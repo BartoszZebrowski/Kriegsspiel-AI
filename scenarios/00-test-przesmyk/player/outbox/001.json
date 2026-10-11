@@ -1,0 +1,179 @@
+{
+  "messages": [
+    {
+      "id": "out-6545f3e8",
+      "channel": "1bzmot",
+      "turn": 1,
+      "time": "2026-05-14T08:00:00+02:00",
+      "sent": "2026-10-11T17:53:28.145Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "dodałem pozycje rubierzy",
+      "attachments": [
+        {
+          "id": "n-5jglrqo8",
+          "kind": "line",
+          "name": "ALFA",
+          "color": "blue",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                22.7,
+                54.267831
+              ],
+              [
+                22.778435,
+                54.278857
+              ],
+              [
+                22.819977,
+                54.281863
+              ],
+              [
+                22.896881,
+                54.281262
+              ],
+              [
+                23.012924,
+                54.255999
+              ],
+              [
+                23.013611,
+                54.255999
+              ],
+              [
+                23.013268,
+                54.255999
+              ]
+            ]
+          },
+          "graphic": "phase_line"
+        }
+      ]
+    },
+    {
+      "id": "out-1dc1174d",
+      "channel": "dd",
+      "turn": 1,
+      "time": "2026-05-14T08:00:00+02:00",
+      "sent": "2026-10-11T17:55:34.803Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "Rosjanie przekroczyli granice w okolicach Zytkiejmy bedziemy sie bronic na rubierzy ALFA",
+      "attachments": [
+        {
+          "id": "n-5jglrqo8",
+          "kind": "line",
+          "name": "ALFA",
+          "color": "blue",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                22.7,
+                54.267831
+              ],
+              [
+                22.778435,
+                54.278857
+              ],
+              [
+                22.819977,
+                54.281863
+              ],
+              [
+                22.896881,
+                54.281262
+              ],
+              [
+                23.012924,
+                54.255999
+              ],
+              [
+                23.013611,
+                54.255999
+              ],
+              [
+                23.013268,
+                54.255999
+              ]
+            ]
+          },
+          "graphic": "phase_line"
+        }
+      ]
+    },
+    {
+      "id": "out-46d5dd7d",
+      "channel": "krozp",
+      "turn": 1,
+      "time": "2026-05-14T08:00:00+02:00",
+      "sent": "2026-10-11T17:57:09.382Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "spróbujcie przetrwac ale na pozycjach z przodu by dawac informacje, strzelac tylko w razie koniecznosci"
+    },
+    {
+      "id": "out-58b567cf",
+      "channel": "krozp",
+      "turn": 1,
+      "time": "2026-05-14T08:00:00+02:00",
+      "sent": "2026-10-11T17:58:01.544Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "bezposrednio przekazywac informacje do dart, i naprawoadzac ogien na cenne cele"
+    },
+    {
+      "id": "out-4d7194a9",
+      "channel": "bcz",
+      "turn": 1,
+      "time": "2026-05-14T08:00:00+02:00",
+      "sent": "2026-10-11T17:59:55.736Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "Zajac rejon A jak najszybciej i sie tam umocnić",
+      "attachments": [
+        {
+          "id": "n-4dq2i1w2",
+          "kind": "area",
+          "name": "Rejon A",
+          "color": "blue",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  23.042928,
+                  54.260081
+                ],
+                [
+                  23.059239,
+                  54.272305
+                ],
+                [
+                  23.136611,
+                  54.264043
+                ],
+                [
+                  23.125784,
+                  54.225919
+                ],
+                [
+                  23.035422,
+                  54.230813
+                ],
+                [
+                  23.042928,
+                  54.260081
+                ]
+              ]
+            ]
+          },
+          "description": "rejon rozlokowania 1",
+          "graphic": "generic"
+        }
+      ]
+    }
+  ]
+}

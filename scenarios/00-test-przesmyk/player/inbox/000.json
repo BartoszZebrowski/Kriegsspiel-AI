@@ -1,0 +1,33 @@
+{
+  "messages": [
+    {
+      "id": "in-000-01",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T05:40:00+02:00",
+      "priority": "urgent",
+      "text": "Do dowódcy ZT „Hańcza”. Przeciwnik przekroczył granicę o 04:30. Zadanie bez zmian: bronić rejonu Suwałk, nie dopuścić do opanowania węzła DK8/S61. Utrzymać styczność z ZT „Biebrza”. Wsparcia lotnictwa w pierwszej dobie nie będzie. Meldunek o sytuacji co 2 godziny."
+    },
+    {
+      "id": "in-000-02",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T05:50:00+02:00",
+      "text": "Ocena wstępna: BGT przeciwnika na NW od Żytkiejm (pewność średnia), kolumna pancerna na drodze Grodno–Sopoćkinie (pewność niska, dane z 01:15). Dywizjon wyrzutni w rejonie Krasnolesja — niepotwierdzony. BSP-1 w powietrzu nad rejonem Żytkiejm, pozostało ok. 1 h 40 min lotu. BSP-2 gotowy do startu, czekam na zadanie."
+    },
+    {
+      "id": "in-000-03",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T05:55:00+02:00",
+      "text": "Stan zaopatrzenia: paliwo 3,0 doby, amunicja 2,5 doby (amunicja 155 mm: 2 jednostki ognia), żywność i woda 3 doby. Batalion logistyczny rozwinięty w Raczkach. MSR: DK8 Augustów–Suwałki. Proszę o priorytety dowozu."
+    },
+    {
+      "id": "in-000-04",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T05:58:00+02:00",
+      "text": "Punkty obserwacyjne zajęte na wzgórzach na S od Wiżajn. Słyszę pracę silników na kierunku granicy, brak kontaktu wzrokowego. Łączność radiowa z zakłóceniami."
+    }
+  ]
+}

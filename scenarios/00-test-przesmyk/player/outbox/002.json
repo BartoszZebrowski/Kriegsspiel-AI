@@ -1,0 +1,74 @@
+{
+  "messages": [
+    {
+      "id": "out-40b2bf39",
+      "channel": "bopl",
+      "turn": 2,
+      "time": "2026-05-14T10:00:00+02:00",
+      "sent": "2026-10-11T18:06:04.758Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "udać sie w rejon jeleniewo i osłaniac 1bzmot"
+    },
+    {
+      "id": "out-ada28ef7",
+      "channel": "2bzmot",
+      "turn": 2,
+      "time": "2026-05-14T10:00:00+02:00",
+      "sent": "2026-10-11T18:08:22.456Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "bronic lini dbać o drogę 16 bo nia idzue zaopatrzenie",
+      "attachments": [
+        {
+          "id": "n-45tpv965",
+          "kind": "line",
+          "name": "BRAVO",
+          "color": "blue",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                23.39918,
+                54.054659
+              ],
+              [
+                23.387528,
+                54.027146
+              ],
+              [
+                23.361552,
+                54.000043
+              ],
+              [
+                23.335576,
+                53.973922
+              ]
+            ]
+          },
+          "graphic": "phase_line"
+        }
+      ]
+    },
+    {
+      "id": "out-cfd4b196",
+      "channel": "1bzmot",
+      "turn": 2,
+      "time": "2026-05-14T10:00:00+02:00",
+      "sent": "2026-10-11T18:08:36.994Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "proponuje rostawić sie szerzej"
+    },
+    {
+      "id": "out-dad29f14",
+      "channel": "dart",
+      "turn": 2,
+      "time": "2026-05-14T10:00:00+02:00",
+      "sent": "2026-10-11T18:09:08.503Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "uważać na ogien kontrabateryjny"
+    }
+  ]
+}

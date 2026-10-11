@@ -1,0 +1,2175 @@
+{
+  "turn": 2,
+  "time": "2026-05-14T10:00:00+02:00",
+  "units": [
+    {
+      "id": "hq",
+      "side": "PL",
+      "name": "ZT Hańcza",
+      "sidc": "SFGPUCIZ--AH---",
+      "pos": [
+        22.935,
+        54.104
+      ],
+      "strength": 1,
+      "status": "SD rozwinięte",
+      "task": "dowodzenie",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 148,
+        "authorized": 160
+      },
+      "equipment": [
+        {
+          "name": "wozy dowodzenia (Rosomak-WD)",
+          "current": 6,
+          "authorized": 6
+        },
+        {
+          "name": "stacje radiowe dalekiego zasięgu",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "1bzmot",
+      "side": "PL",
+      "name": "1 bzmot",
+      "parent": "hq",
+      "sidc": "SFGPUCIZ---F---",
+      "pos": [
+        22.885,
+        54.256
+      ],
+      "strength": 1,
+      "status": "w obronie na rubieży ALFA (odcinek środkowy, ok. 6 km) — umocnienie doraźne",
+      "task": "obrona odcinka rubieży ALFA od jez. Hańcza do ok. 3 km na E od drogi Wiżajny–Jeleniewo",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 609,
+        "authorized": 650
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 40,
+          "authorized": 44
+        },
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        }
+      ]
+    },
+    {
+      "id": "2bzmot",
+      "side": "PL",
+      "name": "2 bzmot",
+      "parent": "hq",
+      "sidc": "SFGPUCIZ---F---",
+      "pos": [
+        23.24,
+        54.115
+      ],
+      "strength": 1,
+      "status": "w obronie",
+      "task": "osłona kierunku Sejny",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 588,
+        "authorized": 640
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 38,
+          "authorized": 42
+        },
+        {
+          "name": "moździerze 98 mm",
+          "current": 6,
+          "authorized": 6
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        }
+      ]
+    },
+    {
+      "id": "bcz",
+      "side": "PL",
+      "name": "bcz",
+      "parent": "hq",
+      "sidc": "SFGPUCAT---F---",
+      "pos": [
+        23.08,
+        54.244
+      ],
+      "strength": 1,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona w Rejonie A (rejon Szypliszek), kierunek N i NE",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 296,
+        "authorized": 310
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 41,
+          "authorized": 44
+        },
+        {
+          "name": "wozy zabezpieczenia technicznego (Bergepanzer)",
+          "current": 3,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "dart",
+      "side": "PL",
+      "name": "dart",
+      "parent": "hq",
+      "sidc": "SFGPUCFHE--F---",
+      "pos": [
+        22.76,
+        54.09
+      ],
+      "strength": 1,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "wsparcie 1 bzmot",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 402,
+        "authorized": 420
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 24,
+          "authorized": 24
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 12,
+          "authorized": 12
+        },
+        {
+          "name": "BSP do korygowania ognia",
+          "current": 2,
+          "authorized": 2
+        }
+      ]
+    },
+    {
+      "id": "krozp",
+      "side": "PL",
+      "name": "krozp",
+      "parent": "hq",
+      "sidc": "SFGPUCR----E---",
+      "pos": [
+        22.86,
+        54.355
+      ],
+      "strength": 1,
+      "status": "PO zapasowe, rozproszeni — obserwacja i naprowadzanie dart",
+      "task": "rozpoznanie kierunku Żytkiejmy",
+      "supply": {
+        "fuel": 2.27,
+        "ammo": 2.45,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 77,
+        "authorized": 92
+      },
+      "equipment": [
+        {
+          "name": "BRDM-2",
+          "current": 7,
+          "authorized": 10
+        },
+        {
+          "name": "drony rozpoznawcze (krótkiego zasięgu)",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "krozp-1p",
+      "side": "PL",
+      "name": "1p krozp",
+      "sidc": "SFGPUCR----D---",
+      "pos": [
+        22.812,
+        54.338
+      ],
+      "strength": 0.68,
+      "status": "po ostrzale artylerii — PO zapasowy, obserwacja",
+      "task": "obserwacja i rozpoznanie w pasie kompanii",
+      "personnel": {
+        "current": 17,
+        "authorized": 25
+      },
+      "equipment": [
+        {
+          "name": "BRDM-2",
+          "current": 2,
+          "authorized": 3
+        }
+      ],
+      "parent": "krozp",
+      "supply": {
+        "fuel": 2.27,
+        "ammo": 2.45,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "krozp-2p",
+      "side": "PL",
+      "name": "2p krozp",
+      "sidc": "SFGPUCR----D---",
+      "pos": [
+        22.83,
+        54.346
+      ],
+      "strength": 0.79,
+      "status": "PO zapasowe, rozproszeni — obserwacja i naprowadzanie dart",
+      "task": "obserwacja i rozpoznanie w pasie kompanii",
+      "personnel": {
+        "current": 20,
+        "authorized": 25
+      },
+      "equipment": [
+        {
+          "name": "BRDM-2",
+          "current": 2,
+          "authorized": 3
+        }
+      ],
+      "parent": "krozp",
+      "supply": {
+        "fuel": 2.27,
+        "ammo": 2.33,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "krozp-3p",
+      "side": "PL",
+      "name": "3p krozp",
+      "sidc": "SFGPUCR----D---",
+      "pos": [
+        22.872,
+        54.35
+      ],
+      "strength": 0.92,
+      "status": "PO zapasowe, rozproszeni — obserwacja i naprowadzanie dart",
+      "task": "obserwacja i rozpoznanie w pasie kompanii",
+      "personnel": {
+        "current": 23,
+        "authorized": 25
+      },
+      "equipment": [
+        {
+          "name": "BRDM-2",
+          "current": 3,
+          "authorized": 3
+        }
+      ],
+      "parent": "krozp",
+      "supply": {
+        "fuel": 2.27,
+        "ammo": 2.45,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "ksap",
+      "side": "PL",
+      "name": "ksap",
+      "parent": "hq",
+      "sidc": "SFGPUCE----E---",
+      "pos": [
+        22.905,
+        54.168
+      ],
+      "strength": 1,
+      "status": "budowa zapór — DK8 na N od Suwałk ok. 40%",
+      "task": "zapory na DK8 i drodze Jeleniewo–Suwałki",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 118,
+        "authorized": 124
+      },
+      "equipment": [
+        {
+          "name": "koparki i spycharki",
+          "current": 5,
+          "authorized": 6
+        },
+        {
+          "name": "zestawy minowania",
+          "current": 2,
+          "authorized": 2
+        },
+        {
+          "name": "miny przeciwpancerne (szt.)",
+          "current": 600,
+          "authorized": 800
+        }
+      ]
+    },
+    {
+      "id": "bopl",
+      "side": "PL",
+      "name": "bopl",
+      "parent": "hq",
+      "sidc": "SFGPUCD----E---",
+      "pos": [
+        22.99,
+        54.095
+      ],
+      "strength": 1,
+      "status": "w gotowości",
+      "task": "osłona węzła Suwałki",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 64,
+        "authorized": 70
+      },
+      "equipment": [
+        {
+          "name": "wyrzutnie Poprad",
+          "current": 4,
+          "authorized": 4
+        },
+        {
+          "name": "zestawy Piorun",
+          "current": 12,
+          "authorized": 12
+        }
+      ]
+    },
+    {
+      "id": "blog",
+      "side": "PL",
+      "name": "blog",
+      "parent": "hq",
+      "sidc": "SFGPUSS----F---",
+      "pos": [
+        22.79,
+        53.975
+      ],
+      "strength": 1,
+      "status": "rozwinięty",
+      "task": "zaopatrzenie ZT",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 487,
+        "authorized": 520
+      },
+      "equipment": [
+        {
+          "name": "ciężarówki (Jelcz)",
+          "current": 92,
+          "authorized": 100
+        },
+        {
+          "name": "cysterny paliwowe",
+          "current": 22,
+          "authorized": 24
+        },
+        {
+          "name": "wozy ewakuacji medycznej",
+          "current": 8,
+          "authorized": 8
+        }
+      ]
+    },
+    {
+      "id": "1bzmot-1k",
+      "side": "PL",
+      "name": "1k 1bzmot",
+      "parent": "1bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "pos": [
+        22.835,
+        54.284
+      ],
+      "strength": 1,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona rejonu Wiżajny, osłona drogi od zachodu",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 138,
+        "authorized": 148
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 14,
+          "authorized": 15
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "1bzmot-1k-1p",
+      "side": "PL",
+      "name": "1p 1k 1bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        22.829,
+        54.286
+      ],
+      "strength": 0.93,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "1bzmot-1k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "1bzmot-1k-2p",
+      "side": "PL",
+      "name": "2p 1k 1bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        22.835,
+        54.287
+      ],
+      "strength": 0.93,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "1bzmot-1k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "1bzmot-1k-3p",
+      "side": "PL",
+      "name": "3p 1k 1bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        22.841,
+        54.286
+      ],
+      "strength": 0.93,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "1bzmot-1k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "1bzmot-2k",
+      "side": "PL",
+      "name": "2k 1bzmot",
+      "parent": "1bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "pos": [
+        22.877,
+        54.285
+      ],
+      "strength": 1,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona kierunku głównego Wiżajny–Suwałki",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 139,
+        "authorized": 148
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 13,
+          "authorized": 15
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "1bzmot-2k-1p",
+      "side": "PL",
+      "name": "1p 2k 1bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        22.871,
+        54.287
+      ],
+      "strength": 0.97,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 29,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "1bzmot-2k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "1bzmot-2k-2p",
+      "side": "PL",
+      "name": "2p 2k 1bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        22.877,
+        54.288
+      ],
+      "strength": 0.85,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 26,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "parent": "1bzmot-2k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "1bzmot-2k-3p",
+      "side": "PL",
+      "name": "3p 2k 1bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        22.883,
+        54.287
+      ],
+      "strength": 0.97,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 29,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "1bzmot-2k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "1bzmot-3k",
+      "side": "PL",
+      "name": "3k 1bzmot",
+      "parent": "1bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "pos": [
+        22.92,
+        54.281
+      ],
+      "strength": 1,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona rejonu Jeleniewo, styk z 2 bzmot",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 136,
+        "authorized": 148
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 13,
+          "authorized": 14
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "1bzmot-3k-1p",
+      "side": "PL",
+      "name": "1p 3k 1bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        22.914,
+        54.283
+      ],
+      "strength": 0.93,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "1bzmot-3k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "1bzmot-3k-2p",
+      "side": "PL",
+      "name": "2p 3k 1bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        22.92,
+        54.284
+      ],
+      "strength": 0.93,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "1bzmot-3k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "1bzmot-3k-3p",
+      "side": "PL",
+      "name": "3p 3k 1bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        22.926,
+        54.283
+      ],
+      "strength": 0.93,
+      "status": "w obronie na rubieży ALFA — umocnienie doraźne",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "1bzmot-3k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "1bzmot-kw",
+      "side": "PL",
+      "name": "kw 1bzmot",
+      "parent": "1bzmot",
+      "sidc": "SFGPUCFM---E---",
+      "pos": [
+        22.88,
+        54.263
+      ],
+      "strength": 1,
+      "status": "na stanowiskach ogniowych za 2k",
+      "task": "wsparcie ogniem moździerzy 1k–3k",
+      "supply": {
+        "fuel": 2.88,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 98,
+        "authorized": 100
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 8,
+          "authorized": 8
+        }
+      ]
+    },
+    {
+      "id": "2bzmot-1k",
+      "side": "PL",
+      "name": "1k 2bzmot",
+      "parent": "2bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "pos": [
+        23.285,
+        54.145
+      ],
+      "strength": 1,
+      "status": "w obronie (północ)",
+      "task": "osłona dojścia od strony Sejn, kierunek Giby",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 138,
+        "authorized": 145
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 13,
+          "authorized": 14
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "2bzmot-1k-1p",
+      "side": "PL",
+      "name": "1p 1k 2bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        23.279,
+        54.147
+      ],
+      "strength": 0.97,
+      "status": "w obronie (północ)",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 29,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "2bzmot-1k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "2bzmot-1k-2p",
+      "side": "PL",
+      "name": "2p 1k 2bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        23.285,
+        54.148
+      ],
+      "strength": 0.97,
+      "status": "w obronie (północ)",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 29,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "2bzmot-1k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "2bzmot-1k-3p",
+      "side": "PL",
+      "name": "3p 1k 2bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        23.291,
+        54.147
+      ],
+      "strength": 0.97,
+      "status": "w obronie (północ)",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 29,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "2bzmot-1k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "2bzmot-2k",
+      "side": "PL",
+      "name": "2k 2bzmot",
+      "parent": "2bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "pos": [
+        23.295,
+        54.105
+      ],
+      "strength": 1,
+      "status": "w obronie (środek)",
+      "task": "obrona głównego pasa na wschód od Sejn",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 135,
+        "authorized": 145
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 13,
+          "authorized": 14
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "2bzmot-2k-1p",
+      "side": "PL",
+      "name": "1p 2k 2bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        23.289,
+        54.107
+      ],
+      "strength": 0.93,
+      "status": "w obronie (środek)",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "2bzmot-2k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "2bzmot-2k-2p",
+      "side": "PL",
+      "name": "2p 2k 2bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        23.295,
+        54.108
+      ],
+      "strength": 0.93,
+      "status": "w obronie (środek)",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "2bzmot-2k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "2bzmot-2k-3p",
+      "side": "PL",
+      "name": "3p 2k 2bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        23.301,
+        54.107
+      ],
+      "strength": 0.93,
+      "status": "w obronie (środek)",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "2bzmot-2k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "2bzmot-3k",
+      "side": "PL",
+      "name": "3k 2bzmot",
+      "parent": "2bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "pos": [
+        23.265,
+        54.07
+      ],
+      "strength": 1,
+      "status": "w obronie (południe)",
+      "task": "osłona prawej flanki i styku z ZT Biebrza",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 134,
+        "authorized": 145
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 12,
+          "authorized": 14
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "2bzmot-3k-1p",
+      "side": "PL",
+      "name": "1p 3k 2bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        23.259,
+        54.072
+      ],
+      "strength": 0.93,
+      "status": "w obronie (południe)",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "2bzmot-3k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "2bzmot-3k-2p",
+      "side": "PL",
+      "name": "2p 3k 2bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        23.265,
+        54.073
+      ],
+      "strength": 0.93,
+      "status": "w obronie (południe)",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "2bzmot-3k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "2bzmot-3k-3p",
+      "side": "PL",
+      "name": "3p 3k 2bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "pos": [
+        23.271,
+        54.072
+      ],
+      "strength": 0.93,
+      "status": "w obronie (południe)",
+      "task": "obrona stanowiska plutonu w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "BWP-1",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "2bzmot-3k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "2bzmot-kw",
+      "side": "PL",
+      "name": "kw 2bzmot",
+      "parent": "2bzmot",
+      "sidc": "SFGPUCFM---E---",
+      "pos": [
+        23.225,
+        54.115
+      ],
+      "strength": 1,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniem moździerzy 1k–3k",
+      "supply": {
+        "fuel": 2.94,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 93,
+        "authorized": 100
+      },
+      "equipment": [
+        {
+          "name": "moździerze 98 mm",
+          "current": 6,
+          "authorized": 6
+        }
+      ]
+    },
+    {
+      "id": "bcz-1k",
+      "side": "PL",
+      "name": "1k bcz",
+      "parent": "bcz",
+      "sidc": "SFGPUCAT---E---",
+      "pos": [
+        23.06,
+        54.255
+      ],
+      "strength": 1,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "odwód, gotowość do kontrataku na kierunku Wiżajny",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 81,
+        "authorized": 85
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 14,
+          "authorized": 15
+        }
+      ]
+    },
+    {
+      "id": "bcz-1k-1p",
+      "side": "PL",
+      "name": "1p 1k bcz",
+      "sidc": "SFGPUCAT---D---",
+      "pos": [
+        23.054,
+        54.257
+      ],
+      "strength": 0.94,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona stanowiska plutonu czołgów w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "bcz-1k",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "bcz-1k-2p",
+      "side": "PL",
+      "name": "2p 1k bcz",
+      "sidc": "SFGPUCAT---D---",
+      "pos": [
+        23.06,
+        54.258
+      ],
+      "strength": 0.94,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona stanowiska plutonu czołgów w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "bcz-1k",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "bcz-1k-3p",
+      "side": "PL",
+      "name": "3p 1k bcz",
+      "sidc": "SFGPUCAT---D---",
+      "pos": [
+        23.066,
+        54.257
+      ],
+      "strength": 0.94,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona stanowiska plutonu czołgów w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "bcz-1k",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "bcz-2k",
+      "side": "PL",
+      "name": "2k bcz",
+      "parent": "bcz",
+      "sidc": "SFGPUCAT---E---",
+      "pos": [
+        23.1,
+        54.258
+      ],
+      "strength": 1,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "odwód, gotowość do kontrataku na kierunku Sejny",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 83,
+        "authorized": 85
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 14,
+          "authorized": 15
+        }
+      ]
+    },
+    {
+      "id": "bcz-2k-1p",
+      "side": "PL",
+      "name": "1p 2k bcz",
+      "sidc": "SFGPUCAT---D---",
+      "pos": [
+        23.094,
+        54.26
+      ],
+      "strength": 1,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona stanowiska plutonu czołgów w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 16,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "bcz-2k",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "bcz-2k-2p",
+      "side": "PL",
+      "name": "2p 2k bcz",
+      "sidc": "SFGPUCAT---D---",
+      "pos": [
+        23.1,
+        54.261
+      ],
+      "strength": 1,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona stanowiska plutonu czołgów w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 16,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "bcz-2k",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "bcz-2k-3p",
+      "side": "PL",
+      "name": "3p 2k bcz",
+      "sidc": "SFGPUCAT---D---",
+      "pos": [
+        23.106,
+        54.26
+      ],
+      "strength": 1,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona stanowiska plutonu czołgów w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 16,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "bcz-2k",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "bcz-3k",
+      "side": "PL",
+      "name": "3k bcz",
+      "parent": "bcz",
+      "sidc": "SFGPUCAT---E---",
+      "pos": [
+        23.09,
+        54.238
+      ],
+      "strength": 1,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "odwód ogólny batalionu",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 80,
+        "authorized": 85
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 13,
+          "authorized": 14
+        }
+      ]
+    },
+    {
+      "id": "bcz-3k-1p",
+      "side": "PL",
+      "name": "1p 3k bcz",
+      "sidc": "SFGPUCAT---D---",
+      "pos": [
+        23.084,
+        54.24
+      ],
+      "strength": 0.94,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona stanowiska plutonu czołgów w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "bcz-3k",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "bcz-3k-2p",
+      "side": "PL",
+      "name": "2p 3k bcz",
+      "sidc": "SFGPUCAT---D---",
+      "pos": [
+        23.09,
+        54.241
+      ],
+      "strength": 0.94,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona stanowiska plutonu czołgów w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "bcz-3k",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "bcz-3k-3p",
+      "side": "PL",
+      "name": "3p 3k bcz",
+      "sidc": "SFGPUCAT---D---",
+      "pos": [
+        23.096,
+        54.24
+      ],
+      "strength": 0.94,
+      "status": "w Rejonie A — zajmowanie stanowisk, umocnienie doraźne (od 09:50)",
+      "task": "obrona stanowiska plutonu czołgów w ugrupowaniu kompanii",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "parent": "bcz-3k",
+      "supply": {
+        "fuel": 2.76,
+        "ammo": 2.5,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "dart-1b",
+      "side": "PL",
+      "name": "1b dart",
+      "parent": "dart",
+      "sidc": "SFGPUCFHE--E---",
+      "pos": [
+        22.728,
+        54.112
+      ],
+      "strength": 1,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "wsparcie 1 bzmot, rejon ogniowy zachód",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 106,
+        "authorized": 110
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "dart-1b-1p",
+      "side": "PL",
+      "name": "1p 1b dart",
+      "sidc": "SFGPUCFHE--D---",
+      "pos": [
+        22.724,
+        54.112
+      ],
+      "strength": 0.98,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "ogień z stanowiska ogniowego plutonu",
+      "personnel": {
+        "current": 39,
+        "authorized": 40
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 2,
+          "authorized": 2
+        }
+      ],
+      "parent": "dart-1b",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "dart-1b-2p",
+      "side": "PL",
+      "name": "2p 1b dart",
+      "sidc": "SFGPUCFHE--D---",
+      "pos": [
+        22.732,
+        54.112
+      ],
+      "strength": 0.98,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "ogień z stanowiska ogniowego plutonu",
+      "personnel": {
+        "current": 39,
+        "authorized": 40
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 2,
+          "authorized": 2
+        }
+      ],
+      "parent": "dart-1b",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "dart-2b",
+      "side": "PL",
+      "name": "2b dart",
+      "parent": "dart",
+      "sidc": "SFGPUCFHE--E---",
+      "pos": [
+        22.79,
+        54.12
+      ],
+      "strength": 1,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "wsparcie 1 bzmot, rejon ogniowy północ",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 104,
+        "authorized": 110
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "dart-2b-1p",
+      "side": "PL",
+      "name": "1p 2b dart",
+      "sidc": "SFGPUCFHE--D---",
+      "pos": [
+        22.786,
+        54.12
+      ],
+      "strength": 0.95,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "ogień z stanowiska ogniowego plutonu",
+      "personnel": {
+        "current": 38,
+        "authorized": 40
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 2,
+          "authorized": 2
+        }
+      ],
+      "parent": "dart-2b",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "dart-2b-2p",
+      "side": "PL",
+      "name": "2p 2b dart",
+      "sidc": "SFGPUCFHE--D---",
+      "pos": [
+        22.794,
+        54.12
+      ],
+      "strength": 0.95,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "ogień z stanowiska ogniowego plutonu",
+      "personnel": {
+        "current": 38,
+        "authorized": 40
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 2,
+          "authorized": 2
+        }
+      ],
+      "parent": "dart-2b",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "dart-3b",
+      "side": "PL",
+      "name": "3b dart",
+      "parent": "dart",
+      "sidc": "SFGPUCFHE--E---",
+      "pos": [
+        22.742,
+        54.078
+      ],
+      "strength": 1,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "wsparcie ogólne, rejon ogniowy południe",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      },
+      "personnel": {
+        "current": 105,
+        "authorized": 110
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 4,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "dart-3b-1p",
+      "side": "PL",
+      "name": "1p 3b dart",
+      "sidc": "SFGPUCFHE--D---",
+      "pos": [
+        22.738,
+        54.078
+      ],
+      "strength": 0.95,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "ogień z stanowiska ogniowego plutonu",
+      "personnel": {
+        "current": 38,
+        "authorized": 40
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 2,
+          "authorized": 2
+        }
+      ],
+      "parent": "dart-3b",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "dart-3b-2p",
+      "side": "PL",
+      "name": "2p 3b dart",
+      "sidc": "SFGPUCFHE--D---",
+      "pos": [
+        22.746,
+        54.078
+      ],
+      "strength": 0.95,
+      "status": "na stanowiskach ogniowych — po zadaniu ogniowym 08:50, zmiana stanowisk wykonana",
+      "task": "ogień z stanowiska ogniowego plutonu",
+      "personnel": {
+        "current": 38,
+        "authorized": 40
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 2,
+          "authorized": 2
+        }
+      ],
+      "parent": "dart-3b",
+      "supply": {
+        "fuel": 2.9,
+        "ammo": 1.88,
+        "general": 2.84
+      }
+    },
+    {
+      "id": "e-bgt1",
+      "side": "RU",
+      "name": "BGT 1 (zmot)",
+      "sidc": "SHGPUCIZ---F---",
+      "pos": [
+        22.77,
+        54.36
+      ],
+      "strength": 0.9,
+      "status": "po ostrzale zatrzymał się 08:55–09:40, wznawia natarcie na Wiżajny",
+      "task": "natarcie Żytkiejmy–Wiżajny–Jeleniewo",
+      "supply": {
+        "fuel": 1.75,
+        "ammo": 1.95,
+        "general": 2.42
+      },
+      "personnel": {
+        "current": 764,
+        "authorized": 850
+      },
+      "equipment": [
+        {
+          "name": "BTR-82A",
+          "current": 28,
+          "authorized": 33
+        },
+        {
+          "name": "moździerze 120 mm",
+          "current": 6,
+          "authorized": 6
+        },
+        {
+          "name": "ppk Kornet",
+          "current": 6,
+          "authorized": 6
+        }
+      ]
+    },
+    {
+      "id": "e-kcz1",
+      "side": "RU",
+      "name": "kcz BGT 1",
+      "sidc": "SHGPUCAT---E---",
+      "pos": [
+        22.735,
+        54.366
+      ],
+      "strength": 1,
+      "status": "za BGT 1, rozwinięta w szyk przed Wiżajnami",
+      "task": "wsparcie natarcia",
+      "supply": {
+        "fuel": 1.53,
+        "ammo": 2,
+        "general": 2.42
+      },
+      "personnel": {
+        "current": 38,
+        "authorized": 40
+      },
+      "equipment": [
+        {
+          "name": "T-72B3",
+          "current": 10,
+          "authorized": 10
+        }
+      ]
+    },
+    {
+      "id": "e-dart1",
+      "side": "RU",
+      "name": "dart 2S19",
+      "sidc": "SHGPUCFHE--F---",
+      "pos": [
+        22.5,
+        54.45
+      ],
+      "strength": 1,
+      "status": "na stanowiskach — ogień 08:15 i 09:20 na PO krozp, 09:45 na 1 bzmot (naprowadzany przez Orlan)",
+      "task": "wsparcie BGT 1, ogień na rozpoznane cele",
+      "supply": {
+        "fuel": 1.97,
+        "ammo": 1.15,
+        "general": 2.42
+      },
+      "personnel": {
+        "current": 310,
+        "authorized": 330
+      },
+      "equipment": [
+        {
+          "name": "2S19 Msta-S",
+          "current": 18,
+          "authorized": 18
+        }
+      ]
+    },
+    {
+      "id": "e-rozp1",
+      "side": "RU",
+      "name": "pluton rozpoznawczy",
+      "sidc": "SHGPUCR----D---",
+      "pos": [
+        22.79,
+        54.332
+      ],
+      "strength": 0.65,
+      "status": "rozpoznanie na kierunku Przerośl–Hańcza (S od Wiżajn)",
+      "task": "rozpoznanie drogi na Wiżajny",
+      "supply": {
+        "fuel": 1.32,
+        "ammo": 1.9,
+        "general": 1.92
+      },
+      "personnel": {
+        "current": 21,
+        "authorized": 26
+      },
+      "equipment": [
+        {
+          "name": "BRDM-2",
+          "current": 2,
+          "authorized": 4
+        }
+      ]
+    },
+    {
+      "id": "e-makiety",
+      "side": "RU",
+      "name": "makiety wyrzutni",
+      "sidc": "SHGPUCFRMSFF---",
+      "pos": [
+        22.42,
+        54.43
+      ],
+      "strength": 0,
+      "status": "makiety",
+      "task": "dezinformacja",
+      "notes": "Dmuchane makiety BM-27 — kontakt c-003 to fałsz",
+      "personnel": {
+        "current": 6,
+        "authorized": 6
+      },
+      "equipment": [
+        {
+          "name": "makiety BM-27 (dmuchane)",
+          "current": 6,
+          "authorized": 6
+        }
+      ]
+    },
+    {
+      "id": "e-bzmot-by",
+      "side": "BY",
+      "name": "bzmot (BY)",
+      "sidc": "SHGPUCIZ---F---",
+      "pos": [
+        23.42,
+        53.98
+      ],
+      "strength": 1,
+      "status": "przekroczył granicę 09:10 na E od Gib, marsz na płn. (Giby–Sejny)",
+      "task": "natarcie przez Giby na Sejny",
+      "supply": {
+        "fuel": 2.27,
+        "ammo": 2,
+        "general": 2.42
+      },
+      "personnel": {
+        "current": 455,
+        "authorized": 520
+      },
+      "equipment": [
+        {
+          "name": "BMP-2",
+          "current": 28,
+          "authorized": 31
+        },
+        {
+          "name": "moździerze 82 mm",
+          "current": 6,
+          "authorized": 8
+        }
+      ]
+    },
+    {
+      "id": "e-bcz-ru",
+      "side": "RU",
+      "name": "bcz (RU)",
+      "sidc": "SHGPUCAT---F---",
+      "pos": [
+        23.47,
+        53.945
+      ],
+      "strength": 1,
+      "status": "marsz za bzmot (BY)",
+      "task": "rozwinięcie powodzenia na Sejny–Lazdijai",
+      "supply": {
+        "fuel": 1.97,
+        "ammo": 2,
+        "general": 2.42
+      },
+      "personnel": {
+        "current": 162,
+        "authorized": 170
+      },
+      "equipment": [
+        {
+          "name": "T-72B3",
+          "current": 30,
+          "authorized": 31
+        }
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "bsp-1",
+      "side": "PL",
+      "name": "BSP-1",
+      "sidc": "SFAPMFQ--------",
+      "status": "gotowy do startu (od 08:40)",
+      "endurance_min": 100
+    },
+    {
+      "id": "bsp-2",
+      "side": "PL",
+      "name": "BSP-2",
+      "status": "gotowy",
+      "endurance_min": 150
+    },
+    {
+      "id": "e-orlan",
+      "side": "RU",
+      "name": "Orlan-10",
+      "sidc": "SHAPMFQ--------",
+      "pos": [
+        22.87,
+        54.3
+      ],
+      "status": "w powietrzu — obserwuje rubież ALFA, naprowadza 2S19",
+      "task": "rozpoznanie dla dart 2S19"
+    }
+  ],
+  "events": [
+    "08:05 rozkazy dotarły do krozp; 08:10 zmiana PO w toku.",
+    "08:15 ogień 2S19 (bateria) na PO krozp wykryte przez Orlan o 07:35: 1p częściowo w ruchu — 2 zabitych, 4 rannych, 1 BRDM zniszczony; 2p 1 ranny.",
+    "08:30 1 bzmot rusza na rubież ALFA (szkic otrzymany 08:05); bcz rusza po S61 do Rejonu A.",
+    "08:40 krozp wykrywa czoło BGT 1 na drodze Żytkiejmy–Wiżajny; dane przekazane bezpośrednio do dart.",
+    "08:50 dart (2 baterie) ogień na kolumnę: 2 BTR-82A zniszczone, 1 uszkodzony, 16 strat osobowych; BGT zatrzymuje się, rozwija i wzywa ogień (doktryna).",
+    "09:10 bzmot (BY) przekracza granicę na E od Gib; bcz (RU) za nim.",
+    "09:20 2S19 ostrzeliwuje rejon PO krozp (rozproszeni zgodnie z rozkazem) — bez strat.",
+    "09:35 1 bzmot na rubieży ALFA (odcinek środkowy). 09:40 ZT Biebrza melduje kolumnę na E od Gib.",
+    "09:45 Orlan naprowadza 2S19 na rejon 2k/1 bzmot: 1 KTO uszkodzony, 3 rannych.",
+    "09:50 bcz w Rejonie A. BGT wznawia natarcie od 09:40, czoło ok. 1,5 km od PO krozp."
+  ]
+}

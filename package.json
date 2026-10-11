@@ -1,0 +1,20 @@
+{
+  "name": "kriegsspiel-ai",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Gra sztabowa w duchu Kriegsspiela: mapa i komunikator gracza, Claude jako sędzia i przeciwnik.",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "node --test \"test/**/*.test.js\"",
+    "validate": "node tools/validate.js",
+    "smoke": "node tools/smoke.mjs",
+    "terrain-view": "node tools/umpire/terrain-view.mjs",
+    "pick": "node tools/umpire/pick.mjs"
+  },
+  "dependencies": {
+    "@geoman-io/leaflet-geoman-free": "^2.17.0",
+    "leaflet": "^1.9.4",
+    "milsymbol": "^2.2.0"
+  }
+}

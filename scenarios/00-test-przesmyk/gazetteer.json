@@ -1,0 +1,740 @@
+{
+  "places": [
+    {
+      "id": "suwalki",
+      "name": "Suwałki",
+      "kind": "miasto",
+      "pos": [
+        22.9279,
+        54.0991
+      ],
+      "zoom": 12,
+      "forms": [
+        "Suwałki",
+        "Suwałk",
+        "Suwałkach",
+        "Suwałkami",
+        "Suwałkom"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "augustow",
+      "name": "Augustów",
+      "kind": "miasto",
+      "pos": [
+        22.9802,
+        53.8437
+      ],
+      "zoom": 12,
+      "forms": [
+        "Augustów",
+        "Augustowa",
+        "Augustowie",
+        "Augustowem",
+        "Augustowowi"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "sejny",
+      "name": "Sejny",
+      "kind": "miasto",
+      "pos": [
+        23.3497,
+        54.1057
+      ],
+      "zoom": 12,
+      "forms": [
+        "Sejny",
+        "Sejn",
+        "Sejnach",
+        "Sejnami",
+        "Sejnom"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "jeleniewo",
+      "name": "Jeleniewo",
+      "kind": "wieś",
+      "pos": [
+        22.9128,
+        54.2063
+      ],
+      "zoom": 13,
+      "forms": [
+        "Jeleniewo",
+        "Jeleniewa",
+        "Jeleniewie",
+        "Jeleniewem",
+        "Jeleniewu"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "wizajny",
+      "name": "Wiżajny",
+      "kind": "wieś",
+      "pos": [
+        22.8665,
+        54.3673
+      ],
+      "zoom": 13,
+      "forms": [
+        "Wiżajny",
+        "Wiżajn",
+        "Wiżajnach",
+        "Wiżajnami",
+        "Wiżajnom"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "zytkiejmy",
+      "name": "Żytkiejmy",
+      "kind": "wieś",
+      "pos": [
+        22.697,
+        54.353
+      ],
+      "zoom": 13,
+      "forms": [
+        "Żytkiejmy",
+        "Żytkiejm",
+        "Żytkiejmach",
+        "Żytkiejmami",
+        "Żytkiejmom"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "filipow",
+      "name": "Filipów",
+      "kind": "wieś",
+      "pos": [
+        22.6216,
+        54.1796
+      ],
+      "zoom": 13,
+      "forms": [
+        "Filipów",
+        "Filipowa",
+        "Filipowie",
+        "Filipowem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "bakalarzewo",
+      "name": "Bakałarzewo",
+      "kind": "wieś",
+      "pos": [
+        22.6516,
+        54.0938
+      ],
+      "zoom": 13,
+      "forms": [
+        "Bakałarzewo",
+        "Bakałarzewa",
+        "Bakałarzewie",
+        "Bakałarzewem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "raczki",
+      "name": "Raczki",
+      "kind": "wieś",
+      "pos": [
+        22.7826,
+        53.9889
+      ],
+      "zoom": 13,
+      "forms": [
+        "Raczki",
+        "Raczek",
+        "Raczkach",
+        "Raczkami",
+        "Raczkom"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "szypliszki",
+      "name": "Szypliszki",
+      "kind": "wieś",
+      "pos": [
+        23.074,
+        54.2537
+      ],
+      "zoom": 13,
+      "forms": [
+        "Szypliszki",
+        "Szypliszek",
+        "Szypliszkach",
+        "Szypliszkami"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "punsk",
+      "name": "Puńsk",
+      "kind": "wieś",
+      "pos": [
+        23.1788,
+        54.2508
+      ],
+      "zoom": 13,
+      "forms": [
+        "Puńsk",
+        "Puńska",
+        "Puńsku",
+        "Puńskiem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "rutka-tartak",
+      "name": "Rutka-Tartak",
+      "kind": "wieś",
+      "pos": [
+        22.9724,
+        54.3227
+      ],
+      "zoom": 13,
+      "forms": [
+        "Rutka-Tartak",
+        "Rutki-Tartak",
+        "Rutce-Tartak",
+        "Rutką-Tartak"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "goldap",
+      "name": "Gołdap",
+      "kind": "miasto",
+      "pos": [
+        22.3019,
+        54.3077
+      ],
+      "zoom": 12,
+      "forms": [
+        "Gołdap",
+        "Gołdapi",
+        "Gołdapią"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "olecko",
+      "name": "Olecko",
+      "kind": "miasto",
+      "pos": [
+        22.4934,
+        54.0398
+      ],
+      "zoom": 12,
+      "forms": [
+        "Olecko",
+        "Olecka",
+        "Olecku",
+        "Oleckiem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "elk",
+      "name": "Ełk",
+      "kind": "miasto",
+      "pos": [
+        22.3616,
+        53.8248
+      ],
+      "zoom": 12,
+      "forms": [
+        "Ełk",
+        "Ełku",
+        "Ełkiem",
+        "Ełkowi"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "giby",
+      "name": "Giby",
+      "kind": "wieś",
+      "pos": [
+        23.3519,
+        54.0409
+      ],
+      "zoom": 13,
+      "forms": [
+        "Giby",
+        "Gib",
+        "Gibach",
+        "Gibami",
+        "Gibom"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "krasnopol",
+      "name": "Krasnopol",
+      "kind": "wieś",
+      "pos": [
+        23.205,
+        54.1165
+      ],
+      "zoom": 13,
+      "forms": [
+        "Krasnopol",
+        "Krasnopola",
+        "Krasnopolu",
+        "Krasnopolem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "przerosl",
+      "name": "Przerośl",
+      "kind": "wieś",
+      "pos": [
+        22.6565,
+        54.2514
+      ],
+      "zoom": 13,
+      "forms": [
+        "Przerośl",
+        "Przerośli"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "budzisko",
+      "name": "Budzisko",
+      "kind": "przejście",
+      "pos": [
+        23.1098,
+        54.3002
+      ],
+      "zoom": 13,
+      "forms": [
+        "Budzisko",
+        "Budziska",
+        "Budzisku",
+        "Budziskiem"
+      ],
+      "note": "Przejście graniczne z Litwą (Budzisko–Kalvarija)."
+    },
+    {
+      "id": "lipsk",
+      "name": "Lipsk",
+      "kind": "miasto",
+      "pos": [
+        23.4037,
+        53.7335
+      ],
+      "zoom": 12,
+      "forms": [
+        "Lipsk",
+        "Lipska",
+        "Lipsku",
+        "Lipskiem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "sztabin",
+      "name": "Sztabin",
+      "kind": "wieś",
+      "pos": [
+        23.1037,
+        53.6773
+      ],
+      "zoom": 12,
+      "forms": [
+        "Sztabin",
+        "Sztabina",
+        "Sztabinie",
+        "Sztabinem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "wigry",
+      "name": "Wigry",
+      "kind": "jezioro",
+      "pos": [
+        23.08,
+        54.03
+      ],
+      "zoom": 12,
+      "forms": [
+        "Wigry",
+        "Wigier",
+        "Wigrach",
+        "Wigrami",
+        "jezioro Wigry",
+        "jeziora Wigry",
+        "jeziorze Wigry",
+        "jeziorem Wigry"
+      ],
+      "note": "Środek jeziora szacowany; wieś Wigry (klasztor) leży na półwyspie przy 23.1255, 54.0405."
+    },
+    {
+      "id": "hancza",
+      "name": "Hańcza",
+      "kind": "jezioro",
+      "pos": [
+        22.8127,
+        54.2635
+      ],
+      "zoom": 13,
+      "forms": [
+        "Hańcza",
+        "Hańczy",
+        "Hańczę",
+        "Hańczą",
+        "jezioro Hańcza",
+        "jeziora Hańcza",
+        "jeziorze Hańcza",
+        "jeziorem Hańcza"
+      ],
+      "note": "Jezioro i wieś Hańcza leżą obok siebie; punkt z rezerwatu Jezioro Hańcza."
+    },
+    {
+      "id": "krasnolesie",
+      "name": "Krasnolesie",
+      "kind": "wieś",
+      "pos": [
+        22.376,
+        54.3944
+      ],
+      "zoom": 12,
+      "forms": [
+        "Krasnolesie",
+        "Krasnolesia",
+        "Krasnolesja",
+        "Krasnolesiu",
+        "Krasnolesiem"
+      ],
+      "note": "Krasnolesie w rejonie Niestierow (Obwód Królewiecki), tuż za granicą."
+    },
+    {
+      "id": "dubeninki",
+      "name": "Dubeninki",
+      "kind": "wieś",
+      "pos": [
+        22.5608,
+        54.2889
+      ],
+      "zoom": 13,
+      "forms": [
+        "Dubeninki",
+        "Dubenink",
+        "Dubeninkach",
+        "Dubeninkami"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "stanczyki",
+      "name": "Stańczyki",
+      "kind": "wieś",
+      "pos": [
+        22.6536,
+        54.2925
+      ],
+      "zoom": 13,
+      "forms": [
+        "Stańczyki",
+        "Stańczyków",
+        "Stańczykach",
+        "Stańczykami"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "grodno",
+      "name": "Grodno",
+      "kind": "miasto",
+      "pos": [
+        23.8343,
+        53.6835
+      ],
+      "zoom": 11,
+      "forms": [
+        "Grodno",
+        "Grodna",
+        "Grodnie",
+        "Grodnem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "sopockinie",
+      "name": "Sopoćkinie",
+      "kind": "miasto",
+      "pos": [
+        23.656,
+        53.8312
+      ],
+      "zoom": 12,
+      "forms": [
+        "Sopoćkinie",
+        "Sopoćkin",
+        "Sopoćkiniach",
+        "Sopoćkiniami"
+      ],
+      "note": "Białoruś, rejon grodzieński."
+    },
+    {
+      "id": "lazdijai",
+      "name": "Lazdijai",
+      "kind": "miasto",
+      "pos": [
+        23.5113,
+        54.2348
+      ],
+      "zoom": 12,
+      "forms": [
+        "Lazdijai",
+        "Łoździeje",
+        "Łoździej",
+        "Łoździejach",
+        "Łoździejami"
+      ],
+      "note": "Litwa."
+    },
+    {
+      "id": "kalvarija",
+      "name": "Kalvarija",
+      "kind": "miasto",
+      "pos": [
+        23.2274,
+        54.4144
+      ],
+      "zoom": 12,
+      "forms": [
+        "Kalvarija",
+        "Kalwaria",
+        "Kalwarii",
+        "Kalwarię"
+      ],
+      "note": "Litwa (Kalwaria Litewska)."
+    },
+    {
+      "id": "mariampol",
+      "name": "Mariampol",
+      "kind": "miasto",
+      "pos": [
+        23.3504,
+        54.5563
+      ],
+      "zoom": 11,
+      "forms": [
+        "Mariampol",
+        "Mariampola",
+        "Mariampolu",
+        "Mariampolem",
+        "Marijampolė"
+      ],
+      "note": "Litwa."
+    },
+    {
+      "id": "kaliningrad",
+      "name": "Kaliningrad",
+      "kind": "miasto",
+      "pos": [
+        20.4566,
+        54.7046
+      ],
+      "zoom": 10,
+      "forms": [
+        "Kaliningrad",
+        "Kaliningradu",
+        "Kaliningradem",
+        "Kaliningradzie",
+        "Królewiec",
+        "Królewca",
+        "Królewcu"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "obwod-krolewiecki",
+      "name": "Obwód Królewiecki",
+      "kind": "inne",
+      "pos": [
+        21.7,
+        54.6
+      ],
+      "zoom": 8,
+      "forms": [
+        "Obwód Królewiecki",
+        "Obwodu Królewieckiego",
+        "Obwodzie Królewieckim",
+        "Obwodem Królewieckim"
+      ],
+      "note": "Punkt orientacyjny w środku obwodu."
+    },
+    {
+      "id": "gusiew",
+      "name": "Gusiew",
+      "kind": "miasto",
+      "pos": [
+        22.2015,
+        54.5922
+      ],
+      "zoom": 11,
+      "forms": [
+        "Gusiew",
+        "Gusiewa",
+        "Gusiewie",
+        "Gusiewem"
+      ],
+      "note": "Rosja, Obwód Królewiecki."
+    },
+    {
+      "id": "dk8",
+      "name": "DK8",
+      "kind": "droga",
+      "pos": [
+        22.79,
+        53.985
+      ],
+      "zoom": 11,
+      "forms": [
+        "DK8",
+        "DK 8",
+        "DK-8"
+      ],
+      "note": "Punkt przybliżony (odcinek Suwałki–Raczki–Augustów); droga krajowa nr 8."
+    },
+    {
+      "id": "s61",
+      "name": "S61",
+      "kind": "droga",
+      "pos": [
+        23.05,
+        54.19
+      ],
+      "zoom": 11,
+      "forms": [
+        "S61",
+        "S 61",
+        "S-61",
+        "Via Baltica"
+      ],
+      "note": "Punkt przybliżony (odcinek Suwałki–Szypliszki–Budzisko); trasa Via Baltica."
+    },
+    {
+      "id": "dk16",
+      "name": "DK16",
+      "kind": "droga",
+      "pos": [
+        22.65,
+        53.8
+      ],
+      "zoom": 10,
+      "forms": [
+        "DK16",
+        "DK 16",
+        "DK-16"
+      ],
+      "note": "Punkt przybliżony (odcinek Augustów–Ełk); droga krajowa nr 16."
+    },
+    {
+      "id": "przesmyk-suwalski",
+      "name": "Przesmyk suwalski",
+      "kind": "inne",
+      "pos": [
+        23.05,
+        54.2
+      ],
+      "zoom": 10,
+      "forms": [
+        "Przesmyk suwalski",
+        "Przesmyku suwalskiego",
+        "Przesmykiem suwalskim",
+        "Przesmykowi suwalskiemu",
+        "Suwałki Gap"
+      ],
+      "note": "Punkt orientacyjny: pas między Suwałkami a Mariampolem/Kalwarią."
+    },
+    {
+      "id": "granica-pl-lt",
+      "name": "granica polsko-litewska",
+      "kind": "inne",
+      "pos": [
+        23.1098,
+        54.3002
+      ],
+      "zoom": 11,
+      "forms": [
+        "granica polsko-litewska",
+        "granicy polsko-litewskiej",
+        "granicę polsko-litewską",
+        "granicą polsko-litewską"
+      ],
+      "note": "Punkt orientacyjny przy przejściu Budzisko."
+    },
+    {
+      "id": "granica-pl-ru",
+      "name": "granica polsko-rosyjska",
+      "kind": "inne",
+      "pos": [
+        22.65,
+        54.36
+      ],
+      "zoom": 11,
+      "forms": [
+        "granica polsko-rosyjska",
+        "granicy polsko-rosyjskiej",
+        "granicę polsko-rosyjską",
+        "granicą polsko-rosyjską"
+      ],
+      "note": "Punkt orientacyjny na granicy w rejonie Żytkiejm."
+    },
+    {
+      "id": "bachanowo",
+      "name": "Bachanowo",
+      "kind": "wieś",
+      "pos": [
+        22.797,
+        54.2425
+      ],
+      "zoom": 13,
+      "forms": [
+        "Bachanowo",
+        "Bachanowa",
+        "Bachanowie",
+        "Bachanowem",
+        "Bachanowu"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "szeszupa",
+      "name": "Szeszupa",
+      "kind": "rzeka",
+      "pos": [
+        23.0211,
+        54.3445
+      ],
+      "zoom": 12,
+      "forms": [
+        "Szeszupa",
+        "Szeszupy",
+        "Szeszupie",
+        "Szeszupą",
+        "Szeszupę",
+        "rzeka Szeszupa",
+        "rzeki Szeszupy"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (punkt na rzece na E od Rutki-Tartak)."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+/* Tokeny projektowe (docs/UI-DESIGN.md §4) — kolory, typografia, promienie, cienie, skala z-index, wymiary */
+:root{
+  --bg-0:#0b0f14;      /* tło aplikacji, pod mapą */
+  --bg-1:#10161d;      /* panele */
+  --bg-2:#151c25;      /* nagłówki paneli, pola */
+  --bg-3:#1b2430;      /* hover */
+  --bg-4:#243142;      /* zaznaczenie / aktywne */
+  --line:#202a36;      /* separator 1px */
+  --line-2:#2d3a4a;    /* obramowanie kontrolek */
+  --line-3:#41536a;    /* obramowanie hover */
+  --t-1:#e6ebf1; --t-2:#a7b3c2; --t-3:#7f8c9d; --t-dis:#566273;
+  --accent:#4c90f0; --accent-2:#2d72d2; --accent-soft:rgba(76,144,240,.16); --accent-line:rgba(76,144,240,.45);
+  --friend:#80e0ff; --hostile:#ff8080; --unknown:#ffff80; --neutral:#aaffaa;
+  --ok:#3fb67f; --warn:#e8b339; --danger:#ec6a5e;
+  --focus:#8fbcff;
+  --font-ui:"Inter","Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --font-mono:"JetBrains Mono","IBM Plex Mono","Cascadia Mono","SF Mono",Consolas,"Liberation Mono",monospace;
+  --fs-cap:11px; --fs-meta:11px; --fs-ui:12px; --fs-body:13px; --fs-lead:14px; --fs-h3:16px; --fs-h2:20px;
+  --r-1:2px; --r-2:3px; --r-3:4px; --r-4:6px;
+  --e-float:0 1px 0 rgba(255,255,255,.04) inset,0 6px 20px rgba(0,0,0,.45);
+  --e-pop:0 1px 0 rgba(255,255,255,.05) inset,0 12px 32px rgba(0,0,0,.55);
+  --e-modal:0 28px 80px rgba(0,0,0,.65);
+  --z-map-ui:500; --z-dock:600; --z-topbar:700; --z-pop:800; --z-modal:900; --z-toast:1000; --z-tip:1100;
+  --topbar-h:44px; --dock-l:312px; --dock-r:392px; --tl-h:98px; --rail-w:40px;
+  --z-splitter:650;
+  color-scheme:dark;
+}
+
+/* Tooltipy i wybór tekstu */
+::selection{background:var(--accent-soft)}

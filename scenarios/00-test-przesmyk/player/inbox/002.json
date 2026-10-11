@@ -1,0 +1,145 @@
+{
+  "messages": [
+    {
+      "id": "in-002-01",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T08:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem oba rozkazy. Zmieniam PO na zapasowe, plutony rozproszone, ogień tylko w obronie własnej. Mam bezpośrednią łączność z dart — będę naprowadzał."
+    },
+    {
+      "id": "in-002-02",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T08:12:00+02:00",
+      "type": "meldunek",
+      "text": "Szkic otrzymałem. Rubież ALFA ma ok. 20 km — dla batalionu za szeroko (zwykle 4–6 km). Zajmuję odcinek środkowy okrakiem na drodze Wiżajny–Jeleniewo: od jeziora Hańcza do ok. 3 km na E od drogi. 1k lewe skrzydło przy Hańczy, 2k na drodze, 3k prawe skrzydło, kw za 2k. Odcinki na W od Hańczy i na E aż do S61 pozostają nieobsadzone — proszę o decyzję, kto je osłania. Przemieszczenie od 08:30."
+    },
+    {
+      "id": "in-002-03",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T08:18:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "08:15 ostrzał artylerii na rejon naszych PO — 1. pluton w trakcie zmiany stanowisk. Straty: 2 zabitych, 4 rannych, 1 BRDM zniszczony. Ogień z kierunku NW (strona rosyjska). Pozostali na PO zapasowych, obserwacja utrzymana."
+    },
+    {
+      "id": "in-002-04",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T08:20:00+02:00",
+      "type": "wiadomosc",
+      "text": "Przyjmuję zamiar obrony na rubieży ALFA. Zwracam uwagę: rubież ma ok. 20 km — sprawdź, czy starczy sił na całą szerokość. Nie zapominaj o kierunku wschodnim i styczności z ZT „Biebrza”. Kolejny meldunek o sytuacji na 10:00."
+    },
+    {
+      "id": "in-002-05",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T08:25:00+02:00",
+      "type": "meldunek",
+      "text": "Rozkaz przyjąłem. Marsz po S61 do Rejonu A, ok. 20 km. Czoło wyrusza 08:35, przewidywane zajęcie rejonu ok. 09:50. Do umocnienia potrzebuję wsparcia saperów — ksap jest zajęta na DK8."
+    },
+    {
+      "id": "in-002-06",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T08:42:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Dron krozp, 08:40: czoło kolumny przeciwnika na drodze Żytkiejmy–Wiżajny, ok. 2 km na E od Żytkiejm — ok. 20 BTR, za nimi co najmniej 4 czołgi. Kierunek wsch. Pewność wysoka. Przekazałem dane do dart."
+    },
+    {
+      "id": "in-002-07",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T08:45:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 gotowy do startu od 08:40, BSP-2 również — oba bez zadań. Proponuję BSP-2 na kierunek wschodni (Giby–Sejny), skąd mamy tylko dane wywiadu dywizji."
+    },
+    {
+      "id": "in-002-08",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-14T08:53:00+02:00",
+      "type": "meldunek",
+      "text": "08:50 zadanie ogniowe na kolumnę na drodze Żytkiejmy–Wiżajny (naprowadzanie krozp), 2 baterie, 96 pocisków. Wg krozp: 2 BTR zniszczone, 1 uszkodzony. Stanowiska zmienione po ogniu."
+    },
+    {
+      "id": "in-002-09",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T09:05:00+02:00",
+      "type": "meldunek",
+      "text": "Po ostrzale przeciwnik zatrzymał kolumnę i rozwija się w rejonie na W od Wiżajn. Widoczne co najmniej 8 czołgów w szyku za BTR. Pewność średnia."
+    },
+    {
+      "id": "in-002-10",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T09:12:00+02:00",
+      "type": "meldunek",
+      "text": "Ponownie BSP przeciwnika nad rejonem Hańczy, krąży nad naszym ruchem na rubież. Nie mamy czym go zwalczyć — proszę o wsparcie OPL."
+    },
+    {
+      "id": "in-002-11",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T09:22:00+02:00",
+      "type": "meldunek",
+      "text": "09:20 kolejny ostrzał na rejon naszych dawnych PO — bez strat (rozproszeni). 09:30 rozpoznanie przeciwnika (2 BRDM) przesuwa się na S od Wiżajn, w kierunku Przerośli."
+    },
+    {
+      "id": "in-002-12",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T09:38:00+02:00",
+      "type": "meldunek",
+      "text": "Batalion na rubieży ALFA od 09:35 (odcinek środkowy, ok. 6 km). Umocnienie doraźne — ok. 2 godziny do przygotowania stanowisk."
+    },
+    {
+      "id": "in-002-13",
+      "channel": "zt-biebrza",
+      "from": "płk Rudnicki, dowódca ZT „Biebrza”",
+      "time": "2026-05-14T09:42:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Nasze rozpoznanie, 09:40: kolumna BMP i czołgów, ok. 30–40 pojazdów, przekroczyła granicę z Białorusią na E od Gib, kierunek płn. Pewność średnia. Nie mamy sił, żeby ją zatrzymać na tym odcinku — kierunek na Sejny jest wasz."
+    },
+    {
+      "id": "in-002-14",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T09:48:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "09:45 ostrzał artylerii na rejon 2k (prawdopodobnie naprowadzany przez BSP): 1 KTO uszkodzony, 3 rannych. Kontynuujemy umocnienie."
+    },
+    {
+      "id": "in-002-15",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T09:50:00+02:00",
+      "type": "meldunek",
+      "text": "bcz w Rejonie A od 09:50, kompanie zajmują stanowiska, dobre pola ostrzału na N i NE (kierunek Budziska). Paliwo po marszu: ok. 2,8 doby."
+    },
+    {
+      "id": "in-002-16",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T09:55:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Przeciwnik wznowił natarcie 09:40. Czoło ok. 1,5 km od naszych PO. Za ok. 20 min będziemy w zasięgu ognia bezpośredniego. Proszę o zgodę na odskok albo o rozkaz."
+    },
+    {
+      "id": "in-002-17",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T09:58:00+02:00",
+      "type": "meldunek",
+      "text": "Wóz ewakuacyjny z BRDM krozp w drodze do Raczek. Dart zużył ok. 0,1 doby amunicji 155 mm. bcz po marszu 20 km — paliwo w normie, dowóz nie jest pilny. Ranni z krozp i 1 bzmot w punkcie medycznym."
+    }
+  ]
+}

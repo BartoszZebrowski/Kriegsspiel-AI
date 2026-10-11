@@ -1,0 +1,104 @@
+{
+  "messages": [
+    {
+      "id": "out-0a83dd7c",
+      "channel": "s2",
+      "turn": 3,
+      "time": "2026-05-14T12:00:00+02:00",
+      "sent": "2026-10-11T18:13:44.537Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "używać BSP bez roskazu i meldować"
+    },
+    {
+      "id": "out-79297689",
+      "channel": "zt-biebrza",
+      "turn": 3,
+      "time": "2026-05-14T12:00:00+02:00",
+      "sent": "2026-10-11T18:16:16.942Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "prosze o wsparcie na styku na południowym odcinku",
+      "attachments": [
+        {
+          "id": "n-45tpv965",
+          "kind": "line",
+          "name": "BRAVO",
+          "color": "blue",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                23.39918,
+                54.054659
+              ],
+              [
+                23.387528,
+                54.027146
+              ],
+              [
+                23.361552,
+                54.000043
+              ],
+              [
+                23.335576,
+                53.973922
+              ]
+            ]
+          },
+          "graphic": "phase_line"
+        }
+      ]
+    },
+    {
+      "id": "out-11942dde",
+      "channel": "dd",
+      "turn": 3,
+      "time": "2026-05-14T12:00:00+02:00",
+      "sent": "2026-10-11T18:17:19.637Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "Potrzebne posiłki i odwody oraz silniejsze naracie sasiednich wojsk, jak tam u nich systułacja?"
+    },
+    {
+      "id": "out-82fa00f8",
+      "channel": "dart",
+      "turn": 3,
+      "time": "2026-05-14T12:00:00+02:00",
+      "sent": "2026-10-11T18:17:39.224Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "przekierować dwie kompanie i przydzielić do wsparcia 2 bzmot na wschodzie"
+    },
+    {
+      "id": "out-9cf1ee7c",
+      "channel": "1bzmot",
+      "turn": 3,
+      "time": "2026-05-14T12:00:00+02:00",
+      "sent": "2026-10-11T18:18:40.157Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "cofnij 1k bzmot do Bachanowo"
+    },
+    {
+      "id": "out-5a461eb4",
+      "channel": "bcz",
+      "turn": 3,
+      "time": "2026-05-14T12:00:00+02:00",
+      "sent": "2026-10-11T18:19:27.384Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "wykonaj szturm na kierunku rutka tartak i zjamij pozycje na wschód od rzeki szeszupa"
+    },
+    {
+      "id": "out-0adad7da",
+      "channel": "2bzmot",
+      "turn": 3,
+      "time": "2026-05-14T12:00:00+02:00",
+      "sent": "2026-10-11T18:20:08.251Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "gdzie ty wypchałes 1k 2bzmot"
+    }
+  ]
+}

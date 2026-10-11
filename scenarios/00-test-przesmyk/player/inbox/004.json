@@ -1,0 +1,171 @@
+{
+  "messages": [
+    {
+      "id": "in-004-01",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T12:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Od teraz BSP używam samodzielnie i melduję. BSP-1 — zachodnie skrzydło (Przerośl, jezioro Hańcza), bo tam widziano rozpoznanie przeciwnika. BSP-2 — kierunek wschodni (Giby, DK16). Start 12:30–12:35."
+    },
+    {
+      "id": "in-004-02",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T12:10:00+02:00",
+      "type": "meldunek",
+      "text": "Rozumiem — 1k w Bachanowie zamknie od tyłu lukę na W od Hańczy, którą widziało rozpoznanie. Ruch od 12:20, frontem na W, gotowość ok. 13:00. Na ALFA zostają 2k i 3k — odcinek będzie jeszcze rzadszy."
+    },
+    {
+      "id": "in-004-03",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T12:12:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Natarcie na Rutkę-Tartak, zajmuję stanowiska na E od Szeszupy. Ruch od 12:25."
+    },
+    {
+      "id": "in-004-04",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-14T12:14:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Przerzucam 1. i 2. baterię na stanowiska na W od Sejn — gotowość ok. 13:15, wtedy Giby w zasięgu. 3. bateria zostaje przy 1 bzmot. Do 13:15 wsparcie 2 bzmot tylko ogniem ZT „Biebrza”, jeśli go dadzą."
+    },
+    {
+      "id": "in-004-05",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T12:15:00+02:00",
+      "type": "meldunek",
+      "text": "1k jest w rejonie Sejn jako odwód batalionu — meldowałem o 10:12. Jeśli 2k zostanie odcięta w Gibach, wprowadzę 1k na DK16 na N od Gib. Proszę o decyzję albo zgodę na samodzielne użycie."
+    },
+    {
+      "id": "in-004-06",
+      "channel": "zt-biebrza",
+      "from": "płk Rudnicki, dowódca ZT „Biebrza”",
+      "time": "2026-05-14T12:20:00+02:00",
+      "type": "meldunek",
+      "text": "Piechoty do wydzielenia nie mam. Mogę dać ogień — mój dywizjon sięga do Gib. Wspieram na wezwanie 2 bzmot, pierwsze uderzenie 12:40 na DK16 na płd. od Gib."
+    },
+    {
+      "id": "in-004-07",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T12:25:00+02:00",
+      "type": "wiadomosc",
+      "text": "Odwodów dywizji w najbliższej dobie nie mam. Daję kompanię przeciwpancerną (Rosomak ze Spike) — od 15:00 na kierunek Sejny. ZT „Mamry” od 12:30 broni się pod Gołdapią, nie wesprze waszego lewego skrzydła. ZT „Biebrza” trzyma Augustów, rozpoznanie przeciwnika pod Lipskiem. Twoim odwodem jest bcz — jeśli 2 bzmot się załamie, Sejny są stracone. Meldunki o sytuacji co 2 godziny, z położeniem wojsk."
+    },
+    {
+      "id": "in-004-08",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T12:33:00+02:00",
+      "type": "meldunek",
+      "text": "12:30 ogień nękający artylerii na 3k — 2 rannych. Ogień słabszy i mniej celny niż rano."
+    },
+    {
+      "id": "in-004-09",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T12:48:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "3. pluton: ok. 12:45 czołgi z przedpola ALFA odjechały na W, razem z częścią BTR. Na przedpolu zostały głównie BTR. Prawdopodobnie obejście."
+    },
+    {
+      "id": "in-004-10",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T12:52:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-2, 12:50: w Gibach i wokół ok. 15 BMP i 10 czołgów, na DK16 na płd. od Gib kolejne ok. 15 czołgów. Pewność średnia."
+    },
+    {
+      "id": "in-004-11",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T13:08:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Bez decyzji — wprowadziłem 1k na DK16 na N od Gib (13:05). 2k pod silnym naciskiem czołgów, odchodzi z Gib. 3k odcięta od drogi, wycofuje się leśnymi drogami na NW."
+    },
+    {
+      "id": "in-004-12",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T13:15:00+02:00",
+      "type": "meldunek",
+      "text": "Rutka-Tartak zajęta 13:10 bez walki — przeciwnika nie było. Stanowiska na E brzegu Szeszupy. Widzę przeciwnika na W, w rejonie Wiżajn."
+    },
+    {
+      "id": "in-004-13",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T13:22:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-1, 13:20: kolumna ok. 7 czołgów i 10 BTR na drodze od Przerośli na wsch., ok. 6 km na W od Bachanowa. Pewność wysoka. Przekazałem do 1 bzmot."
+    },
+    {
+      "id": "in-004-14",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T13:25:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Giby utracone 13:20. Obrona na DK16 na N od Gib: 1k i 2k. 3k zbiera się na NW od Gib. Straty od 12:00: 5 zabitych, 11 rannych, 4 BWP-1."
+    },
+    {
+      "id": "in-004-15",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T13:35:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "13:30 w rejonie Wiżajn widzę kolumny zaopatrzenia przeciwnika (ciężarówki, cysterny) — ok. 7 km na W od nas, słabo osłonięte. Proszę o zgodę na uderzenie."
+    },
+    {
+      "id": "in-004-16",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-14T13:40:00+02:00",
+      "type": "meldunek",
+      "text": "13:30 1. i 2. bateria — ogień na czołgi na DK16 na N od Gib, razem z artylerią ZT „Biebrza”. Wg 2 bzmot zniszczone 4 czołgi, natarcie zatrzymane."
+    },
+    {
+      "id": "in-004-17",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T13:48:00+02:00",
+      "type": "meldunek",
+      "text": "13:45 pojedyncze pociski artylerii na nasz rejon — bez strat. Przeciwnik wie, że tu jesteśmy."
+    },
+    {
+      "id": "in-004-18",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T13:52:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 wraca — silne zakłócenia nad Przerośli, gotowy ponownie ok. 14:50. BSP-2 nad Gibami jeszcze ok. 1 h."
+    },
+    {
+      "id": "in-004-19",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T13:57:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "13:55 1k w Bachanowie w kontakcie z czołem kolumny od Przerośli — Spike zniszczył 1 czołg. Przeciwnik się rozwija. Za mało sił na długą obronę — proszę o wsparcie."
+    },
+    {
+      "id": "in-004-20",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T13:58:00+02:00",
+      "type": "meldunek",
+      "text": "Amunicja dla 1 bzmot dowieziona 13:15. 2 bzmot zaopatrywany drogą Suwałki–Sejny, ranni ewakuowani. ksap skończyła zapory na DK8 (13:00) — czeka na nowe zadanie. Paliwo bcz po marszach ok. 2,5 doby."
+    }
+  ]
+}

@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kriegsspiel AI</title>
+  <link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/vendor/geoman/leaflet-geoman.css">
+  <link rel="stylesheet" href="/css/tokens.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/structure.css">
+  <link rel="stylesheet" href="/css/inspector.css">
+  <link rel="stylesheet" href="/css/messenger.css">
+  <link rel="stylesheet" href="/css/map.css">
+  <link rel="stylesheet" href="/css/draw.css">
+  <link rel="stylesheet" href="/css/timeline.css">
+  <link rel="stylesheet" href="/css/overlays.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body data-m="map">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="i-chevd" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+<symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/></symbol>
+<symbol id="i-cursor" viewBox="0 0 24 24"><path d="m5 3 14 7-6 2-2 6z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 19 19 5M9 5h10v10"/></symbol>
+<symbol id="i-line" viewBox="0 0 24 24"><path d="m5 18 5-8 4 5 5-9"/><circle cx="5" cy="18" r="1.3"/><circle cx="19" cy="6" r="1.3"/></symbol>
+<symbol id="i-poly" viewBox="0 0 24 24"><path d="M12 3.5 20.5 9.5 17.5 19.5h-11l-3-10z"/></symbol>
+<symbol id="i-point" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="8"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h12l-2.5 4L17 12H5"/></symbol>
+<symbol id="i-sym" viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="12"/><path d="m3.5 6 17 12M20.5 6l-17 12"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8M12 17h.01"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="i-clip" viewBox="0 0 24 24"><path d="m20 11-8.5 8.5a5 5 0 0 1-7-7L13 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L14 7"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></symbol>
+<symbol id="i-aim" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></symbol>
+<symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9.5L5 20v-4H4z"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 5v14M19 5 9 12l10 7z"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path d="M18 5v14M5 5l10 7-10 7z"/></symbol>
+<symbol id="i-lt" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+<symbol id="i-gt" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 3 5 14h6l-1 7 8-11h-6z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-tpl" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 9v11"/></symbol>
+<symbol id="i-fold" viewBox="0 0 24 24"><path d="m7 9 5-5 5 5M7 15l5 5 5-5"/></symbol>
+<symbol id="i-unfold" viewBox="0 0 24 24"><path d="m7 4 5 5 5-5M7 20l5-5 5 5"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+<symbol id="i-radio" viewBox="0 0 24 24"><path d="M5 12a7 7 0 0 1 14 0M8.5 12a3.5 3.5 0 0 1 7 0"/><circle cx="12" cy="12" r=".8"/><path d="M12 14v7"/></symbol>
+<symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h11v10H2zM13 9h5l3 3v4h-8z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="1"/><path d="M16 8V4H4v12h4"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 24 24"><path d="M9 9h6v6H9zM9 9V6a3 3 0 1 0-3 3zM15 9V6a3 3 0 1 1 3 3zM9 15v3a3 3 0 1 1-3-3zM15 15v3a3 3 0 1 0 3-3z"/></symbol>
+<symbol id="i-panel-l" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M9 4v16"/></symbol>
+<symbol id="i-panel-r" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M15 4v16"/></symbol>
+<symbol id="i-tree" viewBox="0 0 24 24"><path d="M4 5h5v4H4zM13 11h7v4h-7zM13 17h7v3h-7zM6.5 9v9H13M6.5 13H13"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6 9 4l6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></symbol>
+<symbol id="i-crosshair" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><rect x="8" y="8" width="8" height="8"/></symbol>
+</defs></svg>
+
+<div id="app">
+  <!-- ======================= PASEK GÓRNY ======================= -->
+  <header id="topbar">
+    <div class="brand">
+      <div class="brand-mark"><svg class="i"><use href="#i-crosshair"/></svg></div>
+      <div><b>KRIEGSSPIEL</b><span id="scenario-title">Kriegsspiel AI</span></div>
+    </div>
+    <button class="omni-btn" id="omni-open" aria-label="Szukaj (Ctrl+K)">
+      <svg class="i"><use href="#i-search"/></svg><span>Szukaj jednostki, kontaktu, miejsca lub polecenia…</span><kbd>Ctrl K</kbd>
+    </button>
+    <div class="clock" id="clock">
+      <button id="t-prev" data-tip="Poprzednia tura" data-k="," aria-label="Poprzednia tura"><svg class="i"><use href="#i-lt"/></svg></button>
+      <div class="clock-mid">
+        <span class="clock-turn" id="clk-turn">TURA —</span>
+        <span class="clock-time"><b id="clk-time">—</b><i id="clk-dtg"></i></span>
+      </div>
+      <button id="t-next" data-tip="Następna tura" data-k="." aria-label="Następna tura"><svg class="i"><use href="#i-gt"/></svg></button>
+    </div>
+    <button class="btn sm" id="t-cur" hidden>Wróć do bieżącej</button>
+    <span class="pill hide-m" id="outbox-pill" data-tip="Rozkazy w skrzynce nadawczej — zostaną rozpatrzone po „koniec tury”">SKRZYNKA · 0</span>
+    <span class="vsep"></span>
+    <button class="tb-btn" id="tb-brief" data-tip="Odprawa" data-k="B"><svg class="i"><use href="#i-doc"/></svg><span class="lbl">Odprawa</span></button>
+    <button class="tb-btn" id="tb-bell" data-tip="Powiadomienia" aria-label="Powiadomienia"><svg class="i"><use href="#i-bell"/></svg><span class="dot-badge" id="bell-badge" hidden>0</span></button>
+    <button class="tb-btn" id="tb-help" data-tip="Legenda symboli" data-k="?" aria-label="Legenda"><svg class="i"><use href="#i-help"/></svg></button>
+    <button class="tb-btn on" id="tb-l" data-tip="Lewy panel" data-k="Alt 1" aria-label="Lewy panel"><svg class="i"><use href="#i-panel-l"/></svg></button>
+    <button class="tb-btn on" id="tb-r" data-tip="Prawy panel" data-k="Alt 2" aria-label="Prawy panel"><svg class="i"><use href="#i-panel-r"/></svg></button>
+    <div class="pop" id="bell-pop" role="dialog" aria-label="Powiadomienia"></div>
+  </header>
+
+  <!-- ======================= SPLITTERY DOCKÓW ======================= -->
+  <div class="split v" id="sp-l" role="separator" aria-orientation="vertical" tabindex="0" title="Przeciągnij · dwuklik: domyślnie"></div>
+  <div class="split v" id="sp-r" role="separator" aria-orientation="vertical" tabindex="0" title="Przeciągnij · dwuklik: domyślnie"></div>
+
+  <!-- ======================= LEWY DOK: STRUKTURA + INSPEKTOR ======================= -->
+  <aside id="dock-l" aria-label="Struktura i inspektor">
+    <div class="dock-body">
+      <section class="panel" id="p-tree">
+        <div class="panel-h"><span class="cap">Struktura</span><span class="count" id="cnt-units">0</span><span class="grow"></span>
+          <button class="ibtn" id="tr-fold" data-tip="Zwiń do batalionów" aria-label="Zwiń do batalionów"><svg class="i s"><use href="#i-fold"/></svg></button>
+          <button class="ibtn" id="tr-unfold" data-tip="Rozwiń wszystko" aria-label="Rozwiń wszystko"><svg class="i s"><use href="#i-unfold"/></svg></button>
+        </div>
+        <label class="tree-filter"><svg class="i s"><use href="#i-filter"/></svg><input id="tr-q" placeholder="Filtruj jednostki…" autocomplete="off" aria-label="Filtruj jednostki"><kbd>/</kbd></label>
+        <div id="tree-scroll"></div>
+      </section>
+      <div class="split h rel" id="sp-i" role="separator" aria-orientation="horizontal" tabindex="0" title="Przeciągnij · dwuklik: domyślnie"></div>
+      <section class="panel" id="p-insp">
+        <div class="panel-h"><span class="cap">Inspektor</span><span class="grow"></span>
+          <button class="ibtn" data-tip="Wycentruj na mapie" id="in-aim" aria-label="Wycentruj na mapie"><svg class="i s"><use href="#i-aim"/></svg></button>
+          <button class="ibtn" data-tip="Zamknij" id="in-x" aria-label="Zamknij inspektor"><svg class="i s"><use href="#i-x"/></svg></button>
+        </div>
+        <div class="tabs" id="in-tabs" role="tablist"><button class="on" role="tab" data-t="ov">Przegląd</button><button role="tab" data-t="sup">Zaopatrzenie</button><button role="tab" data-t="hist">Historia</button></div>
+        <div id="insp-body"></div>
+      </section>
+    </div>
+    <div class="dock-rail" id="rail-l">
+      <button class="rail-btn" id="rail-l-tree" data-tip="Struktura" data-pos="r" aria-label="Rozwiń lewy panel: Struktura"><svg class="i"><use href="#i-tree"/></svg><span class="dot-badge" id="rail-l-badge" hidden>0</span></button>
+      <button class="rail-btn" id="rail-l-insp" data-tip="Inspektor" data-pos="r" aria-label="Rozwiń lewy panel: Inspektor"><svg class="i"><use href="#i-info"/></svg></button>
+    </div>
+  </aside>
+
+  <!-- ======================= CENTRUM: MAPA + OŚ CZASU ======================= -->
+  <main id="center">
+    <div id="mapwrap">
+      <div id="map" aria-label="Mapa sztabowa"></div>
+
+      <div class="float" id="rail" role="toolbar" aria-label="Narzędzia szkicu"></div>
+      <div class="float pop" id="flyout"></div>
+
+      <div class="float" id="detail"><span class="cap">Szczegółowość</span>
+        <div class="seg sm" id="seg-detail" role="group" aria-label="Szczegółowość">
+          <button data-d="auto" data-tip="Automatycznie wg przybliżenia" data-k="1">Auto</button>
+          <button data-detail="battalion" data-d="battalion" data-tip="Tylko bataliony i wyżej" data-k="2">Batalion</button>
+          <button data-detail="company" data-d="company" data-tip="Także kompanie" data-k="3">Kompania</button>
+          <button data-detail="platoon" data-d="platoon" data-tip="Także plutony" data-k="4">Pluton</button>
+        </div>
+      </div>
+
+      <div class="float" id="mapctl">
+        <button class="tool" id="b-layers" data-tip="Warstwy i podkład" data-k="W" data-pos="l" aria-label="Warstwy"><svg class="i"><use href="#i-layers"/></svg></button>
+        <button class="tool" id="b-legend" data-tip="Legenda symboli" data-k="?" data-pos="l" aria-label="Legenda"><svg class="i"><use href="#i-help"/></svg></button>
+        <div class="sep"></div>
+        <button class="tool" id="z-in" data-tip="Przybliż" data-pos="l" aria-label="Przybliż"><svg class="i"><use href="#i-plus"/></svg></button>
+        <button class="tool" id="z-out" data-tip="Oddal" data-pos="l" aria-label="Oddal"><svg class="i"><use href="#i-minus"/></svg></button>
+        <button class="tool" id="z-fit" data-tip="Pokaż wszystkie siły własne" data-k="F" data-pos="l" aria-label="Pokaż wszystkie siły własne"><svg class="i"><use href="#i-aim"/></svg></button>
+      </div>
+
+      <div class="float pop" id="layers" role="dialog" aria-label="Warstwy">
+        <div class="lp-sec"><span class="cap">Podkład</span><div id="lp-base"></div></div>
+        <div class="lp-div"></div>
+        <div class="lp-sec"><span class="cap">Nakładki</span><div id="lp-over"></div></div>
+      </div>
+
+      <div class="float pop" id="legend" role="dialog" aria-label="Legenda">
+        <div class="panel-h"><span class="cap">Legenda</span><span class="grow"></span>
+          <div class="seg sm" id="seg-leg"><button class="on" data-l="map">Na mapie</button><button data-l="rules">Zasady</button></div>
+          <button class="ibtn" id="leg-x" data-tip="Zamknij" data-k="Esc" aria-label="Zamknij legendę"><svg class="i s"><use href="#i-x"/></svg></button></div>
+        <div class="lg-body" id="lg-body"></div>
+        <div class="lg-foot"><svg class="i s"><use href="#i-info"/></svg>Najedź na symbol na mapie, aby zobaczyć jego opis.</div>
+      </div>
+
+      <div class="float" id="status"><span>KURSOR <b id="st-c">—</b></span><span id="st-m-wrap">MGRS <b id="st-m">—</b></span><span>ZOOM <b id="st-z">—</b></span><span>PODKŁAD <b id="st-b">—</b></span></div>
+      <div id="toasts" aria-live="polite"></div>
+    </div>
+
+    <div class="split h" id="sp-t" role="separator" aria-orientation="horizontal" tabindex="0" title="Przeciągnij · dwuklik: domyślnie"></div>
+    <section id="timeline" aria-label="Oś czasu tur">
+      <div class="tl-l">
+        <div><div class="cap">Oś czasu</div><div class="mono tl-info" id="tl-info">—</div></div>
+        <div class="row">
+          <button class="ibtn" id="tl-prev" data-tip="Poprzednia tura" data-k="," aria-label="Poprzednia tura"><svg class="i s"><use href="#i-prev"/></svg></button>
+          <button class="ibtn" id="tl-next" data-tip="Następna tura" data-k="." aria-label="Następna tura"><svg class="i s"><use href="#i-next"/></svg></button>
+          <button class="btn sm ghost" id="tl-cur">Bieżąca</button>
+        </div>
+      </div>
+      <div class="tl-mid" id="tl-mid"><div class="tl-axis" id="tl-axis"></div>
+        <div class="tl-banner"><svg class="i s"><use href="#i-clock"/></svg>Archiwum · tylko podgląd</div></div>
+      <div class="tl-r">
+        <div class="tl-legend"><div class="ll"><i style="background:var(--t-2)"></i>wiadomości<i style="background:var(--danger);margin-left:4px"></i>pilne</div><div class="ll"><i style="background:var(--accent)"></i>rozkazy<i style="background:var(--hostile);margin-left:4px"></i>kontakty</div></div>
+        <div class="afterbattle" id="afterbattle" data-tip="Tryb „po bitwie” — dostępny po zakończeniu scenariusza" data-pos="l"><div class="seg sm"><button id="ab-btn" disabled><svg class="i s"><use href="#i-lock"/></svg> Po bitwie</button></div></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= PRAWY DOK: KOMUNIKATOR ======================= -->
+  <aside id="dock-r" aria-label="Komunikator">
+    <div class="dock-body">
+      <div class="panel-h"><span class="cap">Komunikator</span><span class="count" id="cnt-unread">brak nowych</span><span class="grow"></span>
+        <button class="ibtn on" data-tip="Linia łączności z jednostką na mapie" id="m-leader" aria-label="Linia łączności z jednostką"><svg class="i s"><use href="#i-line"/></svg></button>
+        <button class="ibtn" data-tip="Szukaj (Ctrl K)" id="m-search" aria-label="Szukaj"><svg class="i s"><use href="#i-search"/></svg></button></div>
+      <div class="m-chs">
+        <div class="m-chs-scroll" id="chtabs" role="tablist"></div>
+        <button class="m-more" id="m-more" data-tip="Wszystkie kanały" data-pos="l" aria-label="Wszystkie kanały"><svg class="i"><use href="#i-chevd"/></svg></button>
+        <div class="pop" id="chlist"></div>
+      </div>
+      <div class="m-head" id="m-head"></div>
+      <div id="thread"></div>
+      <div class="split h rel" id="sp-c" role="separator" aria-orientation="horizontal" tabindex="0" title="Przeciągnij · dwuklik: domyślnie"></div>
+      <form class="comp" id="compose">
+        <div class="comp-top">
+          <div class="seg sm" id="seg-type" role="group" aria-label="Rodzaj wiadomości"><button type="button" class="on" data-ty="rozkaz">Rozkaz</button><button type="button" data-ty="zarzadzenie">Zarządzenie</button><button type="button" data-ty="meldunek">Meldunek</button><button type="button" data-ty="wiadomosc">Wiadomość</button></div>
+          <span class="grow"></span>
+          <button type="button" class="sw" id="sw-urg" data-tip="Oznacz jako pilne" aria-pressed="false"><svg class="i s"><use href="#i-zap"/></svg>Pilne</button>
+        </div>
+        <div class="comp-box">
+          <textarea id="compose-text" maxlength="4000" placeholder="Treść rozkazu… użyj @ aby wskazać jednostkę, # aby wskazać miejsce"></textarea>
+          <div class="pop" id="mention-pop" role="listbox"></div>
+          <div class="comp-bar">
+            <button type="button" class="sw" id="attach-btn"><svg class="i s"><use href="#i-clip"/></svg>Szkic</button>
+            <button type="button" class="sw" id="tpl-btn"><svg class="i s"><use href="#i-tpl"/></svg>Szablon</button>
+            <span class="hint" id="compose-hint"><kbd>Ctrl</kbd><kbd>↵</kbd></span>
+            <button class="btn pri sm" type="submit" id="compose-send"><svg class="i s"><use href="#i-send"/></svg>Wyślij</button>
+            <div class="pop" id="attach-menu"></div>
+            <div class="pop" id="tpl-menu"></div>
+          </div>
+        </div>
+        <div class="chips" id="compose-chips"></div>
+      </form>
+    </div>
+    <div class="dock-rail" id="rail-r">
+      <button class="rail-btn" id="rail-r-msg" data-tip="Komunikator" data-pos="l" aria-label="Rozwiń prawy panel: Komunikator"><svg class="i"><use href="#i-msg"/></svg><span class="dot-badge" id="rail-r-badge" hidden>0</span></button>
+    </div>
+  </aside>
+
+  <nav id="tabbar" aria-label="Widoki">
+    <button data-m="map" class="on"><svg class="i"><use href="#i-map"/></svg>Mapa</button>
+    <button data-m="tree"><svg class="i"><use href="#i-tree"/></svg>Struktura</button>
+    <button data-m="insp"><svg class="i"><use href="#i-info"/></svg>Szczegóły</button>
+    <button data-m="msg"><svg class="i"><use href="#i-msg"/></svg>Komunikator<span class="dot-badge" id="tab-badge" hidden>0</span></button>
+  </nav>
+</div>
+
+<!-- ======================= OMNIBOX ======================= -->
+<div id="omni" role="dialog" aria-label="Szukaj" aria-modal="true">
+  <div class="omni-box">
+    <div class="omni-in"><svg class="i"><use href="#i-search"/></svg><input id="o-q" placeholder="Szukaj jednostki, kontaktu, miejsca lub polecenia…" autocomplete="off" aria-label="Szukaj"><kbd>Esc</kbd></div>
+    <div class="omni-f"><div class="seg sm" id="o-seg"></div></div>
+    <div class="omni-list" id="o-list" role="listbox"></div>
+    <div class="omni-ft"><span><kbd>↑</kbd><kbd>↓</kbd> wybór</span><span><kbd>↵</kbd> przejdź</span><span><kbd>Shift</kbd><kbd>↵</kbd> kanał / szczegóły</span><span class="grow"></span><span><kbd>Ctrl</kbd><kbd>K</kbd></span></div>
+  </div>
+</div>
+
+<!-- ======================= ODPRAWA ======================= -->
+<div id="brief" role="dialog" aria-label="Odprawa" aria-modal="true">
+  <div class="br-top"><svg class="i"><use href="#i-doc"/></svg><h2 id="br-title">Odprawa</h2><span class="pill">ODPRAWA PRZED OPERACJĄ</span><span class="grow"></span><button class="btn sm" id="briefing-close">Zamknij <kbd>Esc</kbd></button></div>
+  <div class="br-main">
+    <nav class="br-toc" id="br-toc"></nav>
+    <div class="br-doc" id="br-doc"><article class="markdown" id="briefing-body"></article></div>
+    <aside class="br-side" id="br-side"></aside>
+  </div>
+</div>
+<div id="tip"></div>
+
+<!-- ======================= OKNO EDYCJI SZKICU ======================= -->
+<dialog class="modal modal--small" id="note-dialog">
+  <form id="note-form" method="dialog">
+    <div class="modal__header">
+      <h2 id="note-title">Rysunek</h2>
+    </div>
+    <div class="modal__body form">
+      <label>Nazwa <input id="note-name" maxlength="60" required></label>
+      <label>Opis <textarea id="note-desc" rows="3" maxlength="1000" placeholder="np. rejon obrony 1 kompanii"></textarea></label>
+      <div id="note-graphic-box" class="gfx-box">
+        <div class="gfx-box__fields">
+          <label>Rodzaj znaku <select id="note-graphic"></select></label>
+          <label id="note-gechelon-box">Szczebel granicy <select id="note-gechelon"></select></label>
+          <label class="check" id="note-flip-box"><input type="checkbox" id="note-flip"> Odwróć stronę znaku</label>
+        </div>
+        <div class="gfx-box__preview"><div id="note-gfx-preview"></div><small id="note-gfx-hint"></small></div>
+      </div>
+      <fieldset id="note-color-box">
+        <legend>Kolor</legend>
+        <label class="radio"><input type="radio" name="color" value="blue"> <span class="swatch swatch--blue"></span> własne</label>
+        <label class="radio"><input type="radio" name="color" value="red"> <span class="swatch swatch--red"></span> przeciwnik</label>
+        <label class="radio"><input type="radio" name="color" value="black"> <span class="swatch swatch--black"></span> ogólne</label>
+      </fieldset>
+      <fieldset id="note-symbol-box">
+        <legend>Symbol (hipoteza)</legend>
+        <div class="symbol-form">
+          <div class="symbol-form__fields">
+            <label>Kto <select id="note-affiliation">
+              <option value="H">wróg</option><option value="S">podejrzany</option><option value="U">nieznany</option><option value="F">swój</option>
+            </select></label>
+            <label>Rodzaj <select id="note-fn"></select></label>
+            <label>Wielkość <select id="note-echelon"></select></label>
+          </div>
+          <div class="symbol-form__preview"><div id="note-preview"></div><small id="note-preview-desc"></small></div>
+        </div>
+      </fieldset>
+      <div class="form__actions">
+        <button class="btn" type="button" id="note-remove">Usuń</button>
+        <span class="spacer"></span>
+        <button class="btn" type="button" id="note-cancel">Anuluj</button>
+        <button class="btn pri" type="submit">Zapisz</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<script src="/vendor/leaflet/leaflet.js"></script>
+<script src="/vendor/geoman/leaflet-geoman.js"></script>
+<script src="/vendor/milsymbol.js"></script>
+<script type="module" src="/js/main.js"></script>
+</body>
+</html>

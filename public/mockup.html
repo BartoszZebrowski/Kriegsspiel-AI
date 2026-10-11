@@ -1,0 +1,1329 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kriegsspiel AI — makieta interfejsu</title>
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css">
+<style>
+/* ==========================================================================
+   TOKENY  (patrz docs/UI-DESIGN.md §4)
+   ========================================================================== */
+:root{
+  --bg-0:#0b0f14;      /* tło aplikacji, pod mapą */
+  --bg-1:#10161d;      /* panele */
+  --bg-2:#151c25;      /* nagłówki paneli, pola */
+  --bg-3:#1b2430;      /* hover */
+  --bg-4:#243142;      /* zaznaczenie / aktywne */
+  --line:#202a36;      /* separator 1px */
+  --line-2:#2d3a4a;    /* obramowanie kontrolek */
+  --line-3:#41536a;    /* obramowanie hover */
+  --t-1:#e6ebf1; --t-2:#a7b3c2; --t-3:#7f8c9d; --t-dis:#566273;
+  --accent:#4c90f0; --accent-2:#2d72d2; --accent-soft:rgba(76,144,240,.16); --accent-line:rgba(76,144,240,.45);
+  --friend:#80e0ff; --hostile:#ff8080; --unknown:#ffff80; --neutral:#aaffaa;
+  --ok:#3fb67f; --warn:#e8b339; --danger:#ec6a5e;
+  --focus:#8fbcff;
+  --font-ui:"Inter","Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  --font-mono:"JetBrains Mono","IBM Plex Mono","Cascadia Mono","SF Mono",Consolas,"Liberation Mono",monospace;
+  --fs-cap:11px; --fs-meta:11px; --fs-ui:12px; --fs-body:13px; --fs-lead:14px; --fs-h3:16px; --fs-h2:20px;
+  --r-1:2px; --r-2:3px; --r-3:4px; --r-4:6px;
+  --e-float:0 1px 0 rgba(255,255,255,.04) inset,0 6px 20px rgba(0,0,0,.45);
+  --e-pop:0 1px 0 rgba(255,255,255,.05) inset,0 12px 32px rgba(0,0,0,.55);
+  --e-modal:0 28px 80px rgba(0,0,0,.65);
+  --z-map-ui:500; --z-dock:600; --z-topbar:700; --z-pop:800; --z-modal:900; --z-toast:1000; --z-tip:1100;
+  --topbar-h:44px; --dock-l:312px; --dock-r:392px; --tl-h:98px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg-0);color:var(--t-1);font:var(--fs-ui)/1.4 var(--font-ui);-webkit-font-smoothing:antialiased;overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}
+button{background:none;border:0;padding:0;cursor:pointer}
+svg.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+svg.i.s{width:13px;height:13px}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+:focus{outline:none}
+:focus-visible{outline:2px solid var(--focus);outline-offset:1px;border-radius:var(--r-2)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#2a3645;border:3px solid transparent;background-clip:content-box;border-radius:6px}::-webkit-scrollbar-thumb:hover{background:#3a4a5f;background-clip:content-box;border:3px solid transparent}::-webkit-scrollbar-track{background:transparent}
+kbd{font:600 11px/1 var(--font-mono);color:var(--t-2);background:var(--bg-3);border:1px solid var(--line-2);border-bottom-width:2px;border-radius:3px;padding:2px 5px;white-space:nowrap}
+.cap{font-size:var(--fs-cap);font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--t-3)}
+
+/* ==========================================================================
+   UKŁAD
+   ========================================================================== */
+#app{position:relative;display:grid;height:100%;grid-template-columns:var(--dock-l) minmax(0,1fr) var(--dock-r);grid-template-rows:var(--topbar-h) minmax(0,1fr);grid-template-areas:"top top top" "left center right"}
+body.no-l #app{--dock-l:0px} body.no-r #app{--dock-r:0px}
+body.no-l #dock-l,body.no-r #dock-r{display:none}
+#topbar{grid-area:top;display:flex;align-items:center;gap:12px;padding:0 10px 0 12px;background:var(--bg-1);border-bottom:1px solid var(--line);z-index:var(--z-topbar);position:relative}
+#dock-l{grid-area:left;display:flex;flex-direction:column;min-height:0;background:var(--bg-1);border-right:1px solid var(--line);z-index:var(--z-dock)}
+#dock-r{grid-area:right;display:flex;flex-direction:column;min-height:0;background:var(--bg-1);border-left:1px solid var(--line);z-index:var(--z-dock)}
+#center{grid-area:center;display:flex;flex-direction:column;min-width:0;min-height:0;position:relative}
+#mapwrap{position:relative;flex:1;min-height:0;isolation:isolate}
+#map{position:absolute;inset:0;background:var(--bg-0)}
+#tabbar{display:none}
+
+/* ---- pasek górny ---- */
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand-mark{width:24px;height:24px;border:1.5px solid var(--accent);border-radius:3px;display:grid;place-items:center;color:var(--accent);flex:none}
+.brand-mark svg{width:14px;height:14px}
+.brand b{font-size:11px;letter-spacing:.14em;font-weight:700;color:var(--t-1);display:block;line-height:1.1}
+.brand span{font-size:11px;color:var(--t-3);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:230px;line-height:1.2}
+.omni-btn{flex:0 1 380px;min-width:0;margin:0 auto 0 8px;display:flex;align-items:center;gap:8px;height:28px;padding:0 6px 0 9px;background:var(--bg-0);border:1px solid var(--line-2);border-radius:var(--r-3);color:var(--t-3);text-align:left}
+.omni-btn:hover{border-color:var(--line-3);color:var(--t-2)}
+.omni-btn span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clock{display:flex;align-items:stretch;border:1px solid var(--line-2);border-radius:var(--r-3);background:var(--bg-0);height:32px;flex:none}
+.clock>button{width:28px;display:grid;place-items:center;color:var(--t-2)}
+.clock>button:hover:not(:disabled){background:var(--bg-3);color:var(--t-1)}
+.clock>button:disabled{color:var(--t-dis);cursor:default}
+.clock-mid{display:flex;align-items:center;gap:10px;padding:0 10px;border-left:1px solid var(--line-2);border-right:1px solid var(--line-2)}
+.clock-turn{font-size:var(--fs-cap);font-weight:700;letter-spacing:.1em;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:var(--r-1);padding:2px 6px}
+.clock-time{display:flex;flex-direction:column;line-height:1.15}
+.clock-time b{font:600 13px/1.1 var(--font-mono);letter-spacing:.01em}
+.clock-time i{font:normal 11px/1.2 var(--font-mono);color:var(--t-3);letter-spacing:.04em}
+body.archive .clock-turn{color:var(--warn);background:rgba(232,179,57,.12);border-color:rgba(232,179,57,.45)}
+.tb-btn{display:flex;align-items:center;gap:6px;height:28px;padding:0 9px;border-radius:var(--r-3);color:var(--t-2);border:1px solid transparent;position:relative}
+.tb-btn:hover{background:var(--bg-3);color:var(--t-1)}
+.tb-btn.on{background:var(--bg-4);color:var(--t-1)}
+.pill{font:600 11px/1 var(--font-mono);padding:3px 6px;border-radius:9px;background:var(--bg-3);color:var(--t-2);border:1px solid var(--line-2);white-space:nowrap}
+.dot-badge{position:absolute;top:3px;right:3px;min-width:14px;height:14px;border-radius:7px;background:var(--danger);color:#1a0c0a;font:700 11px/14px var(--font-ui);text-align:center;padding:0 3px}
+.vsep{width:1px;height:20px;background:var(--line);flex:none}
+
+/* ---- panele ---- */
+.panel{display:flex;flex-direction:column;min-height:0;background:var(--bg-1)}
+.panel-h{display:flex;align-items:center;gap:8px;height:32px;padding:0 8px 0 12px;background:var(--bg-2);border-bottom:1px solid var(--line);flex:none}
+.panel-h .cap{color:var(--t-2)}
+.panel-h .grow{flex:1}
+.ibtn{width:24px;height:24px;display:grid;place-items:center;border-radius:var(--r-2);color:var(--t-3)}
+.ibtn:hover{background:var(--bg-3);color:var(--t-1)}
+.ibtn.on{background:var(--accent-soft);color:var(--accent)}
+.count{font:600 11px/1 var(--font-mono);color:var(--t-3);background:var(--bg-0);border:1px solid var(--line);border-radius:8px;padding:2px 6px}
+.split{position:absolute;z-index:650;touch-action:none;outline:none}
+.split.v{top:var(--topbar-h);bottom:0;width:7px;cursor:col-resize}
+.split.h{height:7px;cursor:row-resize}
+.split.rel{position:relative;flex:none;margin:-3px 0;z-index:5}
+.split::after{content:"";position:absolute;background:transparent;transition:background .1s,box-shadow .1s}
+.split.v::after{left:3px;top:0;bottom:0;width:1px}
+.split.h::after{top:3px;left:0;right:0;height:1px}
+.split.rel::before{content:"";position:absolute;left:0;right:0;top:3px;height:1px;background:var(--line)}
+.split:hover::after,.split.drag::after,.split:focus-visible::after{background:var(--accent);box-shadow:0 0 0 1px var(--accent-line)}
+#sp-l{left:calc(var(--dock-l) - 3px)}#sp-r{right:calc(var(--dock-r) - 3px)}
+#sp-t{left:0;right:0;bottom:calc(var(--tl-h) - 3px)}
+body.no-l #sp-l,body.no-r #sp-r{display:none}
+body.dragging{user-select:none}body.dragging.dx{cursor:col-resize}body.dragging.dy{cursor:row-resize}
+@media (max-width:760px){.split{display:none}}
+#p-tree{flex:1 1 46%;min-height:120px}
+#p-insp{flex:1 1 54%;min-height:120px}
+
+/* ---- drzewo ---- */
+.tree-filter{display:flex;align-items:center;gap:6px;margin:8px 12px;height:28px;padding:0 8px;background:var(--bg-0);border:1px solid var(--line-2);border-radius:var(--r-3);color:var(--t-3)}
+.tree-filter:focus-within{border-color:var(--accent)}
+.tree-filter input{flex:1;background:none;border:0;outline:0;color:var(--t-1);min-width:0}
+.tree-filter input::placeholder{color:var(--t-3)}
+#tree-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 0 10px;isolation:isolate}
+.sec-h{position:sticky;top:0;bottom:0;z-index:3;background:var(--bg-1);display:flex;align-items:center;gap:8px;height:26px;padding:0 12px 0 8px;margin-top:6px;color:var(--t-3);cursor:pointer;user-select:none;border-top:1px solid var(--line)}
+.sec-h:first-child{margin-top:0;border-top:0}
+.sec-h:hover{color:var(--t-2)}
+.sec-h .car{transition:transform .12s}
+.sec-h.closed .car{transform:rotate(-90deg)}
+.sec-h .cap{color:inherit;flex:1}
+.sec-b.closed{display:none}
+.tree,.tree ul{list-style:none;margin:0;padding:0}
+.tree{padding:0 8px 0 6px}
+.tree ul{margin-left:7px}
+.tree li{position:relative;padding-left:14px}
+.tree>li{padding-left:0}
+.tree li::before{content:"";position:absolute;left:0;top:0;bottom:0;border-left:1px solid #3a4b61}
+.tree li:last-child::before{bottom:auto;height:14px}
+.tree li::after{content:"";position:absolute;left:0;top:14px;width:12px;border-top:1px solid #3a4b61}
+.tree>li::before,.tree>li::after{display:none}
+.trow{position:relative;display:flex;align-items:center;gap:8px;height:28px;padding-right:2px;cursor:pointer;color:var(--t-2);white-space:nowrap}
+.trow::before{content:"";position:absolute;top:1px;bottom:1px;left:-400px;right:-400px;border-radius:0;z-index:-1}
+.trow:hover::before{background:var(--bg-3)}
+.trow.sel::before{background:var(--bg-4);box-shadow:inset 2px 0 0 var(--accent)}
+.trow.sel{color:var(--t-1)}
+.trow.sel .tname{font-weight:600}
+.tcar{width:14px;height:14px;display:grid;place-items:center;color:var(--t-3);flex:none;border-radius:2px}
+.tcar:hover{color:var(--t-1);background:var(--bg-4)}
+.tcar svg{transition:transform .12s;width:11px;height:11px;stroke-width:2}
+.tcar.open svg{transform:rotate(90deg)}
+.tcar.leaf{visibility:hidden}
+.tsym{width:24px;height:22px;display:grid;place-items:center;flex:none}
+.tsym svg{max-width:24px;max-height:22px;width:auto;height:auto}
+.tname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:inherit}
+.tname em{font-style:normal;color:var(--t-3);margin-left:6px;font-size:11px}
+.tmsg{display:none;color:var(--t-3)}
+.trow:hover .tmsg{display:grid}
+.tmsg:hover{color:var(--accent)}
+.ubadge{min-width:16px;height:16px;border-radius:8px;background:var(--accent-2);color:#fff;font:700 11px/16px var(--font-ui);text-align:center;padding:0 4px;flex:none}
+.ubadge.urg{background:var(--danger);color:#1a0c0a}
+.sbar{width:34px;height:4px;background:var(--bg-0);border:1px solid var(--line-2);border-radius:1px;overflow:hidden;flex:none}
+.sbar i{display:block;height:100%;background:var(--ok)}
+.sbar.warn i{background:var(--warn)} .sbar.bad i{background:var(--danger)}
+.spct{width:28px;text-align:right;font:500 11px/1 var(--font-mono);color:var(--t-3);flex:none}
+.trow.sel .spct{color:var(--t-2)}
+.tdim{opacity:.4}
+.tcon{display:flex;align-items:center;gap:8px;height:28px;padding:0 12px 0 20px;cursor:pointer;color:var(--t-2);position:relative}
+.tcon::before{content:"";position:absolute;inset:1px 0;z-index:-1}
+.tcon:hover::before{background:var(--bg-3)}
+.tcon.sel::before{background:var(--bg-4);box-shadow:inset 2px 0 0 var(--accent)}
+.tcon .age{font:500 11px/1 var(--font-mono);color:var(--t-3)}
+.tcon .tname{flex:1}
+.conf{width:6px;height:6px;border-radius:50%;flex:none}
+.conf.h{background:var(--hostile)} .conf.m{background:var(--hostile);opacity:.6} .conf.l{border:1px solid var(--hostile)}
+
+/* ---- inspektor ---- */
+#insp-body{flex:1;overflow-y:auto}
+.insp-empty{display:grid;place-items:center;text-align:center;color:var(--t-3);padding:24px;height:100%;gap:6px;align-content:center}
+.insp-top{display:flex;gap:12px;padding:12px}
+.insp-sym{width:52px;height:52px;flex:none;display:grid;place-items:center;background:var(--bg-0);border:1px solid var(--line-2);border-radius:var(--r-3)}
+.insp-sym svg{max-width:44px;max-height:44px;width:auto;height:auto}
+.insp-title{font-size:var(--fs-h3);font-weight:600;line-height:1.2;letter-spacing:-.005em}
+.insp-sub{color:var(--t-2);font-size:12px;margin-top:2px}
+.insp-sidc{font:11px/1.2 var(--font-mono);color:var(--t-3);margin-top:3px;letter-spacing:.04em}
+.chip-st{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:2px 7px;border-radius:var(--r-2);background:var(--bg-3);border:1px solid var(--line-2);color:var(--t-1);margin-top:6px}
+.chip-st i{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.insp-actions{display:flex;gap:8px;padding:0 12px 12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:26px;padding:0 10px;border-radius:var(--r-3);background:var(--bg-3);border:1px solid var(--line-2);color:var(--t-1);font-size:12px;white-space:nowrap}
+.btn:hover{border-color:var(--line-3);background:var(--bg-4)}
+.btn.pri{background:var(--accent-2);border-color:var(--accent-2);color:#fff;font-weight:600}
+.btn.pri:hover{background:#3a80e6;border-color:#3a80e6}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--t-2)}
+.btn.ghost:hover{background:var(--bg-3);color:var(--t-1)}
+.btn.sm{height:22px;padding:0 7px;font-size:11px}
+.btn.dng{color:var(--danger)}
+.btn:disabled{opacity:.45;cursor:default}
+.tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);flex:none}
+.tabs button{height:32px;padding:0 10px;color:var(--t-3);font-size:12px;position:relative}
+.tabs button:hover{color:var(--t-1)}
+.tabs button.on{color:var(--t-1)}
+.tabs button.on::after{content:"";position:absolute;left:6px;right:6px;bottom:-1px;height:2px;background:var(--accent)}
+.kv{padding:12px;border-bottom:1px solid var(--line)}
+.kv>.cap{margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.kv>.cap .grow{flex:1}
+.kvr{display:flex;gap:10px;padding:2px 0;font-size:12px}
+.kvr>span:first-child{width:92px;color:var(--t-3);flex:none}
+.kvr>span:last-child{flex:1;min-width:0;color:var(--t-1)}
+.bignum{font:600 20px/1 var(--font-mono);letter-spacing:-.02em}
+.bignum small{font-size:12px;color:var(--t-3);font-weight:400;margin-left:4px}
+.meter{height:6px;background:var(--bg-0);border:1px solid var(--line-2);border-radius:1px;position:relative;margin-top:7px}
+.meter i{position:absolute;left:0;top:0;bottom:0;background:var(--ok)}
+.meter.warn i{background:var(--warn)} .meter.bad i{background:var(--danger)}
+.eqr{display:grid;grid-template-columns:1fr 64px 52px;gap:8px;align-items:center;padding:3px 0;font-size:12px}
+.eqr .n{color:var(--t-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eqr .v{text-align:right;font:12px var(--font-mono);color:var(--t-1)}
+.eqr .meter{margin:0;height:4px}
+.dos{display:grid;grid-template-columns:70px 1fr 44px;gap:8px;align-items:center;padding:3px 0}
+.dos .seg{display:flex;gap:2px}
+.dos .seg i{flex:1;height:8px;background:var(--bg-0);border:1px solid var(--line-2)}
+.dos .seg i.f{background:var(--ok);border-color:var(--ok)} .dos.warn .seg i.f{background:var(--warn);border-color:var(--warn)}
+.dos .v{font:12px var(--font-mono);text-align:right}
+.dos .n{color:var(--t-2)}
+.link{color:var(--accent);cursor:pointer;text-decoration:none;border-radius:2px}
+.link:hover{text-decoration:underline}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.uchip{display:inline-flex;align-items:center;gap:5px;height:22px;padding:0 7px 0 4px;border-radius:var(--r-2);background:var(--bg-3);border:1px solid var(--line-2);color:var(--t-1);font-size:11px;cursor:pointer}
+.uchip:hover{border-color:var(--accent-line);background:var(--bg-4)}
+.uchip svg{height:14px;width:auto}
+.log{font-size:12px}
+.log div{display:grid;grid-template-columns:62px 1fr;gap:8px;padding:4px 0;color:var(--t-2)}
+.log time{font:11px var(--font-mono);color:var(--t-3)}
+
+/* ---- komunikator ---- */
+.m-chs{display:flex;align-items:stretch;gap:0;border-bottom:1px solid var(--line);background:var(--bg-1);flex:none;position:relative}
+.m-chs-scroll{display:flex;gap:4px;overflow-x:auto;padding:8px 16px 8px 8px;flex:1;scrollbar-width:none;min-width:0;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+.m-chs-scroll::-webkit-scrollbar{display:none}
+.chtab{display:flex;align-items:center;gap:6px;height:28px;padding:0 9px 0 6px;border-radius:var(--r-3);color:var(--t-2);white-space:nowrap;border:1px solid transparent;flex:none}
+.chtab:hover{background:var(--bg-3);color:var(--t-1)}
+.chtab.on{background:var(--bg-4);color:var(--t-1);border-color:var(--line-2)}
+.chtab .ch-ic{width:20px;height:20px;border-radius:3px;display:grid;place-items:center;font:700 11px var(--font-mono);background:var(--bg-0);border:1px solid var(--line-2);color:var(--t-2);flex:none}
+.chtab .ch-ic svg{height:14px;width:auto}
+.chtab.k-sup .ch-ic{color:var(--accent);border-color:var(--accent-line)}
+.m-more{width:34px;display:grid;place-items:center;border-left:1px solid var(--line);color:var(--t-2);flex:none}
+.m-more:hover{background:var(--bg-3);color:var(--t-1)}
+.m-more.on{background:var(--bg-4);color:var(--t-1)}
+.m-head{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--line);flex:none}
+.m-head .av{width:34px;height:34px;border-radius:var(--r-3);background:var(--bg-0);border:1px solid var(--line-2);display:grid;place-items:center;font:700 11px var(--font-mono);color:var(--t-1);flex:none}
+.m-head .av svg{max-width:30px;max-height:28px;width:auto;height:auto}
+.m-head h3{margin:0;font-size:var(--fs-lead);font-weight:600;line-height:1.2}
+.m-head p{margin:1px 0 0;color:var(--t-3);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.link-q{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--t-2)}
+.link-q i{width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.link-q.bad i{background:var(--warn)}
+#thread{flex:1;overflow-y:auto;min-height:0;padding:4px 0 8px}
+.day{display:flex;align-items:center;gap:12px;padding:12px 12px 4px;color:var(--t-3)}
+.day::before,.day::after{content:"";height:1px;background:var(--line);flex:1}
+.day.new{color:var(--accent)} .day.new::before,.day.new::after{background:var(--accent-line)}
+.msg{display:grid;grid-template-columns:32px 1fr;gap:12px;padding:12px;border-left:2px solid transparent;position:relative}
+.msg:hover{background:rgba(255,255,255,.015)}
+.msg.urgent{border-left-color:var(--danger);background:linear-gradient(90deg,rgba(236,106,94,.10),rgba(236,106,94,0) 70%)}
+.msg.out{border-left-color:var(--accent-line)}
+.msg .av{width:32px;height:32px;border-radius:var(--r-3);background:var(--bg-0);border:1px solid var(--line-2);display:grid;place-items:center;font:700 11px var(--font-mono);color:var(--t-2)}
+.msg .av svg{max-width:26px;max-height:24px;width:auto;height:auto}
+.msg.out .av{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent)}
+.mh{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;line-height:1.3}
+.mh b{font-weight:600;color:var(--t-1);font-size:13px}
+.mh .role{color:var(--t-3);font-size:11px}
+.mh time{margin-left:auto;font:11px var(--font-mono);color:var(--t-3);letter-spacing:.02em}
+.tag{display:inline-flex;align-items:center;gap:4px;font:700 11px/1 var(--font-ui);letter-spacing:.09em;text-transform:uppercase;padding:3px 5px;border-radius:var(--r-1);border:1px solid}
+.tag.urg{color:var(--danger);border-color:rgba(236,106,94,.55);background:rgba(236,106,94,.1)}
+.tag.ord{color:var(--accent);border-color:var(--accent-line);background:var(--accent-soft)}
+.tag.rep{color:var(--t-2);border-color:var(--line-3)}
+.tag.dir{color:var(--warn);border-color:rgba(232,179,57,.5);background:rgba(232,179,57,.08)}
+.mb{margin-top:4px;font-size:var(--fs-body);line-height:1.52;color:var(--t-1);overflow-wrap:anywhere}
+.mb p{margin:0 0 6px}.mb p:last-child{margin:0}
+.mb ol{margin:4px 0 0;padding-left:18px;color:var(--t-1)}.mb li{margin:2px 0}.mb li::marker{color:var(--t-3);font-family:var(--font-mono);font-size:11px}
+.mf{display:flex;align-items:center;gap:12px;margin-top:8px;font:11px var(--font-mono);color:var(--t-3)}
+.mf .ok{color:var(--ok)} .mf a{color:var(--t-2);cursor:pointer}.mf a:hover{color:var(--danger)}
+.ment{display:inline-flex;align-items:center;gap:4px;vertical-align:baseline;padding:0 5px 0 3px;margin:0 1px;border-radius:var(--r-2);background:var(--accent-soft);border:1px solid transparent;color:#9ec5ff;cursor:pointer;font-size:13px;line-height:1.5;white-space:nowrap}
+.ment:hover{border-color:var(--accent-line);color:#c4dcff}
+.ment svg.ms{height:13px;width:auto;margin-left:1px}
+.ment.place{background:transparent;border-bottom:1px dashed var(--accent-line);border-radius:0;padding:0 1px;color:#9ec5ff}
+.ment.place svg.i{width:12px;height:12px;margin-right:1px;color:var(--t-3)}
+.ment.cont{background:rgba(255,128,128,.12);color:#ffb0b0}
+.ment.cont:hover{border-color:rgba(255,128,128,.5)}
+.att{display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 9px 0 7px;margin:6px 6px 0 0;border:1px solid var(--line-3);border-radius:var(--r-3);background:var(--bg-2);color:var(--t-1);font-size:12px;cursor:pointer}
+.att:hover{border-color:var(--accent-line);background:var(--bg-3)}
+.att svg.i{color:var(--accent)}
+.att small{color:var(--t-3);font:11px var(--font-mono)}
+.comp{border-top:1px solid var(--line);background:var(--bg-1);flex:none;padding:8px 12px 12px}
+.comp-top{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.seg{display:inline-flex;border:1px solid var(--line-2);border-radius:var(--r-3);background:var(--bg-0);padding:2px;gap:2px}
+.seg button{height:22px;padding:0 9px;border-radius:2px;color:var(--t-2);font-size:12px;white-space:nowrap}
+.seg button:hover{color:var(--t-1);background:var(--bg-3)}
+.seg button.on{background:var(--bg-4);color:var(--t-1);box-shadow:0 0 0 1px var(--line-3) inset}
+.seg.sm button{height:20px;padding:0 7px;font-size:11px}
+.comp-box{border:1px solid var(--line-2);border-radius:var(--r-3);background:var(--bg-0);transition:border-color .1s}
+.comp-box:focus-within{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent-line)}
+.comp-box textarea{display:block;width:100%;height:78px;resize:none;background:none;border:0;outline:0;padding:8px 10px;color:var(--t-1);font-size:var(--fs-body);line-height:1.5}
+.comp-box textarea::placeholder{color:var(--t-3)}
+.comp-bar{display:flex;align-items:center;gap:4px;padding:4px 4px 4px 6px;border-top:1px solid var(--line)}
+.comp-bar .hint{margin-left:auto;margin-right:6px;color:var(--t-3);font-size:11px;display:flex;align-items:center;gap:5px}
+.sw{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 7px;border-radius:var(--r-2);color:var(--t-2);font-size:11px;border:1px solid transparent}
+.sw:hover{background:var(--bg-3);color:var(--t-1)}
+.sw.on{color:var(--danger);background:rgba(236,106,94,.1);border-color:rgba(236,106,94,.45)}
+.pop{position:absolute;background:var(--bg-2);border:1px solid var(--line-3);border-radius:var(--r-4);box-shadow:var(--e-pop);z-index:var(--z-pop);display:none}
+.pop.open{display:block}
+#chlist{top:100%;left:6px;right:6px;margin-top:4px;max-height:360px;overflow:auto;padding:4px}
+.cl-g{padding:8px 8px 3px}
+.cl-i{display:flex;align-items:center;gap:8px;height:28px;padding:0 8px;border-radius:var(--r-2);cursor:pointer;color:var(--t-2)}
+.cl-i:hover{background:var(--bg-4);color:var(--t-1)}
+.cl-i svg.ms{height:16px;width:auto}
+.cl-i .ch-ic{width:22px;text-align:center}
+.cl-i span{flex:1}
+#attmenu{bottom:100%;left:0;margin-bottom:6px;width:250px;padding:4px}
+#tplmenu{bottom:100%;left:0;margin-bottom:6px;width:250px;padding:4px}
+
+/* ---- paski narzędzi na mapie ---- */
+.float{position:absolute;z-index:var(--z-map-ui);background:rgba(16,22,29,.94);border:1px solid var(--line-2);border-radius:var(--r-4);box-shadow:var(--e-float);backdrop-filter:blur(6px)}
+#rail{left:12px;top:12px;display:flex;flex-direction:column;padding:3px;gap:2px}
+#rail .sep{height:1px;background:var(--line);margin:3px 4px}
+.tool{width:32px;height:32px;display:grid;place-items:center;border-radius:var(--r-3);color:var(--t-2);position:relative}
+.tool:hover{background:var(--bg-3);color:var(--t-1)}
+.tool.on{background:var(--accent-2);color:#fff}
+.tool .fl{position:absolute;right:2px;bottom:2px;width:0;height:0;border-left:4px solid transparent;border-bottom:4px solid currentColor;opacity:.6}
+#flyout{left:54px;top:80px;padding:4px;width:210px}
+#detail{top:12px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:3px 3px 3px 10px}
+#detail .cap{color:var(--t-3)}
+#mapctl{right:12px;top:12px;display:flex;flex-direction:column;padding:3px;gap:2px}
+#mapctl .sep{height:1px;background:var(--line);margin:3px 4px}
+#layers{right:56px;top:12px;width:250px;padding:6px 0}
+#legend{right:56px;top:52px;width:340px;max-height:calc(100% - 110px);display:none;flex-direction:column}
+#legend.open{display:flex}
+#layers.open{display:block}
+#layers{display:none}
+.lp-sec{padding:8px 12px}
+.lp-sec .cap{display:block;margin-bottom:5px}
+.lp-row{display:flex;align-items:center;gap:9px;height:26px;color:var(--t-2);cursor:pointer;font-size:12px}
+.lp-row:hover{color:var(--t-1)}
+.lp-row .rd{width:12px;height:12px;border-radius:50%;border:1.5px solid var(--line-3);display:grid;place-items:center;flex:none}
+.lp-row.on .rd{border-color:var(--accent)}
+.lp-row.on .rd::after{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.lp-row .cb{width:13px;height:13px;border-radius:2px;border:1.5px solid var(--line-3);display:grid;place-items:center;flex:none;color:#fff}
+.lp-row .cb svg{width:10px;height:10px;stroke-width:3;display:none}
+.lp-row.on .cb{background:var(--accent-2);border-color:var(--accent-2)}
+.lp-row.on .cb svg{display:block}
+.lp-row.soon{opacity:.5;cursor:default}
+.lp-row .grow{flex:1}
+.lp-div{height:1px;background:var(--line);margin:4px 0}
+.lg-body{overflow:auto;padding:6px 0 8px}
+.lg-g{padding:8px 14px 2px}
+.lg-r{display:grid;grid-template-columns:40px 1fr auto;gap:10px;align-items:center;padding:4px 14px;min-height:34px}
+.lg-r:hover{background:var(--bg-3)}
+.lg-r .s{display:grid;place-items:center}
+.lg-r .s svg{max-width:38px;max-height:30px;width:auto;height:auto}
+.lg-r .d{color:var(--t-1);font-size:12px;line-height:1.3}.lg-r .d small{display:block;color:var(--t-3);font-size:11px}
+.lg-r .x{font:11px var(--font-mono);color:var(--t-3)}
+.aff{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:6px 14px 8px}
+.aff div{background:var(--bg-0);border:1px solid var(--line);border-radius:var(--r-3);text-align:center;padding:7px 2px 6px;font-size:11px;color:var(--t-2)}
+.aff svg{height:30px;width:auto;display:block;margin:0 auto 4px}
+.lg-foot{border-top:1px solid var(--line);padding:7px 14px;color:var(--t-3);font-size:11px;display:flex;gap:6px;align-items:center}
+#status{left:12px;bottom:10px;display:flex;align-items:center;gap:0;height:24px;font:11px var(--font-mono);color:var(--t-2);padding:0;pointer-events:none}
+#status span{padding:0 9px;border-right:1px solid var(--line)}#status span:last-child{border-right:0}
+#status b{color:var(--t-1);font-weight:500}
+#toasts{position:absolute;right:12px;bottom:12px;z-index:var(--z-toast);display:flex;flex-direction:column;gap:8px;width:340px;pointer-events:none}
+.toast{pointer-events:auto;background:var(--bg-2);border:1px solid var(--line-3);border-left:3px solid var(--accent);border-radius:var(--r-3);box-shadow:var(--e-pop);padding:10px 12px;display:grid;grid-template-columns:1fr auto;gap:2px 10px;animation:tin .18s ease-out}
+.toast.urg{border-left-color:var(--danger)}
+.toast b{font-size:13px}.toast p{margin:0;color:var(--t-2);grid-column:1/2}.toast .act{grid-row:1/3;grid-column:2;align-self:center}
+@keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---- oś czasu ---- */
+#timeline{flex:none;height:var(--tl-h);overflow:hidden;background:var(--bg-1);border-top:1px solid var(--line);display:flex;position:relative;z-index:var(--z-dock)}
+.tl-l{width:136px;flex:none;border-right:1px solid var(--line);padding:8px 12px;display:flex;flex-direction:column;justify-content:space-between}
+.tl-l .row{display:flex;align-items:center;gap:2px;margin:0 -4px}
+.tl-r{width:150px;flex:none;border-left:1px solid var(--line);padding:8px 12px;display:flex;flex-direction:column;gap:5px;justify-content:space-between}
+.tl-mid{flex:1;min-width:0;position:relative;padding:0 20px}
+.tl-axis{position:absolute;left:20px;right:20px;top:0;bottom:0}
+.tl-hours{position:absolute;left:0;right:0;top:44px;height:14px}
+.tl-hours span{position:absolute;transform:translateX(-50%);font:11px var(--font-mono);color:var(--t-3)}
+.tl-line{position:absolute;left:0;right:0;top:31px;height:2px;background:var(--line-2)}
+.tl-past{position:absolute;left:0;top:31px;height:2px;background:var(--accent)}
+.tl-node{position:absolute;top:25px;width:14px;height:14px;transform:translateX(-50%);display:grid;place-items:center;cursor:pointer;z-index:2}
+.tl-node i{width:9px;height:9px;transform:rotate(45deg);background:var(--bg-1);border:1.5px solid var(--accent)}
+.tl-node.fut i{border-style:dashed;border-color:var(--line-3)}
+.tl-node.cur i{background:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.tl-node.view i{background:var(--warn);border-color:var(--warn);box-shadow:0 0 0 3px rgba(232,179,57,.18)}
+.tl-node:hover i{border-color:var(--t-1)}
+.tl-node.fut{cursor:default}.tl-node.fut:hover i{border-color:var(--line-3)}
+.tl-node em{position:absolute;top:-15px;font:600 11px var(--font-mono);color:var(--t-2);font-style:normal;letter-spacing:.04em}
+.tl-node.fut em{color:var(--t-3);font-weight:400}
+.tl-lane{position:absolute;left:0;right:0;height:8px}
+.tl-lane i{position:absolute;top:0;width:2px;height:8px;transform:translateX(-1px);border-radius:1px}
+.tl-lane.msgs{top:62px}.tl-lane.msgs i{background:var(--t-2);opacity:.75}.tl-lane.msgs i.u{background:var(--danger);opacity:1}
+.tl-lane.ords{top:73px}.tl-lane.ords i{background:var(--accent)}
+.tl-lane.cons{top:84px}.tl-lane.cons i{background:var(--hostile);opacity:.8}
+.tl-lbl{position:absolute;left:-18px;font:11px var(--font-ui);color:var(--t-3);display:none}
+.tl-lanes-l{position:absolute;left:0;top:52px;width:0}
+.tl-play{position:absolute;top:24px;bottom:4px;width:0;border-left:1px solid var(--accent);z-index:1;pointer-events:none}
+.tl-play::before{content:"";position:absolute;top:-1px;left:-4px;border:4px solid transparent;border-top-color:var(--accent);border-bottom:0}
+.tl-fut{position:absolute;top:31px;height:2px;right:0;background:repeating-linear-gradient(90deg,var(--line-3) 0 4px,transparent 4px 8px)}
+.tl-banner{position:absolute;left:50%;top:-1px;transform:translateX(-50%);display:none;align-items:center;gap:8px;background:rgba(232,179,57,.14);border:1px solid rgba(232,179,57,.5);color:var(--warn);font:600 11px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:0 0 4px 4px;z-index:3;white-space:nowrap}
+body.archive .tl-banner{display:flex}
+.ll{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t-3)}
+.ll i{width:8px;height:3px;border-radius:1px;display:inline-block}
+.afterbattle{opacity:.5;display:flex;flex-direction:column;gap:4px}
+.afterbattle .seg button{cursor:not-allowed}
+
+/* ---- omnibox ---- */
+#omni{position:fixed;inset:0;z-index:var(--z-modal);display:none;background:rgba(5,8,12,.62);backdrop-filter:blur(3px);padding-top:11vh;justify-content:center;align-items:flex-start}
+#omni.open{display:flex}
+.omni-box{width:min(660px,calc(100vw - 24px));background:var(--bg-1);border:1px solid var(--line-3);border-radius:var(--r-4);box-shadow:var(--e-modal);overflow:hidden}
+.omni-in{display:flex;align-items:center;gap:10px;padding:0 14px;height:50px;border-bottom:1px solid var(--line);color:var(--t-3)}
+.omni-in svg{width:18px;height:18px}
+.omni-in input{flex:1;background:none;border:0;outline:0;font-size:16px;color:var(--t-1);min-width:0}
+.omni-in input::placeholder{color:var(--t-3)}
+.omni-f{display:flex;gap:4px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.omni-list{max-height:min(46vh,420px);overflow-y:auto;padding:4px 6px 6px}
+.o-g{padding:8px 8px 4px}
+.o-i{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:5px 8px;border-radius:var(--r-3);cursor:pointer;min-height:38px}
+.o-i.sel{background:var(--bg-4);box-shadow:inset 2px 0 0 var(--accent)}
+.o-i .s{display:grid;place-items:center;color:var(--t-2)}
+.o-i .s svg.ms{max-width:32px;max-height:26px;width:auto;height:auto}
+.o-i .t{font-size:13px;color:var(--t-1)}.o-i .t mark{background:none;color:var(--accent);font-weight:600}
+.o-i .u{font-size:11px;color:var(--t-3);margin-top:1px}
+.o-i .r{display:flex;gap:6px;align-items:center;color:var(--t-3);font-size:11px}
+.omni-ft{display:flex;gap:16px;align-items:center;padding:8px 14px;border-top:1px solid var(--line);color:var(--t-3);font-size:11px;background:var(--bg-2)}
+.omni-ft span{display:flex;gap:5px;align-items:center}
+.o-none{padding:26px;text-align:center;color:var(--t-3)}
+
+/* ---- odprawa (widok dokumentu) ---- */
+#brief{position:fixed;inset:0;z-index:var(--z-modal);display:none;background:var(--bg-0);flex-direction:column}
+#brief.open{display:flex}
+.br-top{display:flex;align-items:center;gap:12px;height:var(--topbar-h);padding:0 12px;border-bottom:1px solid var(--line);background:var(--bg-1);flex:none}
+.br-top h2{margin:0;font-size:13px;font-weight:600}
+.br-main{flex:1;display:grid;grid-template-columns:240px minmax(0,1fr) 260px;min-height:0}
+.br-toc{border-right:1px solid var(--line);padding:18px 12px;overflow:auto;background:var(--bg-1)}
+.br-toc a{display:block;padding:6px 10px;color:var(--t-2);border-radius:var(--r-2);font-size:13px;cursor:pointer;border-left:2px solid transparent}
+.br-toc a:hover{background:var(--bg-3);color:var(--t-1)}
+.br-toc a.on{color:var(--t-1);border-left-color:var(--accent);background:var(--bg-3)}
+.br-doc{overflow:auto;padding:36px 28px 80px}
+.br-doc article{max-width:720px;margin:0 auto;font-size:15px;line-height:1.7;color:#d5dde7}
+.br-doc h1{font-size:26px;line-height:1.2;margin:6px 0 4px;letter-spacing:-.01em;color:var(--t-1)}
+.br-doc h2{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--t-3);margin:34px 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line);font-weight:600}
+.br-doc h2 b{color:var(--accent);font-family:var(--font-mono);margin-right:8px}
+.br-doc ul{padding-left:20px}.br-doc li{margin:4px 0}.br-doc li::marker{color:var(--t-3)}
+.br-doc .lead{color:var(--t-2);font-size:13px;font-family:var(--font-mono);letter-spacing:.02em}
+.br-doc .callout{border-left:2px solid var(--warn);background:rgba(232,179,57,.07);padding:10px 14px;margin:14px 0;border-radius:0 var(--r-3) var(--r-3) 0;font-size:14px}
+.br-doc table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+.br-doc td,.br-doc th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+.br-doc th{color:var(--t-3);font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.br-side{border-left:1px solid var(--line);padding:18px 16px;background:var(--bg-1);overflow:auto}
+
+/* ---- tooltip ---- */
+#tip{position:fixed;z-index:var(--z-tip);display:none;background:#05080c;color:var(--t-1);border:1px solid var(--line-3);border-radius:var(--r-3);padding:5px 8px;font-size:12px;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.5);white-space:nowrap;align-items:center;gap:8px}
+#tip.on{display:flex}
+
+/* ---- znaczniki na mapie ---- */
+.leaflet-container{background:var(--bg-0);font-family:var(--font-ui)}
+.leaflet-control-attribution{background:rgba(11,15,20,.8)!important;color:var(--t-3)!important;font-size:11px!important;padding:1px 6px!important}
+.leaflet-control-attribution a{color:var(--t-2)!important}
+.leaflet-control-scale{margin-bottom:34px!important;margin-left:12px!important}
+.leaflet-control-scale-line{background:transparent!important;color:var(--t-2)!important;border-color:var(--t-2)!important;font:11px var(--font-mono)!important;text-shadow:0 0 3px #000}
+.mkI{background:none;border:0}
+.mk{position:absolute;left:0;top:0;cursor:pointer}
+.mk-sym{position:absolute;transform:translate(-50%,-50%);line-height:0}
+.mk-sym svg{display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.7))}
+.mk-sym::before{content:"";position:absolute;inset:-6px -6px;border:1.5px solid transparent;border-radius:3px;transition:all .1s}
+.mk:hover .mk-sym::before{border-color:rgba(255,255,255,.35)}
+.mk.sel .mk-sym::before{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),0 0 14px rgba(76,144,240,.5)}
+.mk.hov .mk-sym::before{border-color:var(--focus)}
+.mk-lbl{position:absolute;left:0;transform:translateX(-50%);white-space:nowrap;font:600 11px var(--font-ui);color:#eef3f9;text-shadow:0 0 2px #000,0 0 4px #000,0 1px 3px #000;letter-spacing:.01em;pointer-events:none}
+.mk-lbl small{display:block;font:500 11px var(--font-mono);color:#cbd5e1;text-align:center}
+.mk.h .mk-lbl{color:#ffd0d0}
+.mk.coy .mk-lbl{font-weight:500;font-size:11px}
+.pulse{width:14px;height:14px;margin:-7px;border-radius:50%;background:var(--accent);opacity:.9;position:relative}
+.pulse::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--accent);animation:pl 1.2s ease-out infinite}
+@keyframes pl{from{transform:scale(.6);opacity:1}to{transform:scale(2.6);opacity:0}}
+.plabel{font:600 11px var(--font-ui);color:#fff;white-space:nowrap;text-shadow:0 0 3px #000,0 0 3px #000;transform:translate(10px,-6px)}
+.lline-lbl{font:600 11px var(--font-mono);letter-spacing:.06em;color:#dfe7f0;text-shadow:0 0 3px #000;white-space:nowrap;background:rgba(11,15,20,.72);padding:1px 5px;border-radius:2px;border:1px solid var(--line-2)}
+
+/* ==========================================================================
+   RWD
+   ========================================================================== */
+@media (max-width:1200px){:root{--dock-l:276px;--dock-r:340px}.clock-time i{display:none}.brand span{max-width:140px}.tl-r{display:none}}
+@media (max-width:980px){:root{--dock-l:248px;--dock-r:300px}.omni-btn kbd,.omni-btn span{display:none}.omni-btn{flex:0 0 32px;justify-content:center;padding:0;margin-left:auto}.tl-l{width:120px}.pill.hide-m{display:none}}
+@media (max-width:760px){
+  :root{--topbar-h:46px}
+  #app{grid-template-columns:minmax(0,1fr);grid-template-rows:var(--topbar-h) minmax(0,1fr) 56px;grid-template-areas:"top" "center" "tab"}
+  #tabbar{grid-area:tab;display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg-1);border-top:1px solid var(--line);z-index:var(--z-topbar);padding-bottom:env(safe-area-inset-bottom)}
+  #tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--t-3);font-size:11px;position:relative}
+  #tabbar button.on{color:var(--accent)}
+  #tabbar button.on::before{content:"";position:absolute;top:0;left:22%;right:22%;height:2px;background:var(--accent)}
+  #tabbar svg{width:20px;height:20px}
+  #tabbar .dot-badge{top:5px;right:calc(50% - 20px)}
+  #dock-l,#dock-r{display:none;position:fixed;left:0;right:0;top:var(--topbar-h);bottom:56px;z-index:var(--z-dock);border:0;width:auto}
+  body[data-m="tree"] #dock-l,body[data-m="insp"] #dock-l,body[data-m="msg"] #dock-r{display:flex}
+  body[data-m="tree"] #p-insp,body[data-m="tree"] .splitter{display:none}
+  body[data-m="insp"] #p-tree,body[data-m="insp"] .splitter{display:none}
+  body.no-l #dock-l,body.no-r #dock-r{display:none}
+  body[data-m="tree"] #p-tree,body[data-m="insp"] #p-insp{flex:1}
+  .brand{flex:none}.brand span,.clock-time i,.tb-btn .lbl,.pill{display:none}#tb-l,#tb-r{display:none}
+  .brand b{display:none}
+  .clock-mid{padding:0 8px;gap:6px}
+  .clock>button{width:26px}
+  .tb-btn{padding:0 7px}
+  #tb-brief,#tb-help,#tb-bell{display:none}
+  .omni-btn{margin-left:auto}
+  #timeline{height:70px}.tl-l,.tl-r{display:none}.tl-mid{padding:0 14px}.tl-axis{left:14px;right:14px}
+  .tl-lane.msgs{top:50px}.tl-lane.ords,.tl-lane.cons{display:none}
+  #rail{top:8px;left:8px;flex-direction:row;flex-wrap:wrap;max-width:calc(100% - 60px)}
+  #rail .sep{width:1px;height:auto;margin:4px 3px}
+  .tool{width:30px;height:30px}
+  #rail .t-extra{display:none}
+  #detail{top:auto;bottom:8px;left:8px;transform:none}
+  #detail .cap{display:none}
+  #mapctl{right:8px;top:8px}
+  #layers,#legend{right:8px;left:8px;width:auto;top:52px}
+  #flyout{left:8px;top:48px}
+  #status{display:none}
+  .leaflet-control-scale{display:none}
+  #toasts{left:8px;right:8px;width:auto;bottom:8px}
+  .br-main{grid-template-columns:minmax(0,1fr)}.br-toc,.br-side{display:none}.br-doc{padding:20px 16px 60px}
+  .msg{padding-right:12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body data-m="map">
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+<symbol id="i-chevd" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></symbol>
+<symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3 17 17 3l4 4L7 21z"/><path d="m7 13 2 2M10 10l2 2M13 7l2 2"/></symbol>
+<symbol id="i-cursor" viewBox="0 0 24 24"><path d="m5 3 14 7-6 2-2 6z"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 19 19 5M9 5h10v10"/></symbol>
+<symbol id="i-line" viewBox="0 0 24 24"><path d="m5 18 5-8 4 5 5-9"/><circle cx="5" cy="18" r="1.3"/><circle cx="19" cy="6" r="1.3"/></symbol>
+<symbol id="i-poly" viewBox="0 0 24 24"><path d="M12 3.5 20.5 9.5 17.5 19.5h-11l-3-10z"/></symbol>
+<symbol id="i-point" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><circle cx="12" cy="12" r="8"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h12l-2.5 4L17 12H5"/></symbol>
+<symbol id="i-sym" viewBox="0 0 24 24"><rect x="3.5" y="6" width="17" height="12"/><path d="m3.5 6 17 12M20.5 6l-17 12"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1.9-1.1 1.8M12 17h.01"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+<symbol id="i-clip" viewBox="0 0 24 24"><path d="m20 11-8.5 8.5a5 5 0 0 1-7-7L13 4a3.5 3.5 0 0 1 5 5l-8.5 8.5a2 2 0 0 1-3-3L14 7"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3 10 14M21 3l-7 18-4-7-7-4z"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></symbol>
+<symbol id="i-aim" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></symbol>
+<symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H9.5L5 20v-4H4z"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-prev" viewBox="0 0 24 24"><path d="M6 5v14M19 5 9 12l10 7z"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path d="M18 5v14M5 5l10 7-10 7z"/></symbol>
+<symbol id="i-lt" viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></symbol>
+<symbol id="i-gt" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 3 5 14h6l-1 7 8-11h-6z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+<symbol id="i-filter" viewBox="0 0 24 24"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-tpl" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><path d="M4 9h16M9 9v11"/></symbol>
+<symbol id="i-fold" viewBox="0 0 24 24"><path d="m7 9 5-5 5 5M7 15l5 5 5-5"/></symbol>
+<symbol id="i-unfold" viewBox="0 0 24 24"><path d="m7 4 5 5 5-5M7 20l5-5 5 5"/></symbol>
+<symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+<symbol id="i-radio" viewBox="0 0 24 24"><path d="M5 12a7 7 0 0 1 14 0M8.5 12a3.5 3.5 0 0 1 7 0"/><circle cx="12" cy="12" r=".8"/><path d="M12 14v7"/></symbol>
+<symbol id="i-truck" viewBox="0 0 24 24"><path d="M2 6h11v10H2zM13 9h5l3 3v4h-8z"/><circle cx="6" cy="18" r="1.8"/><circle cx="17" cy="18" r="1.8"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="1"/><path d="M16 8V4H4v12h4"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 24 24"><path d="M9 9h6v6H9zM9 9V6a3 3 0 1 0-3 3zM15 9V6a3 3 0 1 1 3 3zM9 15v3a3 3 0 1 1-3-3zM15 15v3a3 3 0 1 0 3-3z"/></symbol>
+<symbol id="i-panel-l" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M9 4v16"/></symbol>
+<symbol id="i-panel-r" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M15 4v16"/></symbol>
+<symbol id="i-tree" viewBox="0 0 24 24"><path d="M4 5h5v4H4zM13 11h7v4h-7zM13 17h7v3h-7zM6.5 9v9H13M6.5 13H13"/></symbol>
+<symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+<symbol id="i-map" viewBox="0 0 24 24"><path d="M3 6 9 4l6 2 6-2v14l-6 2-6-2-6 2zM9 4v14M15 6v14"/></symbol>
+<symbol id="i-crosshair" viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><rect x="8" y="8" width="8" height="8"/></symbol>
+</defs></svg>
+
+<div id="app">
+  <!-- ======================= PASEK GÓRNY ======================= -->
+  <header id="topbar">
+    <div class="brand">
+      <div class="brand-mark"><svg class="i" style="width:14px;height:14px"><use href="#i-crosshair"/></svg></div>
+      <div><b>KRIEGSSPIEL</b><span id="scen">Ćwiczenie „Przesmyk” · ZT „Hańcza”</span></div>
+    </div>
+    <button class="omni-btn" id="omni-open" aria-label="Szukaj (Ctrl+K)">
+      <svg class="i"><use href="#i-search"/></svg><span>Szukaj jednostki, kontaktu, miejsca lub polecenia…</span><kbd>Ctrl K</kbd>
+    </button>
+    <div class="clock" id="clock">
+      <button id="t-prev" data-tip="Poprzednia tura" data-k=","><svg class="i"><use href="#i-lt"/></svg></button>
+      <div class="clock-mid">
+        <span class="clock-turn" id="clk-turn">TURA 2</span>
+        <span class="clock-time"><b id="clk-time">CZW 14.05 · 10:00</b><i id="clk-dtg">141000B MAJ 26 · tura 2 h</i></span>
+      </div>
+      <button id="t-next" data-tip="Następna tura" data-k="."><svg class="i"><use href="#i-gt"/></svg></button>
+    </div>
+    <button class="btn sm" id="t-cur" style="display:none">Wróć do bieżącej</button>
+    <span class="pill hide-m" data-tip="Rozkazy w skrzynce nadawczej — zostaną rozpatrzone po „koniec tury”">SKRZYNKA · 2</span>
+    <span class="vsep"></span>
+    <button class="tb-btn" id="tb-brief" data-tip="Odprawa" data-k="B"><svg class="i"><use href="#i-doc"/></svg><span class="lbl">Odprawa</span></button>
+    <button class="tb-btn" id="tb-bell" data-tip="Powiadomienia"><svg class="i"><use href="#i-bell"/></svg><span class="dot-badge">3</span></button>
+    <button class="tb-btn" id="tb-help" data-tip="Skróty klawiszowe i legenda" data-k="?"><svg class="i"><use href="#i-help"/></svg></button>
+    <button class="tb-btn on" id="tb-l" data-tip="Lewy panel" data-k="Alt 1" style="padding:0 6px"><svg class="i"><use href="#i-panel-l"/></svg></button>
+    <button class="tb-btn on" id="tb-r" data-tip="Prawy panel" data-k="Alt 2" style="padding:0 6px"><svg class="i"><use href="#i-panel-r"/></svg></button>
+  </header>
+
+  <!-- ======================= LEWY DOK: STRUKTURA + INSPEKTOR ======================= -->
+  <div class="split v" id="sp-l" data-split="l" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Szerokość lewego panelu" title="Przeciągnij · dwuklik: domyślnie"></div>
+  <div class="split v" id="sp-r" data-split="r" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Szerokość prawego panelu" title="Przeciągnij · dwuklik: domyślnie"></div>
+  <aside id="dock-l" aria-label="Struktura i inspektor">
+    <section class="panel" id="p-tree">
+      <div class="panel-h"><span class="cap">Struktura</span><span class="count" id="cnt-units">0</span><span class="grow"></span>
+        <button class="ibtn" id="tr-fold" data-tip="Zwiń do batalionów"><svg class="i s"><use href="#i-fold"/></svg></button>
+        <button class="ibtn" id="tr-unfold" data-tip="Rozwiń wszystko"><svg class="i s"><use href="#i-unfold"/></svg></button>
+      </div>
+      <label class="tree-filter"><svg class="i s"><use href="#i-filter"/></svg><input id="tr-q" placeholder="Filtruj jednostki…" autocomplete="off"><kbd>/</kbd></label>
+      <div id="tree-scroll"></div>
+    </section>
+    <div class="split h rel" id="sp-i" data-split="i" role="separator" aria-orientation="horizontal" tabindex="0" aria-label="Wysokość struktury i inspektora" title="Przeciągnij · dwuklik: domyślnie"></div>
+    <section class="panel" id="p-insp">
+      <div class="panel-h"><span class="cap">Inspektor</span><span class="grow"></span>
+        <button class="ibtn" data-tip="Wycentruj na mapie" id="in-aim"><svg class="i s"><use href="#i-aim"/></svg></button>
+        <button class="ibtn" data-tip="Zamknij" id="in-x"><svg class="i s"><use href="#i-x"/></svg></button>
+      </div>
+      <div class="tabs" id="in-tabs"><button class="on" data-t="ov">Przegląd</button><button data-t="sup">Zaopatrzenie</button><button data-t="hist">Historia</button></div>
+      <div id="insp-body"></div>
+    </section>
+  </aside>
+
+  <!-- ======================= CENTRUM: MAPA + OŚ CZASU ======================= -->
+  <main id="center">
+    <div id="mapwrap">
+      <div id="map" aria-label="Mapa sztabowa"></div>
+
+      <div class="float" id="rail" role="toolbar" aria-label="Narzędzia szkicu">
+        <button class="tool on" data-tool="select" data-tip="Wybieraj" data-k="V" data-pos="r"><svg class="i"><use href="#i-cursor"/></svg></button>
+        <div class="sep"></div>
+        <button class="tool" data-tool="arrow" data-tip="Strzałka" data-k="A" data-pos="r"><svg class="i"><use href="#i-arrow"/></svg></button>
+        <button class="tool" data-tool="line" data-tip="Linia" data-k="L" data-pos="r"><svg class="i"><use href="#i-line"/></svg></button>
+        <button class="tool" data-tool="area" data-tip="Rejon" data-k="R" data-pos="r"><svg class="i"><use href="#i-poly"/></svg></button>
+        <button class="tool t-extra" data-tool="point" data-tip="Punkt" data-k="P" data-pos="r"><svg class="i"><use href="#i-point"/></svg></button>
+        <button class="tool t-extra" data-tool="symbol" data-tip="Symbol (hipoteza)" data-k="Y" data-pos="r"><svg class="i"><use href="#i-sym"/></svg></button>
+        <button class="tool" id="tool-gfx" data-tip="Znaki taktyczne NATO" data-k="G" data-pos="r"><svg class="i"><use href="#i-flag"/></svg><span class="fl"></span></button>
+        <div class="sep"></div>
+        <button class="tool" data-tool="ruler" data-tip="Miarka · odległość i czas marszu" data-k="M" data-pos="r"><svg class="i"><use href="#i-ruler"/></svg></button>
+      </div>
+      <div class="float pop" id="flyout"></div>
+
+      <div class="float" id="detail"><span class="cap">Szczegółowość</span>
+        <div class="seg sm" id="seg-detail"><button class="on" data-d="auto">Auto</button><button data-d="bat">Batalion</button><button data-d="coy">Kompania</button></div>
+      </div>
+
+      <div class="float" id="mapctl">
+        <button class="tool" id="b-layers" data-tip="Warstwy i podkład" data-k="W" data-pos="l"><svg class="i"><use href="#i-layers"/></svg></button>
+        <button class="tool" id="b-legend" data-tip="Legenda symboli" data-k="?" data-pos="l"><svg class="i"><use href="#i-help"/></svg></button>
+        <div class="sep"></div>
+        <button class="tool" id="z-in" data-tip="Przybliż" data-pos="l"><svg class="i"><use href="#i-plus"/></svg></button>
+        <button class="tool" id="z-out" data-tip="Oddal" data-pos="l"><svg class="i"><use href="#i-minus"/></svg></button>
+        <button class="tool" id="z-fit" data-tip="Pokaż wszystkie siły własne" data-k="F" data-pos="l"><svg class="i"><use href="#i-aim"/></svg></button>
+      </div>
+
+      <div class="float pop" id="layers">
+        <div class="lp-sec"><span class="cap">Podkład</span>
+          <div id="lp-base"></div></div>
+        <div class="lp-div"></div>
+        <div class="lp-sec"><span class="cap">Nakładki</span>
+          <div id="lp-over"></div></div>
+      </div>
+
+      <div class="float" id="legend" role="dialog" aria-label="Legenda">
+        <div class="panel-h" style="border-radius:var(--r-4) var(--r-4) 0 0"><span class="cap">Legenda</span><span class="grow"></span>
+          <div class="seg sm" id="seg-leg"><button class="on" data-l="map">Na mapie</button><button data-l="rules">Zasady</button></div>
+          <button class="ibtn" id="leg-x" data-tip="Zamknij" data-k="Esc"><svg class="i s"><use href="#i-x"/></svg></button></div>
+        <div class="lg-body" id="lg-body"></div>
+        <div class="lg-foot"><svg class="i s"><use href="#i-info"/></svg>Najedź na symbol na mapie, aby zobaczyć jego opis.</div>
+      </div>
+
+      <div class="float" id="status"><span>KURSOR <b id="st-c">54.1500°N 22.9500°E</b></span><span>ZOOM <b id="st-z">10</b></span><span>PODKŁAD <b id="st-b">Ciemny</b></span></div>
+      <div id="toasts" aria-live="polite"></div>
+    </div>
+
+    <div class="split h" id="sp-t" data-split="t" role="separator" aria-orientation="horizontal" tabindex="0" aria-label="Wysokość osi czasu" title="Przeciągnij · dwuklik: domyślnie"></div>
+    <section id="timeline" aria-label="Oś czasu tur">
+      <div class="tl-l">
+        <div><div class="cap">Oś czasu</div><div class="mono" style="font-size:11px;color:var(--t-2);margin-top:4px" id="tl-info">T2 · bieżąca</div></div>
+        <div class="row">
+          <button class="ibtn" id="tl-prev" data-tip="Poprzednia tura" data-k=","><svg class="i s"><use href="#i-prev"/></svg></button>
+          <button class="ibtn" id="tl-next" data-tip="Następna tura" data-k="."><svg class="i s"><use href="#i-next"/></svg></button>
+          <button class="btn sm ghost" id="tl-cur" style="margin-left:4px">Bieżąca</button>
+        </div>
+      </div>
+      <div class="tl-mid" id="tl-mid"><div class="tl-axis" id="tl-axis"></div>
+        <div class="tl-banner"><svg class="i s"><use href="#i-clock"/></svg>Archiwum · tylko podgląd</div></div>
+      <div class="tl-r">
+        <div class="ll" style="position:absolute;top:60px;margin-left:-6px"></div><div style="display:flex;flex-direction:column;gap:3px"><div class="ll"><i style="background:var(--t-2)"></i>wiadomości<i style="background:var(--danger);margin-left:4px"></i>pilne</div><div class="ll"><i style="background:var(--accent)"></i>rozkazy<i style="background:var(--hostile);margin-left:4px"></i>kontakty</div></div>
+        <div class="afterbattle" data-tip="Tryb „po bitwie” — dostępny po zakończeniu scenariusza" data-pos="l"><div class="seg sm" style="width:100%"><button style="flex:1"><svg class="i s" style="vertical-align:-2px"><use href="#i-lock"/></svg> Po bitwie</button></div></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================= PRAWY DOK: KOMUNIKATOR ======================= -->
+  <aside id="dock-r" aria-label="Komunikator">
+    <div class="panel-h"><span class="cap">Komunikator</span><span class="count" id="cnt-unread">4 nowe</span><span class="grow"></span>
+      <button class="ibtn" data-tip="Linia łączności z jednostką na mapie" id="m-leader"><svg class="i s"><use href="#i-line"/></svg></button>
+      <button class="ibtn" data-tip="Wyszukaj w wiadomościach"><svg class="i s"><use href="#i-search"/></svg></button></div>
+    <div class="m-chs">
+      <div class="m-chs-scroll" id="chtabs"></div>
+      <button class="m-more" id="m-more" data-tip="Wszystkie kanały" data-pos="l"><svg class="i"><use href="#i-chevd"/></svg></button>
+      <div class="pop" id="chlist"></div>
+    </div>
+    <div class="m-head" id="m-head"></div>
+    <div id="thread"></div>
+    <div class="split h rel" id="sp-c" data-split="c" role="separator" aria-orientation="horizontal" tabindex="0" aria-label="Wysokość pola wiadomości" title="Przeciągnij · dwuklik: domyślnie"></div>
+    <div class="comp">
+      <div class="comp-top">
+        <div class="seg sm" id="seg-type"><button class="on" data-ty="rozkaz">Rozkaz</button><button data-ty="zarz">Zarządzenie</button><button data-ty="meld">Meldunek</button><button data-ty="msg">Wiadomość</button></div>
+        <span style="flex:1"></span>
+        <button class="sw" id="sw-urg" data-tip="Oznacz jako pilne"><svg class="i s"><use href="#i-zap"/></svg>Pilne</button>
+      </div>
+      <div class="comp-box">
+        <textarea id="c-text" placeholder="Treść rozkazu… użyj @ aby wskazać jednostkę, # aby wskazać miejsce"></textarea>
+        <div class="comp-bar" style="position:relative">
+          <button class="sw" id="b-att"><svg class="i s"><use href="#i-clip"/></svg>Szkic</button>
+          <button class="sw" id="b-tpl"><svg class="i s"><use href="#i-tpl"/></svg>Szablon</button>
+          <span class="hint"><kbd>Ctrl</kbd><kbd>↵</kbd></span>
+          <button class="btn pri sm" id="c-send"><svg class="i s"><use href="#i-send"/></svg>Wyślij</button>
+          <div class="pop" id="attmenu"></div>
+          <div class="pop" id="tplmenu"></div>
+        </div>
+      </div>
+      <div class="chips" id="c-chips" style="margin-top:6px"></div>
+    </div>
+  </aside>
+
+  <nav id="tabbar">
+    <button data-m="map" class="on"><svg class="i"><use href="#i-map"/></svg>Mapa</button>
+    <button data-m="tree"><svg class="i"><use href="#i-tree"/></svg>Struktura</button>
+    <button data-m="insp"><svg class="i"><use href="#i-info"/></svg>Szczegóły</button>
+    <button data-m="msg"><svg class="i"><use href="#i-msg"/></svg>Komunikator<span class="dot-badge">4</span></button>
+  </nav>
+</div>
+
+<!-- ======================= OMNIBOX ======================= -->
+<div id="omni" role="dialog" aria-label="Szukaj">
+  <div class="omni-box">
+    <div class="omni-in"><svg class="i"><use href="#i-search"/></svg><input id="o-q" placeholder="Szukaj jednostki, kontaktu, miejsca lub polecenia…" autocomplete="off"><kbd>Esc</kbd></div>
+    <div class="omni-f"><div class="seg sm" id="o-seg"><button class="on" data-f="all">Wszystko</button><button data-f="unit">Jednostki</button><button data-f="con">Kontakty</button><button data-f="place">Miejsca</button><button data-f="cmd">Polecenia</button></div></div>
+    <div class="omni-list" id="o-list"></div>
+    <div class="omni-ft"><span><kbd>↑</kbd><kbd>↓</kbd> wybór</span><span><kbd>↵</kbd> przejdź</span><span><kbd>Shift</kbd><kbd>↵</kbd> kanał / szczegóły</span><span style="margin-left:auto"><kbd>Ctrl</kbd><kbd>K</kbd></span></div>
+  </div>
+</div>
+
+<!-- ======================= ODPRAWA ======================= -->
+<div id="brief" role="dialog" aria-label="Odprawa">
+  <div class="br-top"><svg class="i"><use href="#i-doc"/></svg><h2>Odprawa · Ćwiczenie „Przesmyk”</h2><span class="pill">ODPRAWA PRZED OPERACJĄ</span><span style="flex:1"></span><button class="btn sm" id="br-x">Zamknij <kbd>Esc</kbd></button></div>
+  <div class="br-main">
+    <nav class="br-toc" id="br-toc"><div class="cap" style="padding:0 10px 8px">Spis treści</div>
+      <a class="on" data-s="s1">1. Sytuacja ogólna</a><a data-s="s2">2. Zadanie</a><a data-s="s3">3. Siły własne</a><a data-s="s4">4. Ocena wywiadu</a><a data-s="s5">5. Logistyka</a></nav>
+    <div class="br-doc" id="br-doc"><article>
+      <div class="lead">ZT „HAŃCZA” · 14.05.2026 · 06:00 (B) · TURA 0</div>
+      <h1>Odprawa dla dowódcy ZT „Hańcza”</h1>
+      <p style="color:var(--t-2);margin-top:0">Dokument zawiera ocenę sytuacji na początek ćwiczenia. Ocena wywiadu może być błędna — weryfikuj ją własnym rozpoznaniem.</p>
+      <h2 id="s1"><b>1</b>Sytuacja ogólna</h2>
+      <p>O 04:30 przeciwnik przekroczył granicę państwową na kierunku Wiżajny–Suwałki. ZT „Hańcza” broni rejonu Suwałk, osłaniając węzeł drogowy DK8/S61. Sąsiedzi: ZT „Mamry” z lewej, ZT „Biebrza” z prawej (z tyłu).</p>
+      <div class="callout"><b>Ważne.</b> Wsparcia lotnictwa w pierwszej dobie nie będzie. Meldunek o sytuacji do dowództwa dywizji co 2 godziny.</div>
+      <h2 id="s2"><b>2</b>Zadanie</h2>
+      <p>Bronić rejonu Suwałk i nie dopuścić do opanowania węzła DK8/S61. Utrzymać styczność z ZT „Biebrza”.</p>
+      <h2 id="s3"><b>3</b>Siły własne</h2>
+      <table><tr><th>Jednostka</th><th>Stan</th><th>Zadanie</th></tr><tr><td>1 bzmot</td><td class="mono">612 / 650</td><td>obrona na kierunku Wiżajny–Suwałki</td></tr><tr><td>2 bzmot</td><td class="mono">598 / 650</td><td>obrona na kierunku Sejny</td></tr><tr><td>bcz</td><td class="mono">296 / 310</td><td>odwód</td></tr></table>
+      <h2 id="s4"><b>4</b>Ocena wywiadu</h2>
+      <ul><li>BGT przeciwnika na NW od Żytkiejm, pewność średnia.</li><li>Kolumna pancerna na drodze Grodno–Sopoćkinie, pewność niska (dane z 01:15).</li><li>Dywizjon wyrzutni w rejonie Krasnolesia — niepotwierdzony.</li></ul>
+      <h2 id="s5"><b>5</b>Logistyka</h2>
+      <p>Paliwo 3,0 doby, amunicja 2,5 doby, żywność i woda 3 doby. Batalion logistyczny rozwinięty w Raczkach. MSR: DK8 Augustów–Suwałki.</p>
+    </article></div>
+    <aside class="br-side"><div class="cap" style="margin-bottom:10px">Karta odprawy</div>
+      <div class="kvr"><span style="width:80px;color:var(--t-3)">Strona</span><span>Polska (PL)</span></div>
+      <div class="kvr"><span style="width:80px;color:var(--t-3)">Skala</span><span>brygada</span></div>
+      <div class="kvr"><span style="width:80px;color:var(--t-3)">Tura</span><span class="mono">120 min</span></div>
+      <div class="kvr"><span style="width:80px;color:var(--t-3)">Start</span><span class="mono">14.05 06:00</span></div>
+      <div class="lp-div" style="margin:14px 0"></div>
+      <div class="cap" style="margin-bottom:8px">Wspomniane miejsca</div>
+      <div class="chips"><span class="ment place"><svg class="i"><use href="#i-pin"/></svg>Suwałki</span><span class="ment place"><svg class="i"><use href="#i-pin"/></svg>Wiżajny</span><span class="ment place"><svg class="i"><use href="#i-pin"/></svg>Żytkiejmy</span></div>
+    </aside>
+  </div>
+</div>
+<div id="tip"></div>
+
+<script src="/vendor/leaflet/leaflet.js"></script>
+<script src="/vendor/milsymbol.js"></script>
+<script>
+const UNITS=[{"id":"hq","n":"ZT Hańcza","p":null,"s":"SFGPUCIZ--AH---","pos":[22.935,54.104],"st":"SD rozwinięte","tk":"dowodzenie","str":0.93,"pe":[148,160],"eq":[["wozy dowodzenia (Rosomak-WD)",6,6],["stacje radiowe dalekiego zasięgu",4,4]]},{"id":"1bzmot","n":"1 bzmot","p":"hq","s":"SFGPUCIZ---F---","pos":[22.875,54.198],"st":"w obronie","tk":"obrona na kierunku Wiżajny–Suwałki","str":0.94,"pe":[612,650],"eq":[["KTO Rosomak (30 mm)",41,44],["moździerze samobieżne RAK 120 mm",8,8],["wyrzutnie ppk Spike",12,12]]},{"id":"2bzmot","n":"2 bzmot","p":"hq","s":"SFGPUCIZ---F---","pos":[23.24,54.115],"st":"w obronie","tk":"osłona kierunku Sejny","str":0.88,"pe":[588,640],"eq":[["BWP-1",38,42],["moździerze 98 mm",6,6],["wyrzutnie ppk Spike",12,12]]},{"id":"bcz","n":"bcz","p":"hq","s":"SFGPUCAT---F---","pos":[22.955,54.06],"st":"w ugrupowaniu wyczekującym","tk":"odwód","str":0.95,"pe":[296,310],"eq":[["czołgi Leopard 2PL",41,44],["wozy zabezpieczenia technicznego (Bergepanzer)",3,4]]},{"id":"dart","n":"dart","p":"hq","s":"SFGPUCFHE--F---","pos":[22.76,54.09],"st":"na stanowiskach ogniowych","tk":"wsparcie 1 bzmot","str":0.9,"pe":[402,420],"eq":[["armatohaubice Krab 155 mm",24,24],["wozy amunicyjne",12,12],["BSP do korygowania ognia",2,2]]},{"id":"krozp","n":"krozp","p":"hq","s":"SFGPUCR----E---","pos":[22.86,54.355],"st":"obserwacja","tk":"rozpoznanie kierunku Żytkiejmy","str":0.78,"pe":[86,92],"eq":[["BRDM-2",9,10],["drony rozpoznawcze (krótkiego zasięgu)",4,4]]},{"id":"ksap","n":"ksap","p":"hq","s":"SFGPUCE----E---","pos":[22.905,54.168],"st":"budowa zapór","tk":"zapory na DK8 i drodze Jeleniewo–Suwałki","str":0.82,"pe":[118,124],"eq":[["koparki i spycharki",5,6],["zestawy minowania",2,2],["miny przeciwpancerne (szt.)",600,800]]},{"id":"bopl","n":"bopl","p":"hq","s":"SFGPUCD----E---","pos":[22.99,54.095],"st":"w gotowości","tk":"osłona węzła Suwałki","str":0.9,"pe":[64,70],"eq":[["wyrzutnie Poprad",4,4],["zestawy Piorun",12,12]]},{"id":"blog","n":"blog","p":"hq","s":"SFGPUSS----F---","pos":[22.79,53.975],"st":"rozwinięty","tk":"zaopatrzenie ZT","str":0.7,"pe":[487,520],"eq":[["ciężarówki (Jelcz)",92,100],["cysterny paliwowe",22,24],["wozy ewakuacji medycznej",8,8]]},{"id":"1bzmot-1k","n":"1k 1bzmot","p":"1bzmot","s":"SFGPUCIZ---E---","pos":[22.84,54.235],"st":"w obronie (lewa flanka)","tk":"obrona rejonu Wiżajny, osłona drogi od zachodu","str":0.92,"pe":[138,148],"eq":[["KTO Rosomak (30 mm)",14,15],["wyrzutnie ppk Spike",4,4]]},{"id":"1bzmot-2k","n":"2k 1bzmot","p":"1bzmot","s":"SFGPUCIZ---E---","pos":[22.89,54.24],"st":"w obronie (środek)","tk":"obrona kierunku głównego Wiżajny–Suwałki","str":0.81,"pe":[142,148],"eq":[["KTO Rosomak (30 mm)",14,15],["wyrzutnie ppk Spike",4,4]]},{"id":"1bzmot-3k","n":"3k 1bzmot","p":"1bzmot","s":"SFGPUCIZ---E---","pos":[22.94,54.225],"st":"w obronie (prawa flanka)","tk":"obrona rejonu Jeleniewo, styk z 2 bzmot","str":0.58,"pe":[136,148],"eq":[["KTO Rosomak (30 mm)",13,14],["wyrzutnie ppk Spike",4,4]]},{"id":"1bzmot-kw","n":"kw 1bzmot","p":"1bzmot","s":"SFGPUCFM---E---","pos":[22.855,54.19],"st":"na stanowiskach ogniowych","tk":"wsparcie ogniem moździerzy 1k–3k","str":1,"pe":[98,100],"eq":[["moździerze samobieżne RAK 120 mm",8,8]]},{"id":"2bzmot-1k","n":"1k 2bzmot","p":"2bzmot","s":"SFGPUCIZ---E---","pos":[23.285,54.145],"st":"w obronie (północ)","tk":"osłona dojścia od strony Sejn, kierunek Giby","str":0.9,"pe":[138,145],"eq":[["BWP-1",13,14],["wyrzutnie ppk Spike",4,4]]},{"id":"2bzmot-2k","n":"2k 2bzmot","p":"2bzmot","s":"SFGPUCIZ---E---","pos":[23.295,54.105],"st":"w obronie (środek)","tk":"obrona głównego pasa na wschód od Sejn","str":0.86,"pe":[135,145],"eq":[["BWP-1",13,14],["wyrzutnie ppk Spike",4,4]]},{"id":"2bzmot-3k","n":"3k 2bzmot","p":"2bzmot","s":"SFGPUCIZ---E---","pos":[23.265,54.07],"st":"w obronie (południe)","tk":"osłona prawej flanki i styku z ZT Biebrza","str":0.74,"pe":[134,145],"eq":[["BWP-1",12,14],["wyrzutnie ppk Spike",4,4]]},{"id":"2bzmot-kw","n":"kw 2bzmot","p":"2bzmot","s":"SFGPUCFM---E---","pos":[23.225,54.115],"st":"na stanowiskach ogniowych","tk":"wsparcie ogniem moździerzy 1k–3k","str":0.95,"pe":[93,100],"eq":[["moździerze 98 mm",6,6]]},{"id":"bcz-1k","n":"1k bcz","p":"bcz","s":"SFGPUCAT---E---","pos":[22.925,54.07],"st":"w ugrupowaniu wyczekującym","tk":"odwód, gotowość do kontrataku na kierunku Wiżajny","str":0.97,"pe":[81,85],"eq":[["czołgi Leopard 2PL",14,15]]},{"id":"bcz-2k","n":"2k bcz","p":"bcz","s":"SFGPUCAT---E---","pos":[22.99,54.075],"st":"w ugrupowaniu wyczekującym","tk":"odwód, gotowość do kontrataku na kierunku Sejny","str":0.93,"pe":[83,85],"eq":[["czołgi Leopard 2PL",14,15]]},{"id":"bcz-3k","n":"3k bcz","p":"bcz","s":"SFGPUCAT---E---","pos":[22.96,54.04],"st":"w ugrupowaniu wyczekującym","tk":"odwód ogólny batalionu","str":0.9,"pe":[80,85],"eq":[["czołgi Leopard 2PL",13,14]]},{"id":"dart-1b","n":"1b dart","p":"dart","s":"SFGPUCFHE--E---","pos":[22.735,54.105],"st":"na stanowiskach ogniowych","tk":"wsparcie 1 bzmot, rejon ogniowy zachód","str":0.96,"pe":[106,110],"eq":[["armatohaubice Krab 155 mm",8,8],["wozy amunicyjne",4,4]]},{"id":"dart-2b","n":"2b dart","p":"dart","s":"SFGPUCFHE--E---","pos":[22.78,54.115],"st":"na stanowiskach ogniowych","tk":"wsparcie 1 bzmot, rejon ogniowy północ","str":0.92,"pe":[104,110],"eq":[["armatohaubice Krab 155 mm",8,8],["wozy amunicyjne",4,4]]},{"id":"dart-3b","n":"3b dart","p":"dart","s":"SFGPUCFHE--E---","pos":[22.75,54.07],"st":"na stanowiskach ogniowych","tk":"wsparcie ogólne, rejon ogniowy południe","str":0.45,"pe":[105,110],"eq":[["armatohaubice Krab 155 mm",8,8],["wozy amunicyjne",4,4]]},{"id":"dd","n":"Dow. dywizji","p":null,"s":"SFGPUCIZ--AI---","pos":[22.364,53.828],"st":"przełożony","tk":"","str":null},{"id":"zt-mamry","n":"ZT Mamry","p":null,"s":"SFGPUCIZ---H---","pos":[22.45,54.12],"st":"sąsiad","tk":"","str":0.9354838709677419,"pe":[2900,3100],"eq":[["czołgi",42,44],["BWP/KTO",80,88]]},{"id":"zt-biebrza","n":"ZT Biebrza","p":null,"s":"SFGPUCIZ---H---","pos":[23,53.88],"st":"sąsiad","tk":"","str":0.8870967741935484,"pe":[2750,3100],"eq":[["czołgi",38,44],["BWP/KTO",76,88]]}];
+const CONTACTS=[{"id":"c-001","s":"SHGAUCIZ---F---","pos":[22.6,54.41],"u":4000,"obs":"2026-05-14T03:40:00+02:00","src":"wywiad (dowództwo dywizji)","conf":"średnia","est":"batalionowa grupa taktyczna","pe":{"count":800,"approx":true},"eq":[{"name":"BTR-82A","count":30,"approx":true},{"name":"czołgi T-72","count":10,"approx":true}]},{"id":"c-002","s":"SHGAUCAT---F---","pos":[23.67,53.83],"u":6000,"obs":"2026-05-14T01:15:00+02:00","src":"rozpoznanie radioelektroniczne","conf":"niska","est":"kolumna pancerno-zmechanizowana","pe":{"count":600,"approx":true},"eq":[{"name":"czołgi","count":20,"approx":true},{"name":"BMP","count":25,"approx":true}]},{"id":"c-003","s":"SHGAUCFRMS-F---","pos":[22.42,54.43],"u":5000,"obs":"2026-05-14T02:50:00+02:00","src":"meldunek niepotwierdzony","conf":"niska","est":"dywizjon wyrzutni rakietowych","eq":[{"name":"wyrzutnie BM-27 Uragan","count":6,"approx":true}]}];
+const ASSETS=[{"id":"bsp-1","name":"BSP-1","type":"dron rozpoznawczy FlyEye","sidc":"SFAPMFQ--------","pos":[22.74,54.36],"status":"w powietrzu (zostało ~1 h 40 min lotu)","task":"obserwacja rejonu Żytkiejmy–granica"},{"id":"bsp-2","name":"BSP-2","type":"dron rozpoznawczy FlyEye","status":"gotowy do startu","task":"brak"}];
+const LINES=[{"k":"boundary","l":"granica pasa ZT Hańcza / ZT Mamry","c":[[22.7,54.355],[22.7,54.2],[22.72,54.05],[22.74,53.925]]},{"k":"boundary","l":"granica pasa ZT Hańcza / ZT Biebrza","c":[[22.74,53.925],[23.05,53.935],[23.3,53.975],[23.5,53.95]]}];
+
+</script>
+<script>
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ic=(n,c='')=>`<svg class="i ${c}"><use href="#i-${n}"/></svg>`;
+const sym=(sidc,size=24,o={})=>{try{return new ms.Symbol(sidc,Object.assign({size},o)).asSVG()}catch(e){return ''}};
+const symMs=(sidc,size)=>sym(sidc,size).replace('<svg','<svg class="ms"');
+
+/* ---------- czas gry (minuty od startu 14.05 06:00) ---------- */
+const TURN_MIN=120, CUR_TURN=2, NTURNS=13;
+const DAYS=['ndz','pon','wt','śr','czw','pt','sob'];
+function tmin(iso){const m=iso.match(/T(\d\d):(\d\d)/);return (+m[1]*60+ +m[2])-6*60}
+function clock(min){const t=6*60+min;const h=Math.floor(t/60)%24,m=t%60;return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')}
+function dtg(min){const t=6*60+min;const d=14+Math.floor(t/1440);return String(d).padStart(2,'0')+clock(min).replace(':','')+'B MAJ 26'}
+function ago(min){const a=Math.max(0,CUR_TURN*TURN_MIN-min);const h=Math.floor(a/60),m=a%60;return h?`${h} h ${m?m+' min':''}`.trim():`${m} min`}
+
+/* ---------- dane mock ---------- */
+CONTACTS[0].obs='2026-05-14T09:35:00+02:00';CONTACTS[0].src='BSP-1';CONTACTS[0].conf='wysoka';
+const U={};UNITS.forEach(u=>U[u.id]=u);
+const C={};CONTACTS.forEach(c=>C[c.id]=c);
+const level=u=>u.id==='hq'?'zt':(u.p==='hq'?'bat':(u.p?'coy':'ext'));
+const EXT=['dd','zt-mamry','zt-biebrza'];
+const kids=id=>UNITS.filter(u=>u.p===id);
+const PLACES=[
+ {id:'p-suw',n:'Suwałki',pos:[54.1118,22.9308],t:'miasto · węzeł DK8/S61'},{id:'p-sej',n:'Sejny',pos:[54.1089,23.3500],t:'miasto'},
+ {id:'p-wiz',n:'Wiżajny',pos:[54.3711,22.8800],t:'wieś · przy granicy'},{id:'p-zyt',n:'Żytkiejmy',pos:[54.3100,22.6200],t:'wieś · rejon obserwacji BSP-1'},
+ {id:'p-rac',n:'Raczki',pos:[54.0167,22.9167],t:'miasto · rejon rozwinięcia blog'},{id:'p-aug',n:'Augustów',pos:[53.8444,22.9792],t:'miasto · MSR DK8'},
+ {id:'p-rut',n:'Rutka-Tartak',pos:[54.2050,22.7950],t:'wieś · lewa flanka 1 bzmot'},{id:'p-kra',n:'Krasnolesie',pos:[54.4000,22.4500],t:'wieś · przypuszczalny rejon dywizjonu rakiet'}];
+const UNREAD={dd:1,s2:1,log:1,krozp:1,'1bzmot':0};
+const CH=[
+ {id:'dd',k:'sup',n:'Dowództwo dywizji',s:'DD',who:'gen. bryg. Nowicki',role:'Dowódca dywizji',u:'dd',q:'ok'},
+ {id:'s2',k:'staff',n:'Rozpoznanie S2',s:'S2',who:'kpt. Wrona',role:'S2 · rozpoznanie',q:'ok',ic:'radio'},
+ {id:'log',k:'staff',n:'Logistyka S4',s:'S4',who:'mjr Sadowska',role:'S4 · logistyka',q:'ok',ic:'truck'},
+ {id:'zt-mamry',k:'nb',n:'ZT „Mamry”',s:'MAM',who:'płk Kowal',role:'Sąsiad z lewa',u:'zt-mamry',q:'ok'},
+ {id:'zt-biebrza',k:'nb',n:'ZT „Biebrza”',s:'BIE',who:'płk Maj',role:'Sąsiad z prawa',u:'zt-biebrza',q:'ok'},
+ {id:'1bzmot',k:'sub',n:'1 bzmot',s:'1B',who:'ppłk Dąbrowski',role:'Dowódca 1 bzmot',u:'1bzmot',q:'ok'},
+ {id:'krozp',k:'sub',n:'krozp',s:'KR',who:'por. Lis',role:'Dowódca krozp',u:'krozp',q:'bad'},
+ {id:'bcz',k:'sub',n:'bcz',s:'BC',who:'ppłk Zieliński',role:'Dowódca bcz',u:'bcz',q:'ok'}];
+const CHM={};CH.forEach(c=>CHM[c.id]=c);
+const MSGS={
+ dd:[
+  {d:-20,from:'dd',pri:'urgent',type:'dir',text:'<p>Do dowódcy ZT {u:hq}. Przeciwnik przekroczył granicę o 04:30. Zadanie bez zmian: <b>bronić rejonu</b> {p:Suwałki}, nie dopuścić do opanowania węzła DK8/S61. Utrzymać styczność z {u:zt-biebrza}.</p><p>Wsparcia lotnictwa w pierwszej dobie nie będzie. Meldunek o sytuacji co 2 godziny.</p>',read:1},
+  {d:10,out:1,type:'rep',text:'<p><b>Meldunek nr 1.</b> ZT rozwinięte w rejonie obrony {p:Suwałki}. {u:1bzmot} i {u:2bzmot} w obronie, {u:bcz} w odwodzie. Stan: {u:1bzmot} 612/650, {u:bcz} 41 czołgów.</p>',st:'ok',ack:'06:14'},
+  {d:95,from:'dd',pri:'normal',text:'<p>Meldunek nr 1 przyjąłem. {u:zt-mamry} utrzymuje linię, bez kontaktu z przeciwnikiem. Rozważ wysunięcie {u:krozp} na kierunek {p:Wiżajny}.</p>',read:1},
+  {d:228,from:'dd',pri:'urgent',type:'dir',isNew:1,text:'<p>Przeciwnik w sile ok. batalionu ({c:c-001}) forsuje rejon {p:Żytkiejmy} wg BSP-1. Rozkazuję:</p><ol><li>Do 11:00 zająć i utrzymać <b>Rejon A</b> (wg szkicu).</li><li>{u:bcz} w gotowości do kontrataku na {p:Wiżajny}.</li><li>Stan zaopatrzenia do 10:30 w {u:log}.</li></ol>'}],
+ s2:[
+  {d:-10,from:'s2',pri:'normal',text:'<p>Ocena wstępna: BGT przeciwnika na NW od {p:Żytkiejmy} (pewność średnia). Kolumna pancerna Grodno–Sopoćkinie ({c:c-002}, pewność niska, dane z 01:15).</p>',read:1},
+  {d:215,from:'s2',pri:'normal',isNew:1,text:'<p>BSP-1 potwierdza {c:c-001}: ok. 30 BTR-82A i 10 czołgów T-72, kierunek południowy. <b>Pewność: wysoka.</b> Proponuję zadanie dla BSP-2: rejon {p:Krasnolesie}.</p>'}],
+ log:[{d:-5,from:'log',pri:'normal',isNew:1,text:'<p>Stan zaopatrzenia: paliwo 3,0 doby, amunicja 2,5 doby (155 mm: 2 jednostki ognia), żywność i woda 3 doby. Batalion logistyczny rozwinięty w {p:Raczki}. MSR: DK8 Augustów–Suwałki. <b>Proszę o priorytety dowozu.</b></p>'}],
+ '1bzmot':[
+  {d:120,out:1,type:'ord',text:'<p><b>Rozkaz bojowy nr 2.</b> Zająć i utrzymać Rejon A. {u:1bzmot-1k} na lewej flance, {u:1bzmot-3k} na prawej. {u:1bzmot-kw} w ogniu bezpośrednim.</p>',att:[['Rejon A','rejon obrony'],['Oś kontrataku','oś natarcia']],st:'ok',ack:'08:05'},
+  {d:170,from:'1bzmot',pri:'normal',text:'<p>Rozkaz nr 2 przyjęty. {u:1bzmot-1k} zajęła pozycje w rejonie {p:Rutka-Tartak}, {u:1bzmot-3k} w trakcie. Łączność dobra. Straty: 3 rannych.</p>',read:1}],
+ krozp:[{d:-2,from:'krozp',pri:'normal',isNew:1,text:'<p>Punkty obserwacyjne zajęte na wzgórzach na S od {p:Wiżajny}. Słyszę pracę silników na kierunku granicy, brak kontaktu wzrokowego. Łączność radiowa z zakłóceniami.</p>'}],
+};
+const OUTBOX_EVENTS=[10,120,235];
+const TL_EVENTS={msgs:[[-20,0],[-10,0],[-5,0],[-2,0],[95,0],[170,0],[215,0],[228,1]],ords:[10,120],cons:[-140,-165,-190,215]};
+
+/* ---------- stan ---------- */
+const st={sel:'1bzmot',ch:'dd',detail:'auto',tool:'select',viewTurn:CUR_TURN,base:'dark',itab:'ov',filter:''};
+const open=new Set(['hq','1bzmot']);
+const sevN=new Set();
+
+/* ---------- RADAR: poziom siły ---------- */
+const lvl=r=>r>=.8?'':(r>=.5?'warn':'bad');
+const hex=n=>'';
+
+/* ---------- opis SIDC (skrótowo) ---------- */
+const DESC={'SFGPUCIZ--AH---':'Zgrupowanie taktyczne · piechota zmechanizowana','SFGPUCIZ---F---':'Batalion piechoty zmechanizowanej','SFGPUCIZ---E---':'Kompania piechoty zmechanizowanej','SFGPUCAT---F---':'Batalion czołgów','SFGPUCAT---E---':'Kompania czołgów','SFGPUCFHE--F---':'Dywizjon artylerii samobieżnej','SFGPUCFHE--E---':'Bateria artylerii samobieżnej','SFGPUCR----E---':'Kompania rozpoznawcza','SFGPUCE----E---':'Kompania saperów','SFGPUCD----E---':'Kompania obrony przeciwlotniczej','SFGPUSS----F---':'Batalion logistyczny','SFGPUCFM---E---':'Kompania moździerzy','SFGPUCIZ--AI---':'Dowództwo wyższego szczebla','SFGPUCIZ---H---':'Sąsiad · zgrupowanie taktyczne','SHGAUCIZ---F---':'Przeciwnik · batalion zmechanizowany (przewidywany)','SHGAUCAT---F---':'Przeciwnik · batalion pancerny (przewidywany)','SHGAUCFRMS-F---':'Przeciwnik · dywizjon wyrzutni rakiet (przewidywany)','SFAPMFQ--------':'Bezzałogowiec rozpoznawczy'};
+const FULL={hq:'Zgrupowanie Taktyczne „Hańcza”',dd:'Dowództwo dywizji','zt-mamry':'Zgrupowanie Taktyczne „Mamry”','zt-biebrza':'Zgrupowanie Taktyczne „Biebrza”',bcz:'Batalion czołgów','1bzmot':'1. batalion zmechanizowany','2bzmot':'2. batalion zmechanizowany',dart:'Dywizjon artylerii samobieżnej',krozp:'Kompania rozpoznawcza',ksap:'Kompania saperów',bopl:'Kompania obrony przeciwlotniczej',blog:'Batalion logistyczny'};
+const fullName=u=>FULL[u.id]||(DESC[u.s]||u.n);
+
+/* ==========================================================================
+   MAPA
+   ========================================================================== */
+const BASES={
+ dark:{n:'Ciemny',u:'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',r:'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}',a:'Podkład &copy; Esri, HERE, Garmin, &copy; OpenStreetMap'},
+ topo:{n:'Topograficzny',u:'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',a:'&copy; OpenTopoMap (CC-BY-SA)'},
+ osm:{n:'OpenStreetMap',u:'https://tile.openstreetmap.org/{z}/{x}/{y}.png',a:'&copy; OpenStreetMap'},
+ light:{n:'Jasny',u:'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',r:'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',a:'Podkład &copy; Esri'},
+ sat:{n:'Satelitarny',u:'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',a:'&copy; Esri World Imagery'}};
+const map=L.map('map',{zoomControl:false,zoomSnap:.25,attributionControl:true,center:[54.17,22.93],zoom:10,worldCopyJump:false});
+map.attributionControl.setPrefix(false);
+L.control.scale({imperial:false,position:'bottomleft'}).addTo(map);
+let baseLayers=[];
+function setBase(k){baseLayers.forEach(l=>map.removeLayer(l));const b=BASES[k];baseLayers=[L.tileLayer(b.u,{maxNativeZoom:16,maxZoom:19,attribution:b.a,subdomains:'abc'})];if(b.r)baseLayers.push(L.tileLayer(b.r,{maxNativeZoom:16,maxZoom:19}));baseLayers.forEach(l=>l.addTo(map).bringToBack());st.base=k;$('#st-b').textContent=b.n;renderLayers()}
+const gLines=L.layerGroup().addTo(map), gSub=L.layerGroup().addTo(map), gCon=L.layerGroup().addTo(map), gUnits=L.layerGroup().addTo(map), gPulse=L.layerGroup().addTo(map);
+const markers={};
+const ll=p=>[p[1],p[0]];
+
+function drawStatic(){
+  LINES.forEach(l=>{L.polyline(l.c.map(ll),{color:'#9fb1c8',weight:1.5,dashArray:'7 5',opacity:.8}).addTo(gLines);
+    const m=l.c===LINES[0].c?[22.7,54.29]:l.c[2];L.marker(ll(m),{interactive:false,icon:L.divIcon({className:'mkI',iconSize:[0,0],html:`<div class="lline-lbl" style="transform:translate(-50%,-50%)">${esc('GRANICA · '+l.l.split('/ ').pop().toUpperCase())}</div>`})}).addTo(gLines)});
+  UNITS.filter(u=>u.p&&u.p!=='hq'&&U[u.p]).forEach(u=>L.polyline([ll(U[u.p].pos),ll(u.pos)],{color:'#7fa6d6',weight:1,opacity:.35,dashArray:'2 4'}).addTo(gSub));
+  UNITS.filter(u=>u.p==='hq').forEach(u=>L.polyline([ll(U.hq.pos),ll(u.pos)],{color:'#7fa6d6',weight:1,opacity:.28,dashArray:'2 4'}).addTo(gSub));
+  CONTACTS.forEach(c=>{
+    const a=(ageMin(c)); const fade=Math.max(.38,1-a/600);
+    L.circle(ll(c.pos),{radius:c.u,color:'#ff8080',weight:1,dashArray:'5 4',opacity:.65*fade+.1,fillColor:'#ff8080',fillOpacity:.07*fade}).addTo(gCon);
+    markerFor(c.id,c,true);
+  });
+  ASSETS.filter(a=>a.sidc&&a.pos).forEach(a=>markerFor(a.id,{id:a.id,n:a.name,s:a.sidc,pos:a.pos},false,'asset'));
+  UNITS.forEach(u=>markerFor(u.id,u,false));
+}
+function ageMin(c){return CUR_TURN*TURN_MIN-tmin(c.obs)}
+function markerFor(id,o,contact,kind){
+  const lv=contact?'con':level(o);
+  const size=contact?26:(lv==='zt'?30:lv==='coy'?20:lv==='ext'?26:26);
+  const svg=sym(o.s,size,contact?{}:{});
+  const sz=new ms.Symbol(o.s,{size}).getSize();
+  const lab=contact?`${esc(id)}<small>${ago(tmin(o.obs))}</small>`:esc(o.n||id);
+  const html=`<div class="mk ${contact?'h':''} ${lv==='coy'?'coy':''}" data-id="${id}"><div class="mk-sym">${svg}</div><div class="mk-lbl" style="top:${Math.round(sz.height/2+3)}px">${lab}</div></div>`;
+  const m=L.marker(ll(o.pos),{icon:L.divIcon({className:'mkI',iconSize:[0,0],html}),keyboard:false,zIndexOffset:contact?100:0});
+  m.on('click',()=>select(id,{from:'map'}));
+  m.on('mouseover',()=>hoverMk(id,true));m.on('mouseout',()=>hoverMk(id,false));
+  m._lv=lv;markers[id]=m;m.addTo(contact?gCon:gUnits);
+}
+function hoverMk(id,on){const el=$(`.mk[data-id="${id}"]`);el&&el.classList.toggle('hov',on);const r=$(`.trow[data-id="${id}"],.tcon[data-id="${id}"]`);if(r&&on)r.style.color='var(--t-1)';else if(r)r.style.color=''}
+function applyDetail(){
+  const z=map.getZoom();
+  UNITS.forEach(u=>{const m=markers[u.id];const lv=level(u);let show=true;
+    if(lv==='coy'){show=st.detail==='coy'||(st.detail==='auto'&&z>=11.5)}
+    if(show&&!gUnits.hasLayer(m))m.addTo(gUnits);if(!show&&gUnits.hasLayer(m))gUnits.removeLayer(m)});
+  paintSel();
+}
+function paintSel(){$$('.mk.sel').forEach(e=>e.classList.remove('sel'));const e=$(`.mk[data-id="${st.sel}"]`);e&&e.classList.add('sel')}
+map.on('zoomend',()=>{applyDetail();$('#st-z').textContent=map.getZoom().toFixed(1).replace('.0','')});
+map.on('mousemove',e=>{$('#st-c').textContent=`${e.latlng.lat.toFixed(4)}°N ${e.latlng.lng.toFixed(4)}°E`});
+function flash(pos,label){gPulse.clearLayers();L.marker(ll(pos),{interactive:false,icon:L.divIcon({className:'mkI',iconSize:[0,0],html:`<div class="pulse"></div>${label?`<div class="plabel">${esc(label)}</div>`:''}`})}).addTo(gPulse);setTimeout(()=>gPulse.clearLayers(),5000)}
+
+/* ==========================================================================
+   DRZEWO
+   ========================================================================== */
+function strRow(u){const s=u.str;if(s==null)return '';const p=Math.round(s*100);return `<span class="sbar ${lvl(s)}" title="Ukompletowanie ${p}%"><i style="width:${p}%"></i></span><span class="spct">${p}</span>`}
+function unreadBadge(id){const n=sumUnread(id);return n?`<span class="ubadge ${id==='dd'?'urg':''}">${n}</span>`:''}
+function sumUnread(id){let n=UNREAD[id]||0;kids(id).forEach(k=>n+=sumUnread(k.id));return n}
+function matches(u){const q=st.filter.trim().toLowerCase();if(!q)return true;return (u.n+' '+u.id+' '+fullName(u)).toLowerCase().includes(q)||kids(u.id).some(matches)}
+function nodeHtml(u,depth){
+  const ks=kids(u.id).filter(matches);const isOpen=open.has(u.id)||(st.filter&&ks.length);
+  const hasCh=kids(u.id).length>0;
+  const dim='';
+  return `<li data-id="${u.id}"><div class="trow ${st.sel===u.id?'sel':''}" data-id="${u.id}" role="treeitem" tabindex="-1">
+    <span class="tcar ${hasCh?(isOpen?'open':''):'leaf'}" data-car="${u.id}">${ic('chev')}</span>
+    <span class="tsym">${sym(u.s,20)}</span><span class="tname">${esc(u.n)}${u.id==='hq'?'<em>dowództwo</em>':''}</span>
+    ${unreadBadge(u.id)}<button class="tmsg ibtn" style="width:20px;height:20px" data-msg="${u.id}" data-tip="Otwórz kanał">${ic('msg','s')}</button>${strRow(u)}</div>
+    ${hasCh&&isOpen&&ks.length?`<ul role="group">${ks.map(k=>nodeHtml(k,depth+1)).join('')}</ul>`:''}</li>`;
+}
+function renderTree(){
+  const root=U.hq;const body=$('#tree-scroll');
+  const secs=[];
+  secs.push(secHtml('own','Siły własne',UNITS.filter(u=>u.p).length+1,`<ul class="tree" role="tree">${nodeHtml(root,0)}</ul>`));
+  const ext=EXT.map(id=>U[id]).filter(u=>!st.filter||(u.n.toLowerCase().includes(st.filter.toLowerCase())));
+  secs.push(secHtml('ext','Przełożony i sąsiedzi',3,ext.map(u=>`<div class="tcon trow ${st.sel===u.id?'sel':''}" data-id="${u.id}" style="padding-left:12px"><span class="tsym">${sym(u.s,20)}</span><span class="tname">${esc(u.n)}<em>${u.id==='dd'?'przełożony':'sąsiad'}</em></span>${unreadBadge(u.id)}<button class="tmsg ibtn" style="width:20px;height:20px" data-msg="${u.id}">${ic('msg','s')}</button></div>`).join('')));
+  const cons=CONTACTS.filter(c=>!st.filter||(c.id+' '+c.est).toLowerCase().includes(st.filter.toLowerCase()));
+  secs.push(secHtml('con','Kontakty przeciwnika',CONTACTS.length,cons.map(c=>`<div class="tcon ${st.sel===c.id?'sel':''}" data-id="${c.id}"><span class="tsym">${sym(c.s,20)}</span><span class="tname"><span class="mono" style="color:var(--hostile)">${c.id}</span><em>${esc(c.est.replace('batalionowa grupa taktyczna','BGT'))}</em></span><span class="age">${ago(tmin(c.obs))}</span><span class="conf ${{wysoka:'h',średnia:'m',niska:'l'}[c.conf]}" title="pewność: ${c.conf}"></span></div>`).join('')));
+  secs.push(secHtml('ast','Środki rozpoznania',2,ASSETS.map(a=>`<div class="tcon ${st.sel===a.id?'sel':''}" data-id="${a.id}"><span class="tsym">${a.sidc?sym(a.sidc,18):'<span style="width:18px"></span>'}</span><span class="tname">${esc(a.name)}<em>${a.pos?'w powietrzu':'gotowy'}</em></span><span class="age">${a.pos?'1 h 40':'—'}</span></div>`).join(''),true));
+  body.innerHTML=secs.join('');
+  $('#cnt-units').textContent=UNITS.length;
+}
+const secState={own:1,ext:1,con:1,ast:0};
+function secHtml(k,title,n,inner,){const ix={own:0,ext:1,con:2,ast:3}[k];return `<div class="sec-h ${secState[k]?'':'closed'}" data-sec="${k}" style="top:${ix*26}px;${ix?`bottom:${(3-ix)*26}px`:''}">${ic('chevd','s car')}<span class="cap">${title}</span><span class="count">${n}</span></div><div class="sec-b ${secState[k]?'':'closed'}" data-secb="${k}">${inner}</div>`}
+
+/* ==========================================================================
+   INSPEKTOR
+   ========================================================================== */
+function coord(p){const f=(v,a,b)=>{const s=v<0?b:a;v=Math.abs(v);const d=Math.floor(v),m=Math.floor((v-d)*60),sec=Math.round(((v-d)*60-m)*60);return `${d}°${String(m).padStart(2,'0')}′${String(sec).padStart(2,'0')}″${s}`};return f(p[1],'N','S')+' '+f(p[0],'E','W')}
+function mgrs(p){return '34U FE '+String(Math.round((p[0]-22)*1000)%1000).padStart(3,'0')+' '+String(Math.round((p[1]-54)*1000)%1000).padStart(3,'0')}
+function renderInsp(){
+  const body=$('#insp-body');const id=st.sel;
+  if(!id){body.innerHTML=`<div class="insp-empty">${ic('crosshair')}<b style="color:var(--t-2)">Nic nie zaznaczono</b><span>Kliknij jednostkę na mapie lub w strukturze,<br>albo wciśnij <kbd>Ctrl K</kbd>.</span></div>`;return}
+  const u=U[id], c=C[id], a=ASSETS.find(x=>x.id===id);
+  if(c){return renderContact(c,body)}
+  if(a){body.innerHTML=head(a.sidc?sym(a.sidc,40):'',a.name,a.type,a.sidc||'',a.status||'',true)+`<div class="kv"><div class="cap">Zadanie</div><div style="color:var(--t-1)">${esc(a.task||'—')}</div></div>`;return}
+  const ratio=u.pe?u.pe[0]/u.pe[1]:u.str;
+  const ch=CHM[u.id];
+  let h=head(sym(u.s,44),u.n,fullName(u),u.s,u.st,false,u.str);
+  h+=`<div class="insp-actions"><button class="btn pri" data-act="msg" ${ch?'':''}>${ic('msg','s')}Wiadomość</button><button class="btn" data-act="aim">${ic('aim','s')}Wycentruj</button><button class="btn" data-act="ord">Rozkaz…</button></div>`;
+  if(st.itab==='ov'){
+    h+=`<div class="kv"><div class="cap">Stan osobowy <span class="grow"></span><span class="mono" style="color:var(--t-3);text-transform:none;letter-spacing:0">stan na ${clock(CUR_TURN*TURN_MIN)}</span></div>`;
+    if(u.pe){const r=u.pe[0]/u.pe[1];h+=`<div class="bignum">${u.pe[0]}<small>/ ${u.pe[1]} · ${Math.round(r*100)}%</small></div><div class="meter ${lvl(r)}"><i style="width:${r*100}%"></i></div>`}
+    else h+=`<div class="bignum">${Math.round((u.str||0)*100)}<small>% ukompletowania</small></div><div class="meter ${lvl(u.str)}"><i style="width:${(u.str||0)*100}%"></i></div>`;
+    h+=`</div>`;
+    if(u.eq)h+=`<div class="kv"><div class="cap">Główny sprzęt</div>${u.eq.map(e=>{const r=e[1]/e[2];return `<div class="eqr"><span class="n" title="${esc(e[0])}">${esc(e[0])}</span><div class="meter ${lvl(r)}"><i style="width:${r*100}%"></i></div><span class="v">${e[1]}/${e[2]}</span></div>`}).join('')}</div>`;
+    h+=`<div class="kv"><div class="cap">Zadanie i położenie</div>
+      <div class="kvr"><span>Zadanie</span><span>${esc(u.tk||'—')}</span></div>
+      <div class="kvr"><span>Pozycja</span><span class="mono" style="font-size:12px">${coord(u.pos)} <a class="link" data-copy style="margin-left:4px">${ic('copy','s')}</a></span></div>
+      <div class="kvr"><span>MGRS</span><span class="mono" style="font-size:12px">${mgrs(u.pos)}</span></div>
+      <div class="kvr"><span>Łączność</span><span><span class="link-q ${ch&&ch.q==='bad'?'bad':''}"><i></i>${ch&&ch.q==='bad'?'zakłócona':'dobra'}</span> <span class="mono" style="color:var(--t-3)">· ost. meldunek ${clock(CUR_TURN*TURN_MIN-12)}</span></span></div></div>`;
+    const par=u.p?U[u.p]:null, ks=kids(u.id);
+    h+=`<div class="kv"><div class="cap">Podporządkowanie</div>${par?`<div class="kvr"><span>Przełożony</span><span><span class="uchip" data-go="${par.id}">${sym(par.s,16)}${esc(par.n)}</span></span></div>`:''}${ks.length?`<div class="kvr"><span>Podwładni</span><span class="chips">${ks.map(k=>`<span class="uchip" data-go="${k.id}">${sym(k.s,16)}${esc(k.n)}</span>`).join('')}</span></div>`:(par?'':'')}</div>`;
+  }else if(st.itab==='sup'){
+    const dd=[['Paliwo (kl. III)',3.0,5],['Amunicja',2.5,5],['Żywność i woda',3.0,5],['Części zamienne',1.5,5]];
+    h+=`<div class="kv"><div class="cap">Zaopatrzenie · doby (DOS) <span class="grow"></span><span class="pill">WARSTWA LOGISTYCZNA</span></div>${dd.map(d=>`<div class="dos ${d[1]<2?'warn':''}"><span class="n">${d[0].replace(' (kl. III)','')}</span><div class="seg">${[0,1,2,3,4].map(i=>`<i class="${d[1]>i?'f':''}"></i>`).join('')}</div><span class="v">${d[1].toFixed(1)} d</span></div>`).join('')}
+      <p style="color:var(--t-3);font-size:11px;margin:10px 0 0">Zasób zdefiniowany w warstwie logistycznej (v0.2). Próg ostrzegawczy: &lt; 2,0 doby.</p></div>`;
+    h+=`<div class="kv"><div class="cap">Najbliższy skład</div><div class="kvr"><span>Skład</span><span>Raczki · batalion logistyczny</span></div><div class="kvr"><span>Odległość</span><span class="mono">28 km · 1 h 10 min (kolumna)</span></div></div>`;
+  }else{
+    h+=`<div class="kv"><div class="cap">Dziennik jednostki</div><div class="log"><div><time>${clock(228)}</time><span>Rozkaz DD: zająć Rejon A</span></div><div><time>${clock(170)}</time><span>Przyjęto rozkaz bojowy nr 2</span></div><div><time>${clock(120)}</time><span>Wysłano rozkaz bojowy nr 2 <span class="ment">📎 Rejon A</span></span></div><div><time>${clock(0)}</time><span>Stan początkowy: ${esc(u.st)}</span></div></div></div>`;
+  }
+  body.innerHTML=h;
+}
+function head(symSvg,title,sub,sidc,status,isAsset,str){
+  const dot=str!=null?lvl(str):'';
+  return `<div class="insp-top"><div class="insp-sym">${symSvg}</div><div style="min-width:0"><div class="insp-title">${esc(title)}</div><div class="insp-sub">${esc(sub)}</div><div class="insp-sidc">${esc(sidc)}</div>${status?`<div class="chip-st"><i style="${dot==='warn'?'background:var(--warn)':dot==='bad'?'background:var(--danger)':''}"></i>${esc(status)}</div>`:''}</div></div>`;
+}
+function renderContact(c,body){
+  const age=ago(tmin(c.obs));
+  const h=head(sym(c.s,44),c.id,'Kontakt · '+c.est,c.s,'',false)+
+  `<div class="insp-actions"><button class="btn pri" data-act="aim">${ic('aim','s')}Wycentruj</button><button class="btn" data-act="s2">${ic('msg','s')}Zapytaj S2</button><button class="btn" data-act="hyp">Hipoteza</button></div>
+  <div class="kv"><div class="cap">Obserwacja</div>
+   <div class="kvr"><span>Zaobserwowano</span><span class="mono">${clock(tmin(c.obs))} <span style="color:var(--warn)">· ${age} temu</span></span></div>
+   <div class="kvr"><span>Źródło</span><span>${esc(c.src)}</span></div>
+   <div class="kvr"><span>Pewność</span><span><span class="tag ${c.conf==='wysoka'?'rep':'rep'}" style="${c.conf==='niska'?'color:var(--warn);border-color:rgba(232,179,57,.5)':''}">${c.conf}</span></span></div>
+   <div class="kvr"><span>Niepewność</span><span class="mono">± ${(c.u/1000).toFixed(1)} km</span></div>
+   <div class="kvr"><span>Pozycja</span><span class="mono" style="font-size:12px">${coord(c.pos)}</span></div></div>
+  <div class="kv"><div class="cap">Szacunek sił <span class="grow"></span><span class="pill">NIE PRAWDA</span></div>
+   ${c.pe?`<div class="bignum">~${c.pe.count}<small>żołnierzy</small></div>`:''}
+   <div style="margin-top:8px">${(c.eq||[]).map(e=>`<div class="eqr" style="grid-template-columns:1fr 52px"><span class="n">${esc(e.name)}</span><span class="v">~${e.count}</span></div>`).join('')}</div></div>`;
+  body.innerHTML=h;
+}
+
+/* ==========================================================================
+   WYBÓR (synchronizacja drzewo ↔ mapa ↔ inspektor ↔ komunikator)
+   ========================================================================== */
+function select(id,o={}){
+  st.sel=id;
+  const u=U[id]||C[id]||ASSETS.find(a=>a.id===id);
+  if(U[id]){let p=U[id].p;while(p){open.add(p);p=U[p]&&U[p].p}}
+  renderTree();renderInsp();paintSel();
+  const row=$(`.trow[data-id="${id}"],.tcon[data-id="${id}"]`);if(row&&o.from!=='tree')row.scrollIntoView({block:'nearest'});
+  if(o.fly!==false&&o.from!=='tree'&&u&&u.pos){const m=markers[id];if(m){const lv=m._lv;if(lv==='coy'&&st.detail==='bat'){}map.panTo(ll(u.pos),{animate:true,duration:.4})}}
+  if(o.from==='tree'||o.from==='omni'||o.from==='mention'){const mm=markers[id];if(mm&&u&&u.pos){if(level(U[id]||{})==='coy'&&!gUnits.hasLayer(mm)){st.detail='coy';syncSeg();applyDetail()}map.flyTo(ll(u.pos),Math.max(map.getZoom(),10.5),{duration:.5})}}
+  if(o.mob&&matchMedia('(max-width:760px)').matches)setM(o.mob);
+}
+
+/* ==========================================================================
+   KOMUNIKATOR
+   ========================================================================== */
+function mentHtml(t){
+  return t.replace(/\{u:([^}]+)\}/g,(m,id)=>{const u=U[id];if(!u)return id;return `<span class="ment" data-go="${id}">${symMs(u.s,16)}${esc(u.n)}</span>`})
+   .replace(/\{c:([^}]+)\}/g,(m,id)=>`<span class="ment cont" data-go="${id}">${symMs(C[id].s,16)}${id}</span>`)
+   .replace(/\{p:([^}]+)\}/g,(m,n)=>`<span class="ment place" data-place="${esc(n)}">${ic('pin')}${esc(n)}</span>`);
+}
+function renderChTabs(){
+  $('#chtabs').innerHTML=['dd','s2','log','1bzmot','krozp','bcz'].map(id=>{const c=CHM[id];const n=UNREAD[id]||0;
+    return `<button class="chtab k-${c.k} ${st.ch===id?'on':''}" data-ch="${id}"><span class="ch-ic">${c.u?sym(U[c.u].s,14):(c.ic?ic(c.ic,'s'):c.s)}</span>${esc({dd:'DD',s2:'S2',log:'S4'}[id]||c.n)}${n?`<span class="ubadge ${id==='dd'?'urg':''}">${n}</span>`:''}</button>`}).join('');
+  const groups=[['Przełożony',c=>c.k==='sup'],['Sztab',c=>c.k==='staff'],['Sąsiedzi',c=>c.k==='nb'],['Podwładni',c=>c.k==='sub']];
+  $('#chlist').innerHTML=groups.map(([t,f])=>`<div class="cl-g cap">${t}</div>${CH.filter(f).map(c=>`<div class="cl-i" data-ch="${c.id}"><span class="ch-ic">${c.u?symMs(U[c.u].s,16):(c.ic?ic(c.ic,'s'):c.s)}</span><span>${esc(c.n)}</span>${UNREAD[c.id]?`<span class="ubadge">${UNREAD[c.id]}</span>`:''}</div>`).join('')}`).join('')+`<div class="cl-g cap">Wszystkie jednostki</div><div class="cl-i" style="color:var(--t-3)"><span>${UNITS.length} kanałów — użyj struktury po lewej lub <kbd>Ctrl K</kbd></span></div>`;
+  const tot=Object.values(UNREAD).reduce((a,b)=>a+b,0);$('#cnt-unread').textContent=tot?tot+' nowe':'brak nowych';$$('#tabbar .dot-badge').forEach(e=>{e.textContent=tot;e.style.display=tot?'':'none'})
+}
+function msgHtml(m,ch){
+  const who=m.out?'Ty · dowódca ZT „Hańcza”':CHM[m.from]?CHM[m.from].who:'';
+  const role=m.out?'':(CHM[m.from]?CHM[m.from].role:'');
+  const av=m.out?'TY':(CHM[m.from]&&CHM[m.from].u?sym(U[CHM[m.from].u].s,22):(CHM[m.from]&&CHM[m.from].ic?ic(CHM[m.from].ic):CHM[m.from].s));
+  const tags=[];
+  if(m.pri==='urgent'||m.urgent)tags.push('<span class="tag urg">Pilne</span>');
+  if(m.type==='ord')tags.push('<span class="tag ord">Rozkaz bojowy</span>');
+  if(m.type==='dir')tags.push('<span class="tag dir">Rozkaz</span>');
+  if(m.type==='rep')tags.push('<span class="tag rep">Meldunek</span>');
+  if(m.type==='zarz')tags.push('<span class="tag ord">Zarządzenie</span>');
+  const att=(m.att||[]).map(a=>`<span class="att" data-att="${esc(a[0])}">${ic('clip','s')}${esc(a[0])}<small>${esc(a[1])}</small></span>`).join('');
+  let foot='';
+  if(m.out){foot=m.ack?`<div class="mf"><span class="ok">✓✓ Doręczono ${m.ack}</span><span>przyjęto do wykonania</span></div>`:`<div class="mf"><span style="color:var(--warn)">● W skrzynce</span><span>rozpatrzenie w turze 3</span><a data-undo>Wycofaj</a></div>`}
+  else if(m.read)foot='';
+  return `<div class="msg ${m.pri==='urgent'||m.urgent?'urgent':''} ${m.out?'out':''}" data-d="${m.d}"><div class="av">${av}</div><div><div class="mh"><b>${esc(who)}</b>${role?`<span class="role">${esc(role)}</span>`:''}${tags.join('')}<time>${dtg(m.d).slice(0,6)}B · T${Math.max(0,Math.floor(m.d/TURN_MIN))}</time></div><div class="mb">${mentHtml(m.text)}</div>${att?`<div>${att}</div>`:''}${foot}</div></div>`;
+}
+function renderThread(){
+  const c=CHM[st.ch];const list=MSGS[st.ch]||[];
+  const a=c.u?sym(U[c.u].s,28):(c.ic?ic(c.ic):c.s);
+  $('#m-head').innerHTML=`<div class="av">${a}</div><div style="min-width:0;flex:1"><h3>${esc(c.n)}</h3><p>${esc(c.who)} · ${esc(c.role)}</p></div><span class="link-q ${c.q==='bad'?'bad':''}"><i></i>${c.q==='bad'?'łączność zakłócona':'łączność dobra'}</span>`;
+  let h='';let lastNew=false;
+  if(!list.length)h=`<div class="insp-empty" style="padding-top:60px">${ic('msg')}<b style="color:var(--t-2)">Brak wiadomości</b><span>Napisz rozkaz lub meldunek do ${esc(c.n)}.</span></div>`;
+  else{h+=`<div class="day cap">czw. 14.05.2026</div>`;
+    list.forEach(m=>{if(m.isNew&&!lastNew){h+=`<div class="day new cap">Nowe</div>`;lastNew=true}h+=msgHtml(m,c)})}
+  $('#thread').innerHTML=h;
+  const t=$('#thread');t.scrollTop=t.scrollHeight;
+  if(UNREAD[st.ch]){setTimeout(()=>{UNREAD[st.ch]=0;renderChTabs();renderTree()},1200)}
+}
+function openChannel(id){st.ch=id;renderChTabs();renderThread();$('#chlist').classList.remove('open');$('#m-more').classList.remove('on')}
+
+/* szablony */
+const TPL={
+ rozkaz:'ROZKAZ BOJOWY nr \n1. Sytuacja:\n2. Zadanie:\n3. Zamiar:\n4. Współdziałanie:\n5. Zabezpieczenie:\n6. Dowodzenie i łączność:',
+ zarz:'ZARZĄDZENIE \nPodstawa:\nPolecam:\nTermin wykonania:',
+ meld:'MELDUNEK \nSytuacja:\nStan jednostek:\nZamiary:\nProszę o:',
+ msg:''};
+const PH={rozkaz:'Treść rozkazu… użyj @ aby wskazać jednostkę, # aby wskazać miejsce',zarz:'Treść zarządzenia…',meld:'Treść meldunku…',msg:'Wiadomość…'};
+let curType='rozkaz';
+function setType(t){curType=t;$$('#seg-type button').forEach(b=>b.classList.toggle('on',b.dataset.ty===t));const ta=$('#c-text');ta.placeholder=PH[t];if(!ta.value.trim()||Object.values(TPL).includes(ta.value))ta.value=TPL[t]}
+
+/* ==========================================================================
+   OŚ CZASU
+   ========================================================================== */
+function renderTimeline(){
+  const total=(NTURNS-1)*TURN_MIN, pct=m=>(m/total*100);
+  let h='<div class="tl-hours">';
+  const aw=$('#tl-mid').clientWidth-40, step=aw<420?4:(aw<560?3:2);
+  for(let i=0;i<NTURNS;i+=step)h+=`<span style="left:${pct(i*TURN_MIN)}%">${clock(i*TURN_MIN)}</span>`;
+  h+='</div>';
+  const curm=CUR_TURN*TURN_MIN;
+  h+=`<div class="tl-line"></div><div class="tl-fut" style="left:${pct(curm)}%"></div><div class="tl-past" style="width:${pct(curm)}%"></div>`;
+  for(let i=0;i<NTURNS;i++){const cls=i>CUR_TURN?'fut':(i===CUR_TURN?'cur':'');const view=st.viewTurn===i&&i!==CUR_TURN?'view':'';
+    h+=`<div class="tl-node ${cls} ${view}" data-turn="${i}" style="left:${pct(i*TURN_MIN)}%" data-tip="Tura ${i} · ${clock(i*TURN_MIN)}${i>CUR_TURN?' (przyszła)':''}"><em style="${(aw<420&&i%2)||(aw<290)?'display:none':''}">T${i}</em><i></i></div>`}
+  const ev=(cls,arr,u)=>`<div class="tl-lane ${cls}">${arr.map(x=>{const m=Array.isArray(x)?x[0]:x;const urg=Array.isArray(x)&&x[1];return `<i class="${urg?'u':''}" style="left:${Math.max(0,pct(m))}%"></i>`}).join('')}</div>`;
+  h+=ev('msgs',TL_EVENTS.msgs)+ev('ords',TL_EVENTS.ords)+ev('cons',TL_EVENTS.cons.map(x=>Math.max(1,x+200)));
+  h+=`<div class="tl-play" style="left:${pct(st.viewTurn*TURN_MIN)}%"></div>`;
+  $('#tl-axis').innerHTML=h;
+  const arch=st.viewTurn!==CUR_TURN;document.body.classList.toggle('archive',arch);
+  $('#clk-turn').textContent=(arch?'ARCHIWUM · ':'')+'TURA '+st.viewTurn;
+  $('#clk-time').textContent='CZW 14.05 · '+clock(st.viewTurn*TURN_MIN);
+  $('#clk-dtg').textContent=dtg(st.viewTurn*TURN_MIN)+' · tura 2 h';
+  $('#t-prev').disabled=st.viewTurn<=0;$('#t-next').disabled=st.viewTurn>=CUR_TURN;
+  $('#tl-prev').disabled=$('#t-prev').disabled;$('#tl-next').disabled=$('#t-next').disabled;
+  $('#t-cur').style.display=arch?'':'none';
+  $('#tl-info').textContent='T'+st.viewTurn+(arch?' · archiwum':' · bieżąca');
+}
+function goTurn(i){if(i<0||i>CUR_TURN)return;st.viewTurn=i;renderTimeline()}
+
+/* ==========================================================================
+   WARSTWY / LEGENDA / FLYOUT
+   ========================================================================== */
+const OVER={bounds:1,sub:1,cons:1,notes:1,rail:0,log:0};
+const OVL=[['bounds','Granice pasów'],['sub','Linie podporządkowania'],['cons','Kontakty i okręgi niepewności'],['notes','Moje szkice'],['log','Logistyka: składy, MSR, konwoje','soon'],['rail','Koleje (OpenRailwayMap)']];
+function renderLayers(){
+  $('#lp-base').innerHTML=Object.entries(BASES).map(([k,b])=>`<div class="lp-row ${st.base===k?'on':''}" data-base="${k}"><span class="rd"></span><span class="grow">${b.n}</span></div>`).join('');
+  $('#lp-over').innerHTML=OVL.map(([k,n,s])=>`<div class="lp-row ${OVER[k]?'on':''} ${s?'soon':''}" data-ov="${k}"><span class="cb">${ic('check')}</span><span class="grow">${n}</span>${s?'<span class="pill">WKRÓTCE</span>':''}</div>`).join('')+`<div class="lp-div"></div><div class="lp-row on" data-ov="labels"><span class="cb">${ic('check')}</span><span class="grow">Etykiety symboli</span></div>`;
+}
+function renderLegend(tab){
+  const b=$('#lg-body');
+  if(tab==='map'){
+    const groups={};[...UNITS.map(u=>u),...CONTACTS,...ASSETS.filter(a=>a.sidc)].forEach(o=>{const s=o.s||o.sidc;const k=s;(groups[k]=groups[k]||{s,n:0}).n++});
+    const gl=(t,f)=>{const it=Object.values(groups).filter(f);return it.length?`<div class="lg-g cap">${t}</div>`+it.map(g=>`<div class="lg-r"><div class="s">${sym(g.s,26)}</div><div class="d">${esc(DESC[g.s]||g.s)}<small class="mono">${g.s}</small></div><div class="x">${g.n>1?'×'+g.n:''}</div></div>`).join(''):''};
+    b.innerHTML=gl('Siły własne',g=>g.s[1]==='F'&&g.s[3]!=='A')+gl('Przeciwnik',g=>g.s[1]==='H')+gl('Środki rozpoznania',g=>g.s[3]==='A'&&g.s[1]==='F'||g.s==='SFAPMFQ--------')+
+     `<div class="lg-g cap">Elementy mapy</div>
+      <div class="lg-r"><div class="s"><svg width="34" height="20"><circle cx="17" cy="10" r="8" fill="rgba(255,128,128,.12)" stroke="#ff8080" stroke-dasharray="3 2"/></svg></div><div class="d">Okrąg niepewności<small>promień = niepewność położenia kontaktu</small></div><div class="x"></div></div>
+      <div class="lg-r"><div class="s"><svg width="34" height="20"><circle cx="9" cy="10" r="5" fill="#ff8080" opacity="1"/><circle cx="25" cy="10" r="5" fill="#ff8080" opacity=".35"/></svg></div><div class="d">Wiek informacji<small>kontakt blaknie wraz z upływem czasu</small></div><div class="x"></div></div>
+      <div class="lg-r"><div class="s"><svg width="34" height="20"><path d="M2 10h30" stroke="#9fb1c8" stroke-width="1.5" stroke-dasharray="6 4"/></svg></div><div class="d">Granica pasa<small>rozgraniczenie ZT</small></div><div class="x"></div></div>
+      <div class="lg-r"><div class="s"><svg width="34" height="20"><path d="M2 10h30" stroke="#7fa6d6" stroke-width="1.2" stroke-dasharray="2 3"/></svg></div><div class="d">Podporządkowanie<small>przełożony → podwładny</small></div><div class="x"></div></div>`;
+  }else{
+    b.innerHTML=`<div class="lg-g cap">Przynależność — kolor i kształt ramki</div><div class="aff">
+     <div>${sym('SFGPUCI----E---',34)}Swój</div><div>${sym('SHGPUCI----E---',34)}Wróg</div><div>${sym('SUGPUCI----E---',34)}Nieznany</div><div>${sym('SSGPUCI----E---',34)}Podejrzany</div></div>
+     <div class="lg-g cap">Wielkość — znaczniki nad ramką</div><div class="aff">
+     <div>${sym('SFGPUCI----E---',34)}Kompania<br><span class="mono">I</span></div><div>${sym('SFGPUCI----F---',34)}Batalion<br><span class="mono">II</span></div><div>${sym('SFGPUCI----H---',34)}Pułk / ZT<br><span class="mono">III</span></div><div>${sym('SFGPUCI----I---',34)}Brygada<br><span class="mono">X</span></div></div>
+     <div class="lg-g cap">Rodzaj — znak w środku ramki</div>
+     ${[['SFGPUCI-------','Piechota — krzyż'],['SFGPUCIZ------','Piechota zmechanizowana'],['SFGPUCAT------','Pancerne — elipsa'],['SFGPUCR-------','Rozpoznanie — ukośna kreska'],['SFGPUCFHE-----','Artyleria samobieżna'],['SFGPUCD-------','Obrona przeciwlotnicza']].map(r=>`<div class="lg-r"><div class="s">${sym(r[0],26)}</div><div class="d">${r[1]}</div><div class="x"></div></div>`).join('')}
+     <div class="lg-g cap">Status</div><div class="lg-r"><div class="s">${sym('SHGAUCI----E---',26)}</div><div class="d">Ramka przerywana<small>niepotwierdzony / przewidywany</small></div><div class="x"></div></div>`;
+  }
+}
+const GFX=[['Granica','—·—·—'],['FLOT','linia przedniego skraju'],['Oś natarcia','strzałka z obrysem'],['Linia fazowa','PL'],['Rejon obrony','wielokąt z oznaczeniem'],['Zapora','zapora inżynieryjna']];
+function renderFlyout(){$('#flyout').innerHTML=`<div class="cl-g cap" style="padding-top:4px">Znaki taktyczne</div>`+GFX.map((g,i)=>`<div class="cl-i" data-gfx="${i}"><span class="ch-ic" style="width:20px">${ic('line','s')}</span><span>${g[0]}<small style="color:var(--t-3);margin-left:6px;font-size:11px">${g[1]}</small></span></div>`).join('')}
+
+/* ==========================================================================
+   OMNIBOX
+   ========================================================================== */
+let oSel=0,oFilter='all',oItems=[];
+const CMDS=[['Przejdź do tury bieżącej',()=>goTurn(CUR_TURN),'.'],['Otwórz odprawę',()=>openBrief(),'B'],['Pokaż legendę',()=>toggleLegend(true),'?'],['Rozpocznij pomiar odległości',()=>setTool('ruler'),'M'],['Podkład: satelitarny',()=>setBase('sat'),''],['Podkład: ciemny',()=>setBase('dark'),''],['Pokaż wszystkie siły własne',()=>fitAll(),'F']];
+function buildOmni(q){
+  q=q.trim().toLowerCase();const f=x=>!q||x.toLowerCase().includes(q);
+  const out=[];
+  if(oFilter==='all'||oFilter==='unit')UNITS.filter(u=>f(u.n+' '+u.id+' '+fullName(u))).slice(0,oFilter==='all'?4:14).forEach(u=>out.push({g:'Jednostki',t:u.n,u:fullName(u)+(u.p?' · podległa: '+U[u.p].n:''),s:sym(u.s,24),r:`<span class="mono">${mgrs(u.pos)}</span>`,run:()=>select(u.id,{from:'omni'})}));
+  if(oFilter==='all'||oFilter==='con')CONTACTS.filter(c=>f(c.id+' '+c.est)).slice(0,oFilter==='all'?2:9).forEach(c=>out.push({g:'Kontakty przeciwnika',t:c.id,u:c.est+' · '+ago(tmin(c.obs))+' temu · '+c.src,s:sym(c.s,24),r:`pewność ${c.conf}`,run:()=>select(c.id,{from:'omni'})}));
+  if(oFilter==='all'||oFilter==='place')PLACES.filter(p=>f(p.n+' '+p.t)).slice(0,oFilter==='all'?3:9).forEach(p=>out.push({g:'Miejsca',t:p.n,u:p.t,s:ic('pin'),r:'',run:()=>{map.flyTo(p.pos,12,{duration:.6});flash([p.pos[1],p.pos[0]],p.n)}}));
+  if(oFilter==='all'||oFilter==='cmd')CMDS.filter(c=>f(c[0])).slice(0,oFilter==='all'?3:9).forEach(c=>out.push({g:'Polecenia',t:c[0],u:'',s:ic('cmd'),r:c[2]?`<kbd>${c[2]}</kbd>`:'',run:c[1]}));
+  oItems=out;
+}
+function renderOmni(){
+  const q=$('#o-q').value;buildOmni(q);const el=$('#o-list');
+  if(!oItems.length){el.innerHTML=`<div class="o-none">Brak wyników dla „${esc(q)}”</div>`;return}
+  let g='',h='';oItems.forEach((it,i)=>{if(it.g!==g){g=it.g;h+=`<div class="o-g cap">${g}</div>`}
+    const t=q.trim()?esc(it.t).replace(new RegExp('('+q.trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig'),'<mark>$1</mark>'):esc(it.t);
+    h+=`<div class="o-i ${i===oSel?'sel':''}" data-i="${i}"><div class="s">${it.s}</div><div><div class="t">${t}</div>${it.u?`<div class="u">${esc(it.u)}</div>`:''}</div><div class="r">${it.r}${i===oSel?'<kbd>↵</kbd>':''}</div></div>`});
+  el.innerHTML=h;const s=$('.o-i.sel',el);s&&s.scrollIntoView({block:'nearest'});
+}
+function openOmni(){$('#omni').classList.add('open');$('#o-q').value='';oSel=0;oFilter='all';$$('#o-seg button').forEach(b=>b.classList.toggle('on',b.dataset.f==='all'));renderOmni();setTimeout(()=>$('#o-q').focus(),10)}
+function closeOmni(){$('#omni').classList.remove('open')}
+function runOmni(){const it=oItems[oSel];if(!it)return;closeOmni();it.run()}
+
+/* ==========================================================================
+   RÓŻNE
+   ========================================================================== */
+function setTool(t){st.tool=t;$$('.tool[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));$('#tool-gfx').classList.remove('on');closePops()}
+function toggleLegend(v){const el=$('#legend');const on=v===undefined?!el.classList.contains('open'):v;closePops('legend');el.classList.toggle('open',on);$('#b-legend').classList.toggle('on',on);if(on)renderLegend($('#seg-leg .on').dataset.l)}
+function toggleLayers(){const el=$('#layers');const on=!el.classList.contains('open');closePops('layers');el.classList.toggle('open',on);$('#b-layers').classList.toggle('on',on)}
+function closePops(except){['legend','layers','flyout'].forEach(id=>{if(id!==except){$('#'+id).classList.remove('open')}});if(except!=='legend')$('#b-legend').classList.remove('on');if(except!=='layers')$('#b-layers').classList.remove('on');if(except!=='flyout')$('#tool-gfx').classList.remove('on')}
+function fitAll(){map.flyToBounds(L.latLngBounds(UNITS.filter(u=>u.id!=='dd'&&u.id!=='zt-biebrza'&&u.id!=='zt-mamry').map(u=>ll(u.pos))).pad(.25),{duration:.5})}
+function syncSeg(){$$('#seg-detail button').forEach(b=>b.classList.toggle('on',b.dataset.d===st.detail))}
+function openBrief(){$('#brief').classList.add('open')}
+function closeBrief(){$('#brief').classList.remove('open')}
+function toast(title,text,urg,act){const t=document.createElement('div');t.className='toast'+(urg?' urg':'');t.innerHTML=`<b>${title}</b><p>${text}</p><button class="btn sm act">${act||'Otwórz'}</button>`;$('#toasts').appendChild(t);$('.act',t).onclick=()=>{openChannel('dd');t.remove();if(matchMedia('(max-width:760px)').matches)setM('msg')};setTimeout(()=>t.remove(),9000)}
+function setM(m){document.body.dataset.m=m;$$('#tabbar button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));if(m==='map')setTimeout(()=>map.invalidateSize(),50)}
+
+/* tooltips */
+const tip=$('#tip');
+document.addEventListener('mouseover',e=>{const t=e.target.closest&&e.target.closest('[data-tip]');if(!t){tip.classList.remove('on');return}
+  tip.innerHTML=esc(t.dataset.tip)+(t.dataset.k?` <kbd>${esc(t.dataset.k)}</kbd>`:'');tip.classList.add('on');
+  const r=t.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;let x,y;
+  if(t.dataset.pos==='r'){x=r.right+8;y=r.top+(r.height-h)/2}else if(t.dataset.pos==='l'){x=r.left-w-8;y=r.top+(r.height-h)/2}else{x=r.left+(r.width-w)/2;y=r.bottom+6;if(y+h>innerHeight-4)y=r.top-h-6}
+  x=Math.max(6,Math.min(x,innerWidth-w-6));tip.style.left=x+'px';tip.style.top=y+'px'});
+document.addEventListener('mouseleave',()=>tip.classList.remove('on'));
+
+/* ---------- zdarzenia ---------- */
+document.addEventListener('click',e=>{
+  const T=e.target;
+  const car=T.closest('[data-car]');if(car){const id=car.dataset.car;if(kids(id).length){open.has(id)?open.delete(id):open.add(id);renderTree()}e.stopPropagation();return}
+  const mg=T.closest('[data-msg]');if(mg){const id=mg.dataset.msg;const ch=CHM[id];if(ch){openChannel(id);if(matchMedia('(max-width:760px)').matches)setM('msg')}e.stopPropagation();return}
+  const row=T.closest('.trow,.tcon');if(row&&row.dataset.id&&row.closest('#tree-scroll')){select(row.dataset.id,{from:'tree',mob:null});return}
+  const sh=T.closest('.sec-h');if(sh){secState[sh.dataset.sec]=secState[sh.dataset.sec]?0:1;renderTree();return}
+  const go=T.closest('[data-go]');if(go){select(go.dataset.go,{from:'mention'});return}
+  const pl=T.closest('[data-place]');if(pl){const p=PLACES.find(x=>x.n===pl.dataset.place);if(p){map.flyTo(p.pos,12,{duration:.6});flash([p.pos[1],p.pos[0]],p.n);if(matchMedia('(max-width:760px)').matches)setM('map')}return}
+  const at=T.closest('[data-att]');if(at){map.flyTo([54.215,22.84],11.5,{duration:.6});flash([22.84,54.215],at.dataset.att);if(matchMedia('(max-width:760px)').matches)setM('map');return}
+  const ac=T.closest('[data-act]');if(ac){const a=ac.dataset.act;if(a==='msg'){const ch=CHM[st.sel];if(ch)openChannel(st.sel);else{toast('Kanał','Jednostka bez kanału — wiadomość przez przełożonego.',false,'OK')}if(matchMedia('(max-width:760px)').matches)setM('msg')}
+    if(a==='aim'){const o=U[st.sel]||C[st.sel];o&&map.flyTo(ll(o.pos),11.5,{duration:.5})}if(a==='s2'){openChannel('s2')}return}
+  const ct=T.closest('.chtab,.cl-i[data-ch]');if(ct){openChannel(ct.dataset.ch);return}
+  if(T.closest('#m-more')){const p=$('#chlist');p.classList.toggle('open');$('#m-more').classList.toggle('on',p.classList.contains('open'));return}
+  const tool=T.closest('.tool[data-tool]');if(tool){setTool(tool.dataset.tool);return}
+  if(T.closest('#tool-gfx')){const f=$('#flyout');const on=!f.classList.contains('open');closePops('flyout');f.classList.toggle('open',on);$('#tool-gfx').classList.toggle('on',on);return}
+  const gf=T.closest('[data-gfx]');if(gf){$('#flyout').classList.remove('open');$$('.tool').forEach(b=>b.classList.remove('on'));$('#tool-gfx').classList.add('on');toast('Narzędzie: '+GFX[gf.dataset.gfx][0],'Kliknij na mapie, aby rozpocząć. Esc — anuluj.',false,'OK');return}
+  if(T.closest('#b-layers')){toggleLayers();return}
+  if(T.closest('#b-legend')||T.closest('#tb-help')){toggleLegend();return}
+  if(T.closest('#leg-x')){toggleLegend(false);return}
+  const sl=T.closest('#seg-leg button');if(sl){$$('#seg-leg button').forEach(b=>b.classList.toggle('on',b===sl));renderLegend(sl.dataset.l);return}
+  const bs=T.closest('[data-base]');if(bs){setBase(bs.dataset.base);return}
+  const ov=T.closest('[data-ov]');if(ov&&!ov.classList.contains('soon')){const k=ov.dataset.ov;if(k==='labels'){ov.classList.toggle('on');document.querySelectorAll('.mk-lbl').forEach(l=>l.style.display=ov.classList.contains('on')?'':'none');return}OVER[k]=OVER[k]?0:1;const g={bounds:gLines,sub:gSub,cons:gCon}[k];if(g){OVER[k]?map.addLayer(g):map.removeLayer(g)}renderLayers();return}
+  const sd=T.closest('#seg-detail button');if(sd){st.detail=sd.dataset.d;syncSeg();applyDetail();return}
+  const sg=T.closest('#in-tabs button');if(sg){st.itab=sg.dataset.t;$$('#in-tabs button').forEach(b=>b.classList.toggle('on',b===sg));renderInsp();return}
+  const nd=T.closest('.tl-node');if(nd&&!nd.classList.contains('fut')){goTurn(+nd.dataset.turn);return}
+  if(T.closest('#t-prev,#tl-prev')){goTurn(st.viewTurn-1);return}
+  if(T.closest('#t-next,#tl-next')){goTurn(st.viewTurn+1);return}
+  if(T.closest('#t-cur,#tl-cur')){goTurn(CUR_TURN);return}
+  if(T.closest('#omni-open')){openOmni();return}
+  if(T.closest('#omni')&&!T.closest('.omni-box')){closeOmni();return}
+  const oi=T.closest('.o-i');if(oi){oSel=+oi.dataset.i;runOmni();return}
+  const of=T.closest('#o-seg button');if(of){oFilter=of.dataset.f;$$('#o-seg button').forEach(b=>b.classList.toggle('on',b===of));oSel=0;renderOmni();$('#o-q').focus();return}
+  if(T.closest('#tb-brief')){openBrief();return}
+  if(T.closest('#br-x')){closeBrief();return}
+  const bt=T.closest('#br-toc a');if(bt){$$('#br-toc a').forEach(a=>a.classList.toggle('on',a===bt));const t=document.getElementById(bt.dataset.s);t&&t.scrollIntoView({behavior:'smooth',block:'start'});return}
+  if(T.closest('#tb-bell')){toast('Gen. bryg. Nowicki · PILNE','Przeciwnik w sile ok. batalionu forsuje rejon Żytkiejm…',true,'Czytaj');return}
+  if(T.closest('#tb-l')){document.body.classList.toggle('no-l');$('#tb-l').classList.toggle('on');setTimeout(()=>map.invalidateSize(),50);return}
+  if(T.closest('#tb-r')){document.body.classList.toggle('no-r');$('#tb-r').classList.toggle('on');setTimeout(()=>map.invalidateSize(),50);return}
+  if(T.closest('#in-x')){st.sel=null;renderTree();renderInsp();paintSel();return}
+  if(T.closest('#in-aim')){const o=U[st.sel]||C[st.sel];o&&map.flyTo(ll(o.pos),11.5,{duration:.5});return}
+  if(T.closest('#tr-fold')){open.clear();open.add('hq');renderTree();return}
+  if(T.closest('#tr-unfold')){UNITS.forEach(u=>open.add(u.id));renderTree();return}
+  const ty=T.closest('#seg-type button');if(ty){setType(ty.dataset.ty);return}
+  if(T.closest('#sw-urg')){$('#sw-urg').classList.toggle('on');return}
+  if(T.closest('#b-att')){const m=$('#attmenu');$('#tplmenu').classList.remove('open');m.innerHTML=`<div class="cl-g cap">Dołącz szkic z mapy</div>`+[['Rejon A','rejon obrony'],['Oś kontrataku','oś natarcia'],['Hipoteza 1','symbol']].map(a=>`<div class="cl-i" data-addatt="${a[0]}">${ic('clip','s')}<span>${a[0]}</span><small style="color:var(--t-3)">${a[1]}</small></div>`).join('');m.classList.toggle('open');return}
+  const aa=T.closest('[data-addatt]');if(aa){$('#c-chips').insertAdjacentHTML('beforeend',`<span class="att" style="margin:0">${ic('clip','s')}${esc(aa.dataset.addatt)}<a style="margin-left:4px;color:var(--t-3)" data-rmatt>${ic('x','s')}</a></span>`);$('#attmenu').classList.remove('open');return}
+  const ra=T.closest('[data-rmatt]');if(ra){ra.closest('.att').remove();return}
+  if(T.closest('#b-tpl')){const m=$('#tplmenu');$('#attmenu').classList.remove('open');m.innerHTML=`<div class="cl-g cap">Szablony</div>`+[['rozkaz','Rozkaz bojowy (5 punktów)'],['zarz','Zarządzenie'],['meld','Meldunek sytuacyjny']].map(a=>`<div class="cl-i" data-tpl="${a[0]}">${ic('tpl','s')}<span>${a[1]}</span></div>`).join('');m.classList.toggle('open');return}
+  const tp=T.closest('[data-tpl]');if(tp){setType(tp.dataset.tpl);$('#c-text').value=TPL[tp.dataset.tpl];$('#tplmenu').classList.remove('open');$('#c-text').focus();return}
+  if(T.closest('#c-send')){send();return}
+  if(T.closest('[data-undo]')){const m=T.closest('.msg');m&&m.remove();return}
+  const tb=T.closest('#tabbar button');if(tb){setM(tb.dataset.m);return}
+  if(!T.closest('.pop')&&!T.closest('#legend')&&!T.closest('#layers')){$$('.pop.open').forEach(p=>{if(!p.matches('#flyout'))p.classList.remove('open')});$('#m-more').classList.remove('on')}
+});
+function send(){
+  const ta=$('#c-text');const raw=ta.value.trim();if(!raw||Object.values(TPL).includes(ta.value)){ta.focus();return}
+  const type={rozkaz:'ord',zarz:'zarz',meld:'rep',msg:''}[curType];
+  const atts=$$('#c-chips .att').map(a=>[a.textContent.trim(),'szkic']);
+  const body='<p>'+esc(raw).split('\n').join('</p><p>')+'</p>';
+  (MSGS[st.ch]=MSGS[st.ch]||[]).push({d:CUR_TURN*TURN_MIN+5,out:1,type,urgent:$('#sw-urg').classList.contains('on'),text:body,att:atts});
+  ta.value='';$('#c-chips').innerHTML='';$('#sw-urg').classList.remove('on');renderThread();
+  toast('Rozkaz zapisany w skrzynce','Zostanie rozpatrzony po „koniec tury”.',false,'OK');
+}
+$('#tr-q').addEventListener('input',e=>{st.filter=e.target.value;renderTree()});
+$('#o-q').addEventListener('input',()=>{oSel=0;renderOmni()});
+$('#c-text').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();send()}});
+document.addEventListener('keydown',e=>{
+  const inField=/INPUT|TEXTAREA/.test((e.target||{}).tagName||'');
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();$('#omni').classList.contains('open')?closeOmni():openOmni();return}
+  if($('#omni').classList.contains('open')){
+    if(e.key==='Escape'){closeOmni();return}
+    if(e.key==='ArrowDown'){e.preventDefault();oSel=Math.min(oItems.length-1,oSel+1);renderOmni()}
+    if(e.key==='ArrowUp'){e.preventDefault();oSel=Math.max(0,oSel-1);renderOmni()}
+    if(e.key==='Enter'){e.preventDefault();runOmni()}
+    return}
+  if(e.key==='Escape'){if($('#brief').classList.contains('open')){closeBrief();return}closePops();$$('.pop.open').forEach(p=>p.classList.remove('open'));return}
+  if(inField)return;
+  const k=e.key.toLowerCase();
+  if(k==='/'){e.preventDefault();$('#tr-q').focus();return}
+  if(e.altKey&&k==='1'){$('#tb-l').click();return}
+  if(e.altKey&&k==='2'){$('#tb-r').click();return}
+  if(e.ctrlKey||e.metaKey)return;
+  if(k==='b'){openBrief();return}
+  if(k==='?'){toggleLegend();return}
+  if(k==='w'){toggleLayers();return}
+  if(k==='f'){fitAll();return}
+  if(k===','){goTurn(st.viewTurn-1);return}
+  if(k==='.'){goTurn(st.viewTurn+1);return}
+  const tk={v:'select',a:'arrow',l:'line',r:'area',p:'point',y:'symbol',m:'ruler'};if(tk[k]){setTool(tk[k]);return}
+  if(k==='1'||k==='2'||k==='3'){st.detail=['auto','bat','coy'][+k-1];syncSeg();applyDetail()}
+});
+/* splittery: przeciąganie, klawiatura, dwuklik = domyślnie, zapis w localStorage */
+(function(){
+ const root=document.documentElement;
+ const SP={
+  l:{ax:'x',min:220,max:520,def:312,inv:0,get:()=>$('#dock-l').offsetWidth,set:v=>root.style.setProperty('--dock-l',v+'px'),collapse:'#tb-l'},
+  r:{ax:'x',min:300,max:640,def:392,inv:1,get:()=>$('#dock-r').offsetWidth,set:v=>root.style.setProperty('--dock-r',v+'px'),collapse:'#tb-r'},
+  t:{ax:'y',min:64,max:240,def:98,inv:1,get:()=>$('#timeline').offsetHeight,set:v=>root.style.setProperty('--tl-h',v+'px')},
+  i:{ax:'y',min:120,max:()=>$('#dock-l').offsetHeight-152,def:null,inv:0,get:()=>$('#p-tree').offsetHeight,set:v=>{const a=$('#p-tree'),b=$('#p-insp');if(v==null){a.style.flex='';b.style.flex='';return}a.style.flex='0 0 '+v+'px';b.style.flex='1 1 0'}},
+  c:{ax:'y',min:56,max:320,def:78,inv:1,get:()=>$('#c-text').offsetHeight,set:v=>{$('#c-text').style.height=v+'px'}}};
+ const mx=c=>typeof c.max==='function'?c.max():c.max;
+ const store=(k,v)=>{try{v==null?localStorage.removeItem('ks.split.'+k):localStorage.setItem('ks.split.'+k,v)}catch(e){}};
+ const load=k=>{try{return localStorage.getItem('ks.split.'+k)}catch(e){return null}};
+ let rz;const fit=()=>{clearTimeout(rz);rz=setTimeout(()=>{map.invalidateSize();renderTimeline()},30)};
+ function apply(k,v,save){const c=SP[k];if(v==null){c.set(c.def);store(k,null)}else{v=Math.max(c.min,Math.min(mx(c),Math.round(v)));c.set(v);if(save)store(k,v)}const el=$('#sp-'+k);if(el){el.setAttribute('aria-valuenow',c.get());el.setAttribute('aria-valuemin',c.min);el.setAttribute('aria-valuemax',typeof c.max==='function'?'':c.max)}fit()}
+ Object.keys(SP).forEach(k=>{const v=load(k);if(v!=null)apply(k,+v,false);const el=$('#sp-'+k);
+  let start,v0,raw;
+  el.addEventListener('pointerdown',e=>{el.setPointerCapture(e.pointerId);el.classList.add('drag');document.body.classList.add('dragging',SP[k].ax==='x'?'dx':'dy');start=SP[k].ax==='x'?e.clientX:e.clientY;v0=SP[k].get()});
+  el.addEventListener('pointermove',e=>{if(!el.classList.contains('drag'))return;const c=SP[k];const d=(c.ax==='x'?e.clientX:e.clientY)-start;raw=v0+(c.inv?-d:d);apply(k,raw,false)});
+  const end=()=>{if(!el.classList.contains('drag'))return;el.classList.remove('drag');document.body.classList.remove('dragging','dx','dy');const c=SP[k];
+   if(c.collapse&&raw<c.min-60){apply(k,null);$(c.collapse).click()}else apply(k,c.get(),true)};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  el.addEventListener('dblclick',()=>apply(k,null));
+  el.addEventListener('keydown',e=>{const c=SP[k];const keys=c.ax==='x'?['ArrowLeft','ArrowRight']:['ArrowUp','ArrowDown'];
+   if(e.key==='Home'){e.preventDefault();apply(k,null);return}
+   const i=keys.indexOf(e.key);if(i<0)return;e.preventDefault();const step=(e.shiftKey?48:16)*(i?1:-1)*(c.inv?-1:1);apply(k,c.get()+step,true)});
+ });
+ window.addEventListener('resize',fit);
+})();
+
+/* ---------- start ---------- */
+setBase('dark');drawStatic();applyDetail();renderTree();renderInsp();renderChTabs();renderThread();renderTimeline();renderLayers();renderFlyout();renderLegend('map');setType('rozkaz');$('#c-text').value='';
+UNREAD.dd=1;
+const H=location.hash;
+setTimeout(()=>{map.invalidateSize();$('#st-z').textContent=map.getZoom()},60);
+if(H.includes('omni'))openOmni();
+if(H.includes('legend'))toggleLegend(true);
+if(H.includes('layers'))toggleLayers();
+if(H.includes('brief'))openBrief();
+if(H.includes('m=')){const m=(H.match(/m=(\w+)/)||[])[1];setM(m)}
+if(H.includes('sel=')){select(H.match(/sel=([\w-]+)/)[1],{from:'tree'})}
+window.__mock={select,openOmni,toggleLegend,setM};
+})();
+</script>
+</body>
+</html>

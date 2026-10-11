@@ -1,0 +1,77 @@
+/* Struktura: filtr, sekcje, drzewo z liniami łączącymi, wiersze kontaktów */
+/* ---- drzewo ---- */
+.tree-filter{display:flex;align-items:center;gap:6px;margin:8px 12px;height:28px;padding:0 8px;background:var(--bg-0);border:1px solid var(--line-2);border-radius:var(--r-3);color:var(--t-3)}
+.tree-filter:focus-within{border-color:var(--accent)}
+.tree-filter input{flex:1;background:none;border:0;outline:0;color:var(--t-1);min-width:0}
+.tree-filter input::placeholder{color:var(--t-3)}
+#tree-scroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 0 10px;isolation:isolate}
+.sec-h{position:sticky;top:0;bottom:0;z-index:3;background:var(--bg-1);display:flex;align-items:center;gap:8px;height:26px;padding:0 12px 0 8px;margin-top:6px;color:var(--t-3);cursor:pointer;user-select:none;border-top:1px solid var(--line)}
+.sec-h:first-child{margin-top:0;border-top:0}
+.sec-h:hover{color:var(--t-2)}
+.sec-h .car{transition:transform .12s}
+.sec-h.closed .car{transform:rotate(-90deg)}
+.sec-h .cap{color:inherit;flex:1}
+.sec-b.closed{display:none}
+.tree,.tree ul{list-style:none;margin:0;padding:0}
+.tree{padding:0 8px 0 6px}
+.tree ul{margin-left:7px}
+.tree li{position:relative;padding-left:14px}
+.tree>li{padding-left:0}
+.tree li::before{content:"";position:absolute;left:0;top:0;bottom:0;border-left:1px solid #3a4b61}
+.tree li:last-child::before{bottom:auto;height:14px}
+.tree li::after{content:"";position:absolute;left:0;top:14px;width:12px;border-top:1px solid #3a4b61}
+.tree>li::before,.tree>li::after{display:none}
+.trow{position:relative;display:flex;align-items:center;gap:8px;height:28px;padding-right:2px;cursor:pointer;color:var(--t-2);white-space:nowrap}
+.trow::before{content:"";position:absolute;top:1px;bottom:1px;left:-400px;right:-400px;border-radius:0;z-index:-1}
+.trow:hover::before{background:var(--bg-3)}
+.trow.sel::before{background:var(--bg-4);box-shadow:inset 2px 0 0 var(--accent)}
+.trow.sel{color:var(--t-1)}
+.trow.sel .tname{font-weight:600}
+.tcar{width:14px;height:14px;display:grid;place-items:center;color:var(--t-3);flex:none;border-radius:2px}
+.tcar:hover{color:var(--t-1);background:var(--bg-4)}
+.tcar svg{transition:transform .12s;width:11px;height:11px;stroke-width:2}
+.tcar.open svg{transform:rotate(90deg)}
+.tcar.leaf{visibility:hidden}
+.tsym{width:24px;height:22px;display:grid;place-items:center;flex:none}
+.tsym svg{max-width:24px;max-height:22px;width:auto;height:auto}
+.tname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:12px;color:inherit}
+.tname em{font-style:normal;color:var(--t-3);margin-left:6px;font-size:11px}
+.tmsg{display:none;color:var(--t-3)}
+.trow:hover .tmsg{display:grid}
+.tmsg:hover{color:var(--accent)}
+.ubadge{min-width:16px;height:16px;border-radius:8px;background:var(--accent-2);color:#fff;font:700 11px/16px var(--font-ui);text-align:center;padding:0 4px;flex:none}
+.ubadge.urg{background:var(--danger);color:#1a0c0a}
+.sbar{width:34px;height:4px;background:var(--bg-0);border:1px solid var(--line-2);border-radius:1px;overflow:hidden;flex:none}
+.sbar i{display:block;height:100%;background:var(--ok)}
+.sbar.warn i{background:var(--warn)} .sbar.bad i{background:var(--danger)}
+.spct{width:28px;text-align:right;font:500 11px/1 var(--font-mono);color:var(--t-3);flex:none}
+.trow.sel .spct{color:var(--t-2)}
+.tdim{opacity:.4}
+.tcon{display:flex;align-items:center;gap:8px;height:28px;padding:0 12px 0 20px;cursor:pointer;color:var(--t-2);position:relative}
+.tcon::before{content:"";position:absolute;inset:1px 0;z-index:-1}
+.tcon:hover::before{background:var(--bg-3)}
+.tcon.sel::before{background:var(--bg-4);box-shadow:inset 2px 0 0 var(--accent)}
+.tcon .age{font:500 11px/1 var(--font-mono);color:var(--t-3)}
+.tcon .tname{flex:1}
+.conf{width:6px;height:6px;border-radius:50%;flex:none}
+.conf.h{background:var(--hostile)} .conf.m{background:var(--hostile);opacity:.6} .conf.l{border:1px solid var(--hostile)}
+
+.sec-b{padding-bottom:2px}
+.sec-h{outline-offset:-2px}
+.trow:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+.trow.hov::before{background:var(--bg-3)}
+.trow.hov.sel::before{background:var(--bg-4)}
+.trow .tmsg{width:20px;height:20px}
+.tcon.trow{padding-left:12px;height:28px}
+.tcon.trow .tname{flex:1}
+.tcon.trow::before{left:-400px;right:-400px;top:1px;bottom:1px}
+.tcon .tsym{flex:none}
+.trow{scroll-margin-top:30px;scroll-margin-bottom:82px}
+
+/* formacje sąsiadów: ten sam wygląd drzewa, ale przygaszone (nie podlegają graczowi) */
+.tree.tree--nb{padding-top:2px}
+.trow.nb-unit{color:var(--t-3)}
+.trow.nb-unit .tname{font-style:normal}
+.trow.nb-unit .tsym svg{opacity:.8}
+.trow.nb-unit.sel{color:var(--t-2)}
+.trow.nb-unit .sbar{opacity:.7}

@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "id": "00-test-przesmyk",
+  "title": "Ćwiczenie „Przesmyk” (scenariusz testowy)",
+  "status": "active",
+  "side": "PL",
+  "scale": "brygada",
+  "timezone": "Europe/Warsaw",
+  "start": "2026-05-14T06:00:00+02:00",
+  "turnMinutes": 120,
+  "map": {
+    "center": [
+      22.95,
+      54.15
+    ],
+    "zoom": 10
+  },
+  "channels": [
+    {
+      "id": "dd",
+      "name": "Dowództwo dywizji",
+      "kind": "superior",
+      "description": "Przełożony — dowódca dywizji, SD w Ełku",
+      "short": "DD"
+    },
+    {
+      "id": "zt-mamry",
+      "name": "ZT „Mamry”",
+      "kind": "neighbor",
+      "description": "Sąsiad z lewa — kierunek Gołdap–Olecko",
+      "short": "MAM"
+    },
+    {
+      "id": "zt-biebrza",
+      "name": "ZT „Biebrza”",
+      "kind": "neighbor",
+      "description": "Sąsiad z prawa (z tyłu) — kierunek Augustów",
+      "short": "BIE"
+    },
+    {
+      "id": "1bzmot",
+      "name": "1 bzmot",
+      "kind": "subordinate",
+      "description": "1. batalion zmechanizowany",
+      "short": "1bz"
+    },
+    {
+      "id": "2bzmot",
+      "name": "2 bzmot",
+      "kind": "subordinate",
+      "description": "2. batalion zmechanizowany",
+      "short": "2bz"
+    },
+    {
+      "id": "bcz",
+      "name": "bcz",
+      "kind": "subordinate",
+      "description": "Batalion czołgów — odwód",
+      "short": "bcz"
+    },
+    {
+      "id": "dart",
+      "name": "dart",
+      "kind": "subordinate",
+      "description": "Dywizjon artylerii samobieżnej (155 mm)",
+      "short": "dart"
+    },
+    {
+      "id": "krozp",
+      "name": "krozp",
+      "kind": "subordinate",
+      "description": "Kompania rozpoznawcza",
+      "short": "kr"
+    },
+    {
+      "id": "log",
+      "name": "Szef logistyki",
+      "kind": "logistics",
+      "description": "S4 i batalion logistyczny",
+      "short": "S4",
+      "unit": "blog"
+    },
+    {
+      "id": "s2",
+      "name": "S2 / BSP",
+      "kind": "recon",
+      "description": "Sekcja rozpoznania — meldunki z dronów i rozpoznania",
+      "short": "S2",
+      "unit": "hq"
+    }
+  ]
+}

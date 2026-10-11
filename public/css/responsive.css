@@ -1,0 +1,56 @@
+/* Węższe okna (≤ 1200, ≤ 980, ≤ 760 px) i ograniczony ruch */
+/* ==========================================================================
+   RWD
+   ========================================================================== */
+@media (max-width:1200px){:root{--dock-l:276px;--dock-r:340px}.clock-time i{display:none}.brand span{max-width:140px}.tl-r{display:none}}
+@media (max-width:980px){:root{--dock-l:248px;--dock-r:300px}.omni-btn kbd,.omni-btn span{display:none}.omni-btn{flex:0 0 32px;justify-content:center;padding:0;margin-left:auto}.tl-l{width:120px}.pill.hide-m{display:none}}
+@media (max-width:760px){
+  :root{--topbar-h:46px}
+  #app{grid-template-columns:minmax(0,1fr);grid-template-rows:var(--topbar-h) minmax(0,1fr) 56px;grid-template-areas:"top" "center" "tab"}
+  #tabbar{grid-area:tab;display:grid;grid-template-columns:repeat(4,1fr);background:var(--bg-1);border-top:1px solid var(--line);z-index:var(--z-topbar);padding-bottom:env(safe-area-inset-bottom)}
+  #tabbar button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--t-3);font-size:11px;position:relative}
+  #tabbar button.on{color:var(--accent)}
+  #tabbar button.on::before{content:"";position:absolute;top:0;left:22%;right:22%;height:2px;background:var(--accent)}
+  #tabbar svg{width:20px;height:20px}
+  #tabbar .dot-badge{top:5px;right:calc(50% - 20px)}
+  #dock-l,#dock-r{display:none;position:fixed;left:0;right:0;top:var(--topbar-h);bottom:56px;z-index:var(--z-dock);border:0;width:auto}
+  body[data-m="tree"] #dock-l,body[data-m="insp"] #dock-l,body[data-m="msg"] #dock-r{display:flex}
+  body[data-m="tree"] #p-insp,body[data-m="tree"] #sp-i{display:none}
+  body[data-m="insp"] #p-tree,body[data-m="insp"] #sp-i{display:none}
+  /* na telefonie docki to arkusze: zwinięcie do szyny nie obowiązuje */
+  body.l-collapsed #dock-l .dock-body,body.r-collapsed #dock-r .dock-body{display:flex}
+  body.l-collapsed #dock-l .dock-rail,body.r-collapsed #dock-r .dock-rail{display:none}
+  .leader{display:none}
+  body[data-m="tree"] #p-tree,body[data-m="insp"] #p-insp{flex:1}
+  .brand{flex:none}.brand span,.clock-time i,.tb-btn .lbl,.pill{display:none}#tb-l,#tb-r{display:none}
+  .brand b{display:none}
+  .clock-mid{padding:0 8px;gap:6px}
+  .clock>button{width:26px}
+  .tb-btn{padding:0 7px}
+  #tb-brief,#tb-help,#tb-bell{display:none}
+  .omni-btn{margin-left:auto}
+  #timeline{height:70px}.tl-l,.tl-r{display:none}.tl-mid{padding:0 14px}.tl-axis{left:14px;right:14px}
+  .tl-lane.msgs{top:50px}.tl-lane.ords,.tl-lane.cons{display:none}
+  #rail{top:8px;left:8px;flex-direction:row;flex-wrap:wrap;max-width:calc(100% - 60px)}
+  #rail .sep{width:1px;height:auto;margin:4px 3px}
+  .tool{width:30px;height:30px}
+  #rail .t-extra{display:none}
+  #detail{top:auto;bottom:8px;left:8px;transform:none}
+  #detail .cap{display:none}
+  #mapctl{right:8px;top:8px}
+  #layers,#legend{right:8px;left:8px;width:auto;top:52px}
+  #flyout{left:8px;top:48px}
+  #status{display:none}
+  .leaflet-control-scale{display:none}
+  #toasts{left:8px;right:8px;width:auto;bottom:8px}
+  .br-main{grid-template-columns:minmax(0,1fr)}.br-toc,.br-side{display:none}.br-doc{padding:20px 16px 60px}
+  .msg{padding-right:12px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+@media (max-width:760px){
+  .tool,.rail-btn{min-width:30px}
+  #app{--dock-l:0px;--dock-r:0px}
+  .tl-lane.cons,.tl-lane.ords{display:none}
+  #bell-pop{right:8px;left:8px;width:auto}
+}
