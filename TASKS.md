@@ -549,6 +549,21 @@ Wytrzymałość jako zasób: rotacja i odpoczynek stają się decyzją.
 - [A] Inspektor pokazuje kategorię i kolor.
 - [M] Brygada po dobie ciągłej walki melduje „nie stać nas na natarcie" i realnie zwalnia; świeża rezerwa działa pełnym tempem.
 
+## T28.1 — Strefa sztabu (S2/S3/S4) ⬜
+Na starcie każdej tury gracz dostaje krótką odprawę sztabu: trzy stanowiska (S2 — wywiad, S3 — operacje, S4 — logistyka). Gracz siedzi w dowództwie, nie patrzy z góry.
+
+**WA**
+1. `staff` w `player/turns/NNN.json` (biała lista): tablica do 3 pozycji `{ role: "s2"|"s3"|"s4", name: "stopień nazwisko, funkcja", text: ≤ 300 znaków, time: ISO }`. Walidator: role z listy, unikalność ról w turze, `time` w okresie tury (poza → uwaga).
+2. UI: panel „Odprawa sztabu" przy wejściu na turę — trzy karty z odznaką roli (S2/S3/S4), nazwą, tekstem i DTG. Kliknięcie karty otwiera kanał danej postaci. Panel da się zamknąć i przywołać (ikona przy zegarze), stan zapamiętany (`localStorage`).
+3. Widok odprawy działa też w archiwum (odprawa danej tury). Na wąskich ekranach panel mieści się w zakładce.
+4. CLAUDE.md: procedura pisania odprawy na start każdej tury — krótko i wojskowo, **bez prawdy** (S2/S3/S4 jej nie znają): S2 ocena wroga z pewnością, S3 ocena własna i propozycja, S4 stan logistyki i ryzyka. Wzory: *„S2: wróg przegrupowuje się na zachód — pewność średnia"*, *„S3: 1 bzmot wykrwawiony, proponuję rotację 1k"*, *„S4: amunicja dart 0,4 doby, konwój 3 opóźniony"*.
+5. Wprowadzamy na żywo w poligonie (`00-test-przesmyk`) od pierwszej rozstrzyganej tury po wdrożeniu.
+
+**Scenariusze testowe**
+- [A] Walidator: struktura `staff`, role z listy, duplikat roli → błąd, `time` poza turą → uwaga, `staff` spoza białej listy w innych plikach gracza → błąd.
+- [A] Logika UI: budowa odprawy (role, teksty, DTG), zamknięcie i przywołanie, stan w `localStorage`.
+- [M] Po rozstrzygnięciu tury aplikacja pokazuje odprawę S2/S3/S4; klik karty otwiera kanał; w archiwum widać odprawę tamtej tury.
+
 # Etap v0.3 — po bitwie (realizowany w krokach 2 i 3)
 
 Tryb po bitwie powstaje w dwóch kawałkach: **minimalny w kroku 2** (T29 — odblokowanie prawdy i AAR po `status: “finished”`) i **pełny w kroku 3** (T32 — suwak czasu i warstwy dla kampanii). Oryginalne zadania T20–T22 pozostają tu jako punkt odniesienia:
