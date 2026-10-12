@@ -553,6 +553,24 @@ Zadanie planistyczne: wynikiem jest dokument `docs/DEPLOYMENT.md`, a nie kod.
 **Scenariusze testowe**
 - [M] Przegląd dokumentu z graczem: decyzje z punktów 1–5 zaakceptowane.
 
+## T39 — Plan interakcji z AI (sędzia bez API) ⬜
+Zadanie planistyczne, powiązane z T38: wynik w `docs/AI-INTERFACE.md`. Cel: sędzia (Claude) działa w ramach subskrypcji Claude, bez płatnego API, gdy gra stoi na serwerze.
+
+**Warianty do porównania**
+- **A. Pliki + lokalny Claude Code (stan obecny, zsynchronizowany):** serwer serwuje gre, a stan synchronizuje się z komputerem prowadzącego (git / rsync / folder synchronizowany). „Koniec tury” wyzwala prowadzący. Najprościej, ale wymaga obecności prowadzącego.
+- **B. Zdalny serwer MCP gry:** serwer gry wystawia narzędzia MCP (`get_turn`, `get_orders`, `write_turn`, `validate`, `send_messages`), dodane jako własny konektor w claude.ai lub Claude Code. Narzędzia pilnują uczciwości: `umpire/` tylko przez MCP, walidacja przed zapisem. Działa z subskrypcją; trzeba uwierzytelnić konektor (OAuth/token).
+- **C. Claude Code na serwerze (headless):** `claude -p` zalogowany subskrypcją, uruchamiany przez serwer, gdy obaj gracze zgłoszą koniec tury. W pełni automatycznie; sprawdzić warunki subskrypcji dla użycia automatycznego i limity.
+- **D. Repozytorium git + chmurowa sesja / rutyna Claude Code:** rozkazy z aplikacji trafiają jako commit; rutyna lub sesja w chmurze rozstrzyga turę i wypycha wynik. Bez własnego procesu AI na serwerze; opóźnienie zależne od wyzwalacza.
+- **E. (dla porównania) API Claude:** najpewniejsze i w pełni automatyczne, ale płatne za użycie.
+
+**WA**
+1. Każdy wariant opisany: przepływ tury, kto wyzwala, opóźnienie, koszt, ograniczenia subskrypcji, ryzyko wycieku `umpire/`.
+2. Rekomendacja i plan przejścia (np. A teraz → B docelowo).
+3. Dla wariantu wybranego: lista zadań wykonawczych z WA (np. serwer MCP: narzędzia, uwierzytelnienie, testy).
+
+**Scenariusze testowe**
+- [M] Przegląd dokumentu z graczem; wybrany wariant zaakceptowany.
+
 ---
 
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
