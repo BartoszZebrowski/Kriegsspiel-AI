@@ -1,32 +1,10 @@
 // Widok: lewy dok, panel „Struktura” — własne siły (drzewo z liniami łączącymi, paskami siły i plakietkami
 // nieprzeczytanych) oraz zwijane sekcje: przełożony i sąsiedzi, kontakty przeciwnika, środki rozpoznania.
 // Zaznaczenie jest jedno (store.selection): klik zaznacza, dwuklik / ikona kanału otwiera rozmowę.
-import { buildTree, echelonRank, BATTALION_RANK, splitUnits, channelForUnit, subtreeSum, formationTree, parentIdOf, isNeighbourUnit, reparentedParents, indexById } from '../domain/orbat.js';
-import { symbolSvg } from '../lib/symbols.js';
-import { ic } from '../lib/icons.js';
+import { buildTree, echelonRank, BATTALION_RANK, splitUnits, formationTree, parentIdOf, isNeighbourUnit, reparentedParents, indexById } from '../domain/orbat.js';
 import { escapeHtml as e } from '../domain/markdown.js';
-import { readinessLevel, readinessRatio } from '../domain/strength.js';
 import { ageMinutes, formatAgeShort } from '../domain/format.js';
-import { describeSidc } from '../domain/sidc.js';
-
-const SECTIONS = [
-  ['own', 'Siły własne'],
-  ['ext', 'Przełożony i sąsiedzi'],
-  ['con', 'Kontakty przeciwnika'],
-  ['ast', 'Środki rozpoznania'],
-];
-const SEC_H = 26;
-
-// Poziom siły jednostki 0–1 (osobowy stan, w razie braku — pole strength) albo null.
-function strengthRatio(u) {
-  if (u.personnel) return readinessRatio(u.personnel.current, u.personnel.authorized);
-  return typeof u.strength === 'number' ? u.strength : null;
-}
-const barClass = (r) => {
-  const l = readinessLevel(r);
-  return l === 'warn' ? 'warn' : l === 'bad' ? 'bad' : '';
-};
-const confClass = { wysoka: 'h', średnia: 'm', niska: 'l' };
+import { nodeHtml, subtreeMatches, matchesText, secHtml, neighbourRowHtml, contactRowHtml, assetRowHtml } from './structure/html.js';
 
 export function createStructureView({ store, controller, root = document }) {
   const $ = (id) => root.getElementById(id);
@@ -43,7 +21,7 @@ export function createStructureView({ store, controller, root = document }) {
   const nbSeen = new Set(); // dowództwa sąsiadów, które już raz rozwinięto domyślnie
 
   const q = () => filter.trim().toLowerCase();
-  const matchesText = (...parts) => !q() || parts.join(' ').toLowerCase().includes(q());
+  const matches = (node) => subtreeMatches(node, q());
 
   function ensureOpen(units) {
     if (open) return;
@@ -52,42 +30,6 @@ export function createStructureView({ store, controller, root = document }) {
   }
 
   // ---------- budowa HTML ----------
-  // Drzewo własnych sił oraz formacji sąsiada. Formacja (ctx.nb): korzeń = dowództwo sąsiada (z kanałem, jeśli ma),
-  // podwładni sąsiada tylko do odczytu — bez kanałów, plakietek nieprzeczytanych i przycisku wiadomości.
-  function nodeHtml(node, ctx, depth) {
-    const u = node.unit;
-    const nbChild = ctx.nb && depth > 0;
-    const nbRoot = ctx.nb && depth === 0;
-    const kids = node.children.filter((k) => subtreeMatches(k));
-    const hasKids = node.children.length > 0;
-    const isOpen = hasKids && (open.has(u.id) || (q() && kids.length > 0));
-    const ratio = strengthRatio(u);
-    const unread = nbChild ? 0 : subtreeSum(node, (x) => ctx.unreadUnits[x.id] || 0);
-    const ch = nbChild ? null : channelForUnit(ctx.channels, u.id);
-    const sym = u.sidc ? symbolSvg(u.sidc, { size: 20 }).svg : '';
-    const sel = ctx.selId === u.id;
-    const bar = ratio == null ? '' : `<span class="sbar ${barClass(ratio)}" title="Ukompletowanie ${Math.round(ratio * 100)}%"><i style="width:${Math.round(ratio * 100)}%"></i></span><span class="spct">${Math.round(ratio * 100)}</span>`;
-    const nbLabel = nbRoot ? `<em>${ctx.channel?.kind === 'superior' ? 'przełożony' : 'sąsiad'}</em>` : '';
-    return `<li data-id="${e(u.id)}" role="none"><div class="trow${sel ? ' sel' : ''}${nbRoot ? ' nb' : ''}${nbChild ? ' nb nb-unit' : ''}" data-id="${e(u.id)}" role="treeitem" aria-level="${depth + 1}" aria-selected="${sel}"${hasKids ? ` aria-expanded="${isOpen}"` : ''} tabindex="-1" title="${e(nbChild ? 'Sąsiad — brak dowodzenia' : u.status || describeSidc(u.sidc))}">
-      <span class="tcar${hasKids ? (isOpen ? ' open' : '') : ' leaf'}" data-car="${e(u.id)}">${ic('chev')}</span>
-      <span class="tsym">${sym}</span><span class="tname">${e(u.name || u.id)}${!ctx.nb && !u.parent && depth === 0 && node.children.length ? '<em>dowództwo</em>' : ''}${nbLabel}</span>
-      ${unread ? `<span class="ubadge">${unread}</span>` : ''}${ch ? `<button class="tmsg ibtn" type="button" data-msg="${e(u.id)}" data-tip="Otwórz kanał" aria-label="Otwórz kanał: ${e(u.name || u.id)}">${ic('msg', 's')}</button>` : ''}${bar}</div>
-      ${hasKids && isOpen && kids.length ? `<ul role="group">${kids.map((k) => nodeHtml(k, ctx, depth + 1)).join('')}</ul>` : ''}</li>`;
-  }
-
-  function subtreeMatches(node) {
-    if (!q()) return true;
-    const u = node.unit;
-    return matchesText(u.name, u.id) || node.children.some(subtreeMatches);
-  }
-
-  function secHtml(key, title, count, inner) {
-    const ix = SECTIONS.findIndex((s) => s[0] === key);
-    const closed = !sections[key];
-    return `<div class="sec-h${closed ? ' closed' : ''}" data-sec="${key}" role="button" tabindex="0" aria-expanded="${!closed}" style="top:${ix * SEC_H}px;bottom:${(SECTIONS.length - 1 - ix) * SEC_H}px">${ic('chevd', 's car')}<span class="cap">${title}</span><span class="count">${count}</span></div>
-      <div class="sec-b${closed ? ' closed' : ''}" data-secb="${key}">${inner}</div>`;
-  }
-
   function render() {
     const s = S();
     const turn = s.turn;
@@ -108,10 +50,10 @@ export function createStructureView({ store, controller, root = document }) {
       }
     }
     prevUnits = turn.units || [];
-    const ctx = { unreadUnits: s.unreadUnits, channels: s.channels, selId: s.selection?.id ?? null };
-    const tree = buildTree(own).filter(subtreeMatches);
+    const ctx = { unreadUnits: s.unreadUnits, channels: s.channels, selId: s.selection?.id ?? null, open, q: q() };
+    const tree = buildTree(own).filter(matches);
     const parts = [];
-    parts.push(secHtml('own', 'Siły własne', own.length, tree.length ? `<ul class="tree" role="tree" aria-label="Siły własne">${tree.map((n) => nodeHtml(n, ctx, 0)).join('')}</ul>` : '<p class="muted pad">Brak jednostek.</p>'));
+    parts.push(secHtml('own', 'Siły własne', own.length, tree.length ? `<ul class="tree" role="tree" aria-label="Siły własne">${tree.map((n) => nodeHtml(n, ctx, 0)).join('')}</ul>` : '<p class="muted pad">Brak jednostek.</p>', sections));
 
     // Sąsiedzi z własnymi jednostkami (`formation`) to rozwijane węzły; pozostali — płaskie wiersze jak dotąd.
     const trees = new Map(external.map(({ unit }) => [unit.id, formationTree(unit, formation)]));
@@ -126,7 +68,7 @@ export function createStructureView({ store, controller, root = document }) {
         openNew(t);
       }
     }
-    const ext = external.filter(({ unit }) => subtreeMatches(trees.get(unit.id)));
+    const ext = external.filter(({ unit }) => matches(trees.get(unit.id)));
     parts.push(
       secHtml(
         'ext',
@@ -136,42 +78,36 @@ export function createStructureView({ store, controller, root = document }) {
           .map(({ unit: u, channel }) => {
             const t = trees.get(u.id);
             if (t.children.length) return `<ul class="tree tree--nb" role="tree" aria-label="Formacja: ${e(u.name || u.id)}">${nodeHtml(t, { ...ctx, nb: true, channel }, 0)}</ul>`;
-            const n = ctx.unreadUnits[u.id] || 0;
-            const sel = ctx.selId === u.id;
-            return `<div class="tcon trow${sel ? ' sel' : ''}" data-id="${e(u.id)}" role="treeitem" aria-selected="${sel}" tabindex="-1"><span class="tsym">${u.sidc ? symbolSvg(u.sidc, { size: 20 }).svg : ''}</span><span class="tname">${e(u.name || u.id)}<em>${channel?.kind === 'superior' ? 'przełożony' : 'sąsiad'}</em></span>${n ? `<span class="ubadge${channel?.kind === 'superior' ? ' urg' : ''}">${n}</span>` : ''}${channel ? `<button class="tmsg ibtn" type="button" data-msg="${e(u.id)}" data-tip="Otwórz kanał" aria-label="Otwórz kanał: ${e(u.name || u.id)}">${ic('msg', 's')}</button>` : ''}</div>`;
+            return neighbourRowHtml(u, channel, ctx);
           })
           .join(''),
+        sections,
       ),
     );
 
-    const contacts = (turn.contacts || []).filter((c) => matchesText(c.id, c.estimate));
+    const contacts = (turn.contacts || []).filter((c) => matchesText(q(), c.id, c.estimate));
     parts.push(
       secHtml(
         'con',
         'Kontakty przeciwnika',
         (turn.contacts || []).length,
         contacts
-          .map((c) => {
-            const sel = ctx.selId === c.id;
-            const age = c.observed ? formatAgeShort(ageMinutes(c.observed, turn.time)) : '';
-            return `<div class="tcon trow${sel ? ' sel' : ''}" data-id="${e(c.id)}" role="treeitem" aria-selected="${sel}" tabindex="-1"><span class="tsym">${symbolSvg(c.sidc, { size: 20 }).svg}</span><span class="tname"><span class="mono hostile">${e(c.id)}</span><em>${e(c.estimate || '')}</em></span><span class="age">${e(age)}</span><span class="conf ${confClass[c.confidence] || 'l'}" title="pewność: ${e(c.confidence || 'brak')}"></span></div>`;
-          })
+          .map((c) => contactRowHtml(c, ctx, c.observed ? formatAgeShort(ageMinutes(c.observed, turn.time)) : ''))
           .join(''),
+        sections,
       ),
     );
 
-    const assets = (turn.assets || []).filter((a) => matchesText(a.name, a.id, a.type));
+    const assets = (turn.assets || []).filter((a) => matchesText(q(), a.name, a.id, a.type));
     parts.push(
       secHtml(
         'ast',
         'Środki rozpoznania',
         (turn.assets || []).length,
         assets
-          .map((a) => {
-            const sel = ctx.selId === a.id;
-            return `<div class="tcon trow${sel ? ' sel' : ''}" data-id="${e(a.id)}" role="treeitem" aria-selected="${sel}" tabindex="-1"><span class="tsym">${a.sidc ? symbolSvg(a.sidc, { size: 18 }).svg : ''}</span><span class="tname">${e(a.name || a.id)}<em>${a.pos ? 'w terenie' : 'gotowy'}</em></span></div>`;
-          })
+          .map((a) => assetRowHtml(a, ctx))
           .join(''),
+        sections,
       ),
     );
 

@@ -18,6 +18,8 @@ export const STATUS_INFO = {
   convoy: { planned: ['planowany', 'neutral'], moving: ['w marszu', 'ok'], halted: ['zatrzymany', 'warn'], delayed: ['opóźniony', 'warn'], destroyed: ['zniszczony', 'bad'], arrived: ['dotarł', 'ok'] },
 };
 export const ROUTE_COLORS = { open: '#43b581', threatened: '#e8b339', closed: '#ef4444' };
+// Symbole NATO (SIDC) składu i konwoju: zaopatrzenie / transport. Jedyne źródło dla mapy i inspektora.
+export const LG_SIDC = { depot: 'SFGPUSS--------', convoy: 'SFGPUST--------' };
 export const ROUTE_FALLBACK_COLOR = '#9aa5b1';
 
 export const statusInfo = (kind, status) => {

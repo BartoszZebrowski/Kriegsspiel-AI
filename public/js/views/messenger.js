@@ -3,34 +3,14 @@
 // oraz komponowanie (rodzaj, „Pilne”, szablony, szkice, podpowiedzi @ i #).
 // Renderuje ze store; wszystkie akcje zgłasza kontrolerowi.
 import { escapeHtml as e } from '../domain/markdown.js';
-import { linkify } from '../domain/linkify.js';
-import { formatClock, formatDay, dayKey, formatDtgShort, formatGameTime, addMinutes } from '../domain/format.js';
-import { parseSender, messageTags, tabLabel } from '../domain/messages.js';
 import { draftType, foreignUnitMentions, unknownPlaceNames, channelListModel } from '../domain/compose.js';
-import { channelUnitId } from '../domain/orbat.js';
-import { activeTrigger, mentionSuggestions, applySuggestion } from '../domain/mentions.js';
-import { symbolSvg } from '../lib/symbols.js';
 import { ic } from '../lib/icons.js';
+import { TEMPLATES, PLACEHOLDERS, TEMPLATE_MENU, isTemplate } from './messenger/templates.js';
+import { channelGlyph } from './messenger/glyphs.js';
+import { createThread } from './messenger/thread.js';
+import { createMentionPopup } from './messenger/mentions.js';
 
-// Szablony wiadomości wg rodzaju (wstawiane przy wyborze rodzaju lub z menu „Szablon”).
-export const TEMPLATES = {
-  rozkaz: 'ROZKAZ BOJOWY nr \n1. Sytuacja:\n2. Zadanie:\n3. Zamiar:\n4. Współdziałanie:\n5. Zabezpieczenie:\n6. Dowodzenie i łączność:',
-  zarzadzenie: 'ZARZĄDZENIE \nPodstawa:\nPolecam:\nTermin wykonania:',
-  meldunek: 'MELDUNEK \nSytuacja:\nStan jednostek:\nZamiary:\nProszę o:',
-  wiadomosc: '',
-};
-const PLACEHOLDERS = {
-  rozkaz: 'Treść rozkazu… użyj @ aby wskazać jednostkę, # aby wskazać miejsce',
-  zarzadzenie: 'Treść zarządzenia… (@ jednostka, # miejsce)',
-  meldunek: 'Treść meldunku… (@ jednostka, # miejsce)',
-  wiadomosc: 'Wiadomość… (@ jednostka, # miejsce)',
-};
-const TEMPLATE_MENU = [
-  ['rozkaz', 'Rozkaz bojowy (5 punktów)'],
-  ['zarzadzenie', 'Zarządzenie'],
-  ['meldunek', 'Meldunek sytuacyjny'],
-];
-const isTemplate = (text) => Object.values(TEMPLATES).includes(text);
+export { TEMPLATES };
 
 export function createMessengerView({ store, controller, root = document }) {
   const $ = (id) => root.getElementById(id);
@@ -63,22 +43,8 @@ export function createMessengerView({ store, controller, root = document }) {
   let channelQuery = '';
   let pendingPin = null; // { channel } — pinezka rysowana na prośbę podpowiedzi; po zapisie trafia jako załącznik
   let knownNoteIds = new Set();
-  const attachmentsById = new Map();
-  let shownChannel = null; // kanał, którego wątek jest teraz wyrenderowany (do decyzji o przewijaniu)
-  let forceBottom = false;
-  let trig = null; // aktywne oznaczenie @ / # w polu tekstowym
-  let suggestions = [];
-  let sugIndex = 0;
-
-  // ---------- ikony i awatary kanałów ----------
-  const unitSidc = (s, unitId) => (s.turn?.units || []).find((u) => u.id === unitId)?.sidc;
-  const roleIcon = (c) => (c.kind === 'recon' ? ic('radio', 's') : c.kind === 'logistics' ? ic('truck', 's') : null);
-
-  function channelGlyph(s, c, size) {
-    const sidc = unitSidc(s, channelUnitId(c));
-    if (sidc && c.kind !== 'recon') return symbolSvg(sidc, { size }).svg;
-    return roleIcon(c) || e(tabLabel(c).slice(0, 3));
-  }
+  const thread = createThread({ box: els.thread });
+  const mentions = createMentionPopup({ text: els.text, pop: els.mention, S, patchDraft, onSend: () => send() });
 
   // ---------- lista kanałów (stale na wierzchu: przełożony, sztab, sąsiedzi, podwładni) ----------
   function renderTabs(s) {
@@ -109,98 +75,6 @@ export function createMessengerView({ store, controller, root = document }) {
     }
     els.head.innerHTML = `<div class="av">${channelGlyph(s, c, 28)}</div><div class="m-head-t"><h3>${e(c.name)}</h3><p>${e(c.description || '')}</p></div>`;
     els.head.title = 'Kliknij, aby pokazać jednostkę na mapie';
-  }
-
-  // ---------- wątek ----------
-  function attachmentsHtml(m) {
-    if (!m.attachments?.length) return '';
-    return `<div>${m.attachments
-      .map((a) => {
-        const key = `${m.id}:${a.id}`;
-        attachmentsById.set(key, a);
-        return `<button type="button" class="att" data-attachment="${e(key)}" title="Pokaż na mapie">${ic('clip', 's')}${e(a.name)}<small>${e(a.kind || 'szkic')}</small></button>`;
-      })
-      .join('')}</div>`;
-  }
-
-  // Ikona/symbol przy wzmiance: miniatura jednostki, pinezka miejsca.
-  function decorateMentions(html, s) {
-    const turn = s.turn || {};
-    const sidcOf = (kind, id) => {
-      const list = kind === 'unit' ? turn.units : kind === 'contact' ? turn.contacts : turn.assets;
-      return (list || []).find((x) => x.id === id)?.sidc;
-    };
-    return html.replace(/(<button[^>]*data-mention-kind="(\w+)" data-mention-id="([^"]*)"[^>]*>)/g, (full, open, kind, id) => {
-      const idRaw = id.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
-      if (kind === 'place') return open + ic('pin');
-      const sidc = sidcOf(kind, idRaw);
-      return sidc ? open + symbolSvg(sidc, { size: 14 }).svg.replace('<svg', '<svg class="ms"') : open;
-    });
-  }
-
-  function messageHtml(m, s, ctx) {
-    const out = m.direction === 'out';
-    const tz = s.scenario.timezone;
-    const ch = s.channel;
-    const sender = out ? { name: 'Ty', role: '' } : parseSender(m.from);
-    const urgentMsg = m.priority === 'urgent';
-    const av = out ? 'TY' : channelGlyph(s, ch, 22);
-    const tags = messageTags(m)
-      .map((t) => `<span class="tag ${t.cls}">${t.label}</span>`)
-      .join('');
-    let foot = '';
-    if (out) {
-      const pending = m.turn === s.currentTurn && !s.archive;
-      if (pending) {
-        foot = `<div class="mf"><span class="wait">● W skrzynce</span><span>rozpatrzenie w turze ${m.turn + 1}</span><a role="button" tabindex="0" data-withdraw="${e(m.id)}">Wycofaj</a></div>`;
-      } else {
-        const next = addMinutes(s.scenario.start, (m.turn + 1) * s.scenario.turnMinutes);
-        foot = `<div class="mf"><span class="ok">✓✓ Doręczono ${e(formatClock(next, tz))}</span><span>tura ${m.turn} rozstrzygnięta</span></div>`;
-      }
-    }
-    const text = decorateMentions(linkify(m.text, ctx.link), s);
-    return `<div class="msg${urgentMsg ? ' urgent' : ''}${out ? ' out' : ''}" data-id="${e(m.id)}"><div class="av">${av}</div><div class="mc">
-      <div class="mh"><b>${e(sender.name || ch.name)}</b>${sender.role ? `<span class="role">${e(sender.role)}</span>` : ''}${tags}<time title="${e(formatGameTime(m.time, tz))}">${e(formatDtgShort(m.time, tz))} · T${m.turn}</time></div>
-      <div class="mb">${text}</div>${attachmentsHtml(m)}${foot}</div></div>`;
-  }
-
-  function renderThread(s) {
-    const box = els.thread;
-    const ch = s.channel;
-    if (!ch) {
-      shownChannel = null;
-      box.innerHTML = `<div class="insp-empty"><b>Wybierz kanał</b><span>Wybierz kartę kanału powyżej albo kanał z listy.</span></div>`;
-      return;
-    }
-    const list = s.visibleMessages.filter((m) => m.channel === ch.id);
-    const keepScroll = shownChannel === ch.id && !forceBottom && box.scrollHeight - box.scrollTop - box.clientHeight > 40;
-    const top = box.scrollTop;
-    if (!list.length) {
-      box.innerHTML = `<div class="insp-empty">${ic('msg')}<b>Brak wiadomości</b><span>Napisz rozkaz lub meldunek do: ${e(ch.name)}.</span></div>`;
-    } else {
-      const ctx = { link: { places: s.places, units: s.turn?.units ?? [], contacts: s.turn?.contacts ?? [], assets: s.turn?.assets ?? [] } };
-      const tz = s.scenario.timezone;
-      let html = '';
-      let day = null;
-      let newShown = false;
-      for (const m of list) {
-        const dk = dayKey(m.time, tz);
-        if (dk !== day) {
-          day = dk;
-          html += `<div class="day cap">${e(formatDay(m.time, tz))}</div>`;
-        }
-        if (!newShown && m.direction === 'in' && s.fresh.has(m.id)) {
-          html += '<div class="day new cap">Nowe</div>';
-          newShown = true;
-        }
-        html += messageHtml(m, s, ctx);
-      }
-      box.innerHTML = html;
-    }
-    // Nowy wątek albo gracz przy dole → na dół; w przeciwnym razie zostaje tam, gdzie czytał.
-    box.scrollTop = keepScroll ? top : box.scrollHeight;
-    shownChannel = ch.id;
-    forceBottom = false;
   }
 
   // ---------- komponowanie ----------
@@ -342,94 +216,6 @@ export function createMessengerView({ store, controller, root = document }) {
     controller.command('tool', 'point');
   });
 
-  // ---------- podpowiedzi @ i # ----------
-  function closeMention() {
-    trig = null;
-    suggestions = [];
-    els.mention.classList.remove('open');
-  }
-
-  function renderMention() {
-    els.mention.innerHTML = suggestions
-      .map((sg, i) => {
-        const s = S();
-        const sidc = sg.sidc;
-        const glyph = sg.kind === 'place' ? ic('pin') : sidc ? symbolSvg(sidc, { size: 16 }).svg : '';
-        return `<div class="cl-i${i === sugIndex ? ' sel' : ''}" role="option" aria-selected="${i === sugIndex}" data-sug="${i}"><span class="ch-ic">${glyph}</span><span>${e(sg.text)}</span><small>${e(sg.sub)}</small></div>`;
-      })
-      .join('');
-    els.mention.classList.toggle('open', suggestions.length > 0);
-  }
-
-  function updateMention() {
-    const s = S();
-    trig = activeTrigger(els.text.value, els.text.selectionStart ?? 0);
-    if (!trig) return closeMention();
-    suggestions = mentionSuggestions(trig.trigger, trig.query, {
-      units: s.turn?.units ?? [],
-      contacts: s.turn?.contacts ?? [],
-      assets: s.turn?.assets ?? [],
-      places: s.places,
-    });
-    sugIndex = Math.min(sugIndex, Math.max(0, suggestions.length - 1));
-    if (!suggestions.length) return closeMention();
-    renderMention();
-  }
-
-  function applyMention(i) {
-    const sg = suggestions[i];
-    if (!sg || !trig) return;
-    const caret = els.text.selectionStart ?? els.text.value.length;
-    const res = applySuggestion(els.text.value, trig, caret, sg);
-    els.text.value = res.text;
-    els.text.setSelectionRange(res.caret, res.caret);
-    patchDraft({ text: res.text });
-    closeMention();
-    els.text.focus();
-  }
-
-  els.text.addEventListener('input', () => {
-    patchDraft({ text: els.text.value });
-    sugIndex = 0;
-    updateMention();
-  });
-  els.text.addEventListener('click', updateMention);
-  els.text.addEventListener('blur', () => setTimeout(closeMention, 120));
-  els.mention.addEventListener('mousedown', (ev) => {
-    const item = ev.target.closest('[data-sug]');
-    if (!item) return;
-    ev.preventDefault();
-    applyMention(+item.dataset.sug);
-  });
-
-  els.text.addEventListener('keydown', (ev) => {
-    if (suggestions.length && els.mention.classList.contains('open')) {
-      if (ev.key === 'ArrowDown' || ev.key === 'ArrowUp') {
-        ev.preventDefault();
-        sugIndex = (sugIndex + (ev.key === 'ArrowDown' ? 1 : -1) + suggestions.length) % suggestions.length;
-        renderMention();
-        return;
-      }
-      if (ev.key === 'Enter' || ev.key === 'Tab') {
-        if (!(ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey))) {
-          ev.preventDefault();
-          applyMention(sugIndex);
-          return;
-        }
-      }
-      if (ev.key === 'Escape') {
-        ev.preventDefault();
-        ev.stopPropagation();
-        closeMention();
-        return;
-      }
-    }
-    if (ev.key === 'Enter' && (ev.ctrlKey || ev.metaKey)) {
-      ev.preventDefault();
-      send();
-    }
-  });
-
   // ---------- wysyłanie ----------
   async function send() {
     const s = S();
@@ -440,10 +226,10 @@ export function createMessengerView({ store, controller, root = document }) {
       return;
     }
     els.send.disabled = true;
-    forceBottom = true;
+    thread.stickToBottom();
     const d = draft();
     const msg = await controller.sendMessage(text, d.attachIds, { type: type(), priority: d.urgent ? 'urgent' : 'normal' });
-    if (msg) closeMention(); // kontroler czyści szkic kanału, widok synchronizuje pola
+    if (msg) mentions.close(); // kontroler czyści szkic kanału, widok synchronizuje pola
     renderCompose(S());
   }
   els.form.addEventListener('submit', (ev) => {
@@ -493,7 +279,7 @@ export function createMessengerView({ store, controller, root = document }) {
     if (mention) return controller.mentionClick(mention.dataset.mentionKind, mention.dataset.mentionId);
     const att = ev.target.closest('[data-attachment]');
     if (att) {
-      const a = attachmentsById.get(att.dataset.attachment);
+      const a = thread.attachment(att.dataset.attachment);
       if (a) controller.showAttachment(a);
       return;
     }
@@ -509,7 +295,7 @@ export function createMessengerView({ store, controller, root = document }) {
     renderHead(s);
   }, { immediate: true });
   store.subscribe(['channel', 'visibleMessages', 'archive', 'currentTurn', 'scenario', 'turn', 'places', 'fresh'], (s) => {
-    if (s.scenario) renderThread(s);
+    if (s.scenario) thread.render(s);
   }, { immediate: true });
   store.subscribe(['archive', 'channel', 'currentTurn'], renderCompose, { immediate: true });
   store.subscribe(['draft', 'channel', 'turn', 'places', 'archive'], syncDraft, { immediate: true });

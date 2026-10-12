@@ -582,7 +582,7 @@ Zadanie planistyczne, powiązane z T38: wynik w `docs/AI-INTERFACE.md`. Cel: sę
 **Scenariusze testowe**
 - [M] Przegląd dokumentu z graczem; wybrany wariant zaakceptowany.
 
-## T40 — Porządki architektoniczne ⬜
+## T40 — Porządki architektoniczne ✅
 Wyrównanie kodu do etapu „plan architektoniczny” (nagłówek pliku).
 
 **WA**

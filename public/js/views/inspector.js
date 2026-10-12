@@ -8,10 +8,8 @@ import { findEntity } from '../domain/entities.js';
 import { indexById, childrenOf, channelForUnit, isNeighbourUnit } from '../domain/orbat.js';
 import { readinessRatio } from '../domain/strength.js';
 import { resolveDos } from '../domain/dos.js';
-import { logisticsCard, logisticsCardHtml, LOGISTICS_KINDS } from '../domain/logistics.js';
+import { logisticsCard, logisticsCardHtml, LOGISTICS_KINDS, LG_SIDC } from '../domain/logistics.js';
 import { inspectorHead, unitCard, contactCard, assetCard, supplyCard, historyCard } from '../domain/cards.js';
-
-const LG_SIDC = { depot: 'SFGPUSS--------', convoy: 'SFGPUST--------' };
 
 export function createInspectorView({ store, controller, root = document }) {
   const $ = (id) => root.getElementById(id);

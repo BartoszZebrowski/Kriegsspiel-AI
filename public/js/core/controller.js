@@ -6,11 +6,13 @@
 // - każde odpytanie tury ma numer (`navEpoch`): spóźniona odpowiedź nie nadpisuje nowszego wyboru;
 // - odświeżenie po SSE porównuje dane i ustawia w store tylko to, co się zmieniło.
 import { findEntity } from '../domain/entities.js';
-import { indexById, isUnitVisible, minLevelFor, DETAIL_LEVELS, channelForUnit } from '../domain/orbat.js';
-import { unreadIds, newIncoming, defaultPinned, parseSender } from '../domain/messages.js';
-import { updateDraft, clearDraft } from '../domain/compose.js';
+import { channelForUnit, DETAIL_LEVELS } from '../domain/orbat.js';
+import { newIncoming, defaultPinned, parseSender } from '../domain/messages.js';
 import { buildPlan, planIsEmpty, isSequential, ANIMATION_MS } from '../domain/motion.js';
 import { DEFAULT_BASEMAP, TILE_OVERLAYS, defaultLayers } from './store.js';
+import { createSelection } from './selection.js';
+import { createMessaging } from './messaging.js';
+import { createLayout } from './layout.js';
 
 const nullStorage = { load: (_key, fallback) => fallback, save() {} };
 
@@ -25,7 +27,6 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   const isPageVisible = env.isPageVisible ?? (() => true);
   const S = () => store.get();
   let navEpoch = 0; // rośnie przy każdej ręcznej nawigacji po turach
-  let msgEpoch = 0; // rośnie przy lokalnej zmianie wiadomości (wysłanie/wycofanie)
   let nonce = 0;
   let busy = false;
   let again = false;
@@ -46,42 +47,17 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     return { turn, notes: notes.items || [] };
   };
 
-  const selectionOf = (id) => (id ? { id, kind: findEntity(S().turn, id)?.kind ?? null } : null);
-
-  function setSelection(id) {
-    const next = selectionOf(id);
-    const cur = S().selection;
-    if (cur?.id === next?.id && cur?.kind === next?.kind) return;
-    store.set({ selection: next });
-  }
+  // ---------- podkontrolery (współdzielą store; wydzielone wg odpowiedzialności) ----------
+  const nextNonce = () => ++nonce;
+  const selection = createSelection({ store, storage, S, keyOf, notify, nextNonce });
+  const { setSelection, selectEntity, focusEntity, clearSelection, hoverUnit, mentionClick, showAttachment, flyToPlace, setDetail } = selection;
+  const messaging = createMessaging({ store, api, storage, S, keyOf, notify, syncSelection: () => syncSelectionToChannel(), isPageVisible });
+  const { readIfVisible, selectChannel, setDraft, clearChannelDraft, unpinChannel, ensureActiveChannel, sendMessage, withdrawMessage } = messaging;
+  const layout = createLayout({ store, storage, S, markNoticesSeen, readIfVisible });
+  const { setPopover, togglePopover, openOmnibox, closeOmnibox, setDock, toggleDock, setMobile, setNarrow, toggleLeader, setAnimations, setReducedMotion } = layout;
 
   // Podświetla na mapie jednostkę wybranego kanału (gdy nic nie jest zaznaczone albo przy zmianie kanału).
   const syncSelectionToChannel = () => setSelection(S().channelUnit);
-
-  // Gracz „czyta”, gdy prawy dok jest rozwinięty (na telefonie: zakładka Komunikator) i karta jest widoczna.
-  const isReading = () => {
-    const { ui } = S();
-    return !ui.rightCollapsed && (!ui.narrow || ui.mobile === 'msg') && isPageVisible();
-  };
-
-  function readPatch(channelId) {
-    if (!channelId) return null;
-    const ids = unreadIds(S().visibleMessages, channelId, S().read);
-    if (!ids.length) return null;
-    const read = new Set([...S().read, ...ids]);
-    storage.save(keyOf('read'), [...read]);
-    return { read, fresh: new Set([...S().fresh, ...ids]) };
-  }
-
-  function markRead(channelId) {
-    const patch = readPatch(channelId);
-    if (patch) store.set(patch);
-  }
-
-  // Wiadomości właśnie wczytane: jeśli gracz patrzy na komunikator, aktywny kanał jest przeczytany.
-  function readIfVisible() {
-    if (isReading() && S().channel) markRead(S().channel.id);
-  }
 
   // ---------- animacja przemieszczeń ----------
   // Animacje wyłącza przełącznik „Animacje” (zapamiętany) albo systemowe prefers-reduced-motion.
@@ -233,7 +209,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     const epoch = navEpoch;
     const basis = S().viewTurn;
     const previous = S().currentTurn;
-    const msgBasis = msgEpoch;
+    const msgBasis = messaging.epoch();
     const [info, places] = await Promise.all([api.scenario(), api.gazetteer()]);
     const current = info.currentTurn ?? 0;
     const turns = info.turns || [];
@@ -248,8 +224,8 @@ export function createController({ store, api, storage = nullStorage, env = {} }
       currentTurn: current,
       places: keep(s.places, places),
     };
-    const incoming = msgBasis === msgEpoch ? newIncoming(s.messages, messages) : [];
-    if (msgBasis === msgEpoch) global.messages = keep(s.messages, messages);
+    const incoming = msgBasis === messaging.epoch() ? newIncoming(s.messages, messages) : [];
+    if (msgBasis === messaging.epoch()) global.messages = keep(s.messages, messages);
     // Użytkownik przełączył turę w trakcie odświeżania: bierzemy tylko dane globalne.
     if (epoch !== navEpoch || s.viewTurn !== basis) {
       store.set(global);
@@ -301,69 +277,6 @@ export function createController({ store, api, storage = nullStorage, env = {} }
 
   const listen = (eventSource) => eventSource.addEventListener('update', () => onUpdate());
 
-  // ---------- wybór obiektów ----------
-  const layerOf = { unit: 'units', contact: 'contacts', asset: 'assets', depot: 'logistics', route: 'logistics', bridge: 'logistics', convoy: 'logistics' };
-
-  function isShown(id) {
-    const s = S();
-    const e = findEntity(s.turn, id);
-    if (!e || !s.layers[layerOf[e.kind]]) return false;
-    return e.kind !== 'unit' || isUnitVisible(e.item, indexById(s.turn.units || []), s.level);
-  }
-
-  function setDetail(choice) {
-    const detail = DETAIL_LEVELS.includes(choice) ? choice : null;
-    storage.save(keyOf('detail'), detail);
-    store.set({ detail });
-  }
-
-  // Zaznacza obiekt (inspektor pokazuje jego kartę) i — domyślnie — centruje mapę.
-  // Ukrytą kompanię/pluton odsłania zmianą szczegółowości. Zwraca false, gdy obiektu nie ma na mapie.
-  function selectEntity(id, { pan = true } = {}) {
-    const s = S();
-    const e = findEntity(s.turn, id);
-    if (!e) return false;
-    const patch = { selection: { id, kind: e.kind } };
-    if (pan) patch.focus = { kind: 'entity', id, nonce: ++nonce };
-    if (e.kind === 'unit') {
-      const byId = indexById(s.turn.units || []);
-      if (!isUnitVisible(e.item, byId, s.level)) {
-        patch.detail = minLevelFor(e.item, byId);
-        storage.save(keyOf('detail'), patch.detail);
-      }
-    }
-    store.set(patch);
-    return true;
-  }
-
-  // Tylko centruje mapę na obiekcie (nagłówek rozmowy, „Wycentruj”).
-  function focusEntity(id) {
-    if (id && findEntity(S().turn, id)) store.set({ focus: { kind: 'entity', id, nonce: ++nonce } });
-  }
-
-  const clearSelection = () => store.set({ selection: null });
-  const hoverUnit = (id) => store.set({ hoverUnit: id ?? null });
-
-  // Wzmianka w wiadomości: miejsce → przelot na mapie; obiekt → zaznaczenie w inspektorze.
-  function mentionClick(kind, id) {
-    if (kind === 'place') {
-      const place = S().places.find((p) => p.id === id);
-      if (place && Array.isArray(place.pos)) store.set({ focus: { kind: 'place', place, nonce: ++nonce } });
-    } else if (kind === 'unit') {
-      if (!selectEntity(id)) notify('Tej jednostki nie ma na mapie w tej turze', true);
-    } else if (isShown(id)) {
-      selectEntity(id);
-    } else {
-      notify('Tego obiektu nie ma teraz na mapie (warstwa wyłączona lub brak pozycji)', true);
-    }
-  }
-
-  // Załącznik rozkazu: pokaż szkic na mapie.
-  const showAttachment = (note) => store.set({ focus: { kind: 'geometry', note, nonce: ++nonce } });
-  const flyToPlace = (place) => {
-    if (place && Array.isArray(place.pos)) store.set({ focus: { kind: 'place', place, nonce: ++nonce } });
-  };
-
   // ---------- stan mapy raportowany przez widok ----------
   const mapZoomChanged = (zoom) => store.set({ mapZoom: zoom });
   function setLayerVisible(name, on) {
@@ -380,41 +293,6 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   // ---------- jednorazowe polecenia dla widoków (narzędzie, dopasowanie mapy, fokus pola…) ----------
   const command = (name, arg = null) => store.set({ command: { name, arg, nonce: ++nonce } });
 
-  // ---------- popovery i omnibox ----------
-  const setPopover = (name) => {
-    if (S().popover !== (name ?? null)) store.set({ popover: name ?? null });
-    if (name === 'bell') markNoticesSeen();
-  };
-  const togglePopover = (name) => setPopover(S().popover === name ? null : name);
-  const openOmnibox = () => store.set({ omnibox: { open: true }, popover: null });
-  const closeOmnibox = () => store.set({ omnibox: { open: false } });
-
-  // ---------- komunikator ----------
-  function selectChannel(id) {
-    storage.save(keyOf('channel'), id);
-    const patch = { activeChannel: id, fresh: new Set(unreadIds(S().visibleMessages, id, S().read)) };
-    if (id && !S().pinned.includes(id)) {
-      patch.pinned = [...S().pinned, id];
-      storage.save(keyOf('pinned'), patch.pinned);
-    }
-    store.set(patch);
-    markRead(id);
-    syncSelectionToChannel();
-  }
-
-  // Szkic wiadomości kanału (tekst, rodzaj, pilne, załączniki) — osobny dla każdego kanału, tylko w pamięci.
-  function setDraft(channelId, patch) {
-    if (!channelId) return;
-    store.set({ drafts: updateDraft(S().drafts, channelId, patch) });
-  }
-  const clearChannelDraft = (channelId) => store.set({ drafts: clearDraft(S().drafts, channelId) });
-
-  function unpinChannel(id) {
-    const pinned = S().pinned.filter((x) => x !== id);
-    storage.save(keyOf('pinned'), pinned);
-    store.set({ pinned });
-  }
-
   // Otwiera kanał rozmowy z jednostką (rozwija prawy dok; na telefonie przełącza na zakładkę Komunikator).
   function openUnitChannel(unitId) {
     const ch = channelForUnit(S().channels, unitId);
@@ -429,41 +307,6 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     if (S().ui.rightCollapsed) setDock('r', false);
     if (S().ui.narrow) setMobile('msg');
     selectChannel(channelId);
-  }
-
-  // Start: gdy żaden kanał nie jest aktywny (pierwsze uruchomienie), otwiera kanał przełożonego (albo pierwszy).
-  function ensureActiveChannel() {
-    if (S().channel || !S().channels.length) return;
-    const first = S().channels.find((c) => c.kind === 'superior') || S().channels[0];
-    selectChannel(first.id);
-  }
-
-  // Zwraca wysłaną wiadomość albo null (archiwum, brak kanału, błąd). meta: { type, priority }.
-  async function sendMessage(text, attachments = [], meta = {}) {
-    const s = S();
-    const body = (text || '').trim();
-    if (!body || !s.channel || s.archive) return null;
-    msgEpoch++;
-    try {
-      const msg = await api.send(s.channel.id, body, attachments, meta);
-      store.set({ messages: [...S().messages, { ...msg, direction: 'out' }], drafts: clearDraft(S().drafts, s.channel.id) });
-      return msg;
-    } catch (err) {
-      notify(err.message, true);
-      return null;
-    }
-  }
-
-  async function withdrawMessage(id) {
-    msgEpoch++;
-    try {
-      await api.withdraw(id);
-      store.set({ messages: S().messages.filter((m) => m.id !== id) });
-      return true;
-    } catch (err) {
-      notify(err.message, true);
-      return false;
-    }
   }
 
   // ---------- szkice ----------
@@ -482,38 +325,6 @@ export function createController({ store, api, storage = nullStorage, env = {} }
       notify('Nie zapisano szkicu: ' + err.message, true);
       return null;
     }
-  }
-
-  // ---------- układ ----------
-  function setDock(side, collapsed) {
-    const key = side === 'l' ? 'leftCollapsed' : 'rightCollapsed';
-    storage.save(`ks:dock-${side}-collapsed`, collapsed);
-    store.set({ ui: { ...S().ui, [key]: collapsed } });
-    readIfVisible();
-  }
-  const toggleDock = (side) => setDock(side, !S().ui[side === 'l' ? 'leftCollapsed' : 'rightCollapsed']);
-  function setMobile(pane) {
-    store.set({ ui: { ...S().ui, mobile: pane } });
-    readIfVisible();
-  }
-  function setNarrow(narrow) {
-    if (S().ui.narrow === narrow) return;
-    store.set({ ui: { ...S().ui, narrow } });
-    readIfVisible();
-  }
-  function toggleLeader() {
-    const leader = !S().ui.leader;
-    storage.save('ks:leader', leader);
-    store.set({ ui: { ...S().ui, leader } });
-  }
-
-  function setAnimations(on) {
-    storage.save('ks:animations', Boolean(on));
-    store.set({ ui: { ...S().ui, animations: Boolean(on) } });
-  }
-  // Systemowe „ogranicz ruch” (matchMedia) zgłasza main.js — także przy zmianie w trakcie pracy.
-  function setReducedMotion(reduced) {
-    if (S().ui.reducedMotion !== Boolean(reduced)) store.set({ ui: { ...S().ui, reducedMotion: Boolean(reduced) } });
   }
 
   // ---------- odprawa ----------

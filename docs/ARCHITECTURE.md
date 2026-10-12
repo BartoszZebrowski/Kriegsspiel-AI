@@ -44,7 +44,8 @@ public/js/
   views/               każdy widok: subskrybuje plastry store, emituje intencje
     topbar, docks (splittery, szyny, pasek zakładek), hotkeys, tooltips, toasts, briefing,
     structure, inspector, legend, messenger, timeline, omnibox, leader, draw,
-    map/{index,controls,basemaps,lines,hierarchy,motion}
+    map/{index,controls,basemaps,lines,hierarchy,motion,ewzones,logistics}
+    podkatalogi widoków (patrz „Podział dużych plików”): draw/, messenger/, structure/
   lib/                 liście bez zależności od warstw: storage (localStorage), symbols (milsymbol), icons (sprite SVG)
   sidc.js              cienki re-export domain/sidc.js (importuje go tools/validate.js)
 ```
@@ -57,7 +58,7 @@ main  →  views, controller  →  store  →  domain
 
 - `domain/` nie importuje niczego spoza `domain/`; nie dotyka DOM, `window`, `localStorage` ani Leaflet.
 - `core/` (store, kontroler) też nie dotyka DOM: zależności (API, storage, środowisko) dostaje przez parametry. Dzięki temu testy działają w samym Node.
-- `views/` importują `domain/`, `lib/` i dostają `store` oraz `controller` jako parametry. **Widoki nie importują się nawzajem i nie wołają się nawzajem.** Komunikują się wyłącznie przez store (stan) i kontroler (intencje).
+- `views/` importują `domain/`, `lib/` i dostają `store` oraz `controller` jako parametry. **Widoki nie importują się nawzajem i nie wołają się nawzajem.** Widok `views/x.js` wolno rozbić na moduły w własnym katalogu `views/x/` (np. `views/map/*`, `views/draw/*`): importować się wolno tylko w obrębie jednej grupy `x`. Komunikują się wyłącznie przez store (stan) i kontroler (intencje).
 - `main.js` jest jedynym miejscem, które zna wszystkie części.
 
 Dwa świadome kontrakty między widokami (bez importów):
@@ -137,3 +138,20 @@ Jednostka z `formation: "<id sąsiada>"` (zob. [SCHEMA.md](SCHEMA.md)) należy d
   - testy logiki w `test/*.test.js` importują z `public/js/domain/`.
 - `npm run smoke` (`tools/smoke.mjs`): uruchamia własny serwer na tymczasowej kopii scenariusza (domyślnie `scenarios/00-test-przesmyk`; inny: `npm run smoke -- <ścieżka>`), otwiera aplikację w headless Chrome przez CDP (bez zależności npm) i przechodzi skryptowaną trasę; oryginał nigdy nie jest modyfikowany: układ i zegar z DTG, odprawa, szczegółowość (w tym pluton), inspektor, struktura, legenda (popover), komunikator (pasek kanałów, nieprzeczytane, rodzaj i „Pilne”, @ i #, wysyłka, wycofanie, załączniki, wzmianki), szkice (flyout, wszystkie znaki NATO, edycja ✓/✕, usuwanie dwuetapowe), miarka, podkłady i warstwy, omnibox, splittery i szyny docków, oś czasu i archiwum, żywa aktualizacja po nowym pliku tury, animacja przemieszczeń (trasa, ślad, duch kontaktu, powtórka, przełącznik i reduced-motion), formacje sąsiadów (drzewo, brak kanałów, POST → 400, mapa, inspektor, omnibox), telefon 390 px. Kopia scenariusza jest obcinana do tury 0 (rozgrywana kampania ma kolejne tury). Kończy z kodem ≠ 0 przy błędzie kroku albo błędzie JS w konsoli. Chrome znajduje po `CHROME_PATH` lub w typowych lokalizacjach; flaga `--keep` zostawia katalog roboczy.
 - Debug: `?debug` w adresie wystawia `window.__ks = { store, controller, map, surface, drawing }`.
+
+## Podział dużych plików (T40)
+
+Cel: ≤ ~300 linii na plik, podział wg odpowiedzialności, zachowanie bez zmian, eksporty publiczne zachowane (re-export). Reguły zależności pilnuje `test/architecture.test.js` (czysta funkcja `findViolations(pliki)` + skan `public/js`): `domain/` nie importuje spoza `domain/`, widoki nie importują innych widoków (tylko własny katalog), widoki nie importują `core/`, `core/` nie używa `document`/`window`/`localStorage` i nie importuje widoków.
+
+| Plik (linie przed → po) | Nowe moduły wg odpowiedzialności |
+|---|---|
+| `views/draw.js` (877 → 389) | `views/draw/graphics.js` (stałe, narzędzia, podpowiedzi, `hypothesisSidc`, podgląd znaku), `draw/editor.js` (okno edycji rysunku), `draw/measure.js` (miarka), `draw/shapes.js` (warstwy kształtów, popup, dekoracje znaków). W `draw.js` zostaje paleta narzędzi i flyout, tryby rysowania, edycja kształtu, synchronizacja ze store — jeden stan narzędzia współdzielony przez te części. |
+| `core/controller.js` (556 → 367) | `core/selection.js` (zaznaczenie, centrowanie, wzmianki, szczegółowość), `core/messaging.js` (kanały, przeczytane, szkice wiadomości, wysyłanie), `core/layout.js` (docki, telefon, animacje, popovery, omnibox). Zostają: komunikaty, ładowanie i nawigacja po turach, odświeżenie SSE, animacja przemieszczeń, stan mapy, szkice, odprawa, polecenia. |
+| `views/messenger.js` (536 → 322) | `views/messenger/templates.js` (szablony), `glyphs.js` (awatary kanałów), `thread.js` (wątek wiadomości), `mentions.js` (podpowiedzi @ i #). |
+| `tools/validate.js` (510 → 197) | `tools/validate-checks.js` (sprawdzenia plików tury: SIDC, stany, hierarchia, formacje, linie, trasy, gazeter), `tools/validate-realism.js` (T37: spójność i realizm, re-eksportowane z `validate.js`). |
+| `domain/tactical.js` (379 → 199) | `domain/tactical-geometry.js` (geometria łamanych w pikselach; re-eksportowana). `tactical.js`: katalog znaków, `buildGraphic`, `mainStyle`, ikony punktów. |
+| `views/structure.js` (364 → 300) | `views/structure/html.js` (czyste budowniczowie HTML: węzły drzewa, wiersze kontaktów i środków, sekcje). |
+| `tools/umpire/turn.mjs` (376 → 232) | `tools/umpire/turn-merge.mjs` (czyste pomocniki: łatki, trasy, logistyka, skrzynka; re-eksportowane). `turn.mjs`: `buildTurn`, pliki, CLI. |
+| `views/map/index.js` (319 → 282) | `views/map/logistics.js` (warstwa logistyczna wzorem `ewzones.js`); `LG_SIDC` w `domain/logistics.js` (jedno miejsce dla mapy i inspektora). |
+
+Zostają większe niż ~300 linii: `views/draw.js` (389) i `core/controller.js` (367) — dalszy podział wymagałby przekazywania wspólnego, często zmienianego stanu (aktywne narzędzie / edycja kształtu; epoki nawigacji i odświeżenie) między modułami, co pogorszyłoby czytelność. `tools/smoke.mjs` (1190), `tools/umpire/deploy.mjs` (473), `terrain-view.mjs` (367) i testy są poza zakresem T40.
