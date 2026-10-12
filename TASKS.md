@@ -615,6 +615,24 @@ Zadanie planistyczne: wynik w `docs/ENGINE.md`. Cel: deterministyczny silnik (`e
 **Scenariusze testowe**
 - [M] Przegląd dokumentu z graczem; podział silnik/AI zaakceptowany.
 
+## T42 — Studium wykonalności: płynny upływ czasu w turze ⬜
+Zadanie badawcze: wynik w `docs/STUDY-REALTIME.md`. Tury zostają (rozstrzyga je sędzia), ale gracz ma odczuć mijający czas: zegar płynie, meldunki przychodzą o swoich godzinach, jednostki przesuwają się w trakcie okresu, a nie skokiem na końcu.
+
+**Warianty do zbadania**
+- **A. Odtwarzanie tury:** po rozstrzygnięciu tura N→N+1 „odgrywa się” w przyspieszonym czasie (np. 2 h w 2–5 min): zegar, animacja ruchu po `track` z czasami punktów, wiadomości `inbox` pojawiają się o swoich `time`. Gracz może pauzować, przyspieszać, cofać. Najmniej zmian (dane już są: `track`, `time` wiadomości).
+- **B. Krótsze tury z automatyzacją:** sędzia rozstrzyga co 15–30 min czasu gry, silnik (T41) liczy ruch i zużycie, AI tylko zdarzenia i meldunki. Wymaga T41 i T39.
+- **C. Tura z przerwaniem:** czas płynie w odtwarzaniu, a ważne zdarzenie (kontakt, pilny meldunek) zatrzymuje zegar i pozwala graczowi wydać rozkaz od tego momentu; sędzia rozstrzyga resztę okresu od nowa.
+- **D. Ciągły czas (pseudo real-time):** stały stosunek czasu gry do rzeczywistego, rozkazy w dowolnej chwili, rozstrzyganie w tle. Sprawdzić koszt AI, opóźnienia, zgodność z modelem dwóch graczy (T38).
+
+**WA**
+1. Dla każdego wariantu: wrażenia gracza, zmiany w danych (np. `track` z czasami punktów, `time` dla zdarzeń widocznych), w kliencie (zegar, odtwarzacz), w procedurze sędziego, koszt AI i ryzyko wycieku (żeby odtwarzanie nie zdradziło prawdy przed czasem meldunku).
+2. Wpływ na tarcie: rozkaz wydany „w trakcie” obowiązuje od doręczenia (T25); brak informacji zwrotnej zostaje.
+3. Prototyp najtańszego wariantu (A) na rozgrywce „Przesmyk” nr 1, jeśli da się go zrobić bez zmian schematu albo z małymi.
+4. Rekomendacja i lista zadań wykonawczych z WA.
+
+**Scenariusze testowe**
+- [M] Przegląd studium i prototypu z graczem; wybór wariantu.
+
 ---
 
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
