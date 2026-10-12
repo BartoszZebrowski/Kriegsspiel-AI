@@ -11,6 +11,17 @@ Zadanie jest skończone, gdy spełnia wszystkie warunki akceptacji i przechodzi 
 - czas gry w ISO 8601 ze strefą (np. `2026-05-14T06:00:00+02:00`),
 - symbole NATO kodowane SIDC w formacie MIL-STD-2525C (15 znaków, np. `SFGPUCIZ---H---`).
 
+**Etapy wykonania zadania (w tej kolejności):**
+1. **Plan architektoniczny (przed kodem):** jak zadanie wpływa na architekturę ([docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)) i jak się w nią wpasować:
+   - w której warstwie leży każda część (`domain/` czysta logika, `core/` stan i intencje, `views/` DOM, `shared/` wspólne z serwerem, `tools/`),
+   - zależności tylko w dozwolonym kierunku i możliwie słabe (parametry, store, kontroler zamiast importów; widoki nie importują się nawzajem),
+   - nowe odpowiedzialności w nowych, małych plikach (cel: ≤ ~300 linii), zamiast dopisywania do dużych; nowa warstwa mapy = nowy plik w `views/map/`,
+   - stałe i reguły w jednym miejscu (bez duplikatów między plikami),
+   - gdy zadanie wymaga zmiany architektury — najpierw aktualizacja ARCHITECTURE.md.
+2. **Implementacja** zgodnie z planem.
+3. **Przegląd kodu** (poprawność i zgodność z planem architektonicznym).
+4. **Testy** [A] i scenariusze [M].
+
 Legenda statusu: ⬜ do zrobienia · 🟨 w trakcie · ✅ zrobione
 
 ---
