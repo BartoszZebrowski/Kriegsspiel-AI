@@ -147,6 +147,34 @@ Połączenia: jedno zapytanie na bbox, User-Agent z opisem, ponowna próba po 42
 
 **Limit czasu.** Całe zapytanie (wszystkie serwery i ponowienia razem) ma twardy limit, domyślnie 20 s, dzielony po równo między serwery. Nadpisanie: opcja `{ timeoutMs }` w `findWater`/`findForest`/`nudgeOutOfWater`/`preferCover`, zmienna `OVERPASS_TIMEOUT_MS` albo `pick.mjs --overpass-timeout <sekundy>`. Lista serwerów: opcja `endpoints` albo `OVERPASS_ENDPOINTS` (adresy po przecinku). Po przekroczeniu limitu rzucany jest błąd z `code === 'OVERPASS_UNAVAILABLE'`; `pick --check-water` łapie go, wypisuje „UWAGA: tryb offline — nie sprawdzono wody” i kończy się kodem 0 (dane z cache działają dalej bez sieci). Zawieszenie niemożliwe nawet przy serwerze, który przyjmuje połączenie i milczy (test: wskaż `OVERPASS_ENDPOINTS` na lokalny gniazdowy serwer bez odpowiedzi i `OVERPASS_TIMEOUT_MS=1000`).
 
+## Logistyka i DOS w planie tury (`turn.mjs`, T17/T18)
+
+`plan.logistics` zmienia prawdę sędziego (`umpire/turns`), `plan.player.logistics` widok gracza (`player/turns`). Oba mają ten sam format, a każdy działa tylko na swojej poprzedniej turze: gracz **nie dostaje** niczego z logistyki sędziego (stan znany graczowi aktualizujesz jawnie, np. skład z opóźnionym `as_of`).
+
+```json
+{
+  "logistics": {
+    "depots":  { "patch": { "sk-blog": { "stock": { "fuel": 160, "ammo": 120, "general": 240 } } } },
+    "bridges": { "patch": { "most-2": { "status": "destroyed" } } },
+    "convoys": { "patch": { "kw-1": { "pos": [22.91, 54.17], "route": [[22.88, 54.1]], "status": "delayed" } },
+                 "add": [ { "id": "kw-2", "name": "Kolumna 2", "pos": [22.79, 53.975], "from": "sk-blog", "to": "sk-przod", "cargo": { "fuel": 10, "ammo": 5, "general": 5 }, "status": "planned" } ] }
+  },
+  "player": {
+    "logistics": { "convoys": { "patch": { "kw-1": { "pos": [22.9, 54.15] } } } },
+    "units": { "1bzmot": { "dos": { "fuel": 1.8, "ammo": 1.5, "general": 2.5, "readiness": 0.88, "as_of": "2026-05-14T06:30:00+02:00" } } }
+  }
+}
+```
+
+- Format sekcji (`depots`, `routes`, `bridges`, `convoys`): `{ "patch": { id: łatka | null }, "add": [obiekty] }`. Łatka scala pola (`null` w polu usuwa pole), `null` zamiast łatki usuwa element. Brak planu = poprzedni stan.
+- **Track konwoju** liczony jak dla jednostek: od pozycji z tury N do nowego `pos`, z punktami pośrednimi z łatki (`route`) albo pełnym `track`; w widoku gracza, gdy łatka gracza nie ma `route`, użyta zostaje trasa z łatki sędziego (koniec zawsze w `pos` gracza).
+- Widok gracza przechodzi przez białą listę `LOGISTICS_FIELDS`, więc pola sędziego z elementu nie wyciekną. `dos` jednostki **nie jest** kopiowany z prawdy: ustawiasz go wyłącznie łatką `plan.player.units.<id>.dos` (inaczej dziedziczony z tury N gracza).
+- Poprawność (statusy, id, współrzędne) turn.mjs zgłasza jako UWAGI (`sędzia logistics…` / `gracz logistics…`); twardy wynik daje `npm run validate`.
+
+### Dane przykładowe do ręcznych testów
+
+`test/fixtures/logistics-sample.json` (1 MSR, 1 ASR, 2 składy, 2 mosty, 1 konwój z `track`, `dos` dla 5 jednostek z różnymi progami) i `test/fixtures/logistics-sample.mjs` (`injectLogisticsSample(katalogScenariusza)` wstrzykuje je do ostatniej tury gracza i sędziego kopii; czasy `"T-30"` są rozwiązywane względem czasu tury). Podgląd: `node test/fixtures/logistics-sample.mjs <katalog>` kopiuje 00-test-przesmyk i wstrzykuje dane; potem `PORT=8090 npm start -- <katalog-absolutny>`.
+
 ## Testy
 
 `npm test` zawiera `test/umpire-deploy.test.js`: zakresy rozstawów, orientację względem azymutu, determinizm, ograniczenie jitteru, marsz po trasie, nieliniowość artylerii, poligony wody (z wyspą) i korektę, a także test, że kompanie o różnych zadaniach, azymutach i ziarnach dają wyraźnie różne układy względne, a nie obrócone kopie jednego wzoru.

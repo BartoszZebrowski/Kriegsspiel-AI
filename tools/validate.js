@@ -9,7 +9,7 @@ import { isDescribed } from '../public/js/sidc.js';
 import { distanceKm } from '../public/js/domain/geo.js';
 import {
   SCHEMA_VERSION, CHANNEL_KINDS, LINE_KINDS, PLACE_KINDS, PLAYER_TURN_FIELDS, PLAYER_FIELDS, PLAYER_MESSAGE_FIELDS,
-  MAX_NOTES, checkTrack, isCoord, isValidTime, isCount, extraFields, checkNote, checkMessageText, checkMessageMeta,
+  MAX_NOTES, checkTrack, checkDos, checkLogistics, isCoord, isValidTime, isCount, extraFields, checkNote, checkMessageText, checkMessageMeta,
 } from '../shared/schema.js';
 
 const ms = milsymbol.default ?? milsymbol;
@@ -137,7 +137,7 @@ function checkPlayerFields(label, data, report) {
   }
 }
 
-function checkSituation(label, data, n, scenario, report) {
+function checkSituation(label, data, n, scenario, report, strictLogistics = false) {
   if (data.turn !== n) report.error(`${label}: pole turn = ${data.turn}, oczekiwano ${n}`);
   if (!validTime(data.time)) report.error(`${label}: nieprawidłowy czas tury`);
   else if (validTime(scenario.start) && scenario.turnMinutes) {
@@ -156,6 +156,10 @@ function checkSituation(label, data, n, scenario, report) {
       if (needsSymbol) checkSidc(where, item.sidc, report);
       if ((key !== 'assets' || item.pos) && !validPos(item.pos)) report.error(`${where}: nieprawidłowe pos [lon, lat]`);
       if (key === 'units') checkStrength(where, item, report);
+      if (key === 'units' && item.dos !== undefined) {
+        const e = checkDos(item.dos);
+        if (e) report.error(`${where}: ${e}`);
+      }
       if (key === 'units' && item.track !== undefined) {
         const r = checkTrack(item.track, item.pos);
         if (r.error) report.error(`${where}: ${r.error}`);
@@ -168,6 +172,11 @@ function checkSituation(label, data, n, scenario, report) {
           report.error(`${where}: obserwacja późniejsza niż czas tury`);
       }
     }
+  }
+  if (data.logistics !== undefined) {
+    const r = checkLogistics(data.logistics, { strict: strictLogistics });
+    for (const e of r.errors) report.error(`${label}: ${e}`);
+    for (const w of r.warnings) report.warn(`${label}: ${w}`);
   }
   if (Array.isArray(data.units)) {
     checkHierarchy(label, data.units, report);
@@ -389,7 +398,7 @@ export async function validateScenario(dir) {
     const data = await readJsonSafe(path.join(dir, 'player', 'turns', pad(n) + '.json'), report);
     if (data) unitIdsByTurn.set(n, new Set((data.units || []).map((u) => u?.id)));
     if (data) {
-      checkSituation(`player/turns/${pad(n)}`, data, n, scenario, report);
+      checkSituation(`player/turns/${pad(n)}`, data, n, scenario, report, true);
       checkPlayerFields(`player/turns/${pad(n)}`, data, report);
       checkTracksContinuity(`player/turns/${pad(n)}`, prevUnits, data.units, report);
       for (const w of checkHierarchySums(`player/turns/${pad(n)}`, data.units)) report.warn(w);

@@ -61,7 +61,7 @@ Odprawa w Markdownie, wyświetlana w zakładce Odprawa. Brak pliku = uwaga walid
 
 ## `player/turns/NNN.json` — jawny (widok gracza)
 
-Stan świata **taki, jaki zna gracz**: własne siły na prawdziwych pozycjach, wróg tylko jako kontakty. Pola najwyższego poziomu (gracz): `turn`, `time`, `units`, `contacts`, `assets`, `lines`.
+Stan świata **taki, jaki zna gracz**: własne siły na prawdziwych pozycjach, wróg tylko jako kontakty. Pola najwyższego poziomu (gracz): `turn`, `time`, `units`, `contacts`, `assets`, `lines`, `logistics`.
 
 | Pole | Typ | Wym. | Znaczenie |
 |---|---|---|---|
@@ -71,6 +71,7 @@ Stan świata **taki, jaki zna gracz**: własne siły na prawdziwych pozycjach, w
 | `contacts` | lista | nie | Kontakty z wrogiem. |
 | `assets` | lista | nie | Środki rozpoznania gracza. |
 | `lines` | lista | nie | Linie operacyjne. |
+| `logistics` | obiekt | nie | Warstwa logistyczna znana graczowi (sekcja `logistics` niżej). |
 
 Wszystkie elementy `units`/`contacts`/`assets` mają unikalne w pliku `id`.
 
@@ -91,8 +92,24 @@ Wszystkie elementy `units`/`contacts`/`assets` mają unikalne w pliku `id`.
 | `formation` | tekst | nie | **Jednostka sąsiada** (nie podlega graczowi): id dowództwa sąsiada z tej samej tury (np. `zt-mamry`), zamiast `parent`. Cel nie ma ani `parent`, ani `formation` (brak cykli); `parent` i `formation` naraz = błąd. Podwładni takiej jednostki mogą używać `parent` (należą do formacji pośrednio). Takie jednostki nie mają kanałów komunikatora (serwer odrzuca wiadomość: 400). |
 | `track` | `[[lon,lat], …]` | nie | Trasa przejechana w turze, która **kończy się** w `pos` (pierwszy punkt = pozycja z poprzedniej tury). ≥ 2 poprawne punkty (inaczej błąd); ostatni punkt ≠ `pos` (tolerancja 1e-6°) albo pierwszy punkt dalej niż ~100 m od poprzedniej pozycji = uwaga. Służy tylko animacji przemieszczenia; bez `track` jednostka jedzie po prostej. Dotyczy jednostek własnych i sąsiadów. |
 | `notes` | tekst | nie | Opis do karty jednostki. |
+| `dos` | `{fuel, ammo, general, readiness, as_of}` | nie | **Meldowany** stan zaopatrzenia (T18): `fuel`/`ammo`/`general` = dni zaopatrzenia (liczby ≥ 0, każde opcjonalne, ale wymagany min. jeden wskaźnik razem z `readiness`), `readiness` = sprawność sprzętu 0–1, `as_of` = czas meldunku ISO (wymagany). To wiedza gracza, nie prawda: może być nieaktualna i zaokrąglona. Wartość ujemna, `readiness` > 1 albo zły `as_of` = błąd. Prawdziwy stan to `supply` w `umpire/turns/`. |
 
 Pola **tylko sędziego** (w `umpire/turns/`, zabronione w pliku gracza): `side`, `supply`.
+
+### `logistics` (gracz i sędzia, T17)
+
+Obiekt z czterema opcjonalnymi listami. Ten sam kształt w `player/turns` (to, co wie S4 gracza, dane mogą być nieaktualne) i `umpire/turns` (prawda). Id unikalne w całym `logistics` danej tury. Stałe i walidator: `shared/schema.js` (`checkLogistics`, `DEPOT_STATUSES`, `ROUTE_KINDS`, `ROUTE_STATUSES`, `BRIDGE_STATUSES`, `CONVOY_STATUSES`, `LOGISTICS_FIELDS`). W pliku gracza element nie może mieć pól spoza `LOGISTICS_FIELDS` (błąd); w `umpire/` pola dodatkowe są dozwolone.
+
+| Lista | Pola | Enumy |
+|---|---|---|
+| `depots[]` | wymagane: `id`, `name`, `pos` `[lon,lat]`, `stock` `{fuel, ammo, general}` (tony ≥ 0, wszystkie trzy), `status`, `as_of` (ISO); opcjonalne: `notes` | `status`: `operational`, `limited`, `destroyed` |
+| `routes[]` | wymagane: `id`, `name`, `kind`, `coords` (≥ 2 punkty), `status`; opcjonalne: `as_of`, `notes` | `kind`: `MSR`, `ASR`; `status`: `open`, `threatened`, `closed` |
+| `bridges[]` | wymagane: `id`, `name`, `pos`, `status`; opcjonalne: `mlc` (tony > 0), `as_of`, `notes` | `status`: `intact`, `damaged`, `destroyed` |
+| `convoys[]` | wymagane: `id`, `name`, `pos`, `from`, `to` (tekst: id składu/jednostki albo nazwa), `cargo` `{fuel, ammo, general}` (tony), `status`; opcjonalne: `eta` (ISO), `track`, `as_of`, `notes` | `status`: `planned`, `moving`, `halted`, `delayed`, `destroyed`, `arrived` |
+
+- `as_of` = czas, na który dane są aktualne; starsze niż 1 turę oznacza stare dane (UI). Wymagane tylko dla składu.
+- `convoys[].track` jak `units[].track`: trasa przejechana w turze, kończy się w `pos` (≥ 2 punkty; ostatni punkt ≠ `pos` = uwaga). Tylko animacja.
+- **Gracz vs sędzia:** plik gracza ma stan znany graczowi (np. skład z zapasem sprzed 3 h); `umpire/turns` ma prawdę (może zawierać dodatkowe pola, np. rzeczywisty zapas). `supply` pozostaje polem tylko sędziego i w pliku gracza to błąd.
 
 ### `contacts[]` (gracz)
 
@@ -149,8 +166,9 @@ Wiadomość: `id` (tekst, unikalny w całym scenariuszu, np. `in-000-01`, tak), 
 Pełna prawda dla tury N. Serwer nigdy go nie czyta i nie wysyła; walidator sprawdza strukturę, a w logach wypisuje tylko identyfikatory.
 
 Ma te same pola co plik gracza (`turn`, `time`, `units`, `assets`, `lines`), plus:
-- `units[]`/`assets[]`: `side` (`PL` / `RU` / …), `supply` (jednostki: `{fuel, ammo, general}` w dniach zaopatrzenia, DOS), `endurance_min` (środki: pozostały czas lotu), pełne i prawdziwe `personnel`/`equipment` (dla jednostek własnych identyczne jak w pliku gracza),
+- `units[]`/`assets[]`: `side` (`PL` / `RU` / …), `supply` (jednostki: `{fuel, ammo, general}` w dniach zaopatrzenia, DOS; gracz widzi tylko meldowane `dos`), `endurance_min` (środki: pozostały czas lotu), pełne i prawdziwe `personnel`/`equipment` (dla jednostek własnych identyczne jak w pliku gracza),
 - jednostki wroga (`side` ≠ strona gracza) z prawdziwymi pozycjami i stanami (kontaktów się tu nie zapisuje — to widok gracza),
+- `logistics`: prawdziwy stan warstwy logistycznej (kształt jak u gracza, patrz „`logistics`”; pola dodatkowe dozwolone),
 - `events`: lista tekstów — zdarzenia tury dla sędziego.
 
 ## `umpire/enemy-plan.md` — TYLKO sędzia

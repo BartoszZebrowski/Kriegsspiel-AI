@@ -11,7 +11,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  PLAYER_FIELDS, PLAYER_TURN_FIELDS, PLAYER_MESSAGE_FIELDS, extraFields,
+  PLAYER_FIELDS, PLAYER_TURN_FIELDS, PLAYER_MESSAGE_FIELDS, LOGISTICS_LISTS, LOGISTICS_FIELDS, checkLogistics, extraFields,
   isCoord, isValidTime, checkMessageMeta, checkMessageText, checkTrack,
 } from '../../shared/schema.js';
 
@@ -106,6 +106,42 @@ function patchMissing(kind, patches, list, warnings) {
   for (const id of Object.keys(patches || {})) if (!ids.has(id)) warnings.push(`plan: ${kind} "${id}" nie istnieje (łatka pominięta)`);
 }
 
+/**
+ * Warstwa logistyczna po zmianach planu. `prev` = logistics z tury N (albo undefined), `ch` = plan:
+ *   { depots|routes|bridges|convoys: { patch: { id: łatka | null }, add: [obiekty] } }
+ * Łatka scala pola (null usuwa pole), `null` zamiast łatki usuwa element; konwój może mieć `route` (punkty pośrednie)
+ * albo pełny `track`. Track konwoju liczony jak dla jednostek (od pozycji z tury N). Zwraca { logistics|undefined, warnings }.
+ * `fallbackRoutes` = trasy z innego widoku (np. sędziego), użyte, gdy łatka nie podaje własnej.
+ */
+export function applyLogistics(prev, ch, { fallbackRoutes = {}, fields = null } = {}) {
+  const warnings = [];
+  if (prev === undefined && !ch) return { logistics: undefined, warnings, routes: {} };
+  const out = {};
+  const routes = {};
+  for (const list of LOGISTICS_LISTS) {
+    const before = clone(prev?.[list] || []).map((x) => { const { track, ...rest } = x; return list === 'convoys' ? rest : x; });
+    const prevPos = new Map((prev?.[list] || []).map((x) => [x.id, x.pos]));
+    const spec = ch?.[list] || {};
+    patchMissing(`logistics.${list}`, spec.patch, before, warnings);
+    let items = mergeById(before, spec.patch, spec.add, { skip: ['route', 'track'], onApply: (next, _o, p) => { if (p.route) routes[next.id] = p.route; } });
+    if (list === 'convoys') {
+      items = items.map((c) => {
+        const { track: _t, ...rest } = c;
+        const explicit = spec.patch?.[c.id]?.track ?? spec.add?.find((a) => a.id === c.id)?.track ?? null;
+        const track = computeTrack(prevPos.get(c.id), c.pos, routes[c.id] ?? fallbackRoutes[c.id] ?? [], explicit);
+        return track ? { ...rest, track } : rest;
+      });
+    }
+    checkIds(`logistics.${list}`, items, warnings);
+    if (fields) items = items.map((x) => pickFields(x, fields[list]));
+    if (items.length || prev?.[list] || spec.add) out[list] = items;
+  }
+  if (!Object.keys(out).length) return { logistics: undefined, warnings, routes };
+  const chk = checkLogistics(out);
+  for (const e of chk.errors) warnings.push(e);
+  return { logistics: out, warnings, routes };
+}
+
 /** Wiadomości sędziego → sama biała lista pól, posortowane po czasie (stabilnie). Zwraca { messages, warnings }. */
 export function buildInbox(messages = [], { after, upTo } = {}) {
   const warnings = [];
@@ -157,6 +193,10 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   checkIds('środki sędziego', uAssets, warnings);
   const umpire = { ...clone(prevUmpire), turn, time, units: uUnits, events: clone(plan.events ?? []) };
   if (prevUmpire.assets || plan.addAssets) umpire.assets = uAssets;
+  delete umpire.logistics;
+  const uLog = applyLogistics(prevUmpire.logistics, plan.logistics);
+  warnings.push(...uLog.warnings.map((w) => `sędzia ${w}`));
+  if (uLog.logistics) umpire.logistics = uLog.logistics;
 
   // --- widok gracza ---
   const pl = plan.player || {};
@@ -171,7 +211,7 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   for (const u of uUnits) {
     if (u.side !== playerSide) continue;
     // Pola widoku gracza, których sędzia nie prowadzi (np. notes), dziedziczymy z poprzedniej tury gracza.
-    base.push({ ...prevById.get(u.id), ...pickFields(u, PLAYER_FIELDS.units) });
+    base.push({ ...prevById.get(u.id), ...pickFields(u, PLAYER_FIELDS.units.filter((f) => f !== 'dos')) }); // dos to meldunek gracza: nie z prawdy
     seen.add(u.id);
   }
   for (const u of prevPlayer.units || []) if (!seen.has(u.id) && !umpireIds.has(u.id)) base.push(clone(u));
@@ -217,7 +257,11 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   checkIds('kontakty', contacts, warnings);
   for (const c of contacts) if (isValidTime(c.observed) && Date.parse(c.observed) > Date.parse(time)) warnings.push(`kontakt ${c.id}: observed późniejszy niż czas tury`);
 
+  // Logistyka gracza: tylko z poprzedniej tury gracza + plan.player.logistics (nie z prawdy). Trasy konwojów z planu sędziego jako zapas.
+  const pLog = applyLogistics(prevPlayer.logistics, pl.logistics, { fallbackRoutes: uLog.routes, fields: LOGISTICS_FIELDS });
+  warnings.push(...pLog.warnings.map((w) => `gracz ${w}`));
   const player = { turn, time, units: pUnits };
+  if (pLog.logistics) player.logistics = pLog.logistics;
   if (contacts.length || prevPlayer.contacts) player.contacts = contacts;
   if (pAssets.length || prevPlayer.assets) player.assets = pAssets;
   if (lines.length || prevPlayer.lines) player.lines = lines;

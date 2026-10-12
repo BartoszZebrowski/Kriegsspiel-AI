@@ -1,0 +1,27 @@
+{
+  "_comment": "Przykładowe dane logistyki i DOS dla scenariusza 00-test-przesmyk. Napisy \"T-30\" / \"T+45\" = minuty względem czasu tury (rozwiązuje resolveSample).",
+  "logistics": {
+    "depots": [
+      { "id": "sk-blog", "name": "Skład główny Raczki", "pos": [22.79, 53.975], "stock": { "fuel": 180, "ammo": 120, "general": 240 }, "status": "operational", "as_of": "T-30" },
+      { "id": "sk-przod", "name": "Skład wysunięty Jeleniewo", "pos": [22.912, 54.176], "stock": { "fuel": 22, "ammo": 14, "general": 30 }, "status": "limited", "as_of": "T-180", "notes": "Dane sprzed 3 godzin." }
+    ],
+    "routes": [
+      { "id": "msr-1", "name": "MSR ZŁOTO (Raczki–Jeleniewo)", "kind": "MSR", "coords": [[22.79, 53.975], [22.86, 54.03], [22.935, 54.09], [22.905, 54.15], [22.875, 54.198]], "status": "open", "as_of": "T-30" },
+      { "id": "asr-1", "name": "ASR SREBRO (do 2 bzmot)", "kind": "ASR", "coords": [[22.935, 54.104], [23.07, 54.11], [23.24, 54.115]], "status": "threatened", "as_of": "T-60" }
+    ],
+    "bridges": [
+      { "id": "most-1", "name": "Most na MSR ZŁOTO", "pos": [22.86, 54.03], "mlc": 40, "status": "intact", "as_of": "T-30" },
+      { "id": "most-2", "name": "Most na ASR SREBRO", "pos": [23.07, 54.11], "mlc": 20, "status": "damaged", "as_of": "T-90" }
+    ],
+    "convoys": [
+      { "id": "kw-1", "name": "Kolumna zaopatrzenia nr 1", "pos": [22.86, 54.03], "from": "sk-blog", "to": "sk-przod", "cargo": { "fuel": 20, "ammo": 12, "general": 8 }, "eta": "T+90", "status": "moving", "track": [[22.8, 53.985], [22.83, 54.01], [22.86, 54.03]], "as_of": "T+0" }
+    ]
+  },
+  "dos": {
+    "1bzmot": { "fuel": 2.5, "ammo": 2.0, "general": 3.0, "readiness": 0.9, "as_of": "T-30" },
+    "1bzmot-1k": { "fuel": 1.4, "ammo": 0.8, "general": 2.0, "readiness": 0.7, "as_of": "T-60" },
+    "2bzmot": { "fuel": 0.6, "ammo": 1.2, "general": 1.0, "readiness": 0.45, "as_of": "T-180" },
+    "bcz-1k": { "fuel": 2.1, "ammo": 2.5, "general": 2.0, "readiness": 0.85, "as_of": "T-30" },
+    "dart": { "fuel": 1.0, "ammo": 1.9, "general": 1.5, "readiness": 0.8, "as_of": "T-45" }
+  }
+}
