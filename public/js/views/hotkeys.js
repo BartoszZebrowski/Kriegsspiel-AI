@@ -39,6 +39,7 @@ export function createHotkeysView({ store, controller }) {
     } else if (key === 'b') controller.openBriefing();
     else if (k === '?') controller.togglePopover('legend');
     else if (key === 'w') controller.togglePopover('layers');
+    else if (key === 'd') controller.togglePopover('dos');
     else if (key === 'f') controller.command('fit');
     else if (k === ',') controller.prevTurn();
     else if (k === '.') controller.nextTurn();

@@ -7,7 +7,8 @@ import { symbolIcon } from '../../lib/symbols.js';
 import { describeSidc } from '../../domain/sidc.js';
 import { escapeHtml } from '../../domain/markdown.js';
 import { unitBrief, contactBrief } from '../../domain/strength.js';
-import { findEntity } from '../../domain/entities.js';
+import { findEntity, entityPos } from '../../domain/entities.js';
+import { logisticsElements, logisticsCard, routeColor, dataAge } from '../../domain/logistics.js';
 import { toLatLng } from '../../domain/geo.js';
 import { ageMinutes } from '../../domain/format.js';
 import { indexById, isUnitVisible, echelonRank, BATTALION_RANK, COMPANY_RANK, splitUnits, parentIdOf, isNeighbourUnit } from '../../domain/orbat.js';
@@ -45,6 +46,7 @@ export function createMapView({ store, controller, root = document }) {
     hierarchy: L.layerGroup().addTo(map),
     units: L.layerGroup().addTo(map),
     assets: L.layerGroup().addTo(map),
+    logistics: L.layerGroup().addTo(map),
   };
 
   // ---------- podkład i nakładki (ze store) ----------
@@ -96,11 +98,17 @@ export function createMapView({ store, controller, root = document }) {
     contactsShown: () => S().layers.contacts !== false,
   });
 
+  const routeLines = new Map(); // id trasy logistycznej -> L.Polyline (zaznaczenie zmienia grubość)
+
   const markerEl = (id) => markers.get(id)?.getElement();
 
   function applySelection() {
     const id = S().selection?.id ?? null;
     for (const [mid, m] of markers) m.getElement()?.classList.toggle('is-selected', mid === id);
+    for (const [rid, line] of routeLines) {
+      line.setStyle({ weight: rid === id ? 6 : 4 });
+      line.getElement?.()?.classList.toggle('is-selected', rid === id);
+    }
   }
 
   // Najechanie na wiersz drzewa albo symbol: jasna ramka; przełożony podświetla podwładnych i wzmacnia linie.
@@ -150,9 +158,44 @@ export function createMapView({ store, controller, root = document }) {
     hierarchy.style(S().selection?.id ?? null, S().hoverUnit);
   }
 
+  // Warstwa logistyczna (T17): trasy w kolorze statusu, składy i konwoje jako symbole NATO (zaopatrzenie / transport), mosty jako ikona.
+  const BRIDGE_COLORS = { intact: '#43b581', damaged: '#e8b339', destroyed: '#ef4444' };
+  const LG_SIDC = { depot: 'SFGPUSS--------', convoy: 'SFGPUST--------' };
+  function renderLogistics(turn) {
+    const group = situation.logistics;
+    const ctx = { turnTime: turn.time, turnMinutes: scenario.turnMinutes, tz: scenario.timezone };
+    for (const { kind, item } of logisticsElements(turn)) {
+      const card = logisticsCard(kind, item, ctx);
+      const tip = `<strong>${escapeHtml(card.title)}</strong><br>${escapeHtml(card.kindLabel)} · ${escapeHtml(card.statusLabel)}${card.stale ? '<br><span class="sym-tip__brief">dane nieaktualne</span>' : ''}`;
+      let layer;
+      if (kind === 'route') {
+        if (!Array.isArray(item.coords)) continue;
+        const latlngs = item.coords.map(toLatLng);
+        group.addLayer(L.polyline(latlngs, { color: 'rgba(0,0,0,.55)', weight: 8, opacity: 1, interactive: false }));
+        layer = L.polyline(latlngs, { color: routeColor(item.status), weight: 4, opacity: 0.95, dashArray: item.kind === 'ASR' ? '10 6' : null, className: 'lg-route' });
+        routeLines.set(item.id, layer);
+        layer.bindTooltip(`${tip}`, { className: 'sym-tip', sticky: true });
+      } else {
+        if (!Array.isArray(item.pos)) continue;
+        const icon =
+          kind === 'bridge'
+            ? L.divIcon({ className: 'ms-icon lg-bridge', html: `<svg viewBox="0 0 24 24" width="24" height="24"><rect x="1" y="1" width="22" height="22" rx="4" fill="#161b22" stroke="${BRIDGE_COLORS[item.status] || '#9aa5b1'}" stroke-width="2"/><path d="M4 15h16M6 15v-4a6 6 0 0 1 12 0v4M12 9v6" fill="none" stroke="${BRIDGE_COLORS[item.status] || '#9aa5b1'}" stroke-width="1.6"/></svg>`, iconSize: [24, 24], iconAnchor: [12, 12] })
+            : symbolIcon(LG_SIDC[kind], { size: 24 });
+        const dim = item.status === 'destroyed' || dataAge(item.as_of, turn.time, scenario.turnMinutes).stale;
+        layer = L.marker(toLatLng(item.pos), { icon, keyboard: false, opacity: dim ? 0.6 : 1, zIndexOffset: 50 });
+        markers.set(item.id, layer);
+        layer.on('add', applySelection);
+        layer.bindTooltip(tip, { className: 'sym-tip', direction: 'top', offset: [0, -12] });
+      }
+      layer.on('click', () => controller.selectEntity(item.id, { pan: false }));
+      group.addLayer(layer);
+    }
+  }
+
   function renderTurn(turn) {
     for (const g of Object.values(situation)) g.clearLayers();
     markers.clear();
+    routeLines.clear();
 
     renderLines(situation.lines, turn?.lines);
     if (!turn) return;
@@ -188,6 +231,7 @@ export function createMapView({ store, controller, root = document }) {
     for (const a of turn.assets || []) {
       if (a.sidc) addSymbol(situation.assets, a, { size: 22, uniqueDesignation: a.name });
     }
+    renderLogistics(turn);
     applySelection();
     applyHover();
   }
@@ -216,7 +260,8 @@ export function createMapView({ store, controller, root = document }) {
     if (focus?.kind === 'place') flyToPlace(focus.place);
     else if (focus?.kind === 'entity') {
       const e = findEntity(turn, focus.id);
-      if (e) map.panTo(toLatLng(e.item.pos), { animate: true, duration: 0.4 });
+      const at = entityPos(e);
+      if (at) map.panTo(toLatLng(at), { animate: true, duration: 0.4 });
     }
   }
 

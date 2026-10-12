@@ -4,6 +4,7 @@
 import { symbolSvg } from '../lib/symbols.js';
 import { groupSymbolTypes } from '../domain/sidc.js';
 import { escapeHtml as e } from '../domain/markdown.js';
+import { logisticsElements, ROUTE_COLORS } from '../domain/logistics.js';
 
 const row = (sidc, title, small = '', right = '', size = 26) =>
   `<div class="lg-r"><div class="s">${symbolSvg(sidc, { size }).svg}</div><div class="d">${e(title)}${small ? `<small>${small}</small>` : ''}</div><div class="x">${right}</div></div>`;
@@ -11,11 +12,28 @@ const row = (sidc, title, small = '', right = '', size = 26) =>
 const group = (title, items) =>
   items.length ? `<div class="lg-g cap">${title}</div>` + items.map((g) => row(g.sidc, g.description, `<span class="mono">${e(g.sidc)}</span>`, g.count > 1 ? `×${g.count}` : '')).join('') : '';
 
+// Legenda warstwy logistycznej (T17): trasy MSR (ciągła) i ASR (przerywana) w kolorze statusu, składy, konwoje, most.
+function logisticsLegend() {
+  const line = (color, dash) => `<svg width="34" height="20"><path d="M2 10h30" stroke="${color}" stroke-width="4"${dash ? ' stroke-dasharray="7 5"' : ''}/></svg>`;
+  const r = (svg, title, small) => `<div class="lg-r"><div class="s">${svg}</div><div class="d">${e(title)}<small>${e(small)}</small></div><div class="x"></div></div>`;
+  const bridge = `<svg width="34" height="20" viewBox="0 0 24 24"><rect x="1" y="1" width="22" height="22" rx="4" fill="#161b22" stroke="#43b581" stroke-width="2"/><path d="M4 15h16M6 15v-4a6 6 0 0 1 12 0v4M12 9v6" fill="none" stroke="#43b581" stroke-width="1.6"/></svg>`;
+  return (
+    `<div class="lg-g cap">Logistyka</div>` +
+    r(line(ROUTE_COLORS.open), 'MSR — główna trasa zaopatrzenia', 'linia ciągła; zielona: przejezdna') +
+    r(line(ROUTE_COLORS.threatened, true), 'ASR — zapasowa trasa zaopatrzenia', 'linia przerywana; żółta: zagrożona') +
+    r(line(ROUTE_COLORS.closed), 'Trasa zamknięta', 'czerwona') +
+    r(bridge, 'Most', 'kolor ramki: cały / uszkodzony / zburzony') +
+    row('SFGPUSS--------', 'Skład', 'przygaszony: zniszczony lub dane nieaktualne', '', 24) +
+    row('SFGPUST--------', 'Konwój', 'jedzie po wyznaczonej trasie')
+  );
+}
+
 export function renderOnMap(el, turn) {
   const own = groupSymbolTypes(turn.units || []);
   const enemy = groupSymbolTypes(turn.contacts || []);
   const assets = groupSymbolTypes((turn.assets || []).filter((a) => a.sidc));
-  if (!own.length && !enemy.length && !assets.length) {
+  const hasLg = logisticsElements(turn).length > 0;
+  if (!own.length && !enemy.length && !assets.length && !hasLg) {
     el.innerHTML = '<p class="muted pad">Brak symboli na mapie.</p>';
     return;
   }
@@ -24,6 +42,7 @@ export function renderOnMap(el, turn) {
     group('Siły własne', own) +
     group('Przeciwnik', enemy) +
     group('Środki rozpoznania', assets) +
+    (hasLg ? logisticsLegend() : '') +
     `<div class="lg-g cap">Elementy mapy</div>` +
     svgRow('<svg width="34" height="20"><circle cx="17" cy="10" r="8" fill="rgba(255,128,128,.12)" stroke="#ff8080" stroke-dasharray="3 2"/></svg>', 'Okrąg niepewności', 'promień = niepewność położenia kontaktu') +
     svgRow('<svg width="34" height="20"><circle cx="9" cy="10" r="5" fill="#ff8080"/><circle cx="25" cy="10" r="5" fill="#ff8080" opacity=".38"/></svg>', 'Wiek informacji', 'kontakt blaknie wraz z upływem czasu') +

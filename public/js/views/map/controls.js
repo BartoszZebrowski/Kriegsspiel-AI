@@ -11,6 +11,7 @@ const OVERLAY_ROWS = [
   ['units', 'Jednostki własne'],
   ['contacts', 'Kontakty i okręgi niepewności'],
   ['assets', 'Środki rozpoznania'],
+  ['logistics', 'Logistyka: składy, trasy, mosty, konwoje'],
   ['notes', 'Moje szkice'],
   ['Koleje', 'Koleje (OpenRailwayMap)'],
   ['Rzeźba terenu', 'Rzeźba terenu (cieniowanie)'],
@@ -51,7 +52,7 @@ export function createMapControls({ store, controller, map, root = document }) {
     ).join('');
     $('lp-over').innerHTML =
       rows +
-      `<div class="lp-row soon"><span class="cb">${ic('check')}</span><span class="grow">Logistyka: składy, MSR, konwoje</span><span class="pill">WKRÓTCE</span></div><div class="lp-div"></div>` +
+      `<div class="lp-div"></div>` +
       `<div class="lp-row${layers.labels ? ' on' : ''}" role="checkbox" aria-checked="${Boolean(layers.labels)}" tabindex="0" data-ov="labels"><span class="cb">${ic('check')}</span><span class="grow">Etykiety symboli</span></div>` +
       // Animacja przemieszczeń między turami: przełącznik zapamiętany; systemowe „ogranicz ruch” wyłącza ją zawsze.
       `<div class="lp-row${ui.animations && !ui.reducedMotion ? ' on' : ''}" role="checkbox" aria-checked="${ui.animations && !ui.reducedMotion}" tabindex="0" data-anim title="${ui.reducedMotion ? 'Wyłączone przez ustawienie systemu (ogranicz ruch)' : 'Animacja przemieszczeń po zmianie tury'}"><span class="cb">${ic('check')}</span><span class="grow">Animacje</span>${ui.reducedMotion ? '<span class="pill">SYSTEM</span>' : ''}</div>`;

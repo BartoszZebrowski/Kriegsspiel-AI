@@ -302,7 +302,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   const listen = (eventSource) => eventSource.addEventListener('update', () => onUpdate());
 
   // ---------- wybór obiektów ----------
-  const layerOf = { unit: 'units', contact: 'contacts', asset: 'assets' };
+  const layerOf = { unit: 'units', contact: 'contacts', asset: 'assets', depot: 'logistics', route: 'logistics', bridge: 'logistics', convoy: 'logistics' };
 
   function isShown(id) {
     const s = S();
@@ -533,6 +533,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     if (id === 'briefing') return openBriefing();
     if (id === 'legend') return setPopover('legend');
     if (id === 'layers') return setPopover('layers');
+    if (id === 'dos') return setPopover('dos');
     if (id === 'measure') return command('tool', 'measure');
     if (id === 'fit') return command('fit');
     if (id === 'dock-l') return toggleDock('l');

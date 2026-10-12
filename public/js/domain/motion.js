@@ -100,6 +100,14 @@ export function buildPlan(prev, next) {
       moves.push({ id: u.id, kind: kind === 'units' ? 'unit' : 'asset', route, lengthKm: pathLength(route), tracked: route.length > 2 || Boolean(u.track) });
     }
   }
+  // Konwoje warstwy logistycznej (T17) jadą jak jednostki (pole track); id elementów logistycznych są osobną przestrzenią.
+  const beforeConvoys = new Map((prev.logistics?.convoys || []).filter(hasPos).map((x) => [x.id, x]));
+  for (const c of next.logistics?.convoys || []) {
+    const old = beforeConvoys.get(c.id);
+    if (!old || !hasPos(c) || distanceKm(old.pos, c.pos) <= MIN_MOVE_KM) continue;
+    const route = routeFor(old.pos, c.pos, c.track);
+    moves.push({ id: c.id, kind: 'convoy', route, lengthKm: pathLength(route), tracked: route.length > 2 || Boolean(c.track) });
+  }
   const before = new Map((prev.contacts || []).filter(hasPos).map((c) => [c.id, c]));
   for (const c of next.contacts || []) {
     const old = before.get(c.id);

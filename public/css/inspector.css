@@ -58,3 +58,10 @@
 .uchip:focus-visible{outline:2px solid var(--focus)}
 .insp-sym svg{display:block}
 .chip-st{margin-top:6px}
+
+/* --- T17: karta elementu warstwy logistycznej --- */
+.lg-st{font-weight:600}
+.lg-st--ok{color:var(--ok)}
+.lg-st--warn{color:var(--warn)}
+.lg-st--bad{color:var(--danger)}
+.lg-stale{margin-top:8px;padding:7px 9px;border-radius:var(--r-2);border:1px solid rgba(232,179,57,.5);background:rgba(232,179,57,.1);color:var(--warn);font-size:12px;line-height:1.35}

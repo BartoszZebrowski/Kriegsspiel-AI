@@ -19,6 +19,7 @@ export const COMMANDS = [
   { id: 'briefing', title: 'Otwórz odprawę', key: 'B' },
   { id: 'legend', title: 'Pokaż legendę', key: '?' },
   { id: 'layers', title: 'Warstwy i podkład', key: 'W' },
+  { id: 'dos', title: 'Panel DOS (zaopatrzenie jednostek)', key: 'D' },
   { id: 'measure', title: 'Rozpocznij pomiar odległości', key: 'M' },
   { id: 'fit', title: 'Pokaż wszystkie siły własne', key: 'F' },
   { id: 'base-dark', title: 'Podkład: ciemny', key: '' },

@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="/css/inspector.css">
   <link rel="stylesheet" href="/css/messenger.css">
   <link rel="stylesheet" href="/css/map.css">
+  <link rel="stylesheet" href="/css/dos.css">
   <link rel="stylesheet" href="/css/draw.css">
   <link rel="stylesheet" href="/css/timeline.css">
   <link rel="stylesheet" href="/css/overlays.css">
@@ -150,6 +151,7 @@
       <div class="float" id="mapctl">
         <button class="tool" id="b-layers" data-tip="Warstwy i podkład" data-k="W" data-pos="l" aria-label="Warstwy"><svg class="i"><use href="#i-layers"/></svg></button>
         <button class="tool" id="b-legend" data-tip="Legenda symboli" data-k="?" data-pos="l" aria-label="Legenda"><svg class="i"><use href="#i-help"/></svg></button>
+        <button class="tool" id="b-dos" data-tip="Panel DOS — zaopatrzenie jednostek" data-k="D" data-pos="l" aria-label="Panel DOS"><svg class="i"><use href="#i-info"/></svg></button>
         <div class="sep"></div>
         <button class="tool" id="z-in" data-tip="Przybliż" data-pos="l" aria-label="Przybliż"><svg class="i"><use href="#i-plus"/></svg></button>
         <button class="tool" id="z-out" data-tip="Oddal" data-pos="l" aria-label="Oddal"><svg class="i"><use href="#i-minus"/></svg></button>
@@ -160,6 +162,13 @@
         <div class="lp-sec"><span class="cap">Podkład</span><div id="lp-base"></div></div>
         <div class="lp-div"></div>
         <div class="lp-sec"><span class="cap">Nakładki</span><div id="lp-over"></div></div>
+      </div>
+
+      <div class="float pop" id="dos-panel" role="dialog" aria-label="Panel DOS">
+        <div class="panel-h"><span class="cap">DOS — zaopatrzenie</span><span class="grow"></span>
+          <button class="ibtn" id="dos-x" data-tip="Zamknij" data-k="Esc" aria-label="Zamknij panel DOS"><svg class="i s"><use href="#i-x"/></svg></button></div>
+        <div id="dos-body"></div>
+        <div class="lg-foot"><svg class="i s"><use href="#i-info"/></svg>Meldunki, nie prawda. Dni: ≥ 2 zielony, 1–2 żółty, &lt; 1 czerwony. Klik w wiersz otwiera kartę.</div>
       </div>
 
       <div class="float pop" id="legend" role="dialog" aria-label="Legenda">

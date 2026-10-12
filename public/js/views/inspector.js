@@ -7,7 +7,11 @@ import { escapeHtml as e } from '../domain/markdown.js';
 import { findEntity } from '../domain/entities.js';
 import { indexById, childrenOf, channelForUnit, isNeighbourUnit } from '../domain/orbat.js';
 import { readinessRatio } from '../domain/strength.js';
+import { resolveDos } from '../domain/dos.js';
+import { logisticsCard, logisticsCardHtml, LOGISTICS_KINDS } from '../domain/logistics.js';
 import { inspectorHead, unitCard, contactCard, assetCard, supplyCard, historyCard } from '../domain/cards.js';
+
+const LG_SIDC = { depot: 'SFGPUSS--------', convoy: 'SFGPUST--------' };
 
 export function createInspectorView({ store, controller, root = document }) {
   const $ = (id) => root.getElementById(id);
@@ -45,15 +49,22 @@ export function createInspectorView({ store, controller, root = document }) {
     const units = s.turn.units || [];
     // Jednostka formacji sąsiada: tylko odczyt (bez wiadomości, rozkazów i dziennika rozmów).
     const neighbour = kind === 'unit' && isNeighbourUnit(item, indexById(units));
+    const isLogistics = LOGISTICS_KINDS.includes(kind);
     tabs.hidden = kind !== 'unit' || neighbour;
     const tab = neighbour ? 'ov' : tabState;
     let html;
-    if (kind === 'unit') {
+    if (isLogistics) {
+      const card = logisticsCard(kind, item, { turnTime: s.turn.time, turnMinutes: s.scenario?.turnMinutes, tz });
+      const symbol = LG_SIDC[kind] ? symbolOf(LG_SIDC[kind], 44) : '';
+      html = inspectorHead({ symbol, title: card.title, sub: card.kindLabel, status: card.statusLabel, ratio: card.level === 'bad' ? 0 : card.level === 'warn' ? 0.6 : 1 });
+      html += actions([btn('aim', 'Wycentruj', 'aim', 'pri')]);
+      html += logisticsCardHtml(card, { tz });
+    } else if (kind === 'unit') {
       const ch = neighbour ? null : channelForUnit(s.channels, item.id);
       const ratio = item.personnel ? readinessRatio(item.personnel.current, item.personnel.authorized) : typeof item.strength === 'number' ? item.strength : null;
       html = inspectorHead({ symbol: symbolOf(item.sidc, 44), title: item.name || item.id, sub: describeSidc(item.sidc), sidc: item.sidc, status: item.status, ratio });
       html += neighbour ? actions([btn('aim', 'Wycentruj', 'aim', 'pri')]) : actions([btn('msg', 'Wiadomość', 'msg', 'pri', !ch), btn('aim', 'Wycentruj', 'aim'), btn('ord', 'Rozkaz…', '', '', !ch)]);
-      if (tab === 'ov') html += unitCard(item, indexById(units), childrenOf(units, item.id), { ...ctx, neighbour });
+      if (tab === 'ov') html += unitCard(item, indexById(units), childrenOf(units, item.id), { ...ctx, neighbour, dosView: neighbour ? null : resolveDos(item, units) });
       else if (tab === 'sup') html += supplyCard();
       else {
         const msgs = ch ? s.visibleMessages.filter((m) => m.channel === ch.id) : [];

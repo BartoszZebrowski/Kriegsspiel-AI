@@ -585,7 +585,7 @@ Zalecana kolejność: **T17 + T18** (logistyka jako system) → **T25 + T26** (d
 - **T18 Panel DOS:** patrz sekcja T18 niżej.
 - **T19 Utrata łączności:** jednostka bez łączności jest pokazana na ostatniej znanej pozycji, z czasem ostatniego kontaktu.
 
-## T17 — Warstwa logistyczna ⬜
+## T17 — Warstwa logistyczna ✅
 Gracz widzi logistykę tak, jak ją zna jego S4: stan może być nieaktualny, prawda jest tylko w `umpire/`.
 
 **WA**
@@ -604,7 +604,7 @@ Gracz widzi logistykę tak, jak ją zna jego S4: stan może być nieaktualny, pr
 - [A] Domena: model karty elementu logistycznego (status, wiek danych).
 - [M] Na scenariuszu testowym warstwa pokazuje trasę, skład, most i konwój; klik otwiera kartę.
 
-## T18 — Panel DOS ⬜
+## T18 — Panel DOS ✅
 **WA**
 1. Schemat: jednostka własna w `player/turns` może mieć `dos: {fuel, ammo, general, readiness, as_of}` — meldowany stan (dni zaopatrzenia, `readiness` 0–1 = sprawność sprzętu). To meldunek, nie prawda (`supply` zostaje tylko w `umpire/`).
 2. Karta jednostki pokazuje DOS z paskami i progami kolorów: ≥ 2 dni zielony, 1–2 żółty, < 1 czerwony (sprawność: ≥ 0,8 / 0,5–0,8 / < 0,5), z wiekiem meldunku.

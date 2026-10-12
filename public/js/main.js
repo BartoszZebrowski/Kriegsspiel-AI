@@ -13,6 +13,7 @@ import { createBriefingView } from './views/briefing.js';
 import { createStructureView } from './views/structure.js';
 import { createInspectorView } from './views/inspector.js';
 import { createLegendView } from './views/legend.js';
+import { createDosView } from './views/dos.js';
 import { createMessengerView } from './views/messenger.js';
 import { createTimelineView } from './views/timeline.js';
 import { createOmniboxView } from './views/omnibox.js';
@@ -52,6 +53,7 @@ async function start() {
   createStructureView({ store, controller });
   createInspectorView({ store, controller });
   createLegendView({ store, controller });
+  createDosView({ store, controller });
   createMessengerView({ store, controller });
   createTimelineView({ store, controller });
   createOmniboxView({ store, controller });

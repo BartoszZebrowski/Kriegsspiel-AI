@@ -19,6 +19,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createApp } from '../server/app.js';
 import { GRAPHICS } from '../public/js/domain/tactical.js';
+import { injectLogisticsSample } from '../test/fixtures/logistics-sample.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
@@ -82,6 +83,8 @@ scn.status = 'active';
 await fs.writeFile(scnPath, JSON.stringify(scn, null, 2));
 await fs.rm(path.join(scenarioDir, 'player', 'outbox'), { recursive: true, force: true });
 await fs.rm(path.join(scenarioDir, 'player', 'notes'), { recursive: true, force: true });
+// T17/T18: przykładowa logistyka i DOS w ostatniej turze kopii (tura 0).
+await injectLogisticsSample(scenarioDir);
 await fs.mkdir(profileDir, { recursive: true });
 
 const chromePath = findChrome();
@@ -287,6 +290,41 @@ try {
     await key('Escape');
     await waitFor(`!document.getElementById('brief').classList.contains('open')`, 'Esc po skrócie');
   });
+
+  // ===== T17: warstwa logistyczna (tura 0: dane z injectLogisticsSample są liczone względem jej czasu) =====
+  await step('T17 logistyka: warstwa na mapie (trasy, skład, most, konwój), przełącznik w Warstwach, karta z as_of i „dane nieaktualne”', async () => {
+    await waitFor(`${store()}.turn.logistics && document.querySelectorAll('#map .lg-route').length === 2`, 'trasy MSR/ASR na mapie');
+    assert((await ev(`document.querySelectorAll('#map .lg-bridge').length`)) === 2, 'dwa mosty');
+    assert((await state('s.layers.logistics')) === true, 'warstwa logistyczna domyślnie włączona');
+    // trasa w kolorze statusu: MSR otwarta (zielona), ASR zagrożona (żółta)
+    const colors = await ev(`[...document.querySelectorAll('#map .lg-route')].map((p) => p.getAttribute('stroke')).join()`);
+    assert(/#43b581/.test(colors) && /#e8b339/.test(colors), 'kolory statusów tras: ' + colors);
+    // klik w skład (aktualny, 30 min) → karta bez ostrzeżenia
+    await ev(`window.__ks.controller.selectEntity('sk-blog')`);
+    await waitFor(`document.querySelector('#insp-body .lg-card')`, 'karta składu');
+    let card = await ev(`document.getElementById('insp-body').innerText`);
+    assert(/Skład główny Raczki/.test(card) && /Stan na/.test(card) && /180 t/.test(card), 'karta składu: ' + card);
+    assert(!(await ev(`!!document.querySelector('#insp-body [data-stale]')`)), 'skład z as_of -30 min nie jest nieaktualny');
+    // skład wysunięty (as_of -180 min > 1 tura) → „Dane nieaktualne”
+    await ev(`window.__ks.controller.selectEntity('sk-przod')`);
+    await waitFor(`document.querySelector('#insp-body [data-stale]')`, 'oznaczenie nieaktualnych danych');
+    // trasa i konwój też mają karty
+    await ev(`window.__ks.controller.selectEntity('msr-1')`);
+    await waitFor(`/MSR ZŁOTO/.test(document.getElementById('insp-body').innerText)`, 'karta trasy');
+    await ev(`window.__ks.controller.selectEntity('kw-1')`);
+    await waitFor(`/Kolumna zaopatrzenia/.test(document.getElementById('insp-body').innerText)`, 'karta konwoju');
+    // klik w symbol mostu na mapie otwiera kartę
+    await ev(`document.querySelector('#map .lg-bridge').dispatchEvent(new MouseEvent('click', { bubbles: true }))`);
+    await waitFor(`${store()}.selection && /^most-/.test(${store()}.selection.id)`, 'klik w most zaznacza go');
+    // wyłączenie warstwy w panelu Warstwy ukrywa elementy
+    await ev(`document.getElementById('b-layers').click()`);
+    await ev(`document.querySelector('#layers [data-ov="logistics"]').click()`);
+    await waitFor(`document.querySelectorAll('#map .lg-route, #map .lg-bridge').length === 0`, 'ukrycie warstwy');
+    await ev(`document.querySelector('#layers [data-ov="logistics"]').click()`);
+    await waitFor(`document.querySelectorAll('#map .lg-bridge').length === 2`, 'ponowne włączenie warstwy');
+    await ev(`window.__ks.controller.setPopover(null); window.__ks.controller.clearSelection()`);
+  });
+  // ===== koniec T17 =====
 
   await step('szczegółowość: kompanie, plutony i linie podporządkowania (magenta)', async () => {
     const icons = () => ev(`document.querySelectorAll('#map .ms-icon').length`);
@@ -1086,6 +1124,40 @@ try {
     assert(dist(await pointOf('mamry-1bzmot'), await finalPoint([22.58, 54.17])) < 1.5, 'jednostka sąsiada na nowej pozycji');
     await ev(`window.__ks.controller.showCurrent()`);
   });
+
+  // ===== T18: panel DOS =====
+  await step('T18 DOS: panel zbiorczy (klawisz D, sortowanie po najgorszym, kolory), klik w wiersz → karta z paskami i wiekiem, jednostka wyliczona', async () => {
+    await ev(`window.__ks.controller.showTurn(0)`);
+    await waitFor(`${store()}.viewTurn === 0`, 'tura 0');
+    assert((await state(`s.turn.units.some((u) => u.dos)`)), 'tura 0 ma jednostki z dos (injectLogisticsSample)');
+    await key('d');
+    await waitFor(`document.getElementById('dos-panel').classList.contains('open')`, 'panel DOS otwarty klawiszem D');
+    const rows = await ev(`[...document.querySelectorAll('#dos-body .dos-row')].map((r) => [r.dataset.unit, r.dataset.level])`);
+    assert(rows.length >= 5, 'wiersze jednostek własnych: ' + rows.length);
+    assert(!rows.some(([id]) => /^mamry-|^biebrza-/.test(id)), 'bez jednostek sąsiadów');
+    assert(rows[0][1] === 'bad', 'najgorsza jednostka na górze jest czerwona: ' + rows[0]);
+    const rank = { bad: 0, warn: 1, ok: 2, none: 3 };
+    assert(rows.every((r, i) => i === 0 || rank[rows[i - 1][1]] <= rank[r[1]]), 'sortowanie od najgorszego: ' + rows.map((r) => r[1]).join());
+    assert(await ev(`document.querySelector('#dos-body .dos-row[data-unit="2bzmot"] .dos-bad') !== null`), 'komórka czerwona (paliwo 0,6 d)');
+    assert(await ev(`document.querySelector('#dos-body .dos-row[data-unit="bcz"] .pill') !== null`), 'bcz: wiersz oznaczony jako wyliczony');
+    // klik w wiersz → karta jednostki z sekcją DOS
+    await clickSel('#dos-body .dos-row[data-unit="2bzmot"]');
+    await waitFor(`${store()}.selection?.id === '2bzmot'`, 'zaznaczenie po kliku w wiersz');
+    await waitFor(`document.querySelector('#insp-body [data-dos-block]')`, 'sekcja DOS w karcie');
+    const card = await ev(`(() => { const b = document.querySelector('#insp-body [data-dos-block]'); return { bars: b.querySelectorAll('.dosb').length, levels: [...b.querySelectorAll('.dosb')].map((x) => x.dataset.level + ':' + x.querySelector('.meter').className).join(), text: b.innerText }; })()`);
+    assert(card.bars === 4, 'cztery paski DOS: ' + card.bars);
+    assert(/bad:meter bad/.test(card.levels) && /warn:meter warn/.test(card.levels), 'paski w kolorach progu: ' + card.levels);
+    assert(/meldunek/.test(card.text) && /temu/.test(card.text), 'wiek meldunku: ' + card.text);
+    assert(!/WYLICZONE/.test(card.text), 'własny meldunek nie jest wyliczony');
+    // jednostka bez własnego dos → minimum z podwładnych
+    await ev(`window.__ks.controller.selectEntity('bcz', { pan: false })`);
+    await waitFor(`/WYLICZONE/.test(document.getElementById('insp-body').innerText)`, 'karta bcz: DOS wyliczony');
+    await key('Escape');
+    assert(await ev(`!document.getElementById('dos-panel').classList.contains('open')`), 'Esc zamyka panel');
+    await ev(`window.__ks.controller.clearSelection(); window.__ks.controller.showCurrent()`);
+  });
+  // ===== koniec T18 =====
+
 
   await step('telefon (≤ 760 px): dolny pasek zakładek, arkusze, splittery wyłączone', async () => {
     await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: false });

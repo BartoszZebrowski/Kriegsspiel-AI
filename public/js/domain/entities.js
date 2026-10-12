@@ -1,3 +1,5 @@
+import { findLogisticsItem, logisticsPos } from './logistics.js';
+
 // Obiekty na mapie (jednostka, kontakt, środek rozpoznania) wyszukiwane w danych tury.
 
 // Zwraca { kind, item } albo null. Obiekt bez położenia (`pos`) nie jest „na mapie”.
@@ -11,5 +13,13 @@ export function findEntity(turn, id) {
   if (unit) return { kind: 'unit', item: unit };
   const contact = (turn.contacts || []).find((c) => c.id === id && hasPos(c));
   if (contact) return { kind: 'contact', item: contact };
-  return null;
+  // Elementy warstwy logistycznej (T17): kind = depot | route | bridge | convoy; pierwszeństwo mają obiekty powyżej.
+  const lg = findLogisticsItem(turn, id);
+  return lg && logisticsPos(lg.kind, lg.item) ? lg : null;
+}
+
+// Punkt [lon, lat] obiektu (dla trasy logistycznej: jej środek) albo null.
+export function entityPos(entity) {
+  if (!entity) return null;
+  return entity.kind === 'route' ? logisticsPos('route', entity.item) : Array.isArray(entity.item.pos) ? entity.item.pos : null;
 }

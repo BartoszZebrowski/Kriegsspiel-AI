@@ -1,0 +1,18 @@
+/* Panel DOS (T18): popover mapy z tabelą jednostek własnych */
+#dos-panel{right:56px;top:52px;width:460px;max-height:calc(100% - 110px);display:none;flex-direction:column}
+#dos-panel.open{display:flex}
+#dos-panel .panel-h{border-radius:var(--r-4) var(--r-4) 0 0}
+#dos-body{overflow:auto;min-height:0}
+.dos-t{width:100%;border-collapse:collapse;font-size:12px}
+.dos-t th{position:sticky;top:0;background:var(--bg-2);color:var(--t-3);font-weight:600;font-size:11px;padding:5px 6px;text-align:left;border-bottom:1px solid var(--line)}
+.dos-t td{padding:4px 6px;border-bottom:1px solid var(--line-2)}
+.dos-c{text-align:right;font-family:var(--font-mono);white-space:nowrap}
+.dos-row{cursor:pointer}
+.dos-row:hover,.dos-row:focus-visible{background:var(--bg-3);outline:none}
+.dos-u{display:flex;align-items:center;gap:6px;min-width:0}
+.dos-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:170px}
+.dos-sym svg{display:block}
+.dos-ok{color:var(--ok)} .dos-warn{color:var(--warn)} .dos-bad{color:var(--danger);font-weight:600}
+.dos-row .age{color:var(--warn)}
+.dos-note{margin-top:6px;font-size:11px}
+@media (max-width:760px){#dos-panel{right:8px;left:8px;width:auto;top:52px}}

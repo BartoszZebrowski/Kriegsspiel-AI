@@ -4,6 +4,7 @@ import { describeSidc } from './sidc.js';
 import { formatAge, formatClock } from './format.js';
 import { escapeHtml } from './markdown.js';
 import { formatDms, mgrsOf } from './mgrs.js';
+import { dosIndicators, dosAgeMin, isDosStale, formatDosValue, dosBarPct } from './dos.js';
 import { formatStrength, readinessRatio, readinessLevel, formatEstimateEquipment, formatEstimatePersonnel } from './strength.js';
 
 const e = escapeHtml;
@@ -60,6 +61,20 @@ function equipmentBlock(list) {
   return `<div class="kv"><div class="cap">Główny sprzęt</div>${rows}</div>`;
 }
 
+// Sekcja DOS (T18): paski w kolorach progu + wiek meldunku. `view` = wynik resolveDos ({dos, derived}) albo null.
+export function dosBlock(view, ctx = {}) {
+  if (!view) return '';
+  const { dos, derived } = view;
+  const age = dosAgeMin(dos, ctx.turnTime);
+  const stale = isDosStale(dos, ctx.turnTime);
+  const stamp = dos.as_of ? `<span class="grow"></span><span class="mono stamp${stale ? ' age' : ''}" data-dos-age>meldunek ${e(formatClock(dos.as_of, ctx.tz))}${age !== null ? ` · ${e(formatAge(dos.as_of, ctx.turnTime))}` : ''}</span>` : '';
+  const rows = dosIndicators(dos)
+    .map((i) => `<div class="eqr dosb" data-dos="${i.kind}" data-level="${i.level}"><span class="n">${e(i.label)}</span><div class="meter ${i.level === 'ok' ? '' : i.level}"><i style="width:${dosBarPct(i.kind, i.value)}%"></i></div><span class="v">${e(formatDosValue(i.kind, i.value))}</span></div>`)
+    .join('');
+  const note = derived ? `<div class="muted dos-note">Wyliczone: minimum z podwładnych (jednostka nie meldowała własnego DOS).</div>` : '';
+  return `<div class="kv" data-dos-block><div class="cap">Zaopatrzenie · DOS${derived ? '<span class="pill">WYLICZONE</span>' : ''}${stamp}</div>${rows}${note}</div>`;
+}
+
 function positionBlock(pos, extraRows) {
   const copy = (text) => `<button type="button" class="ibtn copy" data-copy="${e(text)}" title="Kopiuj" aria-label="Kopiuj">⧉</button>`;
   const dms = Array.isArray(pos) ? formatDms(pos) : '';
@@ -79,7 +94,7 @@ export function unitCard(u, byId = new Map(), kids = [], ctx = {}) {
         ${kids.length ? `<div class="kvr"><span>Podwładni</span><span class="chips">${kids.map((k) => unitChip(k, symbolOf)).join('')}</span></div>` : ''}</div>`
     : '';
   const note = ctx.neighbour ? `<div class="nb-note" role="note"><b>Sąsiad — brak dowodzenia</b><span>Jednostka sąsiada: dane tylko do odczytu, nie przyjmuje rozkazów od gracza.</span></div>` : '';
-  return `<div class="card">${header}${note}${personnelBlock(u, ctx)}${equipmentBlock(u.equipment)}
+  return `<div class="card">${header}${note}${personnelBlock(u, ctx)}${equipmentBlock(u.equipment)}${dosBlock(ctx.dosView, ctx)}
     <div class="kv"><div class="cap">Zadanie i położenie</div>${positionBlock(u.pos, rows)}${row('Uwagi', u.notes)}</div>${sub}</div>`;
 }
 
