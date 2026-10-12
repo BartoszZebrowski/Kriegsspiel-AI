@@ -2,7 +2,10 @@
 //
 // node tools/umpire/pick.mjs --meta <out.png.json> --turn <turn.json> \
 //   --set "1bzmot-2k-1p=412,236" --set "1bzmot-2k-2p=530,198" [--track "1bzmot-2k=100,200;150,230"] \
-//   [--check-water] [--write]
+//   [--check-water [--overpass-timeout <sekundy>]] [--write]
+//
+// --check-water pyta Overpass o wodę z łącznym limitem czasu (domyślnie 20 s; --overpass-timeout <s> albo env
+// OVERPASS_TIMEOUT_MS). Po przekroczeniu: ostrzeżenie „tryb offline” i dalej bez sprawdzania wody (kod wyjścia 0).
 //
 // Bez --write tylko drukuje wyniki. Z --write zmienia WYŁĄCZNIE `pos` (i `track`) wskazanych jednostek,
 // reszta pliku zostaje; zapis: JSON z wcięciem 2 spacje i końcowym newline.
@@ -143,7 +146,8 @@ function parseArgs(argv) {
   return f;
 }
 
-async function waterWarnings(picks) {
+/** Punkty w wodzie wg OSM. opts: { timeoutMs, endpoints, cacheDir, fetchImpl, polygons } → terrain.mjs. */
+export async function waterWarnings(picks, opts = {}) {
   const { findWater, pointInAny } = await import('./terrain.mjs');
   const pts = Object.values(picks);
   if (!pts.length) return [];
@@ -154,14 +158,14 @@ async function waterWarnings(picks) {
     Math.max(...pts.map((p) => p[0])) + pad,
     Math.max(...pts.map((p) => p[1])) + pad,
   ];
-  const water = await findWater(bbox);
+  const water = opts.polygons ?? (await findWater(bbox, opts));
   return Object.entries(picks).filter(([, p]) => pointInAny(p, water)).map(([id]) => id);
 }
 
-export async function main(argv) {
+export async function main(argv, opts = {}) {
   const f = parseArgs(argv);
   if (!f.meta || !f.turn || (!f.set.length && !f.track.length)) {
-    console.error('Użycie: node tools/umpire/pick.mjs --meta <out.png.json> --turn <turn.json> --set "id=x,y" [--set …] [--track "id=x,y;x,y;…"] [--check-water] [--write]');
+    console.error('Użycie: node tools/umpire/pick.mjs --meta <out.png.json> --turn <turn.json> --set "id=x,y" [--set …] [--track "id=x,y;x,y;…"] [--check-water [--overpass-timeout s]] [--write]');
     return 1;
   }
   const meta = JSON.parse(await readFile(f.meta, 'utf8'));
@@ -195,12 +199,15 @@ export async function main(argv) {
     if (x < 0 || y < 0 || x > meta.size[0] || y > meta.size[1]) console.warn(`UWAGA: ${id} poza zrzutem (${x},${y})`);
   }
   if (f['check-water']) {
+    const ovOpts = { ...opts };
+    if (f['overpass-timeout'] !== undefined && f['overpass-timeout'] !== true) ovOpts.timeoutMs = Number(f['overpass-timeout']) * 1000;
+    if (typeof f['overpass-endpoints'] === 'string') ovOpts.endpoints = f['overpass-endpoints'].split(',');
     try {
-      const wet = await waterWarnings(picks);
+      const wet = await waterWarnings(picks, ovOpts);
       for (const id of wet) console.warn(`UWAGA: ${id} leży w wodzie`);
       if (!wet.length) console.log('Woda: brak punktów w wodzie.');
     } catch (err) {
-      console.warn(`Nie sprawdzono wody: ${err.message}`);
+      console.warn(`UWAGA: tryb offline — nie sprawdzono wody (${err.message}). Sprawdź pozycje na zrzucie mapy.`);
     }
   }
   if (f.write) {

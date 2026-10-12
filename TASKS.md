@@ -508,7 +508,7 @@ Sąsiednie brygady (np. `zt-mamry`, `zt-biebrza`) mają własne pododdziały w p
 - [A] Test domeny orbat: dwie tury z różnym `parent` dają różne drzewa.
 - [M] W rozgrywce „Przesmyk” nr 1 (tura 13+) 2p krozp jest pod 3k 1 bzmot.
 
-## T36 — Narzędzie tury dla sędziego ⬜
+## T36 — Narzędzie tury dla sędziego ✅
 **WA**
 1. `tools/umpire/turn.mjs`:
    - tworzy `umpire/turns/(N+1).json` z tury N (zmiany z pliku planu lub API),

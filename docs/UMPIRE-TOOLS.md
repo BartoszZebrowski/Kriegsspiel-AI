@@ -145,6 +145,8 @@ Dane z OpenStreetMap (Overpass API), `bbox = [minLon, minLat, maxLon, maxLat]`.
 
 Połączenia: jedno zapytanie na bbox, User-Agent z opisem, ponowna próba po 429/504 z wycofaniem, potem lustra (`overpass.private.coffee`, `overpass.kumi.systems`), gdy główny serwer jest przeciążony. Testy nie używają sieci (wstrzykują poligony).
 
+**Limit czasu.** Całe zapytanie (wszystkie serwery i ponowienia razem) ma twardy limit, domyślnie 20 s, dzielony po równo między serwery. Nadpisanie: opcja `{ timeoutMs }` w `findWater`/`findForest`/`nudgeOutOfWater`/`preferCover`, zmienna `OVERPASS_TIMEOUT_MS` albo `pick.mjs --overpass-timeout <sekundy>`. Lista serwerów: opcja `endpoints` albo `OVERPASS_ENDPOINTS` (adresy po przecinku). Po przekroczeniu limitu rzucany jest błąd z `code === 'OVERPASS_UNAVAILABLE'`; `pick --check-water` łapie go, wypisuje „UWAGA: tryb offline — nie sprawdzono wody” i kończy się kodem 0 (dane z cache działają dalej bez sieci). Zawieszenie niemożliwe nawet przy serwerze, który przyjmuje połączenie i milczy (test: wskaż `OVERPASS_ENDPOINTS` na lokalny gniazdowy serwer bez odpowiedzi i `OVERPASS_TIMEOUT_MS=1000`).
+
 ## Testy
 
 `npm test` zawiera `test/umpire-deploy.test.js`: zakresy rozstawów, orientację względem azymutu, determinizm, ograniczenie jitteru, marsz po trasie, nieliniowość artylerii, poligony wody (z wyspą) i korektę, a także test, że kompanie o różnych zadaniach, azymutach i ziarnach dają wyraźnie różne układy względne, a nie obrócone kopie jednego wzoru.

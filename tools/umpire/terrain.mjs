@@ -71,30 +71,78 @@ const bboxHash = (kind, bbox) => createHash('sha1').update(`${kind}|${bbox.map((
 // Główny serwer, potem lustra (gdy główny jest przeciążony: 429/504).
 const ENDPOINTS = [ENDPOINT, 'https://overpass.private.coffee/api/interpreter', 'https://overpass.kumi.systems/api/interpreter'];
 
-async function overpass(query, { fetchImpl = fetch, retries = 1, backoffMs = 8000, endpoints = ENDPOINTS } = {}) {
+/** Domyślny łączny limit czasu zapytania Overpass (wszystkie serwery i ponowienia razem), ms. */
+export const DEFAULT_OVERPASS_TIMEOUT_MS = 20000;
+
+/** Łączny limit czasu (ms): opts.timeoutMs, env OVERPASS_TIMEOUT_MS, domyślnie 20 s. */
+export function overpassTimeoutMs(opts = {}) {
+  const v = Number(opts.timeoutMs ?? process.env.OVERPASS_TIMEOUT_MS);
+  return Number.isFinite(v) && v > 0 ? v : DEFAULT_OVERPASS_TIMEOUT_MS;
+}
+
+/** Lista serwerów: opts.endpoints, env OVERPASS_ENDPOINTS (adresy po przecinku), domyślnie główny + lustra. */
+export function overpassEndpoints(opts = {}) {
+  if (opts.endpoints?.length) return opts.endpoints;
+  const env = (process.env.OVERPASS_ENDPOINTS || '').split(',').map((x) => x.trim()).filter(Boolean);
+  return env.length ? env : ENDPOINTS;
+}
+
+// Obietnica z twardym limitem czasu (działa też dla fetchImpl, który ignoruje AbortSignal).
+function withTimeout(promise, ms, onTimeout) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => { onTimeout?.(); reject(new Error('timeout')); }, ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+/**
+ * Zapytanie Overpass z łącznym limitem czasu (opts.timeoutMs / env OVERPASS_TIMEOUT_MS), dzielonym po równo
+ * między serwery. Po jego przekroczeniu rzuca błąd z code 'OVERPASS_UNAVAILABLE' — wywołujący przechodzi
+ * w tryb offline.
+ */
+async function overpass(query, opts = {}) {
+  const { fetchImpl = fetch, retries = 1, backoffMs = 8000 } = opts;
+  const endpoints = overpassEndpoints(opts);
+  const total = overpassTimeoutMs(opts);
+  const deadline = Date.now() + total;
   let lastStatus = 0;
-  for (const url of endpoints) {
+  for (let i = 0; i < endpoints.length; i++) {
+    const url = endpoints[i];
+    const endpointDeadline = Date.now() + Math.ceil((deadline - Date.now()) / (endpoints.length - i));
     for (let attempt = 0; attempt <= retries; attempt++) {
+      const left = endpointDeadline - Date.now();
+      if (left <= 0) break;
+      const ctrl = new AbortController();
       let res;
       try {
-        res = await fetchImpl(url, {
-          method: 'POST',
-          headers: { 'User-Agent': USER_AGENT, 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
-          body: `data=${encodeURIComponent(query)}`,
-        });
+        const work = (async () => {
+          const r = await fetchImpl(url, {
+            method: 'POST',
+            headers: { 'User-Agent': USER_AGENT, 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' },
+            body: `data=${encodeURIComponent(query)}`,
+            signal: ctrl.signal,
+          });
+          return r.ok ? { res: r, json: await r.json() } : { res: r };
+        })();
+        const out = await withTimeout(work, left, () => ctrl.abort());
+        if (out.res.ok) return out.json;
+        res = out.res;
       } catch {
-        break; // błąd sieci: następne lustro
+        break; // błąd sieci lub przekroczenie czasu: następne lustro
       }
-      if (res.ok) return res.json();
       lastStatus = res.status;
-      if ((res.status === 429 || res.status === 504) && attempt < retries) {
-        await sleep(backoffMs * (attempt + 1)); // jedna ponowna próba z wycofaniem
+      const wait = backoffMs * (attempt + 1);
+      if ((res.status === 429 || res.status === 504) && attempt < retries && wait < endpointDeadline - Date.now()) {
+        await sleep(wait); // jedna ponowna próba z wycofaniem
         continue;
       }
       break;
     }
   }
-  throw new Error(`Overpass niedostępny (ostatni status ${lastStatus || 'brak odpowiedzi'})`);
+  const err = new Error(`Overpass niedostępny (limit ${Math.round(total / 100) / 10} s, ostatni status ${lastStatus || 'brak odpowiedzi'})`);
+  err.code = 'OVERPASS_UNAVAILABLE';
+  throw err;
 }
 
 const bboxClause = (bbox) => `${bbox[1]},${bbox[0]},${bbox[3]},${bbox[2]}`; // south,west,north,east
