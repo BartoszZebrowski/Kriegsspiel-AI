@@ -722,6 +722,57 @@ Praca sztabu jak w realnym punkcie dowodzenia: gracz określa, o czym chce być 
 - [A] Domena: filtr „tylko CCIR”, grupowanie meldunków cyklicznych.
 - [M] Gracz ustawia PIR na kolumnę pancerną; w turze z takim kontaktem przychodzi pilny meldunek z odwołaniem do PIR; drobne kontakty trafiają do SITREP.
 
+## T49 — Pozycje własnych sił z BFT ⬜
+Jak w BMS: gracz widzi ostatnią pozycję z GPS (Blue Force Tracking), a nie prawdę. Wiąże się z T19 (utrata łączności) i T26 (REW).
+
+**WA**
+1. Jednostka własna w `player/turns` ma `pos` = ostatnia zameldowana pozycja i `pos_time` (czas raportu BFT); prawda tylko w `umpire/`. Schemat, SCHEMA.md, walidator (`pos_time` nie późniejszy niż czas tury).
+2. Sędzia (CLAUDE.md, `turn.mjs`): pozycje BFT co kilka–kilkanaście minut; w strefie zagłuszenia, przy ciszy radiowej lub utracie łączności pozycja zamarza (luka), pojawia się po odzyskaniu łączności.
+3. Mapa: pozycja starsza niż próg (np. 30 min) — symbol przygaszony z czasem ostatniego raportu; `track` animacji kończy się na pozycji BFT, nie prawdziwej.
+4. Zmiana wymaga przeglądu reguł w CLAUDE.md („jednostki własne na prawdziwych pozycjach”) — zaktualizować spójnie.
+
+**Scenariusze testowe**
+- [A] Walidator: `pos_time` poza okresem tury → uwaga; brak `pos_time` → zgodność wstecz (traktowane jako czas tury).
+- [A] Domena: wiek pozycji i próg przygaszenia.
+- [M] Kompania w strefie zagłuszenia stoi na mapie w starej pozycji z czasem raportu; po wyjściu ze strefy „przeskakuje”.
+
+## T50 — Formularze meldunków i rozkazów ⬜
+Obok wolnego tekstu szablony z polami, jak w BMS (wiąże się z T44 — punkt i rubież z mapy).
+
+**WA**
+1. Szablony: SPOTREP (co, ile, gdzie, kiedy, kierunek, pewność), LOGSTAT (paliwo, amunicja, ludzie, potrzeby), FRAGO (zadanie, rejon, czas, koordynacja), zapotrzebowanie na ogień (T52). Definicje w jednym module `domain/` (pola, wymagalność, etykiety PL).
+2. Komunikator: wybór szablonu wypełnia formularz; pole „gdzie” wskazywane na mapie; wynik to wiadomość z czytelnym tekstem i strukturą `form: {kind, fields}` w `player/outbox` (schemat + walidator).
+3. Postacie mogą odpowiadać meldunkami w tych samych formatach (`form` w `inbox`), komunikator renderuje je jako tabelkę.
+
+**Scenariusze testowe**
+- [A] Domena: walidacja wymaganych pól szablonu, generowanie tekstu.
+- [A] Walidator: `form` w outbox/inbox poprawny / zły.
+- [M] Gracz wysyła FRAGO z rubieżą z mapy; podwładny potwierdza w formacie.
+
+## T51 — Nakładki od przełożonego ⬜
+Rozkaz przełożonego przychodzi z graficzną nakładką (granice, rubieże, osie, rejony), którą gracz włącza i wyłącza jak warstwę.
+
+**WA**
+1. Wiadomość `inbox` może mieć `overlay: {id, name, features:[…]}` (te same znaki taktyczne co szkice, `domain/tactical.js`); schemat + walidator.
+2. Mapa: lista nakładek (z nazwą i DTG rozkazu) w panelu warstw; każda włączana osobno; nowsza nakładka tego samego rozkazu zastępuje starszą.
+3. Gracz może skopiować nakładkę do własnych szkiców i dołączyć ją do rozkazu dla podwładnych.
+
+**Scenariusze testowe**
+- [A] Walidator: `overlay` z nieznanym znakiem → błąd.
+- [M] Rozkaz brygady z nową granicą: nakładka pojawia się w warstwach, włączam / wyłączam, kopiuję do szkicu.
+
+## T52 — Zgłoszenie ognia i jego status ⬜
+Gracz zamawia ogień (artyleria, moździerze, ewentualnie lotnictwo) i dostaje status bez prawdy o skutku.
+
+**WA**
+1. Formularz zgłoszenia (T50): cel (punkt/rejon z mapy), rodzaj celu, efekt (obezwładnienie, zniszczenie, dymy, oświetlenie), czas, priorytet, kanał do środka wsparcia (np. dart).
+2. Sędzia: wykonanie zależy od dostępności środka, amunicji (DOS), doręczenia (T25), zasięgu (T46/T47) i priorytetów przełożonego; odpowiedź w formacie: „przyjęto / odmowa (powód) / wykonano HH:MM, X pocisków, skutek nieznany”. Skutek gracz poznaje tylko z obserwacji (BSP, meldunki).
+3. Mapa: zgłoszone i wykonane zadania ogniowe jako znaczniki z czasem (warstwa „Ogień”), bez prawdziwego skutku.
+
+**Scenariusze testowe**
+- [A] Domena: model statusu zgłoszenia (cykl: wysłane → przyjęte/odmowa → wykonane).
+- [M] Zgłoszenie ognia na kontakt: odpowiedź „wykonano, skutek nieznany”, a skutek widać dopiero w meldunku BSP.
+
 ---
 
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
@@ -840,6 +891,7 @@ Na starcie każdej tury gracz dostaje krótką odprawę sztabu: trzy stanowiska 
 3. Widok odprawy działa też w archiwum (odprawa danej tury). Na wąskich ekranach panel mieści się w zakładce.
 4. CLAUDE.md: procedura pisania odprawy na start każdej tury — krótko i wojskowo, **bez prawdy** (S2/S3/S4 jej nie znają): S2 ocena wroga z pewnością, S3 ocena własna i propozycja, S4 stan logistyki i ryzyka. Wzory: *„S2: wróg przegrupowuje się na zachód — pewność średnia"*, *„S3: 1 bzmot wykrwawiony, proponuję rotację 1k"*, *„S4: amunicja dart 0,4 doby, konwój 3 opóźniony"*.
 5. Wprowadzamy na żywo w poligonie (`00-test-przesmyk`) od pierwszej rozstrzyganej tury po wdrożeniu.
+6. **Widok według komórki sztabu:** gotowe ustawienia warstw i paneli dla S2 (kontakty, REW, CCIR-PIR), S3 (własne siły, linie, rozkazy), S4 (logistyka, DOS) i wsparcia ogniowego (zasięgi T47, zgłoszenia ognia T52); przełączenie jednym klikiem lub skrótem, bez utraty własnych ustawień gracza.
 
 **Scenariusze testowe**
 - [A] Walidator: struktura `staff`, role z listy, duplikat roli → błąd, `time` poza turą → uwaga, `staff` spoza białej listy w innych plikach gracza → błąd.
