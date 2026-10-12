@@ -6,6 +6,7 @@ import crypto from 'node:crypto';
 
 import { MAX_MESSAGE_LENGTH, MAX_NOTES, NOTE_KINDS, NOTE_COLORS, NOTE_GRAPHICS, NOTE_ECHELONS, checkNote, checkMessageText, checkMessageMeta } from '../shared/schema.js';
 import { checkOrderAttachment } from '../shared/order.js';
+import { assessSkip, skipMessage } from '../public/js/domain/command.js';
 
 // Stałe schematu żyją w shared/schema.js; tu tylko re-eksport dla zgodności wstecznej.
 export { MAX_MESSAGE_LENGTH, MAX_NOTES, NOTE_KINDS, NOTE_COLORS, NOTE_GRAPHICS, NOTE_ECHELONS };
@@ -207,6 +208,9 @@ export function createStore(scenarioDir) {
     if (!scenarioChannels.has(channel) && isNeighbourFormationUnit(units, channel)) {
       throw new StoreError(400, 'Ta jednostka należy do formacji sąsiada — brak kanału łączności');
     }
+    // T45: commandRules.skipEchelon "hard" — kanały poniżej bezpośrednich podwładnych tylko z priority "urgent".
+    const skip = assessSkip({ scenario, units, channelId: channel, priority });
+    if (skip.level === 'block') throw new StoreError(403, skipMessage(skip));
     const textError = checkMessageText(text);
     if (textError) throw new StoreError(400, textError);
     const metaError = checkMessageMeta({ type, priority });

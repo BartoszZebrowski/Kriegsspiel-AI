@@ -1,6 +1,7 @@
 // Intencje komunikatora: kanały, przeczytane, szkice wiadomości, wysyłanie i wycofywanie. Bez DOM.
 import { unreadIds } from '../domain/messages.js';
 import { updateDraft, clearDraft } from '../domain/compose.js';
+import { assessSkip, skipMessage } from '../domain/command.js';
 
 // `syncSelection` — podświetlenie jednostki kanału (zaznaczenie należy do kontrolera); `isPageVisible` z env.
 export function createMessaging({ store, api, storage, S, keyOf, notify, syncSelection, isPageVisible }) {
@@ -67,6 +68,12 @@ export function createMessaging({ store, api, storage, S, keyOf, notify, syncSel
     const s = S();
     const body = (text || '').trim();
     if (!body || !s.channel || s.archive) return null;
+    // T45: tryb „hard” blokuje kanały poniżej bezpośrednich podwładnych (poza pilnymi); serwer sprawdza to samo.
+    const skip = assessSkip({ scenario: s.scenario, units: s.turn?.units, channels: s.channels, channelId: s.channel.id, priority: meta.priority });
+    if (skip.level === 'block') {
+      notify(skipMessage(skip), true);
+      return null;
+    }
     msgEpoch++;
     try {
       const msg = await api.send(s.channel.id, body, attachments, meta);

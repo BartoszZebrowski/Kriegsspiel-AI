@@ -109,6 +109,13 @@ Pododdziały rozstawiaj ręcznie na zrzucie mapy terenu (`tools/umpire/terrain-v
 
 Gracz może adresować wiadomość (`player/outbox`) do **każdej jednostki własnej**, także kompanii: `channel` = id jednostki z bieżącej tury (np. `1bzmot-1k`). Gdy gracz pomija dowódcę batalionu i wydaje rozkaz kompanii bezpośrednio, dowódca kompanii go wykonuje, ale **melduje o tym swojemu dowódcy batalionu** (realistyczne tarcie). Sędzia uwzględnia to: dowódca batalionu może się dowiedzieć z opóźnieniem, mieć już inny plan dla tej kompanii albo zgłosić zastrzeżenia w kanale batalionu.
 
+**Skutki pominięcia szczebla** (`commandRules.skipEchelon`: `soft` domyślnie, `hard`; przy `off` bez skutków). Dotyczy rozkazów w `outbox` do kanałów poniżej bezpośrednich podwładnych (kompania pod batalionem = 1 pominięcie, pluton = 2). Aplikacja pokazuje graczowi ostrzeżenie; sędzia stosuje skutki:
+- **opóźniona wiedza:** pominięty dowódca dowiaduje się od podwładnego z opóźnieniem (np. jedna tura lub później, zależnie od łączności) albo z rozkazu przełożonego;
+- **kolizja planów:** gdy miał już inny plan dla tej jednostki, wynikają sprzeczne rozkazy, zamieszanie i strata czasu na uzgodnienie;
+- **powtarzanie** obniża inicjatywę podwładnych (czekają na rozkazy z góry) i zaufanie dowódcy (morale, T28);
+- dowódca może zgłosić zastrzeżenia w swoim kanale; `priority: urgent` w trybie `hard` (łączność alarmowa) ma koszt jak w `soft`;
+- **licznik pominięć:** w `umpire/log.md` dopisuj przy turze, kogo i ile razy pominięto (narastająco); gracz go nie widzi.
+
 ## Wiadomości (`player/inbox/NNN.json`)
 
 `{"messages":[{"id":"in-NNN-01","channel":"<id kanału>","from":"stopień nazwisko, funkcja","time":"…","type":"rozkaz|zarzadzenie|meldunek|wiadomosc"?,"priority":"urgent"?,"text":"…"}]}`

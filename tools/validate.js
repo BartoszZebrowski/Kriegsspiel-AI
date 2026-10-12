@@ -3,7 +3,7 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { SCHEMA_VERSION, CHANNEL_KINDS, PLAYER_MESSAGE_FIELDS, MAX_NOTES, isValidTime, extraFields, checkNote, checkMessageText, checkMessageMeta } from '../shared/schema.js';
+import { SCHEMA_VERSION, CHANNEL_KINDS, checkCommandRules, PLAYER_MESSAGE_FIELDS, MAX_NOTES, isValidTime, extraFields, checkNote, checkMessageText, checkMessageMeta } from '../shared/schema.js';
 import { checkDeliveries, checkEw } from '../shared/ew.js';
 import { checkOrderAttachment } from '../shared/order.js';
 import { checkPlayerFields, checkSituation, checkTracksContinuity, checkGazetteer } from './validate-checks.js';
@@ -62,6 +62,7 @@ export async function validateScenario(dir) {
       report.error(`scenario.json: nieznana strefa czasowa ${scenario.timezone}`);
     }
   }
+  for (const m of checkCommandRules(scenario.commandRules)) report.error('scenario.json: ' + m);
   const channelIds = new Set();
   for (const c of scenario.channels || []) {
     if (!c.id || !c.name) report.error('scenario.json: kanał bez id lub nazwy');

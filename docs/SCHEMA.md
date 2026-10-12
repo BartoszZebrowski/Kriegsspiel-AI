@@ -38,8 +38,9 @@ Metadane i kanały komunikatora.
 | `turnMinutes` | liczba > 0 | tak | Długość tury w minutach. |
 | `map` | `{center:[lon,lat], zoom}` | nie | Początkowy widok mapy. |
 | `channels` | lista kanałów | tak, ≥ 1 | Rozmówcy komunikatora (poniżej). |
+| `commandRules` | `{skipEchelon}` | nie | Reguły dowodzenia (T45). `skipEchelon`: `off` (bez ograniczeń), `soft` (domyślny: ostrzeżenie w komunikatorze, skutki rozstrzyga sędzia wg CLAUDE.md), `hard` (wysyłka do kanałów poniżej bezpośrednich podwładnych zablokowana — w kliencie i na serwerze — poza `priority: urgent`). Inna wartość albo nieznane pole = błąd. |
 
-Kanał (`channels[]`): `id` (tekst, unikalny, tak), `name` (tak), `kind` (`superior`, `neighbor`, `subordinate`, `logistics`, `recon`, `other`; inny = uwaga), `description` (nie), `short` (nie, skrót w UI), `unit` (nie, id jednostki, której kanał dotyczy), planowane `commander` (id pliku `umpire/commanders/<id>.md`, T14). Wiadomość można też zaadresować do dowolnej jednostki własnej z bieżącej tury (`channel` = id jednostki).
+Kanał (`channels[]`): `id` (tekst, unikalny, tak), `name` (tak), `kind` (`superior`, `neighbor`, `subordinate`, `logistics`, `recon`, `other`; inny = uwaga), `description` (nie), `short` (nie, skrót w UI), `unit` (nie, id jednostki, której kanał dotyczy), planowane `commander` (id pliku `umpire/commanders/<id>.md`, T14). Wiadomość można też zaadresować do dowolnej jednostki własnej z bieżącej tury (`channel` = id jednostki). Ile szczebli pominięto, liczy się z `parent` (bezpośredni podwładny = 0, kompania pod batalionem = 1, pluton = 2; sąsiedzi i `formation` nie dotyczą); zob. `commandRules`.
 
 ## `briefing.md` — jawny
 

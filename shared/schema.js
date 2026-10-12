@@ -36,6 +36,19 @@ export function checkTrack(track, pos) {
 // --- Kanały, linie, miejsca ---
 
 export const CHANNEL_KINDS = ['superior', 'neighbor', 'subordinate', 'logistics', 'recon', 'other'];
+// Reguły dowodzenia (T45): scenario.commandRules.skipEchelon — koszt rozkazu z pominięciem szczebla. Domyślnie "soft".
+export const SKIP_ECHELON_MODES = ['off', 'soft', 'hard'];
+export const COMMAND_RULES_FIELDS = ['skipEchelon'];
+/** Błędy sekcji commandRules (lista tekstów; pusta = poprawna albo nieobecna). */
+export function checkCommandRules(rules) {
+  if (rules === undefined) return [];
+  if (!rules || typeof rules !== 'object' || Array.isArray(rules)) return ['commandRules musi być obiektem'];
+  const errors = extraFields(rules, COMMAND_RULES_FIELDS).map((f) => `commandRules: nieznane pole „${f}”`);
+  if (rules.skipEchelon !== undefined && !SKIP_ECHELON_MODES.includes(rules.skipEchelon)) {
+    errors.push(`commandRules.skipEchelon: „${rules.skipEchelon}” (dozwolone: ${SKIP_ECHELON_MODES.join(', ')})`);
+  }
+  return errors;
+}
 export const LINE_KINDS = ['boundary', 'flot', 'enemy_flot', 'phase', 'axis', 'enemy_axis', 'ew_zone'];
 export const PLACE_KINDS = ['miasto', 'wieś', 'wzgórze', 'jezioro', 'rzeka', 'droga', 'przejście', 'inne'];
 

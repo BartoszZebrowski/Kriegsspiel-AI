@@ -661,7 +661,7 @@ Gracz zaznacza jednostkę (jedną lub kilka) i wskazuje na mapie cel ruchu albo 
 - [A] Domena: zaznaczenie + punkt/rubież → poprawny załącznik; walidator przyjmuje go w outbox.
 - [M] Zaznaczam 1 bzmot, wskazuję rubież, wysyłam rozkaz; w następnej turze batalion melduje zajęcie (lub problem).
 
-## T45 — Pomijanie szczebli dowodzenia: koszt ⬜
+## T45 — Pomijanie szczebli dowodzenia: koszt ✅
 Rozkaz do jednostki niżej niż bezpośredni podwładny (np. kompania z pominięciem batalionu) ma realistyczny koszt. Tryb ustawiany w scenariuszu: `commandRules.skipEchelon: "off" | "soft" | "hard"`.
 
 **WA**
