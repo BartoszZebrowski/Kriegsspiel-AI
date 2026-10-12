@@ -534,6 +534,25 @@ Sąsiednie brygady (np. `zt-mamry`, `zt-biebrza`) mają własne pododdziały w p
 **Scenariusze testowe**
 - [A] Każdy z pięciu przypadków daje uwagę; czysty scenariusz — 0 uwag.
 
+## T38 — Plan wdrożenia na serwer dla dwóch graczy ⬜
+Zadanie planistyczne: wynikiem jest dokument `docs/DEPLOYMENT.md`, a nie kod.
+
+**WA**
+1. Model gry dwóch graczy, z wyborem i uzasadnieniem jednego z wariantów:
+   - gracz przeciw graczowi (każdy dowodzi jedną stroną, Claude jako sędzia),
+   - współpraca (dwaj dowódcy po tej samej stronie, np. sąsiednie zgrupowania).
+2. Rozdzielenie widoków:
+   - każdy gracz widzi tylko swoje `player/` (własne tury, inbox, outbox, notatki),
+   - `umpire/` nigdy nie jest serwowane,
+   - zmiany w `store.js`, API i schemacie.
+3. Tożsamość i dostęp: logowanie albo link z tokenem, sesje, HTTPS, ochrona przed podglądaniem cudzej strony.
+4. Rytm tury: kto i kiedy zgłasza „koniec tury”, oczekiwanie na obu graczy, rozstrzyganie przez Claude (lokalnie albo agent na serwerze).
+5. Hosting: wybór (VPS, kontener, PaaS), domena, kopie zapasowe scenariuszy, koszt, wdrażanie aktualizacji.
+6. Lista zadań wykonawczych (T39+) z WA, dopisana do tego pliku.
+
+**Scenariusze testowe**
+- [M] Przegląd dokumentu z graczem: decyzje z punktów 1–5 zaakceptowane.
+
 ---
 
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
