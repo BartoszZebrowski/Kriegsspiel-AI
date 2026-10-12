@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "id": "01-obrona-bialegostoku",
+  "title": "Obrona Białegostoku",
+  "status": "active",
+  "side": "PL",
+  "scale": "brygada",
+  "timezone": "Europe/Warsaw",
+  "start": "2026-10-17T05:00:00+02:00",
+  "turnMinutes": 120,
+  "map": {
+    "center": [
+      23.55,
+      53.38
+    ],
+    "zoom": 10
+  },
+  "channels": [
+    {
+      "id": "dd",
+      "name": "Dowództwo dywizji",
+      "kind": "superior",
+      "description": "Przełożony — dowódca dywizji, SD w rejonie Supraśla",
+      "short": "DD"
+    },
+    {
+      "id": "zt-augustow",
+      "name": "ZT Dąbrowa (20 BZ)",
+      "kind": "neighbor",
+      "description": "Sąsiad z lewa (północ) — kierunek Nowy Dwór–Dąbrowa Białostocka",
+      "short": "DAB"
+    },
+    {
+      "id": "zt-bot",
+      "name": "1 Podlaska BOT",
+      "kind": "neighbor",
+      "description": "Sąsiad z prawa (południe) i w mieście — Białystok, kierunek Michałowo–Gródek",
+      "short": "BOT"
+    },
+    {
+      "id": "1bzmot",
+      "name": "1 bzmot",
+      "kind": "subordinate",
+      "description": "1. batalion zmechanizowany — kierunek Kuźnica",
+      "short": "1bz",
+      "unit": "1bzmot"
+    },
+    {
+      "id": "2bzmot",
+      "name": "2 bzmot",
+      "kind": "subordinate",
+      "description": "2. batalion zmechanizowany — Sokółka",
+      "short": "2bz",
+      "unit": "2bzmot"
+    },
+    {
+      "id": "3bzmot",
+      "name": "3 bzmot",
+      "kind": "subordinate",
+      "description": "3. batalion zmechanizowany — Krynki, Szudziałowo",
+      "short": "3bz",
+      "unit": "3bzmot"
+    },
+    {
+      "id": "bcz",
+      "name": "bcz",
+      "kind": "subordinate",
+      "description": "Batalion czołgów — odwód brygady",
+      "short": "bcz",
+      "unit": "bcz"
+    },
+    {
+      "id": "dart",
+      "name": "dart",
+      "kind": "subordinate",
+      "description": "Dywizjon artylerii samobieżnej (155 mm)",
+      "short": "dart",
+      "unit": "dart"
+    },
+    {
+      "id": "krozp",
+      "name": "krozp",
+      "kind": "subordinate",
+      "description": "Kompania rozpoznawcza — osłona na granicy",
+      "short": "kr",
+      "unit": "krozp"
+    },
+    {
+      "id": "bopl",
+      "name": "bopl",
+      "kind": "subordinate",
+      "description": "Bateria obrony przeciwlotniczej",
+      "short": "bopl",
+      "unit": "bopl"
+    },
+    {
+      "id": "ksap",
+      "name": "ksap",
+      "kind": "subordinate",
+      "description": "Kompania saperów — zapory",
+      "short": "ksap",
+      "unit": "ksap"
+    },
+    {
+      "id": "sg",
+      "name": "Straż Graniczna",
+      "kind": "other",
+      "description": "Placówka Straży Granicznej w Kuźnicy — obserwacja przejścia",
+      "short": "SG"
+    },
+    {
+      "id": "log",
+      "name": "Szef logistyki",
+      "kind": "logistics",
+      "description": "S4 i batalion logistyczny",
+      "short": "S4",
+      "unit": "blog"
+    },
+    {
+      "id": "s2",
+      "name": "S2 / BSP",
+      "kind": "recon",
+      "description": "Sekcja rozpoznania — meldunki z dronów i rozpoznania",
+      "short": "S2",
+      "unit": "hq"
+    }
+  ]
+}

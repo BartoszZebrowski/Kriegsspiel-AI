@@ -1,0 +1,2959 @@
+{
+  "turn": 0,
+  "time": "2026-10-17T05:00:00+02:00",
+  "units": [
+    {
+      "id": "hq",
+      "name": "15 GBZ",
+      "sidc": "SFGPUCIZ--AH---",
+      "strength": 1,
+      "status": "SD rozwinięte",
+      "task": "dowodzenie obroną Sokółka–Białystok",
+      "personnel": {
+        "current": 188,
+        "authorized": 200
+      },
+      "equipment": [
+        {
+          "name": "wozy dowodzenia Rosomak-WD",
+          "current": 6,
+          "authorized": 6
+        },
+        {
+          "name": "stacje radiowe dalekiego zasięgu",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.46,
+        53.428
+      ]
+    },
+    {
+      "id": "1bzmot-1k-1p",
+      "name": "1 pluton, 1 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "1bzmot-1k",
+      "strength": 0.99,
+      "status": "w obronie",
+      "task": "stanowisko w pasie kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.55931,
+        53.47802
+      ]
+    },
+    {
+      "id": "1bzmot-1k-2p",
+      "name": "2 pluton, 1 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "1bzmot-1k",
+      "strength": 0.94,
+      "status": "w obronie",
+      "task": "osłona skrzydła kompanii",
+      "personnel": {
+        "current": 33,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.57234,
+        53.47748
+      ]
+    },
+    {
+      "id": "1bzmot-1k-3p",
+      "name": "3 pluton, 1 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "1bzmot-1k",
+      "strength": 0.94,
+      "status": "w obronie",
+      "task": "odwód kompanii",
+      "personnel": {
+        "current": 30,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.58419,
+        53.47996
+      ]
+    },
+    {
+      "id": "1bzmot-1k",
+      "name": "1 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "1bzmot",
+      "strength": 0.96,
+      "status": "w obronie",
+      "task": "obrona drogi DK19 z Kuźnicy na Sokółkę",
+      "personnel": {
+        "current": 113,
+        "authorized": 117
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 14,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.57199,
+        53.47836
+      ]
+    },
+    {
+      "id": "1bzmot-2k-1p",
+      "name": "1 pluton, 2 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "1bzmot-2k",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "stanowisko w pasie kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.59446,
+        53.45425
+      ]
+    },
+    {
+      "id": "1bzmot-2k-2p",
+      "name": "2 pluton, 2 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "1bzmot-2k",
+      "strength": 0.99,
+      "status": "w obronie",
+      "task": "osłona skrzydła kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.60803,
+        53.45656
+      ]
+    },
+    {
+      "id": "1bzmot-2k-3p",
+      "name": "3 pluton, 2 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "1bzmot-2k",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "odwód kompanii",
+      "personnel": {
+        "current": 33,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.59573,
+        53.44941
+      ]
+    },
+    {
+      "id": "1bzmot-2k",
+      "name": "2 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "1bzmot",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "obrona prawego skrzydła na wsch. od DK19, rejon Białobłocia",
+      "personnel": {
+        "current": 114,
+        "authorized": 117
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 14,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.60093,
+        53.45511
+      ]
+    },
+    {
+      "id": "1bzmot-3k-1p",
+      "name": "1 pluton, 3 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "1bzmot-3k",
+      "strength": 0.98,
+      "status": "w odwodzie",
+      "task": "stanowisko w pasie kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.58729,
+        53.45188
+      ]
+    },
+    {
+      "id": "1bzmot-3k-2p",
+      "name": "2 pluton, 3 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "1bzmot-3k",
+      "strength": 0.95,
+      "status": "w odwodzie",
+      "task": "osłona skrzydła kompanii",
+      "personnel": {
+        "current": 33,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.58099,
+        53.45704
+      ]
+    },
+    {
+      "id": "1bzmot-3k-3p",
+      "name": "3 pluton, 3 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "1bzmot-3k",
+      "strength": 0.97,
+      "status": "w odwodzie",
+      "task": "odwód kompanii",
+      "personnel": {
+        "current": 31,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.59009,
+        53.45707
+      ]
+    },
+    {
+      "id": "1bzmot-3k",
+      "name": "3 kompania 1 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "1bzmot",
+      "strength": 0.97,
+      "status": "w odwodzie",
+      "task": "odwód batalionu, na płn. od Kundzina",
+      "personnel": {
+        "current": 113,
+        "authorized": 117
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 11,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.58293,
+        53.4545
+      ]
+    },
+    {
+      "id": "1bzmot-kw-1p",
+      "name": "1 pluton moździerzy, kompania wsparcia 1 bzmot",
+      "sidc": "SFGPUCFM---D---",
+      "parent": "1bzmot-kw",
+      "strength": 0.99,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe batalionu",
+      "personnel": {
+        "current": 35,
+        "authorized": 38
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.53544,
+        53.45823
+      ]
+    },
+    {
+      "id": "1bzmot-kw-2p",
+      "name": "2 pluton moździerzy, kompania wsparcia 1 bzmot",
+      "sidc": "SFGPUCFM---D---",
+      "parent": "1bzmot-kw",
+      "strength": 1,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe batalionu",
+      "personnel": {
+        "current": 35,
+        "authorized": 38
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.54276,
+        53.45713
+      ]
+    },
+    {
+      "id": "1bzmot-kw-3p",
+      "name": "pluton przeciwpancerny, kompania wsparcia 1 bzmot",
+      "sidc": "SFGPUCAA---D---",
+      "parent": "1bzmot-kw",
+      "strength": 0.96,
+      "status": "w obronie",
+      "task": "ppk na kierunku zagrożonym",
+      "personnel": {
+        "current": 28,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        }
+      ],
+      "pos": [
+        23.55806,
+        53.4605
+      ]
+    },
+    {
+      "id": "1bzmot-kw",
+      "name": "kompania wsparcia 1 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "1bzmot",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "wsparcie batalionu",
+      "personnel": {
+        "current": 119,
+        "authorized": 128
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        },
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 2,
+          "authorized": 2
+        }
+      ],
+      "pos": [
+        23.55531,
+        53.46087
+      ]
+    },
+    {
+      "id": "1bzmot",
+      "name": "1 bzmot",
+      "sidc": "SFGPUCIZ---F---",
+      "parent": "hq",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "obrona kierunku Kuźnica–Sokółka (północ)",
+      "personnel": {
+        "current": 571,
+        "authorized": 599
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 41,
+          "authorized": 44
+        },
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        },
+        {
+          "name": "wozy dowodzenia Rosomak-WD",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.565674,
+        53.441855
+      ],
+      "dos": {
+        "fuel": 2.9,
+        "ammo": 2.3,
+        "general": 3,
+        "readiness": 0.96,
+        "as_of": "2026-10-17T04:30:00+02:00"
+      }
+    },
+    {
+      "id": "2bzmot-1k-1p",
+      "name": "1 pluton, 1 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "2bzmot-1k",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "stanowisko w pasie kompanii",
+      "personnel": {
+        "current": 31,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.5773,
+        53.40421
+      ]
+    },
+    {
+      "id": "2bzmot-1k-2p",
+      "name": "2 pluton, 1 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "2bzmot-1k",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "osłona skrzydła kompanii",
+      "personnel": {
+        "current": 30,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.5894,
+        53.40113
+      ]
+    },
+    {
+      "id": "2bzmot-1k-3p",
+      "name": "3 pluton, 1 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "2bzmot-1k",
+      "strength": 1,
+      "status": "w obronie",
+      "task": "odwód kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.57538,
+        53.3965
+      ]
+    },
+    {
+      "id": "2bzmot-1k",
+      "name": "1 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "2bzmot",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "obrona wschodnich podejść do Sokółki, na płn. od Bohonik",
+      "personnel": {
+        "current": 110,
+        "authorized": 117
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 14,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.58469,
+        53.40198
+      ]
+    },
+    {
+      "id": "2bzmot-2k-1p",
+      "name": "1 pluton, 2 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "2bzmot-2k",
+      "strength": 0.95,
+      "status": "w obronie",
+      "task": "stanowisko w pasie kompanii",
+      "personnel": {
+        "current": 30,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.57869,
+        53.3832
+      ]
+    },
+    {
+      "id": "2bzmot-2k-2p",
+      "name": "2 pluton, 2 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "2bzmot-2k",
+      "strength": 0.99,
+      "status": "w obronie",
+      "task": "osłona skrzydła kompanii",
+      "personnel": {
+        "current": 30,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.59071,
+        53.38219
+      ]
+    },
+    {
+      "id": "2bzmot-2k-3p",
+      "name": "3 pluton, 2 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "2bzmot-2k",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "odwód kompanii",
+      "personnel": {
+        "current": 33,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.60191,
+        53.38152
+      ]
+    },
+    {
+      "id": "2bzmot-2k",
+      "name": "2 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "2bzmot",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "obrona wschodnich podejść do Sokółki, na płd.-wsch. od Bohonik",
+      "personnel": {
+        "current": 110,
+        "authorized": 117
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 14,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.58917,
+        53.38077
+      ]
+    },
+    {
+      "id": "2bzmot-3k-1p",
+      "name": "1 pluton, 3 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "2bzmot-3k",
+      "strength": 0.99,
+      "status": "w odwodzie",
+      "task": "stanowisko w pasie kompanii",
+      "personnel": {
+        "current": 31,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.5623,
+        53.39295
+      ]
+    },
+    {
+      "id": "2bzmot-3k-2p",
+      "name": "2 pluton, 3 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "2bzmot-3k",
+      "strength": 0.99,
+      "status": "w odwodzie",
+      "task": "osłona skrzydła kompanii",
+      "personnel": {
+        "current": 33,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.56967,
+        53.39239
+      ]
+    },
+    {
+      "id": "2bzmot-3k-3p",
+      "name": "3 pluton, 3 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "2bzmot-3k",
+      "strength": 0.99,
+      "status": "w odwodzie",
+      "task": "odwód kompanii",
+      "personnel": {
+        "current": 30,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.56784,
+        53.39146
+      ]
+    },
+    {
+      "id": "2bzmot-3k",
+      "name": "3 kompania 2 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "2bzmot",
+      "strength": 0.99,
+      "status": "w odwodzie",
+      "task": "odwód batalionu, na zach. od Bohonik",
+      "personnel": {
+        "current": 112,
+        "authorized": 117
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 14,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.56766,
+        53.3936
+      ]
+    },
+    {
+      "id": "2bzmot-kw-1p",
+      "name": "1 pluton moździerzy, kompania wsparcia 2 bzmot",
+      "sidc": "SFGPUCFM---D---",
+      "parent": "2bzmot-kw",
+      "strength": 0.95,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe batalionu",
+      "personnel": {
+        "current": 34,
+        "authorized": 38
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.54818,
+        53.38625
+      ]
+    },
+    {
+      "id": "2bzmot-kw-2p",
+      "name": "2 pluton moździerzy, kompania wsparcia 2 bzmot",
+      "sidc": "SFGPUCFM---D---",
+      "parent": "2bzmot-kw",
+      "strength": 0.99,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe batalionu",
+      "personnel": {
+        "current": 37,
+        "authorized": 38
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.54726,
+        53.3893
+      ]
+    },
+    {
+      "id": "2bzmot-kw-3p",
+      "name": "pluton przeciwpancerny, kompania wsparcia 2 bzmot",
+      "sidc": "SFGPUCAA---D---",
+      "parent": "2bzmot-kw",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "ppk na kierunku zagrożonym",
+      "personnel": {
+        "current": 29,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        }
+      ],
+      "pos": [
+        23.56808,
+        53.39219
+      ]
+    },
+    {
+      "id": "2bzmot-kw",
+      "name": "kompania wsparcia 2 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "2bzmot",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "wsparcie batalionu",
+      "personnel": {
+        "current": 121,
+        "authorized": 128
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        },
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 2,
+          "authorized": 2
+        }
+      ],
+      "pos": [
+        23.56631,
+        53.39171
+      ]
+    },
+    {
+      "id": "2bzmot",
+      "name": "2 bzmot",
+      "sidc": "SFGPUCIZ---F---",
+      "parent": "hq",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "obrona wschodnich podejść do Sokółki i węzła drogowego",
+      "personnel": {
+        "current": 565,
+        "authorized": 599
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 44,
+          "authorized": 44
+        },
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        },
+        {
+          "name": "wozy dowodzenia Rosomak-WD",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.585,
+        53.395
+      ],
+      "dos": {
+        "fuel": 2.9,
+        "ammo": 2.4,
+        "general": 3,
+        "readiness": 0.95,
+        "as_of": "2026-10-17T04:30:00+02:00"
+      }
+    },
+    {
+      "id": "3bzmot-1k-1p",
+      "name": "1 pluton, 1 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "3bzmot-1k",
+      "strength": 0.95,
+      "status": "w obronie",
+      "task": "stanowisko w pasie kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.67481,
+        53.29944
+      ]
+    },
+    {
+      "id": "3bzmot-1k-2p",
+      "name": "2 pluton, 1 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "3bzmot-1k",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "osłona skrzydła kompanii",
+      "personnel": {
+        "current": 31,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.68368,
+        53.30113
+      ]
+    },
+    {
+      "id": "3bzmot-1k-3p",
+      "name": "3 pluton, 1 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "3bzmot-1k",
+      "strength": 0.96,
+      "status": "w obronie",
+      "task": "odwód kompanii",
+      "personnel": {
+        "current": 30,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.69821,
+        53.30151
+      ]
+    },
+    {
+      "id": "3bzmot-1k",
+      "name": "1 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "3bzmot",
+      "strength": 0.96,
+      "status": "w obronie",
+      "task": "obrona Szudziałowa",
+      "personnel": {
+        "current": 110,
+        "authorized": 117
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 14,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.6892,
+        53.30149
+      ]
+    },
+    {
+      "id": "3bzmot-2k-1p",
+      "name": "1 pluton, 2 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "3bzmot-2k",
+      "strength": 0.99,
+      "status": "w obronie",
+      "task": "stanowisko w pasie kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.67427,
+        53.27774
+      ]
+    },
+    {
+      "id": "3bzmot-2k-2p",
+      "name": "2 pluton, 2 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "3bzmot-2k",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "osłona skrzydła kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.68874,
+        53.27898
+      ]
+    },
+    {
+      "id": "3bzmot-2k-3p",
+      "name": "3 pluton, 2 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "3bzmot-2k",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "odwód kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.67855,
+        53.27262
+      ]
+    },
+    {
+      "id": "3bzmot-2k",
+      "name": "2 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "3bzmot",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "obrona drogi z Krynek na Szudziałowo",
+      "personnel": {
+        "current": 114,
+        "authorized": 117
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 13,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.68161,
+        53.27971
+      ]
+    },
+    {
+      "id": "3bzmot-3k-1p",
+      "name": "1 pluton, 3 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "3bzmot-3k",
+      "strength": 0.98,
+      "status": "w odwodzie",
+      "task": "stanowisko w pasie kompanii",
+      "personnel": {
+        "current": 31,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.65754,
+        53.28349
+      ]
+    },
+    {
+      "id": "3bzmot-3k-2p",
+      "name": "2 pluton, 3 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "3bzmot-3k",
+      "strength": 0.99,
+      "status": "w odwodzie",
+      "task": "osłona skrzydła kompanii",
+      "personnel": {
+        "current": 30,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.66232,
+        53.28169
+      ]
+    },
+    {
+      "id": "3bzmot-3k-3p",
+      "name": "3 pluton, 3 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---D---",
+      "parent": "3bzmot-3k",
+      "strength": 0.99,
+      "status": "w odwodzie",
+      "task": "odwód kompanii",
+      "personnel": {
+        "current": 32,
+        "authorized": 33
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.66413,
+        53.28544
+      ]
+    },
+    {
+      "id": "3bzmot-3k",
+      "name": "3 kompania 3 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "3bzmot",
+      "strength": 0.99,
+      "status": "w odwodzie",
+      "task": "odwód batalionu, rejon Szudziałowa",
+      "personnel": {
+        "current": 111,
+        "authorized": 117
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 13,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.66706,
+        53.28383
+      ]
+    },
+    {
+      "id": "3bzmot-kw-1p",
+      "name": "1 pluton moździerzy, kompania wsparcia 3 bzmot",
+      "sidc": "SFGPUCFM---D---",
+      "parent": "3bzmot-kw",
+      "strength": 0.99,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe batalionu",
+      "personnel": {
+        "current": 35,
+        "authorized": 38
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.64118,
+        53.28729
+      ]
+    },
+    {
+      "id": "3bzmot-kw-2p",
+      "name": "2 pluton moździerzy, kompania wsparcia 3 bzmot",
+      "sidc": "SFGPUCFM---D---",
+      "parent": "3bzmot-kw",
+      "strength": 0.95,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe batalionu",
+      "personnel": {
+        "current": 38,
+        "authorized": 38
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.64842,
+        53.2863
+      ]
+    },
+    {
+      "id": "3bzmot-kw-3p",
+      "name": "pluton przeciwpancerny, kompania wsparcia 3 bzmot",
+      "sidc": "SFGPUCAA---D---",
+      "parent": "3bzmot-kw",
+      "strength": 0.98,
+      "status": "w obronie",
+      "task": "ppk na kierunku zagrożonym",
+      "personnel": {
+        "current": 29,
+        "authorized": 30
+      },
+      "equipment": [
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        }
+      ],
+      "pos": [
+        23.66469,
+        53.28821
+      ]
+    },
+    {
+      "id": "3bzmot-kw",
+      "name": "kompania wsparcia 3 bzmot",
+      "sidc": "SFGPUCIZ---E---",
+      "parent": "3bzmot",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "wsparcie batalionu",
+      "personnel": {
+        "current": 123,
+        "authorized": 128
+      },
+      "equipment": [
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 7,
+          "authorized": 8
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        },
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 2,
+          "authorized": 2
+        }
+      ],
+      "pos": [
+        23.66191,
+        53.2868
+      ]
+    },
+    {
+      "id": "3bzmot",
+      "name": "3 bzmot",
+      "sidc": "SFGPUCIZ---F---",
+      "parent": "hq",
+      "strength": 0.97,
+      "status": "w obronie",
+      "task": "obrona kierunku Krynki–Szudziałowo (południe)",
+      "personnel": {
+        "current": 568,
+        "authorized": 599
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (30 mm)",
+          "current": 42,
+          "authorized": 44
+        },
+        {
+          "name": "moździerze samobieżne RAK 120 mm",
+          "current": 7,
+          "authorized": 8
+        },
+        {
+          "name": "wyrzutnie ppk Spike",
+          "current": 12,
+          "authorized": 12
+        },
+        {
+          "name": "wozy dowodzenia Rosomak-WD",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.685,
+        53.285
+      ],
+      "dos": {
+        "fuel": 2.7,
+        "ammo": 2.3,
+        "general": 3,
+        "readiness": 0.93,
+        "as_of": "2026-10-17T04:30:00+02:00"
+      }
+    },
+    {
+      "id": "bcz-1k-1p",
+      "name": "1 pluton czołgów, 1 kompania bcz",
+      "sidc": "SFGPUCAT---D---",
+      "parent": "bcz-1k",
+      "strength": 0.99,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.470659,
+        53.31898
+      ]
+    },
+    {
+      "id": "bcz-1k-2p",
+      "name": "2 pluton czołgów, 1 kompania bcz",
+      "sidc": "SFGPUCAT---D---",
+      "parent": "bcz-1k",
+      "strength": 0.97,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 16,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.48156,
+        53.320005
+      ]
+    },
+    {
+      "id": "bcz-1k-3p",
+      "name": "3 pluton czołgów, 1 kompania bcz",
+      "sidc": "SFGPUCAT---D---",
+      "parent": "bcz-1k",
+      "strength": 0.97,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.47641,
+        53.314878
+      ]
+    },
+    {
+      "id": "bcz-1k",
+      "name": "1 kompania czołgów bcz",
+      "sidc": "SFGPUCAT---E---",
+      "parent": "bcz",
+      "strength": 0.98,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 59,
+        "authorized": 62
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 12,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.47621,
+        53.317954
+      ]
+    },
+    {
+      "id": "bcz-2k-1p",
+      "name": "1 pluton czołgów, 2 kompania bcz",
+      "sidc": "SFGPUCAT---D---",
+      "parent": "bcz-2k",
+      "strength": 0.98,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.498726,
+        53.327182
+      ]
+    },
+    {
+      "id": "bcz-2k-2p",
+      "name": "2 pluton czołgów, 2 kompania bcz",
+      "sidc": "SFGPUCAT---D---",
+      "parent": "bcz-2k",
+      "strength": 0.95,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 16,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.502846,
+        53.321287
+      ]
+    },
+    {
+      "id": "bcz-2k-3p",
+      "name": "3 pluton czołgów, 2 kompania bcz",
+      "sidc": "SFGPUCAT---D---",
+      "parent": "bcz-2k",
+      "strength": 0.97,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.502159,
+        53.316518
+      ]
+    },
+    {
+      "id": "bcz-2k",
+      "name": "2 kompania czołgów bcz",
+      "sidc": "SFGPUCAT---E---",
+      "parent": "bcz",
+      "strength": 0.97,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 59,
+        "authorized": 62
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 13,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.501244,
+        53.321662
+      ]
+    },
+    {
+      "id": "bcz-3k-1p",
+      "name": "1 pluton czołgów, 3 kompania bcz",
+      "sidc": "SFGPUCAT---D---",
+      "parent": "bcz-3k",
+      "strength": 0.95,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 16,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.48671,
+        53.308314
+      ]
+    },
+    {
+      "id": "bcz-3k-2p",
+      "name": "2 pluton czołgów, 3 kompania bcz",
+      "sidc": "SFGPUCAT---D---",
+      "parent": "bcz-3k",
+      "strength": 0.98,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.497696,
+        53.305031
+      ]
+    },
+    {
+      "id": "bcz-3k-3p",
+      "name": "3 pluton czołgów, 3 kompania bcz",
+      "sidc": "SFGPUCAT---D---",
+      "parent": "bcz-3k",
+      "strength": 0.96,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 15,
+        "authorized": 16
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.48053,
+        53.303185
+      ]
+    },
+    {
+      "id": "bcz-3k",
+      "name": "3 kompania czołgów bcz",
+      "sidc": "SFGPUCAT---E---",
+      "parent": "bcz",
+      "strength": 0.96,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady",
+      "personnel": {
+        "current": 59,
+        "authorized": 62
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 14,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.488312,
+        53.30551
+      ]
+    },
+    {
+      "id": "bcz",
+      "name": "bcz",
+      "sidc": "SFGPUCAT---F---",
+      "parent": "hq",
+      "strength": 0.97,
+      "status": "w ugrupowaniu wyczekującym",
+      "task": "odwód brygady, rejon wyczekiwania w lesie na płd. od Sokółki",
+      "personnel": {
+        "current": 251,
+        "authorized": 262
+      },
+      "equipment": [
+        {
+          "name": "czołgi Leopard 2PL",
+          "current": 41,
+          "authorized": 44
+        },
+        {
+          "name": "wozy zabezpieczenia technicznego (Bergepanzer)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.490829,
+        53.313852
+      ],
+      "dos": {
+        "fuel": 3,
+        "ammo": 2.5,
+        "general": 3,
+        "readiness": 0.94,
+        "as_of": "2026-10-17T04:30:00+02:00"
+      }
+    },
+    {
+      "id": "dart-1b-1p",
+      "name": "1 pluton ogniowy, 1 bateria dart",
+      "sidc": "SFGPUCFHE--D---",
+      "parent": "dart-1b",
+      "strength": 0.97,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady",
+      "personnel": {
+        "current": 24,
+        "authorized": 26
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.42258,
+        53.37063
+      ]
+    },
+    {
+      "id": "dart-1b-2p",
+      "name": "2 pluton ogniowy, 1 bateria dart",
+      "sidc": "SFGPUCFHE--D---",
+      "parent": "dart-1b",
+      "strength": 1,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady",
+      "personnel": {
+        "current": 25,
+        "authorized": 26
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.41842,
+        53.37462
+      ]
+    },
+    {
+      "id": "dart-1b",
+      "name": "1 bateria dart",
+      "sidc": "SFGPUCFHE--E---",
+      "parent": "dart",
+      "strength": 0.98,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady",
+      "personnel": {
+        "current": 89,
+        "authorized": 94
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.43747,
+        53.37567
+      ]
+    },
+    {
+      "id": "dart-2b-1p",
+      "name": "1 pluton ogniowy, 2 bateria dart",
+      "sidc": "SFGPUCFHE--D---",
+      "parent": "dart-2b",
+      "strength": 0.94,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady",
+      "personnel": {
+        "current": 25,
+        "authorized": 26
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.42397,
+        53.36759
+      ]
+    },
+    {
+      "id": "dart-2b-2p",
+      "name": "2 pluton ogniowy, 2 bateria dart",
+      "sidc": "SFGPUCFHE--D---",
+      "parent": "dart-2b",
+      "strength": 0.97,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady",
+      "personnel": {
+        "current": 26,
+        "authorized": 26
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.42841,
+        53.36977
+      ]
+    },
+    {
+      "id": "dart-2b",
+      "name": "2 bateria dart",
+      "sidc": "SFGPUCFHE--E---",
+      "parent": "dart",
+      "strength": 0.95,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady",
+      "personnel": {
+        "current": 93,
+        "authorized": 94
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.44152,
+        53.37137
+      ]
+    },
+    {
+      "id": "dart-3b-1p",
+      "name": "1 pluton ogniowy, 3 bateria dart",
+      "sidc": "SFGPUCFHE--D---",
+      "parent": "dart-3b",
+      "strength": 0.97,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady",
+      "personnel": {
+        "current": 26,
+        "authorized": 26
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.42342,
+        53.36454
+      ]
+    },
+    {
+      "id": "dart-3b-2p",
+      "name": "2 pluton ogniowy, 3 bateria dart",
+      "sidc": "SFGPUCFHE--D---",
+      "parent": "dart-3b",
+      "strength": 0.95,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady",
+      "personnel": {
+        "current": 26,
+        "authorized": 26
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.43072,
+        53.36317
+      ]
+    },
+    {
+      "id": "dart-3b",
+      "name": "3 bateria dart",
+      "sidc": "SFGPUCFHE--E---",
+      "parent": "dart",
+      "strength": 0.96,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady",
+      "personnel": {
+        "current": 92,
+        "authorized": 94
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 8,
+          "authorized": 8
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 3,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.4423,
+        53.36828
+      ]
+    },
+    {
+      "id": "dart",
+      "name": "dart",
+      "sidc": "SFGPUCFHE--F---",
+      "parent": "hq",
+      "strength": 0.96,
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ogniowe brygady, rejon SW od Sokółki",
+      "personnel": {
+        "current": 361,
+        "authorized": 372
+      },
+      "equipment": [
+        {
+          "name": "armatohaubice Krab 155 mm",
+          "current": 24,
+          "authorized": 24
+        },
+        {
+          "name": "wozy amunicyjne",
+          "current": 9,
+          "authorized": 12
+        },
+        {
+          "name": "BSP do korygowania ognia",
+          "current": 1,
+          "authorized": 2
+        }
+      ],
+      "pos": [
+        23.44,
+        53.372
+      ],
+      "dos": {
+        "fuel": 2.8,
+        "ammo": 2,
+        "general": 3,
+        "readiness": 0.95,
+        "as_of": "2026-10-17T04:30:00+02:00"
+      }
+    },
+    {
+      "id": "krozp-1p",
+      "name": "1 pluton krozp",
+      "sidc": "SFGPUCR----D---",
+      "parent": "krozp",
+      "strength": 0.98,
+      "status": "obserwacja",
+      "task": "posterunek obserwacyjny, przejście Kuźnica i DK19",
+      "personnel": {
+        "current": 24,
+        "authorized": 24
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (rozpoznawczy)",
+          "current": 3,
+          "authorized": 4
+        },
+        {
+          "name": "drony rozpoznawcze (krótkiego zasięgu)",
+          "current": 1,
+          "authorized": 1
+        }
+      ],
+      "pos": [
+        23.632622,
+        53.485186
+      ]
+    },
+    {
+      "id": "krozp-2p",
+      "name": "2 pluton krozp",
+      "sidc": "SFGPUCR----D---",
+      "parent": "krozp",
+      "strength": 0.94,
+      "status": "obserwacja",
+      "task": "posterunek obserwacyjny, odcinek Bohoniki–granica",
+      "personnel": {
+        "current": 24,
+        "authorized": 24
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (rozpoznawczy)",
+          "current": 4,
+          "authorized": 4
+        },
+        {
+          "name": "drony rozpoznawcze (krótkiego zasięgu)",
+          "current": 1,
+          "authorized": 1
+        }
+      ],
+      "pos": [
+        23.68927,
+        53.388652
+      ]
+    },
+    {
+      "id": "krozp-3p",
+      "name": "3 pluton krozp",
+      "sidc": "SFGPUCR----D---",
+      "parent": "krozp",
+      "strength": 0.94,
+      "status": "obserwacja",
+      "task": "posterunek obserwacyjny, kierunek Krynki",
+      "personnel": {
+        "current": 23,
+        "authorized": 24
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (rozpoznawczy)",
+          "current": 4,
+          "authorized": 4
+        },
+        {
+          "name": "drony rozpoznawcze (krótkiego zasięgu)",
+          "current": 1,
+          "authorized": 1
+        }
+      ],
+      "pos": [
+        23.745918,
+        53.296414
+      ]
+    },
+    {
+      "id": "krozp",
+      "name": "krozp",
+      "sidc": "SFGPUCR----E---",
+      "parent": "hq",
+      "strength": 0.95,
+      "status": "obserwacja",
+      "task": "osłona i rozpoznanie na granicy Kuźnica–Krynki",
+      "personnel": {
+        "current": 92,
+        "authorized": 94
+      },
+      "equipment": [
+        {
+          "name": "KTO Rosomak (rozpoznawczy)",
+          "current": 13,
+          "authorized": 14
+        },
+        {
+          "name": "drony rozpoznawcze (krótkiego zasięgu)",
+          "current": 4,
+          "authorized": 4
+        }
+      ],
+      "pos": [
+        23.654938,
+        53.414239
+      ],
+      "dos": {
+        "fuel": 3,
+        "ammo": 2.5,
+        "general": 3,
+        "readiness": 0.9,
+        "as_of": "2026-10-17T04:30:00+02:00"
+      }
+    },
+    {
+      "id": "bopl-1p",
+      "name": "1 pluton OPL",
+      "sidc": "SFGPUCDM---D---",
+      "parent": "bopl",
+      "strength": 0.99,
+      "status": "w gotowości",
+      "task": "osłona dowództwa i węzła Sokółka",
+      "personnel": {
+        "current": 22,
+        "authorized": 22
+      },
+      "equipment": [
+        {
+          "name": "samobieżne zestawy Poprad",
+          "current": 2,
+          "authorized": 2
+        },
+        {
+          "name": "przenośne zestawy Piorun",
+          "current": 6,
+          "authorized": 6
+        }
+      ],
+      "pos": [
+        23.4989,
+        53.42375
+      ]
+    },
+    {
+      "id": "bopl-2p",
+      "name": "2 pluton OPL",
+      "sidc": "SFGPUCDM---D---",
+      "parent": "bopl",
+      "strength": 0.94,
+      "status": "w gotowości",
+      "task": "osłona dart",
+      "personnel": {
+        "current": 20,
+        "authorized": 22
+      },
+      "equipment": [
+        {
+          "name": "samobieżne zestawy Poprad",
+          "current": 2,
+          "authorized": 2
+        },
+        {
+          "name": "przenośne zestawy Piorun",
+          "current": 5,
+          "authorized": 6
+        }
+      ],
+      "pos": [
+        23.448944,
+        53.376365
+      ]
+    },
+    {
+      "id": "bopl-3p",
+      "name": "3 pluton OPL",
+      "sidc": "SFGPUCDM---D---",
+      "parent": "bopl",
+      "strength": 0.99,
+      "status": "w gotowości",
+      "task": "osłona 1 bzmot i drogi z Kuźnicy",
+      "personnel": {
+        "current": 21,
+        "authorized": 22
+      },
+      "equipment": [
+        {
+          "name": "samobieżne zestawy Poprad",
+          "current": 2,
+          "authorized": 2
+        },
+        {
+          "name": "przenośne zestawy Piorun",
+          "current": 6,
+          "authorized": 6
+        }
+      ],
+      "pos": [
+        23.560524,
+        53.446967
+      ]
+    },
+    {
+      "id": "bopl",
+      "name": "bopl",
+      "sidc": "SFGPUCDM---E---",
+      "parent": "hq",
+      "strength": 0.97,
+      "status": "w gotowości",
+      "task": "obrona przeciwlotnicza brygady (bateria)",
+      "personnel": {
+        "current": 83,
+        "authorized": 86
+      },
+      "equipment": [
+        {
+          "name": "samobieżne zestawy Poprad",
+          "current": 6,
+          "authorized": 6
+        },
+        {
+          "name": "przenośne zestawy Piorun",
+          "current": 17,
+          "authorized": 18
+        }
+      ],
+      "pos": [
+        23.5,
+        53.42
+      ],
+      "dos": {
+        "fuel": 3,
+        "ammo": 2.2,
+        "general": 3,
+        "readiness": 0.97,
+        "as_of": "2026-10-17T04:30:00+02:00"
+      }
+    },
+    {
+      "id": "ksap-1p",
+      "name": "1 pluton saperów",
+      "sidc": "SFGPUCE----D---",
+      "parent": "ksap",
+      "strength": 0.98,
+      "status": "przygotowanie zapór",
+      "task": "zapory na DK19 przed 1 bzmot",
+      "personnel": {
+        "current": 26,
+        "authorized": 28
+      },
+      "equipment": [
+        {
+          "name": "Baobab-K (system minowania)",
+          "current": 1,
+          "authorized": 1
+        },
+        {
+          "name": "transportery saperskie",
+          "current": 2,
+          "authorized": 3
+        }
+      ],
+      "pos": [
+        23.602409,
+        53.479057
+      ]
+    },
+    {
+      "id": "ksap-2p",
+      "name": "2 pluton saperów",
+      "sidc": "SFGPUCE----D---",
+      "parent": "ksap",
+      "strength": 0.99,
+      "status": "przygotowanie zapór",
+      "task": "zapory na wschodnich podejściach do Sokółki (rejon Bohonik)",
+      "personnel": {
+        "current": 27,
+        "authorized": 28
+      },
+      "equipment": [
+        {
+          "name": "Baobab-K (system minowania)",
+          "current": 1,
+          "authorized": 1
+        },
+        {
+          "name": "transportery saperskie",
+          "current": 2,
+          "authorized": 3
+        }
+      ],
+      "pos": [
+        23.615456,
+        53.386605
+      ]
+    },
+    {
+      "id": "ksap-3p",
+      "name": "3 pluton saperów",
+      "sidc": "SFGPUCE----D---",
+      "parent": "ksap",
+      "strength": 0.99,
+      "status": "przygotowanie zapór",
+      "task": "zapory na drodze z Krynek na Szudziałowo",
+      "personnel": {
+        "current": 28,
+        "authorized": 28
+      },
+      "equipment": [
+        {
+          "name": "Baobab-K (system minowania)",
+          "current": 1,
+          "authorized": 1
+        },
+        {
+          "name": "transportery saperskie",
+          "current": 3,
+          "authorized": 3
+        }
+      ],
+      "pos": [
+        23.711586,
+        53.278969
+      ]
+    },
+    {
+      "id": "ksap",
+      "name": "ksap",
+      "sidc": "SFGPUCE----E---",
+      "parent": "hq",
+      "strength": 0.99,
+      "status": "przygotowanie zapór",
+      "task": "zapory i przeszkody w pasie brygady, dowództwo w rejonie Kundzina",
+      "personnel": {
+        "current": 104,
+        "authorized": 108
+      },
+      "equipment": [
+        {
+          "name": "Baobab-K (system minowania)",
+          "current": 3,
+          "authorized": 3
+        },
+        {
+          "name": "transportery saperskie",
+          "current": 7,
+          "authorized": 9
+        }
+      ],
+      "pos": [
+        23.594856,
+        53.438787
+      ]
+    },
+    {
+      "id": "blog",
+      "name": "blog",
+      "sidc": "SFGPUSS----F---",
+      "parent": "hq",
+      "strength": 0.99,
+      "status": "rozwinięty",
+      "task": "zaopatrzenie brygady, rejon Janów",
+      "personnel": {
+        "current": 396,
+        "authorized": 400
+      },
+      "equipment": [
+        {
+          "name": "samochody ciężarowe Jelcz",
+          "current": 59,
+          "authorized": 60
+        },
+        {
+          "name": "cysterny paliwowe",
+          "current": 14,
+          "authorized": 14
+        }
+      ],
+      "pos": [
+        23.2287,
+        53.4675
+      ]
+    },
+    {
+      "id": "dd",
+      "name": "Dow. dywizji",
+      "sidc": "SFGPUCIZ--AI---",
+      "pos": [
+        23.336,
+        53.21
+      ],
+      "status": "przełożony",
+      "notes": "Stanowisko dowodzenia dywizji — rejon Supraśla"
+    },
+    {
+      "id": "zt-augustow",
+      "name": "ZT Dąbrowa (20 BZ)",
+      "sidc": "SFGPUCIZ---H---",
+      "pos": [
+        23.349,
+        53.6
+      ],
+      "status": "sąsiad",
+      "notes": "Położenie orientacyjne. Sąsiad z lewa (północ): kierunek Nowy Dwór–Dąbrowa Białostocka.",
+      "personnel": {
+        "current": 2900,
+        "authorized": 3100
+      },
+      "strength": 0.97,
+      "task": "obrona kierunku Nowy Dwór–Dąbrowa Białostocka"
+    },
+    {
+      "id": "zt-bot",
+      "name": "1 Podlaska BOT",
+      "sidc": "SFGPUCIL---H---",
+      "pos": [
+        23.159,
+        53.132
+      ],
+      "status": "sąsiad",
+      "notes": "Położenie orientacyjne. Sąsiad z prawa (południe) i w mieście: Białystok, kierunek Michałowo–Gródek.",
+      "personnel": {
+        "current": 3100,
+        "authorized": 3600
+      },
+      "strength": 0.9,
+      "task": "obrona Białegostoku i kierunku Gródek–Michałowo"
+    },
+    {
+      "id": "dab-1bz",
+      "name": "1 batalion ZT Dąbrowa",
+      "sidc": "SFGPUCIZ---F---",
+      "formation": "zt-augustow",
+      "pos": [
+        23.5,
+        53.585
+      ],
+      "status": "w obronie",
+      "task": "obrona kierunku Nowy Dwór",
+      "strength": 0.97
+    },
+    {
+      "id": "dab-2bz",
+      "name": "batalion czołgów ZT Dąbrowa",
+      "sidc": "SFGPUCAT---F---",
+      "formation": "zt-augustow",
+      "pos": [
+        23.4,
+        53.6
+      ],
+      "status": "w odwodzie",
+      "task": "odwód ZT Dąbrowa",
+      "strength": 0.97
+    },
+    {
+      "id": "dab-art",
+      "name": "dywizjon ZT Dąbrowa",
+      "sidc": "SFGPUCFHE--F---",
+      "formation": "zt-augustow",
+      "pos": [
+        23.33,
+        53.57
+      ],
+      "status": "na stanowiskach ogniowych",
+      "task": "wsparcie ZT Dąbrowa",
+      "strength": 0.97
+    },
+    {
+      "id": "bot-gr",
+      "name": "batalion OT Gródek",
+      "sidc": "SFGPUCIL---F---",
+      "formation": "zt-bot",
+      "pos": [
+        23.64,
+        53.108
+      ],
+      "status": "w obronie",
+      "task": "obrona Gródka i drogi od Bobrownik",
+      "strength": 0.88
+    },
+    {
+      "id": "bot-mi",
+      "name": "batalion OT Michałowo",
+      "sidc": "SFGPUCIL---F---",
+      "formation": "zt-bot",
+      "pos": [
+        23.585,
+        53.05
+      ],
+      "status": "w obronie",
+      "task": "obrona Michałowa",
+      "strength": 0.9
+    },
+    {
+      "id": "bot-bs",
+      "name": "batalion OT Białystok",
+      "sidc": "SFGPUCIL---F---",
+      "formation": "zt-bot",
+      "pos": [
+        23.19,
+        53.14
+      ],
+      "status": "w odwodzie",
+      "task": "obrona miasta",
+      "strength": 0.92
+    }
+  ],
+  "contacts": [
+    {
+      "id": "c-001",
+      "sidc": "SHGAUCIZ---F---",
+      "pos": [
+        23.7,
+        53.57
+      ],
+      "uncertainty_m": 2500,
+      "observed": "2026-10-17T04:40:00+02:00",
+      "source": "Straż Graniczna (kamery przejścia Kuźnica)",
+      "confidence": "średnia",
+      "estimate": "kolumna pojazdów gąsienicowych i kołowych w rejonie Bruzgów, po stronie białoruskiej",
+      "estimate_personnel": {
+        "count": 400,
+        "approx": true
+      },
+      "estimate_equipment": [
+        {
+          "name": "pojazdy opancerzone",
+          "count": 25,
+          "approx": true
+        }
+      ]
+    },
+    {
+      "id": "c-002",
+      "sidc": "SHGAUCAT---F---",
+      "pos": [
+        23.8,
+        53.52
+      ],
+      "uncertainty_m": 4000,
+      "observed": "2026-10-17T04:20:00+02:00",
+      "source": "rozpoznanie radiowe dywizji",
+      "confidence": "niska",
+      "estimate": "ruch ciężkiej techniki na wschód od Kuźnicy",
+      "estimate_equipment": [
+        {
+          "name": "czołgi",
+          "count": 20,
+          "approx": true
+        }
+      ]
+    },
+    {
+      "id": "c-003",
+      "sidc": "SHAAMFQ--------",
+      "pos": [
+        23.63,
+        53.505
+      ],
+      "uncertainty_m": 2500,
+      "observed": "2026-10-17T04:55:00+02:00",
+      "source": "obserwacja 1 bzmot",
+      "confidence": "średnia",
+      "estimate": "dron rozpoznawczy nad przejściem Kuźnica"
+    },
+    {
+      "id": "c-004",
+      "sidc": "SHGAUUMSEI-----",
+      "pos": [
+        23.72,
+        53.47
+      ],
+      "uncertainty_m": 5000,
+      "observed": "2026-10-17T04:30:00+02:00",
+      "source": "REW krozp (namiar DF)",
+      "confidence": "niska",
+      "estimate": "silny nadajnik zakłócający UKF, namiar z jednego punktu"
+    },
+    {
+      "id": "c-005",
+      "sidc": "SHGAUCIZ---F---",
+      "pos": [
+        23.9,
+        53.12
+      ],
+      "uncertainty_m": 3000,
+      "observed": "2026-10-17T04:45:00+02:00",
+      "source": "meldunek 1 Podlaskiej BOT (przejście Bobrowniki)",
+      "confidence": "średnia",
+      "estimate": "kolumna pojazdów przy przejściu Bobrowniki, po stronie białoruskiej"
+    }
+  ],
+  "assets": [
+    {
+      "id": "bsp-1",
+      "name": "BSP-1",
+      "type": "dron rozpoznawczy FlyEye",
+      "sidc": "SFAPMFQ--------",
+      "pos": [
+        23.6,
+        53.5
+      ],
+      "status": "w powietrzu (zostało ok. 1 h 30 min lotu)",
+      "task": "obserwacja rejonu Kuźnica–granica"
+    },
+    {
+      "id": "bsp-2",
+      "name": "BSP-2",
+      "type": "dron rozpoznawczy FlyEye",
+      "sidc": "SFAPMFQ--------",
+      "status": "gotowy do startu (Sokółka)",
+      "task": "brak"
+    },
+    {
+      "id": "bsp-3",
+      "name": "BSP-3",
+      "type": "dron rozpoznawczy Gladius",
+      "sidc": "SFAPMFQ--------",
+      "status": "gotowy do startu (Szudziałowo)",
+      "task": "brak"
+    }
+  ],
+  "lines": [
+    {
+      "id": "b-north",
+      "kind": "boundary",
+      "label": "granica pasa 15 GBZ / ZT Dąbrowa",
+      "coords": [
+        [
+          23.64,
+          53.545
+        ],
+        [
+          23.5,
+          53.5
+        ],
+        [
+          23.36,
+          53.44
+        ],
+        [
+          23.22,
+          53.4
+        ]
+      ]
+    },
+    {
+      "id": "b-south",
+      "kind": "boundary",
+      "label": "granica pasa 15 GBZ / 1 Podlaska BOT",
+      "coords": [
+        [
+          23.84,
+          53.225
+        ],
+        [
+          23.7,
+          53.2
+        ],
+        [
+          23.5,
+          53.18
+        ],
+        [
+          23.3,
+          53.17
+        ]
+      ]
+    },
+    {
+      "id": "flot-own",
+      "kind": "flot",
+      "label": "FLOT 15 GBZ (rubież ubezpieczenia)",
+      "coords": [
+        [
+          23.64,
+          53.5
+        ],
+        [
+          23.67,
+          53.42
+        ],
+        [
+          23.72,
+          53.33
+        ],
+        [
+          23.75,
+          53.255
+        ]
+      ]
+    },
+    {
+      "id": "flot-dab",
+      "kind": "flot",
+      "label": "FLOT ZT Dąbrowa",
+      "formation": "zt-augustow",
+      "coords": [
+        [
+          23.58,
+          53.6
+        ],
+        [
+          23.56,
+          53.555
+        ],
+        [
+          23.62,
+          53.535
+        ]
+      ]
+    },
+    {
+      "id": "flot-bot",
+      "kind": "flot",
+      "label": "FLOT 1 Podlaska BOT",
+      "formation": "zt-bot",
+      "coords": [
+        [
+          23.8,
+          53.17
+        ],
+        [
+          23.72,
+          53.12
+        ],
+        [
+          23.68,
+          53.1
+        ],
+        [
+          23.64,
+          53.08
+        ]
+      ]
+    },
+    {
+      "id": "phase-1",
+      "kind": "phase",
+      "label": "rubież obrony głównej (Kundzin–Sokółka–Szudziałowo)",
+      "coords": [
+        [
+          23.59,
+          53.52
+        ],
+        [
+          23.56,
+          53.44
+        ],
+        [
+          23.6,
+          53.35
+        ],
+        [
+          23.66,
+          53.28
+        ]
+      ]
+    },
+    {
+      "id": "enemy-ax-1",
+      "kind": "enemy_axis",
+      "label": "możliwy kierunek natarcia (ocena S2): Kuźnica–Sokółka–Białystok",
+      "coords": [
+        [
+          23.72,
+          53.57
+        ],
+        [
+          23.65,
+          53.51
+        ],
+        [
+          23.5,
+          53.405
+        ],
+        [
+          23.36,
+          53.3
+        ],
+        [
+          23.16,
+          53.14
+        ]
+      ]
+    },
+    {
+      "id": "enemy-ax-2",
+      "kind": "enemy_axis",
+      "label": "możliwy kierunek natarcia (ocena S2): Bobrowniki–Gródek–Białystok",
+      "coords": [
+        [
+          23.95,
+          53.12
+        ],
+        [
+          23.67,
+          53.095
+        ],
+        [
+          23.4,
+          53.1
+        ],
+        [
+          23.17,
+          53.13
+        ]
+      ]
+    },
+    {
+      "id": "ew-1",
+      "kind": "ew_zone",
+      "label": "zagłuszanie UKF/GPS (meldunek SG i krozp)",
+      "observed": "2026-10-17T03:50:00+02:00",
+      "coords": [
+        [
+          23.55,
+          53.46
+        ],
+        [
+          23.78,
+          53.46
+        ],
+        [
+          23.78,
+          53.6
+        ],
+        [
+          23.55,
+          53.6
+        ],
+        [
+          23.55,
+          53.46
+        ]
+      ]
+    }
+  ],
+  "logistics": {
+    "depots": [
+      {
+        "id": "sk-glowny",
+        "name": "Skład główny Wasilków",
+        "pos": [
+          23.2057,
+          53.1987
+        ],
+        "stock": {
+          "fuel": 420,
+          "ammo": 300,
+          "general": 520
+        },
+        "status": "operational",
+        "as_of": "2026-10-17T04:30:00+02:00",
+        "notes": "Zapas dywizji (ok. 3 doby dla brygady)."
+      },
+      {
+        "id": "sk-przod",
+        "name": "Skład wysunięty Sokółka",
+        "pos": [
+          23.462,
+          53.395
+        ],
+        "stock": {
+          "fuel": 90,
+          "ammo": 70,
+          "general": 110
+        },
+        "status": "operational",
+        "as_of": "2026-10-17T04:30:00+02:00"
+      }
+    ],
+    "routes": [
+      {
+        "id": "msr-1",
+        "name": "MSR ZŁOTO (DK19 Białystok–Wasilków–Sokółka–Kuźnica)",
+        "kind": "MSR",
+        "coords": [
+          [
+            23.16,
+            53.14
+          ],
+          [
+            23.2057,
+            53.1987
+          ],
+          [
+            23.237,
+            53.3
+          ],
+          [
+            23.36,
+            53.36
+          ],
+          [
+            23.4996,
+            53.4049
+          ],
+          [
+            23.585,
+            53.468
+          ],
+          [
+            23.649,
+            53.51
+          ]
+        ],
+        "status": "open",
+        "as_of": "2026-10-17T04:30:00+02:00"
+      },
+      {
+        "id": "asr-1",
+        "name": "ASR SREBRO (Sokółka–Szudziałowo–Krynki)",
+        "kind": "ASR",
+        "coords": [
+          [
+            23.4996,
+            53.4049
+          ],
+          [
+            23.58,
+            53.35
+          ],
+          [
+            23.655,
+            53.2995
+          ],
+          [
+            23.7726,
+            53.2644
+          ]
+        ],
+        "status": "open",
+        "as_of": "2026-10-17T04:30:00+02:00"
+      },
+      {
+        "id": "asr-2",
+        "name": "ASR MIEDŹ (Białystok–Zabłudów–Michałowo, dla sąsiada)",
+        "kind": "ASR",
+        "coords": [
+          [
+            23.16,
+            53.14
+          ],
+          [
+            23.338,
+            53.0148
+          ],
+          [
+            23.6067,
+            53.0329
+          ]
+        ],
+        "status": "open",
+        "as_of": "2026-10-17T04:00:00+02:00"
+      }
+    ],
+    "bridges": [
+      {
+        "id": "most-1",
+        "name": "Most na Supraśli w Wasilkowie (DK19)",
+        "pos": [
+          23.2057,
+          53.2017
+        ],
+        "mlc": 70,
+        "status": "intact",
+        "as_of": "2026-10-17T04:30:00+02:00"
+      },
+      {
+        "id": "most-2",
+        "name": "Most na Sokołdzie w Sokółce",
+        "pos": [
+          23.5105,
+          53.41
+        ],
+        "mlc": 50,
+        "status": "intact",
+        "as_of": "2026-10-17T04:30:00+02:00"
+      }
+    ],
+    "convoys": [
+      {
+        "id": "kw-1",
+        "name": "Kolumna zaopatrzenia nr 1",
+        "pos": [
+          23.237,
+          53.3
+        ],
+        "from": "sk-glowny",
+        "to": "sk-przod",
+        "cargo": {
+          "fuel": 40,
+          "ammo": 30,
+          "general": 20
+        },
+        "eta": "2026-10-17T06:45:00+02:00",
+        "status": "moving",
+        "as_of": "2026-10-17T04:45:00+02:00"
+      }
+    ]
+  }
+}

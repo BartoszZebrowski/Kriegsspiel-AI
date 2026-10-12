@@ -1,0 +1,101 @@
+{
+  "messages": [
+    {
+      "id": "in-000-01",
+      "channel": "dd",
+      "from": "gen. bryg. Wawrzyniak, dowódca dywizji",
+      "time": "2026-10-17T04:35:00+02:00",
+      "type": "rozkaz",
+      "priority": "urgent",
+      "text": "Do dowódcy 15 Giżyckiej Brygady Zmechanizowanej (15 GBZ). Od 03:50 zagłuszanie łączności UKF i nawigacji GPS na kierunku Kuźnicy, po stronie białoruskiej koncentracja wojsk. Zadanie: bronić kierunku Kuźnica–Sokółka–Białystok, nie dopuścić do przerwania obrony na rubieży Kundzin–Sokółka–Szudziałowo i do wyjścia przeciwnika w rejon Białegostoku. Gotowość pełna do 06:30. Z lewej (płn.) zgrupowanie taktyczne (ZT) Dąbrowa, z prawej (płd.) i w mieście 1 Podlaska Brygada Obrony Terytorialnej (BOT), kierunek Bobrowniki–Gródek. Wsparcie dywizji: dywizjon wyrzutni Homar-K, użycie na wniosek. Lotnictwa w pierwszej dobie nie będzie. Ogień otwierać po przekroczeniu granicy albo po wyraźnym akcie wrogim. Meldunek o sytuacji co 2 godziny."
+    },
+    {
+      "id": "in-000-02",
+      "channel": "sg",
+      "from": "kpt. SG Kowalczuk, zastępca komendanta placówki Straży Granicznej Kuźnica",
+      "time": "2026-10-17T04:42:00+02:00",
+      "type": "meldunek",
+      "text": "04:40, kamery przejścia Kuźnica: ruch pojazdów opancerzonych po stronie białoruskiej, rejon Bruzgów, liczby nie da się ustalić (ciemno, ok. 20–30 pojazdów). Łączność radiowa i telefony komórkowe zakłócone. Granica nieprzekroczona. Obserwacja trwa."
+    },
+    {
+      "id": "in-000-03",
+      "channel": "zt-bot",
+      "from": "płk Nowik, dowódca 1 Podlaskiej Brygady Obrony Terytorialnej (BOT)",
+      "time": "2026-10-17T04:48:00+02:00",
+      "type": "meldunek",
+      "text": "Ok. 04:30 ruch kolumny przy przejściu Bobrowniki, po stronie białoruskiej. Gródek i Michałowo w pełnej gotowości. Proszę o informacje o ruchu na styku naszych pasów w rejonie Krynek."
+    },
+    {
+      "id": "in-000-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, szef rozpoznania (S2)",
+      "time": "2026-10-17T04:50:00+02:00",
+      "type": "meldunek",
+      "text": "Ocena wstępna: uderzenie główne z Białorusi na Kuźnicę i Sokółkę (pewność średnia), pomocnicze na Krynki i Bobrowniki; nie wykluczam, że to Krynki są kierunkiem głównym. Po stronie białoruskiej białoruska brygada zmechanizowana i prawdopodobnie wzmocnienie z Rosji: czołgi, piechota, artyleria i wyrzutnie rakiet. Dane z wywiadu dywizji z wczoraj, niepewne. Nadajnik zagłuszający namierzony przez kompanię rozpoznawczą (krozp) tylko z jednego punktu. Bezzałogowe statki powietrzne (BSP): BSP-1 nad Kuźnicą, lotu ok. 1 h 30 min; BSP-2 i BSP-3 gotowe do startu. Spodziewać się dronów przeciwnika i ognia artylerii naprowadzanego z dronów. Łączność z batalionami: UKF z zakłóceniami, retransmisja przez wozy dowodzenia, kurier w zapasie."
+    },
+    {
+      "id": "in-000-05",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca kompanii rozpoznawczej (krozp)",
+      "time": "2026-10-17T04:52:00+02:00",
+      "type": "meldunek",
+      "text": "Stan: 92 z 94 ludzi, 13 z 14 Rosomaków. Trzy posterunki zajęte: przy drodze z przejścia Kuźnica, na wschód od Bohonik i w kierunku Krynek. Po stronie białoruskiej słychać silniki, kontaktu wzrokowego brak. UKF mocno zakłócany przy Kuźnicy. Proponuję: wysłać dron krozp nad przejście Kuźnica i utrzymać ciszę radiową poza meldunkami o kontakcie."
+    },
+    {
+      "id": "in-000-06",
+      "channel": "1bzmot",
+      "from": "ppłk Zawada, dowódca 1 batalionu zmechanizowanego (1 bzmot)",
+      "time": "2026-10-17T04:55:00+02:00",
+      "type": "meldunek",
+      "text": "Stan: 571 z 599 ludzi, 41 z 44 kołowych transporterów opancerzonych (KTO) Rosomak (3 kompania ma 11 z 14), moździerze 8 z 8. Obrona po obu stronach DK19 między Kuźnicą a Kundzinem: 1 kompania na drodze, 2 kompania na prawym skrzydle w rejonie Białobłocia, 3 kompania w odwodzie na płn. od Kundzina. Nad przejściem Kuźnica dron przeciwnika. Proponuję: saperzy zamykają DK19 zaporą (miny i zawał) przed moją 1 kompanią zaraz po przekroczeniu granicy, piechoty przed rubież nie wysuwam. Czekam na decyzję co do ubezpieczenia i zasięgu otwarcia ognia."
+    },
+    {
+      "id": "in-000-07",
+      "channel": "2bzmot",
+      "from": "ppłk Barnat, dowódca 2 batalionu zmechanizowanego (2 bzmot)",
+      "time": "2026-10-17T04:57:00+02:00",
+      "type": "meldunek",
+      "text": "Stan: 565 z 599 ludzi, Rosomaki 44 z 44, moździerze 8 z 8. Bronię wschodnich podejść do Sokółki w rejonie Bohonik: 1 i 2 kompania w pierwszym rzucie, 3 kompania w odwodzie na zach. od Bohonik. Uwaga: most na Sokołdzie w Sokółce wg szefa logistyki ma nośność 50 t, Leopard 2PL waży ok. 60 t, więc bcz przez miasto nie przejedzie. Proponuję: wyznaczyć objazd dla czołgów i przydzielić mi pluton saperów do zapór przy węźle w Sokółce."
+    },
+    {
+      "id": "in-000-08",
+      "channel": "3bzmot",
+      "from": "ppłk Sawicki, dowódca 3 batalionu zmechanizowanego (3 bzmot)",
+      "time": "2026-10-17T04:58:00+02:00",
+      "type": "meldunek",
+      "text": "Stan: 568 z 599 ludzi, Rosomaki 42 z 44, moździerze 7 z 8, jeden wóz dowodzenia niesprawny. Obrona w rejonie Szudziałowa, 2 kompania na drodze z Krynek. W Krynkach ok. 2 tys. mieszkańców, granica ok. 4 km od miasta, artyleria z drugiej strony dosięgnie zabudowy w pierwszej salwie. Proponuję: zarządzić ewakuację Krynek i zgodzić się na wysunięcie jednej kompanii do miasta jako punktu oporu."
+    },
+    {
+      "id": "in-000-09",
+      "channel": "dart",
+      "from": "mjr Kozioł, dowódca dywizjonu artylerii samobieżnej (dart)",
+      "time": "2026-10-17T04:59:00+02:00",
+      "type": "meldunek",
+      "text": "Stan: 361 z 372 ludzi, armatohaubice Krab 24 z 24, wozy amunicyjne 9 z 12, amunicja 2 jednostki ognia. Stanowiska ogniowe na płd.-zach. od Sokółki; sięgamy przejścia Kuźnica i Krynek. Zagłuszanie GPS: baterie nawigują po kompasie i punktach geodezyjnych, dokładność nieco gorsza. Proponuję: zmiana stanowisk baterii po każdym zadaniu ogniowym i wskazanie priorytetu ognia: przejście Kuźnica czy Krynki."
+    },
+    {
+      "id": "in-000-10",
+      "channel": "bcz",
+      "from": "ppłk Kowal, dowódca batalionu czołgów (bcz)",
+      "time": "2026-10-17T05:00:00+02:00",
+      "type": "meldunek",
+      "text": "Stan: 251 z 262 ludzi, Leopard 2PL 41 z 44 (3 w naprawie). Rejon wyczekiwania w lesie na płd. od Sokółki, gotowość do wyjścia 30 minut, do Kundzina ok. 1 h 30 min marszu. Proponuję: cały batalion jako odwód do przeciwuderzenia na kierunku Kuźnicy, bez dzielenia kompanii między bataliony, chyba że zajdzie wyraźna potrzeba."
+    },
+    {
+      "id": "in-000-11",
+      "channel": "log",
+      "from": "mjr Sadowska, szef logistyki (S4)",
+      "time": "2026-10-17T05:00:00+02:00",
+      "type": "meldunek",
+      "text": "Zaopatrzenie brygady: paliwo 2,9 doby, amunicja 2,3 doby, żywność i woda 3 doby. Skład główny w Wasilkowie pełny, skład wysunięty w Sokółce na 04:30 pełny. Kolumna zaopatrzenia nr 1 (paliwo, amunicja) wyjechała z Wasilkowa, w Sokółce ok. 06:45; GPS zakłócony, może się spóźnić. Główna droga zaopatrzenia (MSR) ZŁOTO, czyli DK19, otwarta. Proponuję: pierwszeństwo dowozu amunicji dla 1 bzmot i dart. Proszę o decyzję."
+    },
+    {
+      "id": "in-000-12",
+      "channel": "ksap",
+      "from": "kpt. Gajewski, dowódca kompanii saperów (ksap)",
+      "time": "2026-10-17T05:00:00+02:00",
+      "type": "meldunek",
+      "text": "Stan: 104 ze 108 ludzi, 3 systemy minowania Baobab-K. 1 pluton na DK19 przed 1 bzmot, 2 pluton na wschodnich podejściach do Sokółki (rejon Bohonik), 3 pluton na drodze z Krynek na Szudziałowo. Min wystarczy na dwa pola minowe narzutowe i kilka zapór na drogach. Proponuję: główny wysiłek na DK19, pola minowe stawiać dopiero po przekroczeniu granicy, żeby nie zdradzić ich wcześniej."
+    }
+  ]
+}

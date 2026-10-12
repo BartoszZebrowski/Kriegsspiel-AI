@@ -1,0 +1,504 @@
+{
+  "places": [
+    {
+      "id": "bialystok",
+      "name": "Białystok",
+      "kind": "miasto",
+      "pos": [
+        23.1592,
+        53.1324
+      ],
+      "zoom": 12,
+      "forms": [
+        "Białystok",
+        "Białegostoku",
+        "Białymstoku",
+        "Białymstokiem",
+        "Białemustoku"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "sokolka",
+      "name": "Sokółka",
+      "kind": "miasto",
+      "pos": [
+        23.4996,
+        53.4049
+      ],
+      "zoom": 13,
+      "forms": [
+        "Sokółka",
+        "Sokółki",
+        "Sokółce",
+        "Sokółką",
+        "Sokółkę"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "kuznica",
+      "name": "Kuźnica",
+      "kind": "wieś",
+      "pos": [
+        23.6491,
+        53.5101
+      ],
+      "zoom": 13,
+      "forms": [
+        "Kuźnica",
+        "Kuźnicy",
+        "Kuźnicą",
+        "Kuźnicę"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "przejscie-kuznica",
+      "name": "przejście graniczne Kuźnica",
+      "kind": "przejście",
+      "pos": [
+        23.6568,
+        53.5215
+      ],
+      "zoom": 13,
+      "forms": [
+        "przejście graniczne Kuźnica",
+        "przejścia granicznego Kuźnica",
+        "przejściu granicznym Kuźnica",
+        "przejście Kuźnica",
+        "przejścia Kuźnica",
+        "przejściu Kuźnica"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "krynki",
+      "name": "Krynki",
+      "kind": "miasto",
+      "pos": [
+        23.7726,
+        53.2644
+      ],
+      "zoom": 13,
+      "forms": [
+        "Krynki",
+        "Krynek",
+        "Krynkach",
+        "Krynkami"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "grodek",
+      "name": "Gródek",
+      "kind": "wieś",
+      "pos": [
+        23.6678,
+        53.0952
+      ],
+      "zoom": 13,
+      "forms": [
+        "Gródek",
+        "Gródka",
+        "Gródku",
+        "Gródkiem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "michalowo",
+      "name": "Michałowo",
+      "kind": "miasto",
+      "pos": [
+        23.6067,
+        53.0329
+      ],
+      "zoom": 13,
+      "forms": [
+        "Michałowo",
+        "Michałowa",
+        "Michałowie",
+        "Michałowem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "szudzialowo",
+      "name": "Szudziałowo",
+      "kind": "wieś",
+      "pos": [
+        23.6549,
+        53.2995
+      ],
+      "zoom": 13,
+      "forms": [
+        "Szudziałowo",
+        "Szudziałowa",
+        "Szudziałowie",
+        "Szudziałowem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "dabrowa",
+      "name": "Dąbrowa Białostocka",
+      "kind": "miasto",
+      "pos": [
+        23.3485,
+        53.6544
+      ],
+      "zoom": 12,
+      "forms": [
+        "Dąbrowa Białostocka",
+        "Dąbrowy Białostockiej",
+        "Dąbrowie Białostockiej",
+        "Dąbrową Białostocką"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "wasilkow",
+      "name": "Wasilków",
+      "kind": "miasto",
+      "pos": [
+        23.2057,
+        53.1987
+      ],
+      "zoom": 13,
+      "forms": [
+        "Wasilków",
+        "Wasilkowa",
+        "Wasilkowie",
+        "Wasilkowem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "suprasl",
+      "name": "Supraśl",
+      "kind": "miasto",
+      "pos": [
+        23.3361,
+        53.21
+      ],
+      "zoom": 13,
+      "forms": [
+        "Supraśl",
+        "Supraśla",
+        "Supraślu",
+        "Supraślem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "korycin",
+      "name": "Korycin",
+      "kind": "wieś",
+      "pos": [
+        23.0909,
+        53.4446
+      ],
+      "zoom": 13,
+      "forms": [
+        "Korycin",
+        "Korycina",
+        "Korycinie",
+        "Korycinem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "janow",
+      "name": "Janów",
+      "kind": "wieś",
+      "pos": [
+        23.2287,
+        53.4675
+      ],
+      "zoom": 13,
+      "forms": [
+        "Janów",
+        "Janowa",
+        "Janowie",
+        "Janowem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "sidra",
+      "name": "Sidra",
+      "kind": "wieś",
+      "pos": [
+        23.4505,
+        53.5528
+      ],
+      "zoom": 13,
+      "forms": [
+        "Sidra",
+        "Sidry",
+        "Sidrze",
+        "Sidrą"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "nowy-dwor",
+      "name": "Nowy Dwór",
+      "kind": "wieś",
+      "pos": [
+        23.5418,
+        53.6316
+      ],
+      "zoom": 13,
+      "forms": [
+        "Nowy Dwór",
+        "Nowego Dworu",
+        "Nowym Dworze",
+        "Nowym Dworem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "kundzin",
+      "name": "Kundzin",
+      "kind": "wieś",
+      "pos": [
+        23.5885,
+        53.4395
+      ],
+      "zoom": 14,
+      "forms": [
+        "Kundzin",
+        "Kundzina",
+        "Kundzinie",
+        "Kundzinem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "kruszyniany",
+      "name": "Kruszyniany",
+      "kind": "wieś",
+      "pos": [
+        23.8129,
+        53.1783
+      ],
+      "zoom": 13,
+      "forms": [
+        "Kruszyniany",
+        "Kruszynian",
+        "Kruszynianach",
+        "Kruszynianami"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "walily",
+      "name": "Waliły",
+      "kind": "wieś",
+      "pos": [
+        23.594,
+        53.1391
+      ],
+      "zoom": 13,
+      "forms": [
+        "Waliły",
+        "Waliłów",
+        "Waliłach",
+        "Waliłami"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "zabludow",
+      "name": "Zabłudów",
+      "kind": "miasto",
+      "pos": [
+        23.338,
+        53.0148
+      ],
+      "zoom": 13,
+      "forms": [
+        "Zabłudów",
+        "Zabłudowa",
+        "Zabłudowie",
+        "Zabłudowem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "bobrowniki",
+      "name": "Bobrowniki",
+      "kind": "wieś",
+      "pos": [
+        23.8904,
+        53.1237
+      ],
+      "zoom": 13,
+      "forms": [
+        "Bobrowniki",
+        "Bobrownik",
+        "Bobrownikach",
+        "Bobrownikami"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "przejscie-bobrowniki",
+      "name": "przejście graniczne Bobrowniki",
+      "kind": "przejście",
+      "pos": [
+        23.8904,
+        53.1237
+      ],
+      "zoom": 13,
+      "forms": [
+        "przejście graniczne Bobrowniki",
+        "przejścia granicznego Bobrowniki",
+        "przejściu granicznym Bobrowniki",
+        "przejście Bobrowniki",
+        "przejścia Bobrowniki",
+        "przejściu Bobrowniki"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "grodno",
+      "name": "Grodno",
+      "kind": "miasto",
+      "pos": [
+        23.8343,
+        53.6835
+      ],
+      "zoom": 11,
+      "forms": [
+        "Grodno",
+        "Grodna",
+        "Grodnie",
+        "Grodnem"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "bruzgi",
+      "name": "Bruzgi",
+      "kind": "wieś",
+      "pos": [
+        23.682,
+        53.5556
+      ],
+      "zoom": 13,
+      "forms": [
+        "Bruzgi",
+        "Bruzg",
+        "Bruzgach",
+        "Bruzgami",
+        "Bruzgów"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "jurowlany",
+      "name": "Jurowlany",
+      "kind": "wieś",
+      "pos": [
+        23.7692,
+        53.3178
+      ],
+      "zoom": 13,
+      "forms": [
+        "Jurowlany",
+        "Jurowlan",
+        "Jurowlanach",
+        "Jurowlanami"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "zubrzyca",
+      "name": "Zubrzyca Mała",
+      "kind": "wieś",
+      "pos": [
+        23.7297,
+        53.3756
+      ],
+      "zoom": 13,
+      "forms": [
+        "Zubrzyca Mała",
+        "Zubrzycy Małej",
+        "Zubrzycą Małą",
+        "Zubrzyca",
+        "Zubrzycy",
+        "Zubrzycą"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "czarna-wies",
+      "name": "Czarna Wieś Kościelna",
+      "kind": "wieś",
+      "pos": [
+        23.2372,
+        53.3001
+      ],
+      "zoom": 13,
+      "forms": [
+        "Czarna Wieś Kościelna",
+        "Czarnej Wsi Kościelnej",
+        "Czarną Wsią Kościelną"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "jarylowka",
+      "name": "Jaryłówka",
+      "kind": "wieś",
+      "pos": [
+        23.8773,
+        53.1387
+      ],
+      "zoom": 13,
+      "forms": [
+        "Jaryłówka",
+        "Jaryłówki",
+        "Jaryłówce",
+        "Jaryłówką"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    },
+    {
+      "id": "bialoblocie",
+      "name": "Białobłocie",
+      "kind": "wieś",
+      "pos": [
+        23.6395,
+        53.4895
+      ],
+      "zoom": 14,
+      "forms": [
+        "Białobłocie",
+        "Białobłocia",
+        "Białobłociu",
+        "Białobłociem"
+      ],
+      "note": "Położenie wg mapy topograficznej (OSM)."
+    },
+    {
+      "id": "bohoniki",
+      "name": "Bohoniki",
+      "kind": "wieś",
+      "pos": [
+        23.5925,
+        53.3917
+      ],
+      "forms": [
+        "Bohoniki",
+        "Bohonik",
+        "Bohonikach",
+        "Bohonikami"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim."
+    }
+  ]
+}
