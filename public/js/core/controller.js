@@ -11,6 +11,7 @@ import { newIncoming, defaultPinned, parseSender } from '../domain/messages.js';
 import { buildPlan, planIsEmpty, isSequential, ANIMATION_MS } from '../domain/motion.js';
 import { DEFAULT_BASEMAP, TILE_OVERLAYS, defaultLayers } from './store.js';
 import { createSelection } from './selection.js';
+import { dayOf, isNewDay } from '../domain/campaign.js';
 import { createMessaging } from './messaging.js';
 import { createLayout } from './layout.js';
 import { createOrders } from './orders.js';
@@ -56,7 +57,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   // ---------- podkontrolery (współdzielą store; wydzielone wg odpowiedzialności) ----------
   const nextNonce = () => ++nonce;
   const selection = createSelection({ store, storage, S, keyOf, notify, nextNonce });
-  const { setSelection, selectEntity, focusEntity, clearSelection, hoverUnit, mentionClick, showAttachment, flyToPlace, setDetail } = selection;
+  const { setSelection, selectEntity, focusEntity, clearSelection, showTurnCard, hoverUnit, mentionClick, showAttachment, flyToPlace, setDetail } = selection;
   const messaging = createMessaging({ store, api, storage, S, keyOf, notify, syncSelection: () => syncSelectionToChannel(), isPageVisible });
   const { readIfVisible, selectChannel, setDraft, clearChannelDraft, unpinChannel, ensureActiveChannel, sendMessage, withdrawMessage } = messaging;
   const layout = createLayout({ store, storage, S, markNoticesSeen, readIfVisible });
@@ -102,7 +103,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
       patch.animation = s.turn && animationsOn() && isSequential(s.viewTurn, n, turns) ? makeAnimation(s.viewTurn, n, s.turn, view.turn) : null;
     }
     // Zaznaczenie znika tylko wtedy, gdy obiektu nie ma już w nowych danych (nie zamykamy inspektora bez powodu).
-    if (s.selection && !findEntity(patch.turn, s.selection.id)) patch.selection = null;
+    if (s.selection && s.selection.kind !== 'turn' && !findEntity(patch.turn, s.selection.id)) patch.selection = null;
     store.set(patch);
     // Zaznaczenie (inspektor) zostaje przy zmianie tury; bez zaznaczenia podświetlamy jednostkę kanału.
     if (!S().selection) syncSelectionToChannel();
@@ -130,6 +131,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     store.set({
       scenario: info.scenario,
       turns: info.turns || [],
+      schedule: info.schedule || [],
       currentTurn: current,
       viewTurn: current,
       places,
@@ -250,6 +252,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
       ccir: keep(s.ccir, ccirItems),
       scenario: keep(s.scenario, info.scenario),
       turns: keep(s.turns, turns),
+      schedule: keep(s.schedule, info.schedule || []),
       currentTurn: current,
       places: keep(s.places, places),
     };
@@ -265,7 +268,11 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     }
     applyView(target, view, global);
     afterBattle.revokeIfNotFinished();
-    if (advanced) notify(`Tura ${previous} rozstrzygnięta — teraz tura ${current}`);
+    if (advanced) {
+      notify(`Tura ${previous} rozstrzygnięta — teraz tura ${current}`);
+      const day = dayOf(view.turn.time, S().scenario);
+      if (isNewDay(s.turn?.time, view.turn.time, S().scenario)) notify(`Nowy dzień bojowy: ${day.id}${day.title ? ` — ${day.title}` : ''}`);
+    }
     announceIncoming(incoming);
   }
 
@@ -388,7 +395,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   return {
     init, load, listen, refresh, onUpdate, notify, markNoticesSeen,
     showTurn, prevTurn, nextTurn, showCurrent, replayTurn,
-    selectEntity, focusEntity, clearSelection, hoverUnit, mentionClick, showAttachment, flyToPlace,
+    selectEntity, focusEntity, clearSelection, showTurnCard, hoverUnit, mentionClick, showAttachment, flyToPlace,
     setDetail, mapZoomChanged, setLayerVisible, setBasemap,
     command, setPopover, togglePopover, openOmnibox, closeOmnibox, runCommand,
     selectChannel, setDraft, clearChannelDraft, ensureActiveChannel, unpinChannel, openUnitChannel, openChannel, sendMessage, withdrawMessage,

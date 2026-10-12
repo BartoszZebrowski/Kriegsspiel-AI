@@ -1,6 +1,7 @@
 // Widok: pasek górny — scenariusz, omnibox, zegar z DTG i nawigacją po turach, skrzynka, odprawa,
 // powiadomienia (dzwonek), legenda i przełączniki docków.
 import { formatDayClock, formatDtg, formatDuration } from '../domain/format.js';
+import { dayOf, turnDurationMin } from '../domain/campaign.js';
 import { escapeHtml } from '../domain/markdown.js';
 
 export function createTopbarView({ store, controller, root = document }) {
@@ -9,6 +10,15 @@ export function createTopbarView({ store, controller, root = document }) {
   $('t-prev').addEventListener('click', () => controller.prevTurn());
   $('t-next').addEventListener('click', () => controller.nextTurn());
   $('t-cur').addEventListener('click', () => controller.showCurrent());
+  // Klik w środek zegara otwiera kartę tury w inspektorze (DTG, dzień, pora doby, pogoda).
+  const mid = root.querySelector('#clock .clock-mid');
+  mid.addEventListener('click', () => controller.showTurnCard());
+  mid.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter' || ev.key === ' ') {
+      ev.preventDefault();
+      controller.showTurnCard();
+    }
+  });
   $('omni-open').addEventListener('click', () => controller.openOmnibox());
   $('tb-brief').addEventListener('click', () => controller.openBriefing());
   $('tb-ccir').addEventListener('click', () => controller.toggleCcirEditor());
@@ -25,13 +35,14 @@ export function createTopbarView({ store, controller, root = document }) {
   });
 
   function renderClock(s) {
-    const { scenario, turn, turns, viewTurn, currentTurn, archive } = s;
+    const { scenario, turn, turns, viewTurn, currentTurn, archive, schedule } = s;
     if (!scenario) return;
     const tz = scenario.timezone;
     $('scenario-title').textContent = scenario.title;
-    $('clk-turn').textContent = (archive ? 'ARCHIWUM · ' : '') + `TURA ${viewTurn}`;
+    const day = turn ? dayOf(turn.time, scenario) : null;
+    $('clk-turn').textContent = (archive ? 'ARCHIWUM · ' : '') + `TURA ${viewTurn}` + (day ? ` · ${day.id}` : '');
     $('clk-time').textContent = turn ? formatDayClock(turn.time, tz) : '—';
-    $('clk-dtg').textContent = turn ? `${formatDtg(turn.time, tz)} · tura ${formatDuration(scenario.turnMinutes)}` : '';
+    $('clk-dtg').textContent = turn ? `${formatDtg(turn.time, tz)} · tura ${formatDuration(turnDurationMin(scenario, schedule, viewTurn))}` : '';
     $('t-prev').disabled = turns.indexOf(viewTurn) <= 0;
     $('t-next').disabled = viewTurn >= currentTurn;
     $('t-cur').hidden = !archive;
@@ -70,7 +81,7 @@ export function createTopbarView({ store, controller, root = document }) {
       : '<div class="bn-none">Brak powiadomień</div>';
   }
 
-  store.subscribe(['scenario', 'turn', 'turns', 'viewTurn', 'currentTurn', 'archive'], renderClock, { immediate: true });
+  store.subscribe(['scenario', 'turn', 'turns', 'schedule', 'viewTurn', 'currentTurn', 'archive'], renderClock, { immediate: true });
   store.subscribe(['outboxCount', 'currentTurn'], renderOutbox, { immediate: true });
   store.subscribe(['unread', 'scenario'], renderUnread, { immediate: true });
   store.subscribe('ui', renderDocks, { immediate: true });

@@ -121,3 +121,14 @@ export function enemyNameLeaks(ownUnits, enemyItems) {
 export function checkFinishedAar(scenario, hasAar) {
   return scenario?.status === 'finished' && !hasAar ? ['scenario.json: status „finished” bez umpire/aar.md'] : [];
 }
+
+/** Zakończona bitwa (T32): prawda sędziego ciągła (000…N) i zgodna z turami gracza. */
+export function checkFinishedContinuity(scenario, playerTurns, umpireTurns) {
+  if (scenario?.status !== 'finished') return [];
+  const out = [];
+  umpireTurns.forEach((n, i) => {
+    if (n !== i) out.push(`status „finished”: numeracja umpire/turns nieciągła (oczekiwano ${i}, jest ${n})`);
+  });
+  for (const n of playerTurns) if (!umpireTurns.includes(n)) out.push(`status „finished”: brak umpire/turns/${String(n).padStart(3, '0')}.json`);
+  return out;
+}

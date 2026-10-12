@@ -53,7 +53,7 @@ async function start() {
   }
 
   createTopbarView({ store, controller });
-  createWeatherView({ store });
+  createWeatherView({ store, controller });
   createDocksView({ store, controller });
   createBriefingView({ store, controller });
   createAarView({ store, controller });

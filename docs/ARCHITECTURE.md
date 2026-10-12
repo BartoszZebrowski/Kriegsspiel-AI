@@ -379,3 +379,32 @@ Jedyny świadomy wyjątek od zasady „serwer nie czyta `umpire/`”: po `status
 | Walidator | `tools/validate.js` | `status` z listy (`SCENARIO_STATUSES` w `shared/schema.js`), uwaga dla `finished` bez `aar.md` (już istnieje). |
 
 Strażnik jest sprawdzany także odwrotnie: `status: "active"` (lub brak pola) daje 403 dla `/api/truth/*` i `/api/aar`, a ścieżki z `..` nigdy nie dochodzą do dysku. Przypadek graniczny: sędzia zmienia status na `finished` dopiero po zapisaniu `aar.md` (CLAUDE.md).
+
+## AAR kampanii i pełny tryb po bitwie (T32)
+
+Rozszerzenie T29 bez nowego dostępu do `umpire/`: statystyki liczy klient z prawdy pobieranej przez ten sam strażnik (`GET /api/truth/:n` przez `server/truth.js`), więc przy `status` innym niż `finished` nie ma ani prawdy, ani statystyk (403 → komunikat). Suwak czasu to istniejąca oś tur (T12.7) razem z warstwami; warstwy „wiedza gracza” (`contacts`), „Prawda” (`truth`) i „notatki” (`notes`) są niezależnymi przełącznikami, więc można je nakładać.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Logika | `domain/aarstats.js` (nowy, czysty) | `battleDay(iso, startIso, tz)` → numer dnia (D+n); `summarizeLosses(turns, {start, timezone, ownSide})` → straty personelu i sprzętu oraz zużycie amunicji (spadek `supply.ammo`, DOS) po stronach i dniach (liczone po jednostkach liści hierarchii, żeby nie liczyć dwa razy batalionu i kompanii); `statsTableHtml` jest w widoku, nie tu. |
+| Logika | `domain/afterbattle.js` | `matchContactsToTruth(contacts, truthUnits)` → pary kontakt–prawda (zachłanne najbliższe, jeden do jednego, próg odległości) do rysowania przesunięcia. |
+| Intencje | `core/afterbattle.js` | `openAar()` dodatkowo pobiera wszystkie tury prawdy (`api.truth`) i zapisuje `aar.stats`; błąd jednej tury nie blokuje dokumentu. `store.aar` ma pole `stats`. |
+| Widoki | `views/map/truth.js` | Linia przerywana od zameldowanej pozycji kontaktu do prawdziwej (z odległością w podpowiedzi), gdy włączone są obie warstwy. `views/aar.js` dopisuje sekcję „Statystyki końcowe” (tabele dni i kategorii) pod dokumentem; tekst przez `escapeHtml`. |
+| Walidator | `tools/validate-realism.js`, `tools/validate.js` | `finished` bez `aar.md` jest błędem; `finished` wymaga ciągłości tur sędziego (`umpire/turns` 000…N, zgodnie z turami gracza). |
+
+## Karta tury i przejście dni (T30 pkt 4, T31)
+
+Dwie części. **Karta tury** to lekki widok w inspektorze (DTG, dzień kampanii, pora doby, wschód i zachód słońca, pogoda i prognoza). **Przejście dni** wprowadza turę o zmiennej długości (noc), dni kampanii i ich oznaczenia w UI. Czas tury przestaje być wyliczany z `start + N × turnMinutes`: źródłem prawdy o czasie jest `time` w pliku tury, a długość okresu, który tura otwiera, to opcjonalne `duration_min` (brak = `turnMinutes`).
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/campaign.js` (nowy, jak `fatigue.js`; w `shared/schema.js` tylko `duration_min` dopisane do `PLAYER_TURN_FIELDS`) | `turnDurationMin(turn, scenario)` (`duration_min` albo `turnMinutes`), `expectedNextMs(turn, scenario)` (ms), `checkDuration(v)`, `checkPhases(phases, scenario)` (`phases`: `[{id, start, title?}]`, rosnące, `id` unikalne, pierwsza faza w czasie startu lub po nim). `phases` leży w `scenario.json` (jawne dla gracza, bez pól sędziego). |
+| Logika klienta | `domain/campaign.js` (nowy, czysty; lustrzane drobne stałe, bez importów spoza `domain/`) | `buildSchedule(scenario, entries)` → oś `[{turn, time, ms, offsetMin, durationMin}]` (z `GET /api/scenario`, uzupełniona o przyszłe tury `turnMinutes`), `dayOf(iso, scenario)` → `{id: 'D+1', index, title}` albo `null` (bez `phases` brak dni), `dayStarts(scenario, schedule)`, `isNewDay(prevIso, iso, scenario)`. Jedyne miejsce reguł dni; widoki nie liczą sami. |
+| Logika karty | `domain/turncard.js` (nowy, czysty) | `turnCardHtml({turn, scenario, durationMin})` → HTML (`escapeHtml`): DTG, `D+x`, czas trwania, pora doby (`dayPhase`), wschód/zachód (`sunTimes`), blok pogody z istniejącego, dotąd nieużywanego `weatherBlockHtml` (`domain/weather.js`). Bez DOM. |
+| Serwer | `server/store.js` (`listSchedule()`), `server/app.js` (`GET /api/scenario` dodaje `schedule: [{turn, time, duration_min?}]`) | Serwer czyta wyłącznie `player/turns` (jak dotąd); nic z `umpire/`. Powód: oś czasu potrzebuje czasów przeszłych tur bez pobierania każdej. |
+| Stan / intencje | `core/store.js` (`schedule`), `core/selection.js` (`showTurnCard`: zaznaczenie specjalne `{id: '@turn', kind: 'turn'}`), `core/controller.js` | `schedule` ustawiane razem ze scenariuszem i przy odświeżaniu. `applyView` nie kasuje zaznaczenia `kind: 'turn'`. Powiadomienie „nowy dzień bojowy” (`notify`) przy awansie tury na początek nowego dnia (`isNewDay`). Bez nowego plastra stanu na kartę. |
+| Widoki | `views/inspector.js` (gałąź `kind: 'turn'`), `views/topbar.js` (klik w środek zegara → `controller.showTurnCard()`, „D+x” obok numeru tury, czas tury z `durationMin`), `views/timeline.js` + `domain/timeline.js` (pozycje węzłów z osi czasu zamiast `i × turnMinutes`, linie podziału dni z etykietą), `views/messenger/thread.js` (czas doręczenia z osi), `public/css/*.css` | Brak importów między widokami; dane tylko ze store i kontrolera. `buildTimeline` przyjmuje opcjonalne `offsets` (minuty od startu) i `days`; bez nich zachowanie jak dotąd (zgodność testów). |
+| Sędzia | `tools/umpire/turn.mjs`, nowy `tools/umpire/night.mjs` (czysta regeneracja nocna), `turn-merge.mjs` | Czas nowej tury = czas tury N + `duration_min` tury N (albo `turnMinutes`); `plan.time` nadal ma pierwszeństwo. `plan.duration_min` ustawia długość okresu otwieranego przez nową turę. `plan.night` (tryb nocny): regeneracja `stamina_min` jednostek (z wyjątkami `exclude`) proporcjonalnie do rozstrzyganego okresu; DOS i konwoje nadal planem. Okno „czas przed turą” w `checkPosTime`/`checkStaff` = długość poprzedniego okresu. |
+| Walidator | `tools/validate-checks.js`, `tools/validate.js` | Ciągłość: `time` tury N+1 = `time` tury N + (`duration_min` ?? `turnMinutes`) (tura 0 = `start`); `duration_min` > 0; `phases` przez `checkPhases`. |
+
+Zależności: `shared/` → nic; `domain/campaign.js` ← `domain/timeline.js`? Nie: `timeline` dostaje gotowe `offsets` jako parametr (słabe sprzężenie), a `core/` i `views/` wołają `domain/campaign.js` osobno. Pliki mieszczą się w ≤ 300 linii.

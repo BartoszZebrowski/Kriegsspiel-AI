@@ -59,3 +59,6 @@ button.tl-node{padding:0;background:none;border:0}
 .tl-lane.msgs i.rep-logstat{border-color:var(--warn)}
 .tl-node.night i{border-color:#7f95e8;background:#1d2440}
 .tl-node.night.cur i{background:#7f95e8}
+/* Podział na dni kampanii (T31) */
+.tl-day{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed var(--accent);z-index:1;pointer-events:none}
+.tl-day b{position:absolute;top:2px;left:4px;font:600 10px var(--font-mono);color:var(--accent);letter-spacing:.04em}

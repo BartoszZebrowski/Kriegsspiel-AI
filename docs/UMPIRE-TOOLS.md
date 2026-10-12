@@ -168,6 +168,10 @@ node tools/umpire/engineer.mjs progress --started <ISO> --now <ISO> --total <min
 
 Mnożniki: noc × 1,25, pod ogniem × 2, teren (otwarty 1; las 1,4; błoto 1,8…). `progressPercent` daje postęp do meldunku „ZAPORA-1: 60%”; zadanie przerwane ogniem lub rozkazem zatrzymaj (zapisz `state` i `progress` bez zmian, ewentualnie `paused_min`).
 
+### Długość tury i noc w planie (T31)
+
+Czas nowej tury = czas tury N + `duration_min` tury N (domyślnie `turnMinutes`); `plan.time` ma pierwszeństwo. `plan.duration_min` (liczba, minuty) ustawia długość okresu, który **otwiera** nowa tura (np. 600 dla nocy); brak = domyślna, nie jest dziedziczone. `plan.night` (`true` albo `{ factor?, exclude?: [id] }`) regeneruje `stamina_min` jednostek obu stron o rozstrzygany okres × `factor` (domyślnie 1, maks. 1440); `exclude` = jednostki, które marszowały lub walczyły, a ręczne `stamina_min` w `plan.units` ma pierwszeństwo. DOS, konwoje i rezerwy nadal podajesz planem (`logistics`).
+
 ### Pogoda w planie tury (T30)
 
 `plan.weather` = obiekt `weather` (docs/SCHEMA.md) zmienia pogodę tury; brak pola = dziedziczenie z tury N, `null` = usuń. Pogoda trafia do obu plików tury; błędna struktura to ostrzeżenie.

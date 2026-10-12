@@ -1002,7 +1002,7 @@ Modele i doktryna potrzebne do prowadzenia T23: zużycie DOS (postój < obrona <
 
 Ten sam szczebel (dywizja), jedna wielodniowa bitwa w **czasie gry**: fazy D+0…D+3, noce jako osobny rytm, zegar logistyczny, rezerwy przyjeżdżające wg harmonogramu. Gracz gra sam; nic się nie resetuje między dniami. (Szerszy front — dowodzenie 2 dywizjami/korpusem — odłożony na później, po kampanii.)
 
-## T30 — Pogoda i cykl dobowy 🟨
+## T30 — Pogoda i cykl dobowy ✅
 **WA**
 1. `weather` w turach (biała lista): tekst i kategorie (opad, mgła, wiatr, temperatura, widzialność). Pogoda jawna dla gracza (prognoza + obserwacje), zmiany meldunkami.
 2. Dzień/noc liczony z realnego czasu startu i szerokości geograficznej (wschód/zachód słońca); zegar i oś czasu oznaczają noce.
@@ -1015,7 +1015,7 @@ Ten sam szczebel (dywizja), jedna wielodniowa bitwa w **czasie gry**: fazy D+0�
 - [A] Walidator: `weather` z kategorii z listy; brak pól sędziego.
 - [M] Deszcz odwołuje lot BSP (meldunek „lot odwołany — wiatr"), nocne natarcie widzi tylko jednostka z termowizją.
 
-## T31 — Przejście dni: noc jako tura ⬜
+## T31 — Przejście dni: noc jako tura ✅
 **WA**
 1. Tura nocna: dłuższa (np. 20:00–06:00) i cicha z założenia — uzupełnienie (DOS rośnie wg konwojów, T17/T18), ewakuacja rannych, regeneracja wytrzymałości (T28), przegrupowania; wypad wroga możliwy, ale rzadki i meldowany z opóźnieniem.
 2. `duration_min` opcjonalne w pliku tury (biała lista): czas bieżącej tury zamiast domyślnego `turnMinutes`; zegar liczy godzinę następnej tury z `duration_min`; walidator sprawdza ciągłość (tura N+1 `time` = tura N `time` + `duration_min`).
@@ -1031,7 +1031,7 @@ Ten sam szczebel (dywizja), jedna wielodniowa bitwa w **czasie gry**: fazy D+0�
 - [A] UI: nagłówek pokazuje „D+1", oś czasu dzieli się na dni.
 - [M] Noc: meldunki S4 o uzupełnieniu, jednostki regenerują (Inspektor), o świcie meldunek rozpoznania o przegrupowaniu wroga.
 
-## T32 — AAR kampanii i pełny tryb po bitwie ⬜
+## T32 — AAR kampanii i pełny tryb po bitwie ✅
 **WA**
 1. Suwak czasu (rozszerzenie T29): przewijanie wszystkich tur kampanii z warstwami „wiedza gracza", „prawda" i „notatki", przełączanymi lub nałożonymi.
 2. AAR kampanii (`aar.md`): omówienie ćwiczenia dzień po dniu — zamiary vs rzeczywistość, decyzje kluczowe z dziennika sędziego, straty, logistyka, wnioski.

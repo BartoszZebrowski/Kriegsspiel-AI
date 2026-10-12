@@ -53,6 +53,8 @@ export function createSelection({ store, storage, S, keyOf, notify, nextNonce })
   }
 
   const clearSelection = () => store.set({ selection: null });
+  // Karta tury (T30/T31): inspektor pokazuje DTG, dzień, porę doby i pogodę oglądanej tury.
+  const showTurnCard = () => store.set({ selection: { id: '@turn', kind: 'turn' } });
   const hoverUnit = (id) => store.set({ hoverUnit: id ?? null });
 
   // Wzmianka w wiadomości: miejsce → przelot na mapie; obiekt → zaznaczenie w inspektorze.
@@ -75,5 +77,5 @@ export function createSelection({ store, storage, S, keyOf, notify, nextNonce })
     if (place && Array.isArray(place.pos)) store.set({ focus: { kind: 'place', place, nonce: nextNonce() } });
   };
 
-  return { setSelection, selectEntity, focusEntity, clearSelection, hoverUnit, mentionClick, showAttachment, flyToPlace, setDetail };
+  return { setSelection, selectEntity, focusEntity, clearSelection, showTurnCard, hoverUnit, mentionClick, showAttachment, flyToPlace, setDetail };
 }

@@ -16,6 +16,8 @@ import { checkStaff, STAFF_FIELDS } from '../../shared/staff.js';
 import { fatigueLevel } from '../../shared/fatigue.js';
 import { checkComms, commsFromTruth } from '../../shared/comms.js';
 import { checkWeather } from '../../shared/weather.js';
+import { checkDuration, turnDurationMin } from '../../shared/campaign.js';
+import { applyNightRegen } from './night.mjs';
 import { applyEngineering, syncBridgeStatus } from './engineering-merge.mjs';
 import { clone, pad3, pickFields, moved, computeTrack, nextTime, mergeById, checkIds, patchMissing, applyLogistics, buildInbox } from './turn-merge.mjs';
 
@@ -30,7 +32,7 @@ const ROOT = path.resolve(HERE, '..', '..');
  *   prevUmpire  — umpire/turns/NNN.json tury N,
  *   prevPlayer  — player/turns/NNN.json tury N,
  *   plan        — zmiany (format w docs/UMPIRE-TOOLS.md),
- *   turnMinutes — z scenario.json (gdy plan nie podaje `time`),
+ *   turnMinutes — z scenario.json (gdy plan nie podaje `time`; czas = czas tury N + jej `duration_min` albo `turnMinutes`),
  *   playerSide  — strona gracza (domyślnie 'PL'; scenario.side).
  * Zwraca { umpire, player, inbox: {messages}, time, turn, warnings, moved: [id] }. Niczego nie zapisuje.
  */
@@ -38,7 +40,8 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   const warnings = [];
   const turn = prevUmpire.turn + 1;
   if (prevPlayer.turn !== prevUmpire.turn) warnings.push(`tura gracza (${prevPlayer.turn}) różni się od tury sędziego (${prevUmpire.turn})`);
-  const time = plan.time ?? (Number.isFinite(turnMinutes) ? nextTime(prevUmpire.time, turnMinutes) : null);
+  const periodMin = turnDurationMin(prevUmpire, { turnMinutes }); // okres rozstrzygany teraz (T31): tura N otwierała go swoim duration_min
+  const time = plan.time ?? (Number.isFinite(periodMin) ? nextTime(prevUmpire.time, periodMin) : null);
   if (!time) throw new Error('Brak czasu tury: podaj plan.time albo turnMinutes');
   if (!isValidTime(time)) throw new Error(`Nieprawidłowy czas tury: ${time}`);
 
@@ -54,6 +57,16 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   checkIds('jednostki sędziego', uUnits, warnings);
   checkIds('środki sędziego', uAssets, warnings);
   const umpire = { ...clone(prevUmpire), turn, time, units: uUnits, events: clone(plan.events ?? []) };
+  // duration_min dotyczy jednej tury (okresu, który ta tura otwiera): nie jest dziedziczone, ustawia je plan.duration_min (T31).
+  delete umpire.duration_min;
+  if (plan.duration_min !== undefined && plan.duration_min !== null) {
+    const de = checkDuration(plan.duration_min);
+    if (de) warnings.push(`plan ${de}`);
+    else umpire.duration_min = plan.duration_min;
+  }
+  // Tryb nocny (T31): regeneracja wytrzymałości za rozstrzygany okres (plan.night = true | { factor, exclude: [id] }).
+  const night = applyNightRegen(uUnits, (Date.parse(time) - Date.parse(prevUmpire.time)) / 60000, plan.night, plan.units || {});
+  warnings.push(...night.warnings);
   if (prevUmpire.assets || plan.addAssets) umpire.assets = uAssets;
   delete umpire.logistics;
   const uLog = applyLogistics(prevUmpire.logistics, plan.logistics);
@@ -130,7 +143,7 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
     const patch = playerPatches[u.id];
     if (patch?.pos !== undefined && patch.pos_time === undefined) warnings.push(`jednostka ${u.id}: pos BFT bez pos_time (przyjęto czas tury)`);
     if (u.pos_time === undefined) continue;
-    const r = checkPosTime(u.pos_time, time, turnMinutes);
+    const r = checkPosTime(u.pos_time, time, periodMin);
     if (r.error) warnings.push(`jednostka ${u.id}: ${r.error}`);
     else if (r.warn && !patch?.pos_time) warnings.push(`jednostka ${u.id}: ${r.warn}`);
     else if (Date.parse(u.pos_time) === Date.parse(time)) delete u.pos_time; // równy czasowi tury = domyślny
@@ -182,6 +195,7 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   syncBridgeStatus(umpire.logistics, eng.bridgeStates, time);
   syncBridgeStatus(pLog.logistics, eng.ownBridgeStates, time);
   const player = { turn, time, units: pUnits };
+  if (umpire.duration_min) player.duration_min = umpire.duration_min;
   if (umpire.weather) player.weather = clone(umpire.weather);
   if (pLog.logistics) player.logistics = pLog.logistics;
   if (contacts.length || prevPlayer.contacts) player.contacts = contacts;
@@ -191,7 +205,7 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   // Odprawa sztabu (T28.1): dotyczy jednej tury, nie jest dziedziczona. plan.player.staff = [{ role, name, text, time }] (bez prawdy!).
   if (Array.isArray(pl.staff) && pl.staff.length) {
     player.staff = pl.staff.map((s) => pickFields(s, STAFF_FIELDS));
-    const st = checkStaff(player.staff, time, turnMinutes);
+    const st = checkStaff(player.staff, time, periodMin);
     warnings.push(...st.errors.map((e) => `plan ${e}`), ...st.warnings.map((w) => `plan ${w}`));
   }
   const leaked = extraFields(player, PLAYER_TURN_FIELDS);

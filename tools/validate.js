@@ -11,12 +11,13 @@ import { checkPlayerFields, checkSituation, checkTracksContinuity, checkGazettee
 import { checkFormShape } from '../shared/form.js';
 import { checkStaff } from '../shared/staff.js';
 import { checkScenarioStatus } from '../shared/status.js';
+import { checkPhases, turnDurationMin } from '../shared/campaign.js';
 import { checkOverlay } from '../shared/overlay.js';
 import { checkFormContent, missingFields } from '../public/js/domain/forms.js';
 import { createFireChecker } from './validate-fire.js';
 import { checkCcirFile, checkReportCycleField, checkMessageCcirFields } from './validate-ccir.js';
 import { loadCatalogIndex, checkEquipmentRefs } from './validate-equipment.js';
-import { checkHierarchySums, unitsInWater, loadWaterPolygons, inboxOutOfOrder, enemyNameLeaks, checkFinishedAar } from './validate-realism.js';
+import { checkHierarchySums, unitsInWater, loadWaterPolygons, inboxOutOfOrder, enemyNameLeaks, checkFinishedAar, checkFinishedContinuity } from './validate-realism.js';
 
 // Sprawdzenia T37 (spójność i realizm) żyją w osobnym module; walidator zachowuje je w swoim publicznym API.
 export * from './validate-realism.js';
@@ -70,6 +71,7 @@ export async function validateScenario(dir) {
       report.error(`scenario.json: nieznana strefa czasowa ${scenario.timezone}`);
     }
   }
+  for (const m of checkPhases(scenario.phases, scenario)) report.error('scenario.json: ' + m);
   const statusError = checkScenarioStatus(scenario.status);
   if (statusError) report.error('scenario.json: ' + statusError);
   for (const m of checkCommandRules(scenario.commandRules)) report.error('scenario.json: ' + m);
@@ -106,9 +108,10 @@ export async function validateScenario(dir) {
     const data = await readJsonSafe(path.join(dir, 'player', 'turns', pad(n) + '.json'), report);
     if (data) unitIdsByTurn.set(n, new Set((data.units || []).map((u) => u?.id)));
     if (data) {
-      checkSituation(`player/turns/${pad(n)}`, data, n, scenario, report, true);
+      const prevData = playerTurnData.get(n - 1) ?? null;
+      checkSituation(`player/turns/${pad(n)}`, data, n, scenario, report, true, prevData);
       checkPlayerFields(`player/turns/${pad(n)}`, data, report);
-      const st = checkStaff(data.staff, data.time, scenario.turnMinutes);
+      const st = checkStaff(data.staff, data.time, prevData ? turnDurationMin(prevData, scenario) : scenario.turnMinutes);
       for (const e of st.errors) report.error(`player/turns/${pad(n)}: ${e}`);
       for (const w of st.warnings) report.warn(`player/turns/${pad(n)}: ${w}`);
       checkEquipmentRefs(`player/turns/${pad(n)}`, data, catalogIndex, report);
@@ -204,11 +207,13 @@ export async function validateScenario(dir) {
   const umpireTurns = await numbered(path.join(dir, 'umpire', 'turns'));
   for (const n of turns) if (!umpireTurns.includes(n)) report.warn(`brak umpire/turns/${pad(n)}.json (prawda dla tury ${n})`);
   const leaks = new Set();
+  const umpireTurnData = new Map();
   for (const n of umpireTurns) {
     const data = await readJsonSafe(path.join(dir, 'umpire', 'turns', pad(n) + '.json'), report);
     if (!data) continue;
+    umpireTurnData.set(n, data);
     const ulabel = `umpire/turns/${pad(n)}`;
-    checkSituation(ulabel, data, n, scenario, report);
+    checkSituation(ulabel, data, n, scenario, report, false, umpireTurnData.get(n - 1) ?? null);
     checkEquipmentRefs(ulabel, data, catalogIndex, report);
     if (data.deliveries !== undefined) {
       const r = checkDeliveries(data.deliveries);
@@ -228,7 +233,8 @@ export async function validateScenario(dir) {
   }
   for (const w of leaks) report.warn(w);
   const hasAar = await fs.access(path.join(dir, 'umpire', 'aar.md')).then(() => true, () => false);
-  for (const w of checkFinishedAar(scenario, hasAar)) report.warn(w);
+  for (const w of checkFinishedAar(scenario, hasAar)) report.error(w); // T32: finished wymaga aar.md
+  for (const w of checkFinishedContinuity(scenario, turns, umpireTurns)) report.error(w);
 
   return { errors, warnings };
 }

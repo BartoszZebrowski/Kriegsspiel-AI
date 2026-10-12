@@ -2,7 +2,7 @@
 import { dayPhase, isNightPhase, PHASE_LABELS } from '../domain/daylight.js';
 import { weatherInfo, weatherSummaryText } from '../domain/weather.js';
 
-export function createWeatherView({ store, root = document }) {
+export function createWeatherView({ store, controller, root = document }) {
   const el = root.getElementById('clk-weather');
 
   function render({ turn, scenario }) {
@@ -24,6 +24,8 @@ export function createWeatherView({ store, root = document }) {
     el.dataset.tip = weatherSummaryText(turn.weather, phase);
     el.setAttribute('aria-label', `${PHASE_LABELS[phase]}. ${weatherSummaryText(turn.weather, phase)}`);
   }
+
+  el?.addEventListener('click', () => controller?.showTurnCard());
 
   store.subscribe(['turn', 'scenario'], render, { immediate: true });
 }

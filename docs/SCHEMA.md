@@ -6,7 +6,7 @@ Jedyny, obowiązujący opis formatu danych. Gdy ten dokument i kod się rozchodz
 
 - Katalog scenariusza: `scenarios/<id>/`. Numeracja plików tur: `NNN.json`, 3 cyfry z zerami (`000`, `001`…), ciągła od `000`.
 - Współrzędne: `[długość, szerokość]` (lon, lat, jak w GeoJSON), stopnie WGS84. Dopuszczalne: |lon| ≤ 180, |lat| ≤ 90.
-- Czas: ISO 8601 ze strefą (`2026-05-14T06:00:00+02:00`). Czas tury N = `start + N × turnMinutes`.
+- Czas: ISO 8601 ze strefą (`2026-05-14T06:00:00+02:00`). Czas tury 0 = `start`; czas tury N+1 = czas tury N + jej `duration_min` (domyślnie `turnMinutes`), więc noc może być jedną długą turą (T31).
 - Symbole: SIDC MIL-STD-2525C, 15 znaków; dozwolone tylko kody opisane w `public/js/sidc.js`.
 - Kodowanie UTF-8, JSON wcięty 2 spacjami. Teksty dla gracza po polsku.
 - `schemaVersion` (w `scenario.json`): numer wersji tego schematu. Obecnie `1`. Walidator: brak pola = uwaga, inna wartość niż obsługiwana = błąd. Zmiana niekompatybilna podnosi numer i dodaje sekcję „Migracja” poniżej.
@@ -35,7 +35,8 @@ Metadane i kanały komunikatora.
 | `scale` | tekst | nie | Skala dowodzenia, np. `brygada` (informacyjnie). |
 | `timezone` | tekst | tak | Strefa IANA, np. `Europe/Warsaw`. |
 | `start` | czas ISO | tak | Czas tury 0. |
-| `turnMinutes` | liczba > 0 | tak | Długość tury w minutach. |
+| `turnMinutes` | liczba > 0 | tak | Domyślna długość tury w minutach (tura może ją zmienić przez `duration_min`). |
+| `phases` | `[{id, start, title?}]` | nie | Dni kampanii (T31): `id` unikalne (`D+0`, `D+1`…), `start` (czas ISO) rosnący, pierwsza faza nie wcześniej niż `start` scenariusza. Aplikacja pokazuje dzień w zegarze i dzieli oś czasu. Bez pola brak oznaczeń dni. |
 | `map` | `{center:[lon,lat], zoom}` | nie | Początkowy widok mapy. |
 | `channels` | lista kanałów | tak, ≥ 1 | Rozmówcy komunikatora (poniżej). |
 | `reportCycle` | `{sitrep, logstat, anchor?}` | nie | Rytm meldunków cyklicznych w minutach czasu gry (T48), np. `{"sitrep": 240, "logstat": 1440}`; liczby całkowite > 0; `anchor` (czas ISO) = godzina odniesienia. Nieznane pole albo zła wartość = błąd. |
@@ -68,7 +69,8 @@ Stan świata **taki, jaki zna gracz**: własne siły na ostatnich zameldowanych 
 | Pole | Typ | Wym. | Znaczenie |
 |---|---|---|---|
 | `turn` | liczba | tak | Musi równać się numerowi z nazwy pliku. |
-| `time` | czas ISO | tak | Czas tury (= start + N × turnMinutes, inaczej uwaga). |
+| `time` | czas ISO | tak | Czas tury. Ciągłość: tura 0 = `start`; tura N+1 = `time` tury N + `duration_min` tury N (domyślnie `turnMinutes`); niezgodność to uwaga, a gdy tura N ma `duration_min`, błąd. |
+| `duration_min` | liczba 1–1440 | nie | Długość okresu, który ta tura otwiera (minuty): np. 600 dla nocy 20:00–06:00. Dotyczy jednej tury, nie jest dziedziczone; brak = `turnMinutes`. Jawne dla gracza (w `umpire/turns` też). |
 | `units` | lista | tak | Jednostki własne, przełożony, sąsiedzi. |
 | `contacts` | lista | nie | Kontakty z wrogiem. |
 | `assets` | lista | nie | Środki rozpoznania gracza. |

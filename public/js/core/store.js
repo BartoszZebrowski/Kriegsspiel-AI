@@ -22,6 +22,7 @@ export function initialState() {
     // --- dane (z serwera) ---
     scenario: null,
     turns: [], // numery dostępnych tur
+    schedule: [], // czasy tur [{ turn, time, duration_min? }] (T31): oś czasu o zmiennej długości tur
     currentTurn: 0,
     viewTurn: 0, // oglądana tura (== currentTurn albo archiwum)
     turn: null, // dane oglądanej tury: { turn, time, units, contacts, assets, lines }
@@ -53,7 +54,7 @@ export function initialState() {
     omnibox: { open: false },
     command: null, // jednorazowe polecenie dla widoku: { name, arg, nonce }
     briefing: { open: false, text: null, error: null },
-    aar: { open: false, text: null, error: null }, // omówienie ćwiczenia po bitwie (T29)
+    aar: { open: false, text: null, error: null, stats: null }, // omówienie ćwiczenia po bitwie (T29)
     truth: { turn: null, data: null }, // prawda oglądanej tury z umpire/ (T29, tylko po status: finished)
     notice: null, // { id, text, error, title?, urgent?, channel? } — komunikat do wyświetlenia (toast)
     notices: [], // historia komunikatów (dzwonek)

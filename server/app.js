@@ -100,7 +100,8 @@ async function handleApi(req, res, store, watcher, router, truth, parts) {
   if (method === 'GET' && resource === 'scenario' && !arg) {
     const scenario = await store.readScenario();
     const turns = await store.listTurns();
-    return sendJson(res, 200, { scenario, turns, currentTurn: turns.at(-1) ?? null });
+    const schedule = await store.listSchedule();
+    return sendJson(res, 200, { scenario, turns, currentTurn: turns.at(-1) ?? null, schedule });
   }
   if (method === 'GET' && resource === 'turn' && arg !== undefined) {
     return sendJson(res, 200, await store.readTurn(parseTurnNumber(arg)));

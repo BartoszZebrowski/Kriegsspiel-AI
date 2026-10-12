@@ -119,6 +119,20 @@ export function createStore(scenarioDir) {
     return listNumbered(dirs.turns);
   }
 
+  // Czasy tur (T31): { turn, time, duration_min? } z player/turns. Tylko pola jawne dla gracza.
+  async function listSchedule() {
+    const out = [];
+    for (const n of await listTurns()) {
+      try {
+        const t = await readTurn(n);
+        out.push({ turn: n, time: t.time, ...(t.duration_min > 0 ? { duration_min: t.duration_min } : {}) });
+      } catch {
+        // uszkodzona tura nie psuje listy; walidator zgłosi błąd
+      }
+    }
+    return out;
+  }
+
   async function currentTurn() {
     const turns = await listTurns();
     if (turns.length === 0) throw new StoreError(500, 'Scenariusz nie ma żadnej tury gracza');
@@ -306,6 +320,7 @@ export function createStore(scenarioDir) {
     playerDir,
     readScenario,
     listTurns,
+    listSchedule,
     currentTurn,
     readTurn,
     readBriefing,

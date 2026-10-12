@@ -9,6 +9,8 @@ import { indexById, childrenOf, channelForUnit, isNeighbourUnit } from '../domai
 import { readinessRatio } from '../domain/strength.js';
 import { resolveDos } from '../domain/dos.js';
 import { logisticsCard, logisticsCardHtml, LOGISTICS_KINDS, LG_SIDC } from '../domain/logistics.js';
+import { turnCardHtml } from '../domain/turncard.js';
+import { turnDurationMin } from '../domain/campaign.js';
 import { inspectorHead, unitCard, contactCard, assetCard, supplyCard, historyCard } from '../domain/cards.js';
 
 export function createInspectorView({ store, controller, root = document }) {
@@ -33,6 +35,15 @@ export function createInspectorView({ store, controller, root = document }) {
   function render() {
     const s = S();
     const sel = s.selection;
+    if (sel?.kind === 'turn' && s.turn) {
+      // Karta tury (T30/T31): bez jednostki, więc bez zakładek i „Wycentruj”.
+      $('in-aim').disabled = true;
+      $('in-x').disabled = false;
+      tabs.hidden = true;
+      body.innerHTML = turnCardHtml({ turn: s.turn, scenario: s.scenario, durationMin: turnDurationMin(s.scenario, s.schedule, s.viewTurn) });
+      body.dataset.id = sel.id;
+      return;
+    }
     const entity = sel && s.turn ? findEntity(s.turn, sel.id) : null;
     $('in-aim').disabled = !entity;
     $('in-x').disabled = !sel;
@@ -143,5 +154,5 @@ export function createInspectorView({ store, controller, root = document }) {
     }
   });
 
-  store.subscribe(['selection', 'turn', 'scenario', 'channels', 'visibleMessages', 'equipment'], render, { immediate: true });
+  store.subscribe(['selection', 'turn', 'scenario', 'schedule', 'channels', 'visibleMessages', 'equipment'], render, { immediate: true });
 }

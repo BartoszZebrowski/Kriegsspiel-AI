@@ -1,7 +1,8 @@
 // Wątek wiadomości kanału: karty (nadawca, rola, znaczniki, DTG, wzmianki, załączniki, stan doręczenia) i decyzja o przewijaniu.
 import { escapeHtml as e } from '../../domain/markdown.js';
 import { linkify } from '../../domain/linkify.js';
-import { formatClock, formatDay, dayKey, formatDtgShort, formatGameTime, addMinutes } from '../../domain/format.js';
+import { formatClock, formatDay, dayKey, formatDtgShort, formatGameTime } from '../../domain/format.js';
+import { turnTimeIso } from '../../domain/campaign.js';
 import { parseSender, messageTags } from '../../domain/messages.js';
 import { filterCcir } from '../../domain/ccir.js';
 import { symbolSvg } from '../../lib/symbols.js';
@@ -60,7 +61,7 @@ export function createThread({ box, ccirOnly = () => false }) {
       if (pending) {
         foot = `<div class="mf"><span class="wait">● W skrzynce</span><span>rozpatrzenie w turze ${m.turn + 1}</span><a role="button" tabindex="0" data-withdraw="${e(m.id)}">Wycofaj</a></div>`;
       } else {
-        const next = addMinutes(s.scenario.start, (m.turn + 1) * s.scenario.turnMinutes);
+        const next = turnTimeIso(s.scenario, s.schedule, m.turn + 1);
         foot = `<div class="mf"><span class="ok">✓✓ Doręczono ${e(formatClock(next, tz))}</span><span>tura ${m.turn} rozstrzygnięta</span></div>`;
       }
     }

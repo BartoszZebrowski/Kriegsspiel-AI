@@ -1559,6 +1559,28 @@ try {
     await waitFor(`document.querySelector('#clk-weather').hidden || document.querySelector('#clk-weather').dataset.phase !== 'day'`, 'wskaźnik znika w dzień');
   });
 
+  await step('T30/T31 karta tury i dni: klik w zegar → karta (DTG, pogoda, słońce); phases → D+x w zegarze i podział osi; duration_min → długość tury w zegarze', async () => {
+    const cur = await state('s.currentTurn');
+    await waitFor(`${store()}.viewTurn === ${cur}`, 'oglądana jest bieżąca tura');
+    await clickSel('#clock .clock-mid');
+    await waitFor(`document.querySelector('#insp-body [data-turncard]') && document.querySelector('#insp-body [data-weather]')`, 'karta tury z blokiem pogody');
+    assert(await ev(`/wschód [0-9]{2}:[0-9]{2}, zachód [0-9]{2}:[0-9]{2}/.test(document.getElementById('insp-body').textContent)`), 'karta: wschód i zachód słońca');
+    const scn = await readJson('scenario.json');
+    const f = `player/turns/${String(cur).padStart(3, '0')}.json`;
+    const turn0 = await readJson(f);
+    await writeJson('scenario.json', { ...scn, phases: [{ id: 'D+0', start: scn.start, title: 'Obrona' }, { id: 'D+1', start: new Date(Date.parse(scn.start) + 10 * 3600000).toISOString() }] });
+    await waitFor(`/D[+]0/.test(document.getElementById('clk-turn').textContent)`, 'D+0 w zegarze');
+    assert(await ev(`document.querySelectorAll('#tl-axis .tl-day').length === 2`), 'oś czasu dzieli się na dni');
+    turn0.duration_min = 600;
+    await writeJson(f, turn0);
+    await waitFor(`/10 h/.test(document.getElementById('clk-dtg').textContent)`, 'długość tury 10 h w zegarze');
+    delete turn0.duration_min;
+    await writeJson(f, turn0);
+    await writeJson('scenario.json', scn);
+    await waitFor(`!/D[+]0/.test(document.getElementById('clk-turn').textContent)`, 'bez phases brak D+x');
+    await ev(`window.__ks.controller.clearSelection()`);
+  });
+
   await step('T19 łączność: comms lost → znacznik na mapie, wiersz w karcie, ostrzeżenie w komunikatorze; ok bez znaczników', async () => {
     const cur = await state('s.currentTurn');
     await waitFor(`${store()}.viewTurn === ${cur}`, 'oglądana jest bieżąca tura');
@@ -1595,6 +1617,8 @@ try {
     await clickSel('#ab-btn');
     await waitFor(`document.getElementById('aar').classList.contains('open') && document.querySelectorAll('#aar-toc a[data-s]').length >= 2`, 'AAR ze spisem treści');
     assert(await ev(`document.getElementById('aar-body').querySelector('h2') !== null`), 'AAR: nagłówki sekcji');
+    await waitFor(`${store()}.aar.stats !== null && document.getElementById('aar-stats') && !document.getElementById('aar-body').textContent.includes('Liczenie statystyk')`, 'T32: sekcja statystyk końcowych w AAR (tabela albo informacja o braku danych)');
+    assert(await ev(`[...document.querySelectorAll('#aar-toc a')].some((a) => a.dataset.s === 'aar-stats')`), 'T32: statystyki w spisie treści');
     await key('Escape');
     await waitFor(`!document.getElementById('aar').classList.contains('open')`, 'Esc zamyka AAR');
     await ev(`window.__ks.controller.showTurn(0)`);

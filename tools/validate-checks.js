@@ -7,6 +7,7 @@ import { LINE_KINDS, PLACE_KINDS, PLAYER_TURN_FIELDS, PLAYER_FIELDS, checkTrack,
 import { checkFatigue, checkUmpireFatigue } from '../shared/fatigue.js';
 import { checkComms, checkUmpireComms } from '../shared/comms.js';
 import { checkWeather } from '../shared/weather.js';
+import { checkDuration, expectedNextMs, turnDurationMin } from '../shared/campaign.js';
 import { checkEwZone, checkEmitterContact } from '../shared/ew.js';
 
 const ms = milsymbol.default ?? milsymbol;
@@ -108,13 +109,23 @@ export function checkPlayerFields(label, data, report) {
   }
 }
 
-export function checkSituation(label, data, n, scenario, report, strictLogistics = false) {
+// `prev` = dane poprzedniej tury tego samego rodzaju (ciągłość czasu T31: time = time poprzedniej + jej duration_min ?? turnMinutes).
+export function checkSituation(label, data, n, scenario, report, strictLogistics = false, prev = null) {
   if (data.turn !== n) report.error(`${label}: pole turn = ${data.turn}, oczekiwano ${n}`);
   if (!validTime(data.time)) report.error(`${label}: nieprawidłowy czas tury`);
-  else if (validTime(scenario.start) && scenario.turnMinutes) {
-    const expected = Date.parse(scenario.start) + n * scenario.turnMinutes * 60000;
-    if (Date.parse(data.time) !== expected) report.warn(`${label}: czas tury nie odpowiada start + ${n} × turnMinutes`);
+  else if (n === 0 && validTime(scenario.start)) {
+    if (Date.parse(data.time) !== Date.parse(scenario.start)) report.warn(`${label}: czas tury 0 nie odpowiada start scenariusza`);
+  } else if (prev && validTime(prev.time) && scenario.turnMinutes) {
+    const expected = expectedNextMs(prev, scenario);
+    if (Date.parse(data.time) !== expected) {
+      const msg = `${label}: czas tury nie odpowiada czasowi tury ${n - 1} + ${turnDurationMin(prev, scenario)} min (${prev.duration_min ? 'duration_min' : 'turnMinutes'})`;
+      if (prev.duration_min) report.error(msg);
+      else report.warn(msg);
+    }
   }
+  const durationError = checkDuration(data.duration_min);
+  if (durationError) report.error(`${label}: ${durationError}`);
+  const periodMin = prev ? turnDurationMin(prev, scenario) : scenario.turnMinutes; // okres kończący się w tej turze
   const ids = new Set();
   for (const key of ['units', 'contacts', 'assets']) {
     if (data[key] !== undefined && !Array.isArray(data[key])) report.error(`${label}: ${key} musi być listą`);
@@ -141,7 +152,7 @@ export function checkSituation(label, data, n, scenario, report, strictLogistics
         if (e) report.error(`${where}: ${e}`);
       }
       if (key === 'units' && item.pos_time !== undefined) {
-        const r = checkPosTime(item.pos_time, data.time, scenario.turnMinutes);
+        const r = checkPosTime(item.pos_time, data.time, periodMin);
         if (r.error) report.error(`${where}: ${r.error}`);
         else if (r.warn) report.warn(`${where}: ${r.warn}`);
       }

@@ -2,8 +2,9 @@
 // ścieżki zdarzeń (wiadomości, rozkazy, kontakty), znacznik oglądanej tury i zablokowany przełącznik „Po bitwie”.
 // Klik w przeszłą turę = podgląd archiwalny (controller.showTurn).
 import { dayPhase, isNightPhase } from '../domain/daylight.js';
-import { buildTimeline, hourStep, showTurnLabel, lanesVisible } from '../domain/timeline.js';
-import { addMinutes, formatClock } from '../domain/format.js';
+import { buildTimeline, tickCount, hourStep, showTurnLabel, lanesVisible } from '../domain/timeline.js';
+import { formatClock } from '../domain/format.js';
+import { buildSchedule, dayStarts } from '../domain/campaign.js';
 import { REPORT_LABELS } from '../domain/ccir.js';
 import { escapeHtml as e } from '../domain/markdown.js';
 
@@ -20,6 +21,8 @@ export function createTimelineView({ store, controller, root = document }) {
     const { scenario } = s;
     const tz = scenario.timezone;
     const width = Math.max(0, mid.clientWidth - 40);
+    const sched = buildSchedule(scenario, s.schedule, Math.max(0, tickCount(s.currentTurn) - (s.schedule || []).length));
+    const offsets = sched.map((x) => x.offsetMin);
     const tl = buildTimeline({
       turns: s.turns,
       currentTurn: s.currentTurn,
@@ -28,13 +31,17 @@ export function createTimelineView({ store, controller, root = document }) {
       turnMinutes: scenario.turnMinutes,
       messages: s.messages,
       contacts: s.turn?.contacts || [],
-      nightAt: (min) => isNightPhase(dayPhase(addMinutes(scenario.start, min), scenario.map?.center)),
+      offsets,
+      days: dayStarts(scenario, sched),
+      nightAt: (min) => isNightPhase(dayPhase(new Date((sched[0]?.ms ?? Date.parse(scenario.start)) + min * 60000).toISOString(), scenario.map?.center)),
     });
     const step = hourStep(width);
-    const clock = (i) => formatClock(addMinutes(scenario.start, i * scenario.turnMinutes), tz);
+    const t0 = sched[0]?.ms ?? Date.parse(scenario.start);
+    const clock = (i) => formatClock(new Date(t0 + (offsets[i] ?? i * scenario.turnMinutes) * 60000).toISOString(), tz);
     let h = '<div class="tl-hours">';
     for (const t of tl.ticks) if (t.turn % step === 0) h += `<span style="left:${t.pct}%">${clock(t.turn)}</span>`;
     h += '</div>';
+    for (const d of tl.days) h += `<div class="tl-day" style="left:${d.pct}%" data-tip="${e(d.title || d.id)}"><b>${e(d.id)}</b></div>`;
     h += `<div class="tl-line"></div><div class="tl-fut" style="left:${tl.futurePct}%"></div><div class="tl-past" style="width:${tl.pastPct}%"></div>`;
     for (const t of tl.ticks) {
       const cls = [t.state === 'fut' ? 'fut' : '', t.state === 'cur' ? 'cur' : '', t.view ? 'view' : '', t.night ? 'night' : ''].filter(Boolean).join(' ');

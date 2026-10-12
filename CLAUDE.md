@@ -36,7 +36,7 @@ Gdy gracz napisze „koniec tury” (albo podobnie), dla aktywnego scenariusza `
    - `player/turns/NNN.json`,
    - `player/outbox/NNN.json` (rozkazy gracza z tej tury; brak pliku oznacza brak rozkazów),
    - `umpire/turns/NNN.json`, `umpire/enemy-plan.md`, `umpire/log.md`.
-2. **Rozstrzygnij** okres od czasu tury N do N + `turnMinutes`:
+2. **Rozstrzygnij** okres od czasu tury N do czasu tury N+1 (`duration_min` tury N, domyślnie `turnMinutes`):
    - **Rozkazy gracza:**
      - wykonanie zależy od czasu (rozkaz musi dojść, zostać przemyślany i wykonany),
      - zależy też od terenu, łączności, stanu jednostki i działań wroga,
@@ -119,9 +119,18 @@ Gdy spełniony jest warunek końca bitwy (z `umpire/enemy-plan.md` i scenariusza
 - **Teren i marsz:** po deszczu lub w ulewie drogi gruntowe i teren −15…−30% prędkości (aplikacja liczy −15% / −30% w pomiarze po drogach); nocą marsz wolniejszy wg `MARCH_PROFILES`.
 - **Zima:** poniżej −5 °C rośnie zużycie wytrzymałości (ok. ×1,3), ostrzeżenia o odmrożeniach i rozruchu sprzętu.
 
+## Noc i dni kampanii (T31)
+
+- **Noc jako tura:** zamykając turę wieczorną, ustaw `plan.duration_min` (np. 600, 20:00–06:00) i opisz w `enemy-plan.md` zamiar na noc. Noc jest cicha z założenia; wypad wroga rzadki, a meldunek o nim z opóźnieniem. Jedna tura = jedno rozstrzygnięcie całej nocy, ale `track` i meldunki rozłóż w czasie (`time` wiadomości w okresie).
+- **Regeneracja:** `plan.night` (docs/UMPIRE-TOOLS.md) dolicza `stamina_min` o czas okresu (+1×, maks. 1440); jednostki, które marszowały lub walczyły nocą, daj w `exclude`. Rannych ewakuuj (strata w `personnel` nie rośnie, meldunek S4/medyczny), DOS rośnie wyłącznie wg konwojów, które zdążyły dojechać trasą (MSR) w nocy.
+- **S4 rano:** meldunek o uzupełnieniu (ile przyjechało, ile brakuje) i o ewakuacji; o świcie rozpoznanie meldunkiem o przegrupowaniu wroga (nie opisuj prawdy).
+- **Dni:** `phases` w `scenario.json` (D+0…); na początku dnia przełożony wysyła w swoim kanale zadanie dnia (`type: rozkaz`), a aplikacja pokazuje „D+x” i powiadomienie „nowy dzień bojowy”.
+- **Rezerwy i konwoje wg harmonogramu:** prawda (godzina przybycia, trasa/MSR) w `umpire/enemy-plan.md` lub `log.md`; gracz zna je z meldunków S4 i przełożonego, bez gwarancji (opóźnienia, przerwana trasa).
+- **Koniec kampanii:** po D+X warunki: utrzymano pozycje do końca ostatniego dnia, przełamano obronę albo rozbito zgrupowanie; wtedy napisz `aar.md` i dopiero ustaw `status: "finished"`.
+
 ## Widok gracza (`player/turns/NNN.json`)
 
-- `turn`, `time` (= start + N × turnMinutes, ISO ze strefą).
+- `turn`, `time` (ISO ze strefą; = `time` tury N−1 + jej `duration_min` albo `turnMinutes`, tura 0 = `start`), `duration_min` (opcjonalnie, długość okresu otwieranego przez tę turę).
 - `units`: jednostki własne z polami `id`, `name`, `sidc`, `pos`, `pos_time`, `strength`, `status`, `task`. Do tego przełożony i sąsiedzi (położenie orientacyjne).
   - **Pozycja BFT (Blue Force Tracking):** `pos` to ostatnia **zameldowana** pozycja, `pos_time` to czas raportu (nie późniejszy niż czas tury; brak = czas tury). Zwykle raport co kilka–kilkanaście minut, więc `pos` = prawda, `pos_time` = czas tury. W strefie zagłuszenia, przy ciszy radiowej albo utracie łączności pozycja **zamarza** (stare `pos` + stare `pos_time`) i „przeskakuje” po odzyskaniu łączności. Prawdziwa pozycja jest tylko w `umpire/turns/`. W `turn.mjs` podaj ją łatką `plan.player.units.<id> = {pos, pos_time}`; `track` kończy się na pozycji BFT. Mapa przygasza symbol, gdy pozycja jest starsza niż 30 min.
   - **Łączność (T19):** `comms: {status: ok|degraded|lost, last_contact}` to wiedza sztabu (brak pola = ok); prawda w `umpire/turns` jako `comms_true: {status, since, cause}` (nigdy w pliku gracza). Traci się ją przez: zagłuszenie/REW (T26), zniszczenie wozu dowodzenia lub węzła łączności, marsz w terenie zasłoniętym lub poza zasięg UKF bez retransmisji, ciszę radiową z rozkazu. Odzyskuje przez: wyjście ze strefy, retransmisję, kurier, odtworzenie węzła. Przy `lost` zamroź też `pos`/`pos_time` (BFT). Rozkaz do takiej jednostki ginie wg T25 albo dojeżdża kurierem z opóźnieniem; podwładny działa wg ostatniego znanego zamiaru, nie melduje, a sztab opisuje ciszę w meldunku („brak łączności z 1k od 06:12”) bez prawdy.

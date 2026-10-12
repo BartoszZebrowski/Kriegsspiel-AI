@@ -28,11 +28,14 @@ export function showTurnLabel(i, axisWidth) {
 // Wysokość osi < 80 px: znikają ścieżki zdarzeń (zostają węzły tur).
 export const lanesVisible = (height) => height >= 80;
 
-// Budowa osi. Wejście: { turns, currentTurn, viewTurn, start (ISO), turnMinutes, messages, contacts }.
-// Wynik: { ticks, lanes: { msgs, ords, cons }, playheadPct, pastPct, futurePct, archive }.
-export function buildTimeline({ turns = [], currentTurn = 0, viewTurn = 0, start, turnMinutes = 120, messages = [], contacts = [], nightAt = null }) {
+// Budowa osi. Wejście: { turns, currentTurn, viewTurn, start (ISO), turnMinutes, messages, contacts, nightAt, offsets, days }.
+// `offsets` (T31) = minuty od czasu tury 0 dla kolejnych tur (tury o zmiennej długości); bez nich i × turnMinutes.
+// `days` = [{ id, title, offsetMin }] — podział na dni kampanii.
+// Wynik: { ticks, lanes: { msgs, ords, cons }, days, playheadPct, pastPct, futurePct, archive }.
+export function buildTimeline({ turns = [], currentTurn = 0, viewTurn = 0, start, turnMinutes = 120, messages = [], contacts = [], nightAt = null, offsets = null, days = [] }) {
   const count = tickCount(currentTurn);
-  const span = (count - 1) * turnMinutes || 1;
+  const off = (i) => (Number.isFinite(offsets?.[i]) ? offsets[i] : i * turnMinutes);
+  const span = off(count - 1) || 1;
   const pct = (m) => Math.max(0, Math.min(100, (m / span) * 100));
   const archive = viewTurn !== currentTurn;
   const ticks = [];
@@ -42,9 +45,9 @@ export function buildTimeline({ turns = [], currentTurn = 0, viewTurn = 0, start
     else if (i < currentTurn) state = 'past';
     // Dostępna do obejrzenia = istnieje plik tury (klikalna).
     const clickable = turns.includes(i);
-    ticks.push({ turn: i, minutes: i * turnMinutes, pct: pct(i * turnMinutes), state, view: archive && i === viewTurn, clickable, night: nightAt ? Boolean(nightAt(i * turnMinutes)) : false });
+    ticks.push({ turn: i, minutes: off(i), pct: pct(off(i)), state, view: archive && i === viewTurn, clickable, night: nightAt ? Boolean(nightAt(off(i))) : false });
   }
-  const playheadMin = viewTurn * turnMinutes;
+  const playheadMin = off(viewTurn);
   const toMin = (iso) => (start && iso ? minutesBetween(start, iso) : null);
   const lane = (items) => items.filter((x) => x.min !== null).map((x) => ({ pct: pct(x.min), urgent: Boolean(x.urgent), late: x.min > playheadMin + 0.01, ...(x.report ? { report: x.report, count: x.count } : {}) }));
   const isOrder = (m) => m.direction === 'out' && (m.type === 'rozkaz' || m.type === 'zarzadzenie');
@@ -61,8 +64,9 @@ export function buildTimeline({ turns = [], currentTurn = 0, viewTurn = 0, start
     ticks,
     lanes,
     archive,
+    days: days.filter((d) => d.offsetMin <= span).map((d) => ({ id: d.id, title: d.title || '', pct: pct(d.offsetMin) })),
     playheadPct: pct(playheadMin),
-    pastPct: pct(currentTurn * turnMinutes),
-    futurePct: pct(currentTurn * turnMinutes),
+    pastPct: pct(off(currentTurn)),
+    futurePct: pct(off(currentTurn)),
   };
 }
