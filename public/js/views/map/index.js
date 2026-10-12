@@ -14,6 +14,7 @@ import { ageMinutes } from '../../domain/format.js';
 import { indexById, isUnitVisible, echelonRank, BATTALION_RANK, COMPANY_RANK, splitUnits, parentIdOf, isNeighbourUnit } from '../../domain/orbat.js';
 import { BASEMAPS, OVERLAYS, DARK_BASES } from './basemaps.js';
 import { renderLines } from './lines.js';
+import { createEwZonesLayer } from './ewzones.js';
 import { createHierarchyLayer } from './hierarchy.js';
 import { createMapControls } from './controls.js';
 import { createMotion } from './motion.js';
@@ -288,6 +289,7 @@ export function createMapView({ store, controller, root = document }) {
   store.subscribe('level', applyLevel);
   store.subscribe('basemap', syncBasemap, { immediate: true });
   store.subscribe('layers', syncLayers, { immediate: true });
+  createEwZonesLayer({ store, map });
   store.subscribe('selection', () => {
     applySelection();
     hierarchy.style(S().selection?.id ?? null, S().hoverUnit);

@@ -11,6 +11,7 @@ import {
   SCHEMA_VERSION, CHANNEL_KINDS, LINE_KINDS, PLACE_KINDS, PLAYER_TURN_FIELDS, PLAYER_FIELDS, PLAYER_MESSAGE_FIELDS,
   MAX_NOTES, checkTrack, checkDos, checkLogistics, isCoord, isValidTime, isCount, extraFields, checkNote, checkMessageText, checkMessageMeta,
 } from '../shared/schema.js';
+import { checkEwZone, checkEmitterContact, checkDeliveries, checkEw } from '../shared/ew.js';
 
 const ms = milsymbol.default ?? milsymbol;
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -167,6 +168,9 @@ function checkSituation(label, data, n, scenario, report, strictLogistics = fals
       }
       if (key === 'contacts') {
         checkEstimates(where, item, report);
+        const em = checkEmitterContact(item);
+        if (em) report.error(`${where}: ${em}`);
+        else if (item.sidc?.slice(4, 10) === 'UUMSEI' && !item.source) report.warn(`${where}: kontakt-nadajnik bez source (REW/DF)`);
         if (!validTime(item.observed)) report.error(`${where}: nieprawidłowy czas obserwacji`);
         else if (validTime(data.time) && Date.parse(item.observed) > Date.parse(data.time))
           report.error(`${where}: obserwacja późniejsza niż czas tury`);
@@ -187,6 +191,7 @@ function checkSituation(label, data, n, scenario, report, strictLogistics = fals
     if (!LINE_KINDS.includes(line.kind)) report.warn(`${where}: nieznany rodzaj „${line.kind}”`);
     if (!Array.isArray(line.coords) || line.coords.length < 2 || !line.coords.every(validPos))
       report.error(`${where}: linia wymaga co najmniej 2 punktów [lon, lat]`);
+    for (const e of checkEwZone(line, data.time)) report.error(`${where}: ${e}`);
   }
 }
 
@@ -466,6 +471,12 @@ export async function validateScenario(dir) {
     if (!data) continue;
     const ulabel = `umpire/turns/${pad(n)}`;
     checkSituation(ulabel, data, n, scenario, report);
+    if (data.deliveries !== undefined) {
+      const r = checkDeliveries(data.deliveries);
+      for (const e of r.errors) report.error(`${ulabel}: ${e}`);
+      for (const w of r.warnings) report.warn(`${ulabel}: ${w}`);
+    }
+    if (data.ew !== undefined) for (const e of checkEw(data.ew)) report.error(`${ulabel}: ${e}`);
     for (const w of checkHierarchySums(ulabel, data.units)) report.warn(w);
     const water = await loadWaterPolygons((data.units || []).map((u) => u?.pos));
     for (const id of unitsInWater(data.units, water)) report.warn(`${ulabel} units[${id}]: pozycja w wodzie`);

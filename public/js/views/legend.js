@@ -5,6 +5,7 @@ import { symbolSvg } from '../lib/symbols.js';
 import { groupSymbolTypes } from '../domain/sidc.js';
 import { escapeHtml as e } from '../domain/markdown.js';
 import { logisticsElements, ROUTE_COLORS } from '../domain/logistics.js';
+import { EW_ZONE_KIND, EW_ZONE_NAME } from '../domain/ewzones.js';
 
 const row = (sidc, title, small = '', right = '', size = 26) =>
   `<div class="lg-r"><div class="s">${symbolSvg(sidc, { size }).svg}</div><div class="d">${e(title)}${small ? `<small>${small}</small>` : ''}</div><div class="x">${right}</div></div>`;
@@ -33,7 +34,8 @@ export function renderOnMap(el, turn) {
   const enemy = groupSymbolTypes(turn.contacts || []);
   const assets = groupSymbolTypes((turn.assets || []).filter((a) => a.sidc));
   const hasLg = logisticsElements(turn).length > 0;
-  if (!own.length && !enemy.length && !assets.length && !hasLg) {
+  const hasEw = (turn.lines || []).some((l) => l.kind === EW_ZONE_KIND);
+  if (!own.length && !enemy.length && !assets.length && !hasLg && !hasEw) {
     el.innerHTML = '<p class="muted pad">Brak symboli na mapie.</p>';
     return;
   }
@@ -46,6 +48,7 @@ export function renderOnMap(el, turn) {
     `<div class="lg-g cap">Elementy mapy</div>` +
     svgRow('<svg width="34" height="20"><circle cx="17" cy="10" r="8" fill="rgba(255,128,128,.12)" stroke="#ff8080" stroke-dasharray="3 2"/></svg>', 'Okrąg niepewności', 'promień = niepewność położenia kontaktu') +
     svgRow('<svg width="34" height="20"><circle cx="9" cy="10" r="5" fill="#ff8080"/><circle cx="25" cy="10" r="5" fill="#ff8080" opacity=".38"/></svg>', 'Wiek informacji', 'kontakt blaknie wraz z upływem czasu') +
+    (hasEw ? svgRow('<svg width="34" height="20"><rect x="3" y="3" width="28" height="14" fill="rgba(168,85,247,.16)" stroke="#a855f7" stroke-dasharray="4 4"/></svg>', EW_ZONE_NAME, 'zasięg zagłuszenia wg meldunku; wiek w etykiecie') : '') +
     svgRow('<svg width="34" height="20"><path d="M2 10h30" stroke="#d6dde6" stroke-width="3"/></svg>', 'Granica pasa', 'rozgraniczenie pasów zgrupowań') +
     svgRow('<svg width="34" height="20"><path d="M2 10h30" stroke="#ff2bd6" stroke-width="2.5" stroke-dasharray="7 5"/></svg>', 'Podporządkowanie', 'przełożony → podwładny');
 }

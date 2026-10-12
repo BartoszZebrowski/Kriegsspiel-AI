@@ -24,6 +24,7 @@ const LINE_NAMES = {
 // Rysuje linie tury w grupie warstw (poprzednia zawartość grupy jest czyszczona przez wołającego).
 export function renderLines(group, lines) {
   for (const line of lines || []) {
+    if (line.kind === 'ew_zone') continue; // strefy REW rysuje ewzones.js (własna warstwa)
     const style = LINE_STYLES[line.kind] || LINE_STYLES.phase;
     const latlngs = line.coords.map(toLatLng);
     // Obwódka: jasna pod czarnymi liniami, ciemna pod kolorowymi — czytelne na każdym podkładzie.

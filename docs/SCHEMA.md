@@ -111,6 +111,8 @@ Obiekt z czterema opcjonalnymi listami. Ten sam kształt w `player/turns` (to, c
 - `convoys[].track` jak `units[].track`: trasa przejechana w turze, kończy się w `pos` (≥ 2 punkty; ostatni punkt ≠ `pos` = uwaga). Tylko animacja.
 - **Gracz vs sędzia:** plik gracza ma stan znany graczowi (np. skład z zapasem sprzed 3 h); `umpire/turns` ma prawdę (może zawierać dodatkowe pola, np. rzeczywisty zapas). `supply` pozostaje polem tylko sędziego i w pliku gracza to błąd.
 
+**`ew_zone` (T26)** — zameldowana strefa zagłuszenia/aktywności radioelektronicznej, **wiedza gracza** (jak kontakt: meldunek, nie prawda; starzeje się). Wymaga: `coords` = zamknięty wielokąt (≥ 4 punkty, pierwszy == ostatni, inaczej błąd), niepustego `label`, `observed` (ISO, nie późniejszy niż `time` tury). Walidator: `checkEwZone` (`shared/ew.js`). Prawdziwy obraz — `ew` w `umpire/turns` (niżej). Aplikacja rysuje strefę jako półprzezroczysty wielokąt z etykietą i wiekiem meldunku.
+
 ### `contacts[]` (gracz)
 
 | Pole | Typ | Wym. | Znaczenie |
@@ -126,13 +128,15 @@ Obiekt z czterema opcjonalnymi listami. Ten sam kształt w `player/turns` (to, c
 | `estimate_personnel` | `{count, approx}` | nie | `count` całkowite ≥ 0. |
 | `estimate_equipment` | `[{name, count, approx}]` | nie | Szacunek sprzętu. |
 
+**Kontakt-nadajnik (T26):** namierzony nadajnik to kontakt z SIDC funkcji `UUMSEI` (np. `SHGAUUMSEI----`), **zawsze status `A`** (niepotwierdzony, ramka przerywana; błąd, gdy inny), `source` powinno wskazywać REW/DF (brak = uwaga), `uncertainty_m` zwykle duże. Pozostałe SIDC REW (`SIDC` w `public/js/domain/sidc.js`): `UUMS` rozpoznanie radiowe (SIGINT), `UUMSE` jednostka REW, `UUMSED` namierzanie (DF), `UUMSEJ` zagłuszanie.
+
 ### `assets[]` (gracz)
 
 `id` (tak), `name`, `type` (np. `dron rozpoznawczy FlyEye`), `sidc`, `pos` (tylko gdy w powietrzu / rozwinięty), `status`, `task`. **Tylko sędzia:** `side`, `endurance_min`.
 
 ### `lines[]` (gracz)
 
-`id` (tekst), `kind` (`boundary`, `flot`, `enemy_flot`, `phase`, `axis`, `enemy_axis`; inny = uwaga), `label` (tekst), `coords` (`[[lon,lat], …]`, ≥ 2 punkty, tak), `formation` (nie; id dowództwa sąsiada z tej samej tury — linia należy do sąsiada, np. jego FLOT; ta sama reguła celu co przy `units[].formation`).
+`id` (tekst), `kind` (`boundary`, `flot`, `enemy_flot`, `phase`, `axis`, `enemy_axis`, `ew_zone`; inny = uwaga), `label` (tekst), `coords` (`[[lon,lat], …]`, ≥ 2 punkty, tak), `observed` (czas ISO meldunku; wymagane dla `ew_zone`), `formation` (nie; id dowództwa sąsiada z tej samej tury — linia należy do sąsiada, np. jego FLOT; ta sama reguła celu co przy `units[].formation`).
 
 ## `player/inbox/NNN.json` — jawny
 
@@ -169,7 +173,9 @@ Ma te same pola co plik gracza (`turn`, `time`, `units`, `assets`, `lines`), plu
 - `units[]`/`assets[]`: `side` (`PL` / `RU` / …), `supply` (jednostki: `{fuel, ammo, general}` w dniach zaopatrzenia, DOS; gracz widzi tylko meldowane `dos`), `endurance_min` (środki: pozostały czas lotu), pełne i prawdziwe `personnel`/`equipment` (dla jednostek własnych identyczne jak w pliku gracza),
 - jednostki wroga (`side` ≠ strona gracza) z prawdziwymi pozycjami i stanami (kontaktów się tu nie zapisuje — to widok gracza),
 - `logistics`: prawdziwy stan warstwy logistycznej (kształt jak u gracza, patrz „`logistics`”; pola dodatkowe dozwolone),
-- `events`: lista tekstów — zdarzenia tury dla sędziego.
+- `events`: lista tekstów — zdarzenia tury dla sędziego,
+- `deliveries` (T25): doręczenia rozkazów gracza rozstrzygnięte w tej turze (nie dziedziczone). Lista `{ msg_id, to, sent, delivered, means, note? }`: `msg_id` = id z `player/outbox`, `to` = id adresata (jednostka/kanał), `sent` = czas wysłania w grze (ISO), `delivered` = godzina doręczenia (ISO, ≥ `sent`; może wypaść po czasie tury, gdy rozkaz jest w drodze) albo `null` dla zgubionego, `means` ∈ `radio` | `relay` (retransmisja) | `courier` | `lost`, `note` = powód (zagłuszenie, cisza radiowa, odległość). Rozkaz obowiązuje od `delivered`; `lost` = adresat działa wg poprzedniego zamiaru. **Wyłącznie w `umpire/`**: `deliveries` w pliku gracza to błąd (strażnik wycieku); UI komunikatora nie pokazuje doręczeń. Walidator: `checkDeliveries`.
+- `ew` (T26): prawdziwy obraz REW, dziedziczony z tury N. `{ zones: [{ id, kind, owner, coords, from?, until?, … }] }`: `kind` ∈ `jamming` | `df` (strefa namierzania) | `decoy` (wabik), `owner` = strona (`RU`, `PL`), `coords` = zamknięty wielokąt, `from`/`until` = okno działania (ISO); pola dodatkowe (moc, zasięg) dozwolone. To, co z tego zna gracz, trafia do niego wyłącznie jako `lines[].kind = "ew_zone"` (meldunek), kontakty-nadajniki albo skutki (opóźnione/zgubione rozkazy, przerwane meldunki). Walidator: `checkEw`.
 
 ## `umpire/enemy-plan.md` — TYLKO sędzia
 

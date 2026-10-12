@@ -14,6 +14,7 @@ import {
   PLAYER_FIELDS, PLAYER_TURN_FIELDS, PLAYER_MESSAGE_FIELDS, LOGISTICS_LISTS, LOGISTICS_FIELDS, checkLogistics, extraFields,
   isCoord, isValidTime, checkMessageMeta, checkMessageText, checkTrack,
 } from '../../shared/schema.js';
+import { checkDeliveries, checkEw, checkEwZone } from '../../shared/ew.js';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
@@ -198,6 +199,23 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   warnings.push(...uLog.warnings.map((w) => `sędzia ${w}`));
   if (uLog.logistics) umpire.logistics = uLog.logistics;
 
+  // Doręczenia rozkazów (T25): zdarzenia tej tury, nie dziedziczone. Tylko umpire/turns, nigdy widok gracza.
+  delete umpire.deliveries;
+  if (plan.deliveries !== undefined) {
+    const dl = checkDeliveries(plan.deliveries);
+    warnings.push(...dl.errors.map((e) => `plan ${e}`), ...dl.warnings.map((w) => `plan ${w}`));
+    if (Array.isArray(plan.deliveries)) umpire.deliveries = clone(plan.deliveries);
+  }
+  // Prawdziwy obraz REW (T26): dziedziczony z tury N, zmieniany planem { zones: { set: [strefy], remove: [id] } }.
+  delete umpire.ew;
+  const zones = new Map((prevUmpire.ew?.zones || []).map((z) => [z.id, clone(z)]));
+  for (const id of plan.ew?.zones?.remove ?? []) if (!zones.delete(id)) warnings.push(`plan: usuwana strefa REW "${id}" nie istnieje`);
+  for (const z of plan.ew?.zones?.set ?? []) zones.set(z.id, clone(z));
+  if (zones.size || prevUmpire.ew) {
+    umpire.ew = { zones: [...zones.values()] };
+    warnings.push(...checkEw(umpire.ew).map((e) => `sędzia ${e}`));
+  }
+
   // --- widok gracza ---
   const pl = plan.player || {};
   const prevPlayerPos = new Map((prevPlayer.units || []).map((u) => [u.id, u.pos]));
@@ -255,6 +273,7 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   const contacts = upsert(prevPlayer.contacts || [], pl.contacts).map((c) => pickFields(c, PLAYER_FIELDS.contacts));
   const lines = upsert(prevPlayer.lines || [], pl.lines).map((l) => pickFields(l, PLAYER_FIELDS.lines));
   checkIds('kontakty', contacts, warnings);
+  for (const l of lines) for (const e of checkEwZone(l, time)) warnings.push(`linia ${l.id}: ${e}`);
   for (const c of contacts) if (isValidTime(c.observed) && Date.parse(c.observed) > Date.parse(time)) warnings.push(`kontakt ${c.id}: observed późniejszy niż czas tury`);
 
   // Logistyka gracza: tylko z poprzedniej tury gracza + plan.player.logistics (nie z prawdy). Trasy konwojów z planu sędziego jako zapas.

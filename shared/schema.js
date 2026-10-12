@@ -36,7 +36,7 @@ export function checkTrack(track, pos) {
 // --- Kanały, linie, miejsca ---
 
 export const CHANNEL_KINDS = ['superior', 'neighbor', 'subordinate', 'logistics', 'recon', 'other'];
-export const LINE_KINDS = ['boundary', 'flot', 'enemy_flot', 'phase', 'axis', 'enemy_axis'];
+export const LINE_KINDS = ['boundary', 'flot', 'enemy_flot', 'phase', 'axis', 'enemy_axis', 'ew_zone'];
 export const PLACE_KINDS = ['miasto', 'wieś', 'wzgórze', 'jezioro', 'rzeka', 'droga', 'przejście', 'inne'];
 
 // --- Szkice gracza (player/notes) ---
@@ -61,7 +61,7 @@ export const PLAYER_FIELDS = {
   units: ['id', 'name', 'sidc', 'pos', 'strength', 'status', 'task', 'personnel', 'equipment', 'parent', 'formation', 'track', 'notes', 'dos'],
   contacts: ['id', 'sidc', 'pos', 'uncertainty_m', 'observed', 'source', 'confidence', 'estimate', 'estimate_personnel', 'estimate_equipment'],
   assets: ['id', 'name', 'type', 'sidc', 'pos', 'status', 'task'],
-  lines: ['id', 'kind', 'label', 'coords', 'formation'],
+  lines: ['id', 'kind', 'label', 'coords', 'formation', 'observed'],
 };
 export const PLAYER_MESSAGE_FIELDS = ['id', 'channel', 'from', 'turn', 'time', 'sent', 'type', 'priority', 'text', 'attachments'];
 

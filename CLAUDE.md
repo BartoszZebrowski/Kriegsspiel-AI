@@ -41,6 +41,7 @@ Gdy gracz napisze „koniec tury” (albo podobnie), dla aktywnego scenariusza `
      - wykonanie zależy od czasu (rozkaz musi dojść, zostać przemyślany i wykonany),
      - zależy też od terenu, łączności, stanu jednostki i działań wroga,
      - rozkaz niejasny jest wykonany tak, jak zrozumiał go podwładny.
+     - **doręczenie (T25):** rozkaz obowiązuje od chwili doręczenia, nie wysłania. Czas zależy od odległości, środka (radio UKF w zasięgu: minuty; retransmisja: dłużej; kurier: godziny, wg drogi), zagłuszenia (strefy REW) i ciszy radiowej (rozkaz gracza: tylko kurier, ale trudniejsze namierzenie). Godzinę i środek zapisz w `umpire/turns` (`deliveries`) i stosuj rozkaz od `delivered`. Rozkaz zgubiony (`means: "lost"`): podwładny działa wg poprzedniego zamiaru i melduje to później („rozkazu nie otrzymaliśmy”) albo milczy. Gracz nie dostaje potwierdzenia doręczenia, tylko meldunki i ich brak.
    - **Przeciwnik:** działa wg `enemy-plan.md`, ale reaguje na to, co realnie wie o graczu (jego rozpoznanie: drony, obserwacja, radioelektronika).
    - **Walka:** straty i skutki szacuj realistycznie, bez wyników „filmowych”. Siła `strength` jest w zakresie 0–1.
    - **Logistyka:**
@@ -76,6 +77,12 @@ Pododdziały rozstawiaj ręcznie na zrzucie mapy terenu (`tools/umpire/terrain-v
 - **Plan przeciwnika:** każde nowe siły i zmianę zamiaru dopisz do `umpire/enemy-plan.md` z godziną decyzji.
 - **Rozstawienie:** każda przemieszczona jednostka przez terrain-view + pick (nie ręczne przesunięcia o stałe offsety).
 - **Czat:** krótki status w trakcie długiej tury, żeby gracz nie czekał w ciszy.
+
+## REW przeciwnika (T26)
+
+- **Doktryna RU:** rozpoznanie radioelektroniczne przed uderzeniem (nasłuch, namierzanie nadajników sztabów i łączności), potem ogień na namierzony rejon (artyleria, rakiety, BSP uderzeniowe) oraz zagłuszanie łączności i sterowania BSP/SD gracza.
+- **Wykrywalność gracza:** intensywna łączność radiowa = namierzenie (ostrzał rejonu sztabu/SD po 1–2 turach); cisza radiowa i kurier zmniejszają ryzyko; wabiki gracza mogą ściągnąć ogień.
+- **Prawda** o strefach zagłuszenia i namierzaniu tylko w `umpire/turns` (`ew`) i `enemy-plan.md`. Gracz widzi **wyłącznie skutki**: opóźnione lub zgubione rozkazy, przerwane meldunki, BSP tracące łączność lub zestrzelone, ostrzał. Strefę zna dopiero z meldunku (`lines` `ew_zone` z `observed`), a nadajnik z własnego DF (kontakt `UUMSEI`, status `A`).
 
 ## Widok gracza (`player/turns/NNN.json`)
 

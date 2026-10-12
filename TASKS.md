@@ -751,7 +751,7 @@ Gracz widzi logistykę tak, jak ją zna jego S4: stan może być nieaktualny, pr
 - [A] Walidator: `dos` z wartością ujemną lub `readiness` > 1 — błąd; `supply` w pliku gracza nadal błąd.
 - [M] Panel DOS na scenariuszu testowym, klik w wiersz otwiera kartę.
 
-## T25 — Czas doręczenia rozkazów ⬜
+## T25 — Czas doręczenia rozkazów ✅
 Rozkaz zaczyna obowiązywać w chwili **doręczenia**, nie wysłania. Czas przejścia zależy od odległości, środka łączności (radio UKF w zasięgu / retransmisja / kurier), stref zagłuszenia (T26) i ciszy radiowej.
 
 **WA**
@@ -765,7 +765,7 @@ Rozkaz zaczyna obowiązywać w chwili **doręczenia**, nie wysłania. Czas przej
 - [A] Walidator: pole doręczenia w pliku gracza → błąd (strażnik wycieku); `npm run validate` czysto po turze z doręczeniami.
 - [M] Rozkaz w warunkach zagłuszenia przychodzi z opóźnieniem: podwładny melduje wykonanie poprzedniego zadania, dopiero potem otrzymanie nowego rozkazu.
 
-## T26 — Walka radioelektroniczna ⬜
+## T26 — Walka radioelektroniczna ✅
 Spektrum jako broń obu stron: zagłuszenie, namierzanie nadajników, wabiki.
 
 **WA**
