@@ -1,0 +1,749 @@
+{
+ "version": 1,
+ "note": "Katalog jawny; zasięgi skuteczne, orientacyjne (dane producentów, publikacje MON, Army Recognition, Wikipedia). side: PL = Wojsko Polskie; RU = przeciwnik (RU/BY).",
+ "categories": [
+  {
+   "id": "czołg"
+  },
+  {
+   "id": "pojazd bojowy"
+  },
+  {
+   "id": "artyleria"
+  },
+  {
+   "id": "moździerz",
+   "portable": true
+  },
+  {
+   "id": "ppk",
+   "portable": true
+  },
+  {
+   "id": "plot",
+   "portable": true
+  },
+  {
+   "id": "broń zespołowa",
+   "portable": true
+  },
+  {
+   "id": "broń indywidualna",
+   "portable": true
+  },
+  {
+   "id": "BSP"
+  },
+  {
+   "id": "wyposażenie"
+  },
+  {
+   "id": "pojazd logistyczny"
+  }
+ ],
+ "weaponKinds": {
+  "ppanc": "przeciwpancerna",
+  "plot": "przeciwlotnicza",
+  "ogólny": "ogólna",
+  "pośredni": "ogień pośredni"
+ },
+ "items": [
+  {
+   "id": "pl-rosomak-30",
+   "name": "KTO Rosomak (ZSSW-30)",
+   "side": "PL",
+   "category": "pojazd bojowy",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "armata 30 mm ZSSW-30",
+     "range_m": 2000,
+     "kind": "ogólny"
+    },
+    {
+     "name": "UKM-2000C 7,62 mm",
+     "range_m": 800,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Kołowy transporter opancerzony z wieżą bezzałogową; 8 żołnierzy desantu."
+  },
+  {
+   "id": "pl-rosomak-spike",
+   "name": "KTO Rosomak ze Spike-LR",
+   "side": "PL",
+   "category": "pojazd bojowy",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "armata 30 mm ZSSW-30",
+     "range_m": 2000,
+     "kind": "ogólny"
+    },
+    {
+     "name": "Spike-LR",
+     "range_m": 4000,
+     "kind": "ppanc"
+    }
+   ],
+   "note": "Wariant z wyrzutnią ppk na wieży."
+  },
+  {
+   "id": "pl-leopard-2pl",
+   "name": "Leopard 2PL",
+   "side": "PL",
+   "category": "czołg",
+   "crew": 4,
+   "weapons": [
+    {
+     "name": "armata 120 mm L/44",
+     "range_m": 3500,
+     "kind": "ppanc"
+    },
+    {
+     "name": "UKM-2000 7,62 mm",
+     "range_m": 800,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Zmodernizowany Leopard 2A4."
+  },
+  {
+   "id": "pl-leopard-2a5",
+   "name": "Leopard 2A5",
+   "side": "PL",
+   "category": "czołg",
+   "crew": 4,
+   "weapons": [
+    {
+     "name": "armata 120 mm L/44",
+     "range_m": 3500,
+     "kind": "ppanc"
+    },
+    {
+     "name": "UKM-2000 7,62 mm",
+     "range_m": 800,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Czołg podstawowy; zasięg skuteczny orientacyjny."
+  },
+  {
+   "id": "pl-k2",
+   "name": "K2 Black Panther (K2GF/K2PL)",
+   "side": "PL",
+   "category": "czołg",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "armata 120 mm L/55",
+     "range_m": 4000,
+     "kind": "ppanc"
+    },
+    {
+     "name": "karabin maszynowy 12,7 mm",
+     "range_m": 1500,
+     "kind": "ogólny"
+    },
+    {
+     "name": "UKM 7,62 mm",
+     "range_m": 800,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Automat ładowania; załoga 3 osoby."
+  },
+  {
+   "id": "pl-abrams",
+   "name": "M1A2 SEPv3 Abrams",
+   "side": "PL",
+   "category": "czołg",
+   "crew": 4,
+   "weapons": [
+    {
+     "name": "armata 120 mm L/44",
+     "range_m": 4000,
+     "kind": "ppanc"
+    },
+    {
+     "name": "karabin maszynowy 12,7 mm",
+     "range_m": 1500,
+     "kind": "ogólny"
+    },
+    {
+     "name": "karabin maszynowy 7,62 mm",
+     "range_m": 800,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Czołg podstawowy."
+  },
+  {
+   "id": "pl-krab",
+   "name": "Krab (155 mm armatohaubica samobieżna)",
+   "side": "PL",
+   "category": "artyleria",
+   "crew": 5,
+   "weapons": [
+    {
+     "name": "armatohaubica 155 mm L/52",
+     "range_m": 40000,
+     "kind": "pośredni"
+    },
+    {
+     "name": "WKM 12,7 mm",
+     "range_m": 1500,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Zasięg ok. 40 km z amunicją wspomaganą."
+  },
+  {
+   "id": "pl-rak-120",
+   "name": "RAK 120 mm (moździerz samobieżny na Rosomaku)",
+   "side": "PL",
+   "category": "moździerz",
+   "crew": 4,
+   "weapons": [
+    {
+     "name": "moździerz 120 mm",
+     "range_m": 8000,
+     "kind": "pośredni"
+    }
+   ],
+   "note": "Automatyczny moździerz samobieżny."
+  },
+  {
+   "id": "pl-homar-k",
+   "name": "Homar-K (wyrzutnia rakiet 290 mm)",
+   "side": "PL",
+   "category": "artyleria",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "rakieta CGR-080 290 mm",
+     "range_m": 80000,
+     "kind": "pośredni"
+    }
+   ],
+   "note": "Wieloprowadnicowa wyrzutnia rakiet."
+  },
+  {
+   "id": "pl-moz-98",
+   "name": "Moździerz 98 mm (M-98)",
+   "side": "PL",
+   "category": "moździerz",
+   "crew": 4,
+   "weapons": [
+    {
+     "name": "moździerz 98 mm",
+     "range_m": 6000,
+     "kind": "pośredni"
+    }
+   ],
+   "note": "Moździerz kompanijny/batalionowy."
+  },
+  {
+   "id": "pl-moz-60",
+   "name": "Moździerz 60 mm (LMP-2017)",
+   "side": "PL",
+   "category": "moździerz",
+   "crew": 2,
+   "weapons": [
+    {
+     "name": "moździerz 60 mm",
+     "range_m": 2500,
+     "kind": "pośredni"
+    }
+   ],
+   "note": "Moździerz plutonowy."
+  },
+  {
+   "id": "pl-spike-lr",
+   "name": "Spike-LR (zestaw ppk)",
+   "side": "PL",
+   "category": "ppk",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "Spike-LR",
+     "range_m": 4000,
+     "kind": "ppanc"
+    }
+   ],
+   "note": "Przeciwpancerny pocisk kierowany dalekiego zasięgu."
+  },
+  {
+   "id": "pl-pirat",
+   "name": "Pirat (zestaw ppk)",
+   "side": "PL",
+   "category": "ppk",
+   "crew": 2,
+   "weapons": [
+    {
+     "name": "Pirat",
+     "range_m": 2500,
+     "kind": "ppanc"
+    }
+   ],
+   "note": "Polski ppk (rodzina Pirat)."
+  },
+  {
+   "id": "pl-piorun",
+   "name": "Piorun (przenośny zestaw plot)",
+   "side": "PL",
+   "category": "plot",
+   "crew": 1,
+   "weapons": [
+    {
+     "name": "Piorun",
+     "range_m": 6500,
+     "kind": "plot"
+    }
+   ],
+   "note": "Pułap do ok. 4 km."
+  },
+  {
+   "id": "pl-poprad",
+   "name": "Poprad (samobieżny zestaw plot)",
+   "side": "PL",
+   "category": "plot",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "Piorun",
+     "range_m": 6500,
+     "kind": "plot"
+    },
+    {
+     "name": "WKM 12,7 mm",
+     "range_m": 1500,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Zestaw na bazie pojazdu opancerzonego."
+  },
+  {
+   "id": "pl-ukm-2000",
+   "name": "UKM-2000 (karabin maszynowy 7,62 mm)",
+   "side": "PL",
+   "category": "broń zespołowa",
+   "crew": 1,
+   "weapons": [
+    {
+     "name": "UKM-2000 7,62×51",
+     "range_m": 800,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Uniwersalny karabin maszynowy."
+  },
+  {
+   "id": "pl-wkm",
+   "name": "WKM-B 12,7 mm",
+   "side": "PL",
+   "category": "broń zespołowa",
+   "crew": 2,
+   "weapons": [
+    {
+     "name": "WKM-B 12,7×99",
+     "range_m": 1500,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Wielkokalibrowy karabin maszynowy."
+  },
+  {
+   "id": "pl-grot",
+   "name": "Karabinek MSBS Grot 5,56 mm",
+   "side": "PL",
+   "category": "broń indywidualna",
+   "crew": 1,
+   "weapons": [
+    {
+     "name": "MSBS Grot 5,56×45",
+     "range_m": 500,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Podstawowy karabinek piechoty."
+  },
+  {
+   "id": "pl-flyeye",
+   "name": "FlyEye (BSP rozpoznawczy)",
+   "side": "PL",
+   "category": "BSP",
+   "crew": 2,
+   "note": "Taktyczny BSP; zasięg łącza do ok. 15 km, długotrwałość ok. 2,5 h."
+  },
+  {
+   "id": "pl-warmate",
+   "name": "Warmate (amunicja krążąca)",
+   "side": "PL",
+   "category": "BSP",
+   "crew": 2,
+   "weapons": [
+    {
+     "name": "głowica odłamkowo-burząca",
+     "range_m": 30000,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Zasięg do ok. 30 km (wersje dalekie)."
+  },
+  {
+   "id": "pl-gladius",
+   "name": "Gladius (system żołnierza)",
+   "side": "PL",
+   "category": "wyposażenie",
+   "note": "Zintegrowany system wyposażenia żołnierza: łączność, nawigacja, cele."
+  },
+  {
+   "id": "pl-baobab-k",
+   "name": "Baobab-K (system minowania)",
+   "side": "PL",
+   "category": "wyposażenie",
+   "crew": 3,
+   "note": "Wyrzutnia min narzutowych na podwoziu Jelcz."
+  },
+  {
+   "id": "pl-jelcz",
+   "name": "Jelcz (samochód ciężarowy)",
+   "side": "PL",
+   "category": "pojazd logistyczny",
+   "crew": 2,
+   "note": "Samochód ciężarowy terenowy (rodzina 442/662): transport i zaopatrzenie."
+  },
+  {
+   "id": "ru-t-80bvm",
+   "name": "T-80BVM",
+   "side": "RU",
+   "category": "czołg",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "armata 125 mm 2A46M-5",
+     "range_m": 2500,
+     "kind": "ppanc"
+    },
+    {
+     "name": "Refleks (9M119M)",
+     "range_m": 5000,
+     "kind": "ppanc"
+    },
+    {
+     "name": "karabin maszynowy 12,7 mm",
+     "range_m": 1500,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Zmodernizowany T-80B; strona przeciwna."
+  },
+  {
+   "id": "ru-t-72b3",
+   "name": "T-72B3",
+   "side": "RU",
+   "category": "czołg",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "armata 125 mm 2A46M-5",
+     "range_m": 2500,
+     "kind": "ppanc"
+    },
+    {
+     "name": "Swir (9M119)",
+     "range_m": 4000,
+     "kind": "ppanc"
+    },
+    {
+     "name": "karabin maszynowy 12,7 mm",
+     "range_m": 1500,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Zmodernizowany T-72; strona przeciwna (RU/BY)."
+  },
+  {
+   "id": "ru-bmp-2",
+   "name": "BMP-2",
+   "side": "RU",
+   "category": "pojazd bojowy",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "armata 30 mm 2A42",
+     "range_m": 2000,
+     "kind": "ogólny"
+    },
+    {
+     "name": "Konkurs (9M113)",
+     "range_m": 4000,
+     "kind": "ppanc"
+    }
+   ],
+   "note": "Bojowy wóz piechoty."
+  },
+  {
+   "id": "ru-bmp-3",
+   "name": "BMP-3",
+   "side": "RU",
+   "category": "pojazd bojowy",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "armata 100 mm 2A70",
+     "range_m": 4000,
+     "kind": "ogólny"
+    },
+    {
+     "name": "Arkan (9M117)",
+     "range_m": 5500,
+     "kind": "ppanc"
+    },
+    {
+     "name": "armata 30 mm 2A72",
+     "range_m": 2000,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Bojowy wóz piechoty."
+  },
+  {
+   "id": "ru-btr-82a",
+   "name": "BTR-82A",
+   "side": "RU",
+   "category": "pojazd bojowy",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "armata 30 mm 2A72",
+     "range_m": 2000,
+     "kind": "ogólny"
+    },
+    {
+     "name": "PKT 7,62 mm",
+     "range_m": 1000,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Kołowy transporter opancerzony."
+  },
+  {
+   "id": "ru-2s19",
+   "name": "2S19 Msta-S",
+   "side": "RU",
+   "category": "artyleria",
+   "crew": 5,
+   "weapons": [
+    {
+     "name": "haubica 152 mm 2A64",
+     "range_m": 24700,
+     "kind": "pośredni"
+    }
+   ],
+   "note": "Haubica samobieżna."
+  },
+  {
+   "id": "ru-2s3",
+   "name": "2S3 Akacja",
+   "side": "RU",
+   "category": "artyleria",
+   "crew": 4,
+   "weapons": [
+    {
+     "name": "haubica 152 mm 2A33",
+     "range_m": 18500,
+     "kind": "pośredni"
+    }
+   ],
+   "note": "Haubica samobieżna."
+  },
+  {
+   "id": "ru-bm-27",
+   "name": "BM-27 Uragan (220 mm)",
+   "side": "RU",
+   "category": "artyleria",
+   "crew": 4,
+   "weapons": [
+    {
+     "name": "rakiety 220 mm (16 prowadnic)",
+     "range_m": 35000,
+     "kind": "pośredni"
+    }
+   ],
+   "note": "Wieloprowadnicowa wyrzutnia rakiet."
+  },
+  {
+   "id": "ru-polonez",
+   "name": "Polonez (wyrzutnia rakiet, BY)",
+   "side": "RU",
+   "category": "artyleria",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "rakiety 301 mm",
+     "range_m": 200000,
+     "kind": "pośredni"
+    }
+   ],
+   "note": "Białoruski system rakietowy; zasięg zależy od wersji (Polonez-M do 300 km)."
+  },
+  {
+   "id": "ru-pancyr-s1",
+   "name": "Pancyr-S1",
+   "side": "RU",
+   "category": "plot",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "rakiety 57E6",
+     "range_m": 20000,
+     "kind": "plot"
+    },
+    {
+     "name": "armaty 2×30 mm 2A38M",
+     "range_m": 4000,
+     "kind": "plot"
+    }
+   ],
+   "note": "Samobieżny zestaw artyleryjsko-rakietowy."
+  },
+  {
+   "id": "ru-tor-m2",
+   "name": "Tor-M2",
+   "side": "RU",
+   "category": "plot",
+   "crew": 3,
+   "weapons": [
+    {
+     "name": "rakiety 9M331",
+     "range_m": 12000,
+     "kind": "plot"
+    }
+   ],
+   "note": "Samobieżny zestaw rakietowy krótkiego zasięgu."
+  },
+  {
+   "id": "ru-igla",
+   "name": "Igła (przenośny zestaw plot)",
+   "side": "RU",
+   "category": "plot",
+   "crew": 1,
+   "weapons": [
+    {
+     "name": "Igła 9M39",
+     "range_m": 5200,
+     "kind": "plot"
+    }
+   ],
+   "note": "Przenośny zestaw plot."
+  },
+  {
+   "id": "ru-kornet",
+   "name": "Kornet (zestaw ppk)",
+   "side": "RU",
+   "category": "ppk",
+   "crew": 2,
+   "weapons": [
+    {
+     "name": "Kornet 9M133",
+     "range_m": 5500,
+     "kind": "ppanc"
+    }
+   ],
+   "note": "Przeciwpancerny pocisk kierowany; wersja EM do 8 km."
+  },
+  {
+   "id": "ru-rpg-7",
+   "name": "RPG-7",
+   "side": "RU",
+   "category": "ppk",
+   "crew": 1,
+   "weapons": [
+    {
+     "name": "RPG-7",
+     "range_m": 500,
+     "kind": "ppanc"
+    }
+   ],
+   "note": "Granatnik przeciwpancerny."
+  },
+  {
+   "id": "ru-podnos",
+   "name": "2B14 Podnos (moździerz 82 mm)",
+   "side": "RU",
+   "category": "moździerz",
+   "crew": 4,
+   "weapons": [
+    {
+     "name": "moździerz 82 mm",
+     "range_m": 4270,
+     "kind": "pośredni"
+    }
+   ],
+   "note": "Moździerz batalionowy."
+  },
+  {
+   "id": "ru-ak-74m",
+   "name": "AK-74M",
+   "side": "RU",
+   "category": "broń indywidualna",
+   "crew": 1,
+   "weapons": [
+    {
+     "name": "AK-74M 5,45×39",
+     "range_m": 500,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Podstawowy karabinek."
+  },
+  {
+   "id": "ru-pkm",
+   "name": "PKM 7,62 mm",
+   "side": "RU",
+   "category": "broń zespołowa",
+   "crew": 1,
+   "weapons": [
+    {
+     "name": "PKM 7,62×54R",
+     "range_m": 1000,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Uniwersalny karabin maszynowy."
+  },
+  {
+   "id": "ru-orlan-10",
+   "name": "Orłan-10 (BSP rozpoznawczy)",
+   "side": "RU",
+   "category": "BSP",
+   "crew": 3,
+   "note": "Zasięg do ok. 120 km, długotrwałość do ok. 16 h."
+  },
+  {
+   "id": "ru-lancet",
+   "name": "Lancet-3 (amunicja krążąca)",
+   "side": "RU",
+   "category": "BSP",
+   "crew": 2,
+   "weapons": [
+    {
+     "name": "głowica 3 kg",
+     "range_m": 40000,
+     "kind": "ogólny"
+    }
+   ],
+   "note": "Zasięg do ok. 40 km."
+  },
+  {
+   "id": "ru-ural-4320",
+   "name": "Ural-4320",
+   "side": "RU",
+   "category": "pojazd logistyczny",
+   "crew": 2,
+   "note": "Samochód ciężarowy terenowy."
+  }
+ ]
+}

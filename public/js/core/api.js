@@ -30,8 +30,16 @@ export const api = {
       return [];
     }
   },
+  // Katalog wyposażenia (jawny); brak katalogu = karty działają bez zasięgów i grup.
+  equipment: async () => {
+    try {
+      return await (await request('/data/equipment.json')).json();
+    } catch {
+      return null;
+    }
+  },
   messages: async () => (await request('/api/messages')).json(),
-  // meta: { type, priority } — rodzaj wiadomości i przełącznik „Pilne” (pola opcjonalne).
+  // meta: { type, priority, orders } — rodzaj, przełącznik „Pilne” i rozkazy graficzne (T44) — pola opcjonalne.
   send: async (channel, text, attachments, meta = {}) =>
     (
       await request('/api/outbox', {
@@ -42,6 +50,7 @@ export const api = {
           ...(attachments?.length ? { attachments } : {}),
           ...(meta.type ? { type: meta.type } : {}),
           ...(meta.priority ? { priority: meta.priority } : {}),
+          ...(meta.orders?.length ? { orders: meta.orders } : {}),
         }),
       })
     ).json(),

@@ -5,7 +5,9 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { SCHEMA_VERSION, CHANNEL_KINDS, PLAYER_MESSAGE_FIELDS, MAX_NOTES, isValidTime, extraFields, checkNote, checkMessageText, checkMessageMeta } from '../shared/schema.js';
 import { checkDeliveries, checkEw } from '../shared/ew.js';
+import { checkOrderAttachment } from '../shared/order.js';
 import { checkPlayerFields, checkSituation, checkTracksContinuity, checkGazetteer } from './validate-checks.js';
+import { loadCatalogIndex, checkEquipmentRefs } from './validate-equipment.js';
 import { checkHierarchySums, unitsInWater, loadWaterPolygons, inboxOutOfOrder, enemyNameLeaks, checkFinishedAar } from './validate-realism.js';
 
 // Sprawdzenia T37 (spójność i realizm) żyją w osobnym module; walidator zachowuje je w swoim publicznym API.
@@ -78,6 +80,7 @@ export async function validateScenario(dir) {
   const gazetteer = await readJsonSafe(path.join(dir, 'gazetteer.json'), report);
   if (gazetteer !== undefined && gazetteer !== null) checkGazetteer(gazetteer, report);
 
+  const catalogIndex = await loadCatalogIndex(report);
   const turns = await numbered(path.join(dir, 'player', 'turns'));
   if (turns.length === 0) report.error('brak player/turns/000.json');
   turns.forEach((n, i) => {
@@ -92,6 +95,7 @@ export async function validateScenario(dir) {
     if (data) {
       checkSituation(`player/turns/${pad(n)}`, data, n, scenario, report, true);
       checkPlayerFields(`player/turns/${pad(n)}`, data, report);
+      checkEquipmentRefs(`player/turns/${pad(n)}`, data, catalogIndex, report);
       checkTracksContinuity(`player/turns/${pad(n)}`, prevUnits, data.units, report);
       for (const w of checkHierarchySums(`player/turns/${pad(n)}`, data.units)) report.warn(w);
       playerTurnData.set(n, data);
@@ -125,6 +129,13 @@ export async function validateScenario(dir) {
         const metaError = checkMessageMeta(m);
         if (metaError) report.error(`${where}: ${metaError.toLowerCase()}`);
         for (const f of extraFields(m, PLAYER_MESSAGE_FIELDS)) report.error(`${where}: pole „${f}” spoza schematu gracza (pole sędziego?)`);
+        // Rozkazy graficzne (T44) w załącznikach rozkazów gracza: struktura, geometria i jednostki z tury.
+        if (kind === 'outbox') {
+          for (const a of (Array.isArray(m.attachments) ? m.attachments : []).filter((x) => x?.kind === 'order')) {
+            const r = checkOrderAttachment(a, unitIdsByTurn.get(n));
+            if (r.error) report.error(`${where} rozkaz graficzny [${a.id ?? '?'}]: ${r.error}`);
+          }
+        }
       }
     }
   }
@@ -158,6 +169,7 @@ export async function validateScenario(dir) {
     if (!data) continue;
     const ulabel = `umpire/turns/${pad(n)}`;
     checkSituation(ulabel, data, n, scenario, report);
+    checkEquipmentRefs(ulabel, data, catalogIndex, report);
     if (data.deliveries !== undefined) {
       const r = checkDeliveries(data.deliveries);
       for (const e of r.errors) report.error(`${ulabel}: ${e}`);

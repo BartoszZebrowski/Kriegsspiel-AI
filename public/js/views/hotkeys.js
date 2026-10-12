@@ -41,6 +41,7 @@ export function createHotkeysView({ store, controller }) {
     else if (key === 'w') controller.togglePopover('layers');
     else if (key === 'd') controller.togglePopover('dos');
     else if (key === 'f') controller.command('fit');
+    else if (key === 'o') controller.toggleOrderMode();
     else if (k === ',') controller.prevTurn();
     else if (k === '.') controller.nextTurn();
     else if (TOOL_KEYS[key]) controller.command('tool', TOOL_KEYS[key]);

@@ -660,6 +660,56 @@ try {
     await key('Escape');
   });
 
+  await step('T44 rozkaz graficzny: klawisz O, zaznaczenie klikiem, zadanie, punkt → załącznik w szkicu kanału, podgląd znaku, wysyłka z załącznikiem „order”', async () => {
+    // jednostka z kanałem dowódcy; mapa wyśrodkowana na niej (niezależnie od poprzednich kroków)
+    await ev(`window.__ks.controller.clearSelection()`);
+    const unit = await state(`s.channels.find((c) => c.kind === 'subordinate' && c.unit && /^1bzmot-1k$|^krozp$/.test(c.unit) && s.turn.units.some((u) => u.id === c.unit && Array.isArray(u.pos)))?.unit`);
+    assert(unit, 'jednostka z kanałem dowódcy');
+    await ev(`window.__ks.controller.setDetail('company')`);
+    await ev(`(() => { const u = window.__ks.store.get().turn.units.find((x) => x.id === ${JSON.stringify(unit)}); window.__ks.map.setView([u.pos[1], u.pos[0]], 12, { animate: false }); })()`);
+    await sleep(300);
+    await key('o');
+    await waitFor(`!!window.__ks.store.get().orderMode && !document.getElementById('order-panel').hidden`, 'panel trybu rozkazu (klawisz O)');
+    const [ox, oy] = await mapOrigin();
+    const p = await pointOf(unit);
+    assert(p, 'symbol jednostki na mapie');
+    await click(ox + p[0], oy + p[1]);
+    assert((await state(`s.orderMode.selected.join()`)) === unit, 'klik w symbol zaznacza jednostkę');
+    assert(await ev(`!!document.querySelector('.ms-icon.is-order')`), 'zaznaczony symbol ma ramkę rozkazu');
+    await clickSel('#order-panel [data-task="move"]');
+    assert((await state(`s.orderMode.task + ':' + s.orderMode.kind`)) === 'move:point', 'marsz do → wskazanie punktu');
+    await click(ox + 520, oy + 330);
+    assert(await state(`s.orderMode === null`), 'punkt kończy tryb');
+    const orders = await state(`Object.values(s.drafts).flatMap((d) => d.orders || [])`);
+    assert(orders.length === 1 && orders[0].kind === 'order' && orders[0].task === 'move' && orders[0].geometry.type === 'Point' && orders[0].units[0] === unit, 'załącznik {units, task, geometry} w szkicu');
+    await waitFor(`!!document.querySelector('#compose-chips .att--order')`, 'chip rozkazu w komunikatorze');
+    assert(await ev(`!!document.querySelector('.tac-icon')`), 'podgląd rozkazu znakiem taktycznym na mapie');
+    assert(await ev(`document.getElementById('compose-text').value.length > 0`), 'treść podpowiedziana');
+    await clickSel('#compose-send');
+    await waitFor(`[...document.querySelectorAll('#thread .msg .att')].some((e) => /rozkaz graficzny/.test(e.textContent))`, 'załącznik rozkazu w wątku');
+    const sent = (await fetchJson('/api/messages')).messages.find((m) => m.attachments?.some((a) => a.kind === 'order'));
+    assert(sent && sent.attachments[0].units[0] === unit && sent.attachments[0].geometry.type === 'Point', 'wiadomość z załącznikiem zapisana na serwerze');
+    const bad = await ev(`fetch('/api/outbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ channel: ${JSON.stringify(sent.channel)}, text: 'x', orders: [{ id: 'o-bad', kind: 'order', name: 'x', units: ['nie-ma'], task: 'move', geometry: { type: 'Point', coordinates: [1, 1] } }] }) }).then((r) => r.status)`);
+    assert(bad === 400, 'serwer odrzuca rozkaz z nieznaną jednostką');
+    await ev(`fetch('/api/outbox/' + ${JSON.stringify(sent.id)}, { method: 'DELETE', headers: { 'Content-Type': 'application/json' } }).then((r) => r.status)`);
+    await waitFor(`!window.__ks.store.get().drafts[${JSON.stringify(sent.channel)}]?.orders?.length`, 'szkic oczyszczony po wysłaniu');
+    // rubież: dwa punkty + Enter, Esc wycofuje krok po kroku
+    await key('o');
+    await waitFor(`!!window.__ks.store.get().orderMode`, 'tryb rozkazu');
+    await click(ox + p[0], oy + p[1]);
+    await clickSel('#order-panel [data-task="defend"]');
+    await click(ox + 420, oy + 380);
+    await click(ox + 560, oy + 400);
+    await key('Enter');
+    const line = await state(`Object.values(s.drafts).flatMap((d) => d.orders || [])`);
+    assert(line.length === 1 && line[0].task === 'defend' && line[0].geometry.type === 'LineString' && line[0].geometry.coordinates.length === 2, 'rubież: LineString z 2 punktów');
+    await ev(`window.__ks.controller.clearChannelDraft(${JSON.stringify(sent.channel)})`);
+    await ev(`window.__ks.controller.setDetail(null)`);
+    await key('o');
+    await key('Escape');
+    assert(await state(`s.orderMode === null`), 'tryb zamknięty');
+  });
+
   await step('podkład: popover Warstwy, Jasna wyłącza is-dark-base, wybór zapisany', async () => {
     await clickSel('#b-layers');
     await waitFor(`document.getElementById('layers').classList.contains('open')`, 'popover warstw');

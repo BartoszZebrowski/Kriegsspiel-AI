@@ -647,7 +647,7 @@ Mapa sztabowa zostaje w Leaflet 2D; dochodzi **widok 3D wybranego rejonu** (wari
 - [M] Rejon przesmyku w 3D: widać wzgórza i doliny, jednostki stoją na terenie, obrót i pochylenie płynne.
 - [A] Domena: przekształcenie tury na obiekty widoku 3D (pozycje, symbole, linie).
 
-## T44 — Rozkaz graficzny na mapie (jak w RTS) ⬜
+## T44 — Rozkaz graficzny na mapie (jak w RTS) ✅
 Gracz zaznacza jednostkę (jedną lub kilka) i wskazuje na mapie cel ruchu albo rubież; to **załącznik do rozkazu**, nie natychmiastowe wykonanie — tarcie (T25) i interpretacja przez podwładnego zostają.
 
 **WA**
@@ -677,7 +677,7 @@ Rozkaz do jednostki niżej niż bezpośredni podwładny (np. kompania z pominię
 - [A] Domena: kanał bezpośredniego podwładnego = 0 pominiętych szczebli, kompania pod batalionem = 1, pluton = 2; tryb hard blokuje wysyłkę poza urgent.
 - [M] W trybie soft rozkaz do kompanii działa, a batalion w następnej turze melduje zastrzeżenia lub kolizję planu.
 
-## T46 — Szczegółowe wyposażenie ⬜
+## T46 — Szczegółowe wyposażenie ✅
 Sprzęt i uzbrojenie z katalogu zamiast samych nazw: gracz widzi, czym naprawdę dysponuje pododdział.
 
 **WA**

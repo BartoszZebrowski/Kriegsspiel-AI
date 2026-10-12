@@ -13,6 +13,7 @@ import { DEFAULT_BASEMAP, TILE_OVERLAYS, defaultLayers } from './store.js';
 import { createSelection } from './selection.js';
 import { createMessaging } from './messaging.js';
 import { createLayout } from './layout.js';
+import { createOrders } from './orders.js';
 
 const nullStorage = { load: (_key, fallback) => fallback, save() {} };
 
@@ -56,6 +57,9 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   const layout = createLayout({ store, storage, S, markNoticesSeen, readIfVisible });
   const { setPopover, togglePopover, openOmnibox, closeOmnibox, setDock, toggleDock, setMobile, setNarrow, toggleLeader, setAnimations, setReducedMotion } = layout;
 
+  // Rozkaz graficzny na mapie (T44): tryb zaznaczania i wskazywania; wynik trafia do szkiców kanałów dowódców.
+  const orders = createOrders({ store, S, notify, openChannel: (id) => openChannel(id) });
+
   // Podświetla na mapie jednostkę wybranego kanału (gdy nic nie jest zaznaczone albo przy zmianie kanału).
   const syncSelectionToChannel = () => setSelection(S().channelUnit);
 
@@ -74,6 +78,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     // Przejście o jedną turę do przodu animuje przemieszczenia; skok, cofnięcie i archiwum są natychmiastowe.
     if (n !== s.viewTurn) {
       const turns = extra.turns ?? s.turns;
+      patch.orderMode = null; // zmiana tury kończy tryb rozkazu graficznego
       patch.animation = s.turn && animationsOn() && isSequential(s.viewTurn, n, turns) ? makeAnimation(s.viewTurn, n, s.turn, view.turn) : null;
     }
     // Zaznaczenie znika tylko wtedy, gdy obiektu nie ma już w nowych danych (nie zamykamy inspektora bez powodu).
@@ -92,7 +97,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   // ---------- start ----------
   // Etap 1: scenariusz i preferencje. Widoki można tworzyć dopiero po nim (potrzebują scenariusza).
   async function init() {
-    const [info, places] = await Promise.all([api.scenario(), api.gazetteer()]);
+    const [info, places, equipment] = await Promise.all([api.scenario(), api.gazetteer(), api.equipment?.() ?? null]);
     const id = info.scenario.id;
     const key = (name) => `ks:${id}:${name}`;
     let detail = storage.load(key('detail'), null);
@@ -107,6 +112,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
       currentTurn: current,
       viewTurn: current,
       places,
+      equipment,
       detail,
       layers,
       basemap: typeof mapPrefs.base === 'string' ? mapPrefs.base : DEFAULT_BASEMAP,
@@ -361,6 +367,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     command, setPopover, togglePopover, openOmnibox, closeOmnibox, runCommand,
     selectChannel, setDraft, clearChannelDraft, ensureActiveChannel, unpinChannel, openUnitChannel, openChannel, sendMessage, withdrawMessage,
     saveNotes,
+    ...orders,
     setDock, toggleDock, setMobile, setNarrow, toggleLeader, setAnimations, setReducedMotion,
     openBriefing, closeBriefing,
   };

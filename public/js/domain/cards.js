@@ -5,6 +5,8 @@ import { formatAge, formatClock } from './format.js';
 import { escapeHtml } from './markdown.js';
 import { formatDms, mgrsOf } from './mgrs.js';
 import { dosIndicators, dosAgeMin, isDosStale, formatDosValue, dosBarPct } from './dos.js';
+import { echelonRank, PLATOON_RANK } from './orbat.js';
+import { groupEquipment, subordinateTotals, portableSummary, OTHER_CATEGORY } from './equipment.js';
 import { formatStrength, readinessRatio, readinessLevel, formatEstimateEquipment, formatEstimatePersonnel } from './strength.js';
 
 const e = escapeHtml;
@@ -50,15 +52,41 @@ function personnelBlock(u, ctx) {
   return `<div class="kv"><div class="cap">Stan osobowy${stamp}</div>${body}</div>`;
 }
 
-function equipmentBlock(list) {
+function eqRow(q) {
+  const r = readinessRatio(q.current, q.authorized) ?? 0;
+  return `<div class="eqr"><span class="n" title="${e(q.name)}">${e(q.name)}</span><div class="meter ${meterClass(r)}"><i style="width:${pct(r)}%"></i></div><span class="v">${e(q.current)}/${e(q.authorized)}</span></div>`;
+}
+
+// Zasięgi broni pozycji katalogu: „armata 120 mm L/55 · 4 km · przeciwpancerna”. `approx` = szacunek wroga.
+function weaponsLine(weapons, approx = false) {
+  if (!weapons?.length) return '';
+  const items = weapons.map((w) => `<span class="w-${e(w.kind)}">${e(w.name)} <b>${approx ? '~' : ''}${e(w.range)}</b> <i>${e(w.label)}</i></span>`).join('');
+  return `<div class="eq-w${approx ? ' est' : ''}">${items}</div>`;
+}
+
+// Sprzęt jednostki: bez katalogu (albo bez `ref`) płaska lista „Główny sprzęt”; z `ref` grupy wg kategorii z zasięgami
+// i sumą z podwładnych (ctx.catalog, ctx.units), a dla plutonu i niżej także uzbrojenie drużyn.
+function equipmentBlock(u, ctx = {}) {
+  const list = u.equipment;
   if (!list?.length) return '';
-  const rows = list
-    .map((q) => {
-      const r = readinessRatio(q.current, q.authorized) ?? 0;
-      return `<div class="eqr"><span class="n" title="${e(q.name)}">${e(q.name)}</span><div class="meter ${meterClass(r)}"><i style="width:${pct(r)}%"></i></div><span class="v">${e(q.current)}/${e(q.authorized)}</span></div>`;
+  const groups = groupEquipment(list, ctx.catalog);
+  if (groups.every((g) => g.category === OTHER_CATEGORY)) return `<div class="kv"><div class="cap">Główny sprzęt</div>${list.map(eqRow).join('')}</div>`;
+  const totals = subordinateTotals(ctx.units, u.id);
+  const body = groups
+    .map((g) => {
+      const rows = g.rows
+        .map((q) => {
+          const t = totals.get(q.key);
+          const sub = t ? `<div class="eq-sub" title="Suma z podwładnych">podwładni: ${e(t.current)}/${e(t.authorized)}</div>` : '';
+          return eqRow(q) + sub + weaponsLine(q.weapons);
+        })
+        .join('');
+      return `<div class="eq-cat" data-eq-cat="${e(g.category)}">${e(g.category)}</div>${rows}`;
     })
     .join('');
-  return `<div class="kv"><div class="cap">Główny sprzęt</div>${rows}</div>`;
+  const squads = echelonRank(u) >= 0 && echelonRank(u) <= PLATOON_RANK ? portableSummary(list, ctx.catalog) : '';
+  const squadLine = squads ? `<div class="kvr eq-squads"><span>Uzbrojenie drużyn</span><span>${e(squads)}</span></div>` : '';
+  return `<div class="kv" data-equipment><div class="cap">Wyposażenie</div>${body}${squadLine}</div>`;
 }
 
 // Sekcja DOS (T18): paski w kolorach progu + wiek meldunku. `view` = wynik resolveDos ({dos, derived}) albo null.
@@ -94,17 +122,21 @@ export function unitCard(u, byId = new Map(), kids = [], ctx = {}) {
         ${kids.length ? `<div class="kvr"><span>Podwładni</span><span class="chips">${kids.map((k) => unitChip(k, symbolOf)).join('')}</span></div>` : ''}</div>`
     : '';
   const note = ctx.neighbour ? `<div class="nb-note" role="note"><b>Sąsiad — brak dowodzenia</b><span>Jednostka sąsiada: dane tylko do odczytu, nie przyjmuje rozkazów od gracza.</span></div>` : '';
-  return `<div class="card">${header}${note}${personnelBlock(u, ctx)}${equipmentBlock(u.equipment)}${dosBlock(ctx.dosView, ctx)}
+  return `<div class="card">${header}${note}${personnelBlock(u, ctx)}${equipmentBlock(u, ctx)}${dosBlock(ctx.dosView, ctx)}
     <div class="kv"><div class="cap">Zadanie i położenie</div>${positionBlock(u.pos, rows)}${row('Uwagi', u.notes)}</div>${sub}</div>`;
 }
 
-function estimateBlock(c) {
+function estimateBlock(c, ctx = {}) {
   const p = c.estimate_personnel;
   const eq = c.estimate_equipment;
   if (!p && !eq?.length) return '';
   const src = [c.source, c.confidence && `pewność ${c.confidence}`].filter(Boolean).join(', ');
   const big = p ? `<div class="bignum">${e(formatEstimatePersonnel(p).replace(' żołn.', ''))}<small>żołnierzy</small></div>` : '';
-  const items = (eq || []).map((q) => `<div class="eqr eqr--est"><span class="n">${e(q.name)}</span><span class="v">${e(formatEstimateEquipment(q).split(' ')[0])}</span></div>`).join('');
+  const groups = groupEquipment(eq || [], ctx.catalog);
+  const row = (q) => `<div class="eqr eqr--est"><span class="n">${e(q.name)}</span><span class="v">${e(formatEstimateEquipment(q).split(' ')[0])}</span></div>${weaponsLine(q.weapons, true)}`;
+  const items = groups.every((g) => g.category === OTHER_CATEGORY)
+    ? (eq || []).map((q) => `<div class="eqr eqr--est"><span class="n">${e(q.name)}</span><span class="v">${e(formatEstimateEquipment(q).split(' ')[0])}</span></div>`).join('')
+    : groups.map((g) => `<div class="eq-cat">${e(g.category)}</div>${g.rows.map(row).join('')}`).join('');
   return `<div class="kv estimate"><div class="cap">Szacunek sił<span class="grow"></span><span class="pill">NIE PRAWDA</span></div>${big}
     <div class="est-eq">${items}</div><div class="estimate__src">źródło: ${e(src)}</div></div>`;
 }
@@ -116,7 +148,7 @@ export function contactCard(c, turnTime, tz, ctx = {}) {
   const seen = c.observed ? `<div class="kvr"><span>Zaobserwowano</span><span class="mono">${e(formatClock(c.observed, tz))}${age ? ` <span class="age">· ${e(age)}</span>` : ''}</span></div>` : '';
   const conf = c.confidence ? `<div class="kvr"><span>Pewność</span><span><span class="tag rep${c.confidence === 'niska' ? ' warn' : ''}">${e(c.confidence)}</span></span></div>` : '';
   const unc = c.uncertainty_m ? `<div class="kvr"><span>Niepewność</span><span class="mono">± ${e((c.uncertainty_m / 1000).toFixed(1))} km</span></div>` : '';
-  return `<div class="card">${header}<div class="kv"><div class="cap">Obserwacja</div>${seen}${row('Źródło', c.source)}${conf}${unc}${positionBlock(c.pos, '')}${row('Uwagi', c.notes)}</div>${estimateBlock(c)}</div>`;
+  return `<div class="card">${header}<div class="kv"><div class="cap">Obserwacja</div>${seen}${row('Źródło', c.source)}${conf}${unc}${positionBlock(c.pos, '')}${row('Uwagi', c.notes)}</div>${estimateBlock(c, ctx)}</div>`;
 }
 
 export function assetCard(a, ctx = {}) {

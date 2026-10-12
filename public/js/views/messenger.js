@@ -4,11 +4,13 @@
 // Renderuje ze store; wszystkie akcje zgłasza kontrolerowi.
 import { escapeHtml as e } from '../domain/markdown.js';
 import { draftType, foreignUnitMentions, unknownPlaceNames, channelListModel } from '../domain/compose.js';
+import { draftOrders } from '../domain/order.js';
 import { ic } from '../lib/icons.js';
 import { TEMPLATES, PLACEHOLDERS, TEMPLATE_MENU, isTemplate } from './messenger/templates.js';
 import { channelGlyph } from './messenger/glyphs.js';
 import { createThread } from './messenger/thread.js';
 import { createMentionPopup } from './messenger/mentions.js';
+import { orderChipsHtml } from './messenger/orders.js';
 
 export { TEMPLATES };
 
@@ -140,12 +142,13 @@ export function createMessengerView({ store, controller, root = document }) {
   function renderChips() {
     const { notes } = S();
     const ids = draft().attachIds.filter((id) => notes.some((n) => n.id === id));
-    els.chips.innerHTML = ids
-      .map((id) => {
-        const n = notes.find((x) => x.id === id);
-        return `<span class="att att--sel">${ic('clip', 's')}${e(n.name)}<a role="button" tabindex="0" data-unattach="${e(id)}" aria-label="Usuń załącznik">${ic('x', 's')}</a></span>`;
-      })
-      .join('');
+    els.chips.innerHTML =
+      ids
+        .map((id) => {
+          const n = notes.find((x) => x.id === id);
+          return `<span class="att att--sel">${ic('clip', 's')}${e(n.name)}<a role="button" tabindex="0" data-unattach="${e(id)}" aria-label="Usuń załącznik">${ic('x', 's')}</a></span>`;
+        })
+        .join('') + orderChipsHtml(draftOrders(draft()));
   }
 
   function renderAttachMenu() {
@@ -199,6 +202,10 @@ export function createMessengerView({ store, controller, root = document }) {
     els.text.focus();
   });
   els.chips.addEventListener('click', (ev) => {
+    const show = ev.target.closest('[data-order-show]');
+    const del = ev.target.closest('[data-order-del]');
+    if (show) return controller.showAttachment(draftOrders(draft()).find((o) => o.id === show.dataset.orderShow));
+    if (del) return patchDraft({ orders: draftOrders(draft()).filter((o) => o.id !== del.dataset.orderDel) });
     const btn = ev.target.closest('[data-unattach]');
     if (!btn) return;
     patchDraft({ attachIds: draft().attachIds.filter((x) => x !== btn.dataset.unattach) });
@@ -228,7 +235,7 @@ export function createMessengerView({ store, controller, root = document }) {
     els.send.disabled = true;
     thread.stickToBottom();
     const d = draft();
-    const msg = await controller.sendMessage(text, d.attachIds, { type: type(), priority: d.urgent ? 'urgent' : 'normal' });
+    const msg = await controller.sendMessage(text, d.attachIds, { type: type(), priority: d.urgent ? 'urgent' : 'normal', orders: draftOrders(d) });
     if (msg) mentions.close(); // kontroler czyści szkic kanału, widok synchronizuje pola
     renderCompose(S());
   }

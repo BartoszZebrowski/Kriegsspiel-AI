@@ -27,6 +27,11 @@ const SHARED = {
   'schema.js': 'shared/schema.js',
 };
 
+// Jawna lista plików danych (katalog wyposażenia, T46) — /data/<klucz>, tylko do odczytu.
+const DATA = {
+  'equipment.json': 'data/equipment.json',
+};
+
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
@@ -131,6 +136,12 @@ async function handleApi(req, res, store, watcher, parts) {
 async function handleStatic(res, pathname) {
   if (pathname.startsWith('/shared/')) {
     const rel = SHARED[pathname.slice('/shared/'.length)];
+    if (!rel) throw new StoreError(404, 'Nie znaleziono');
+    return sendFile(res, path.join(ROOT, rel));
+  }
+  if (pathname.startsWith('/data/')) {
+    const key = pathname.slice('/data/'.length);
+    const rel = Object.hasOwn(DATA, key) ? DATA[key] : null;
     if (!rel) throw new StoreError(404, 'Nie znaleziono');
     return sendFile(res, path.join(ROOT, rel));
   }

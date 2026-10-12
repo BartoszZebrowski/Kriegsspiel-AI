@@ -37,7 +37,8 @@ export function clearDraft(drafts, channelId) {
 }
 
 // Czy szkic zawiera cokolwiek wartego zapamiętania.
-export const isDraftEmpty = (draft) => !draft || (!draft.text?.trim() && !draft.attachIds?.length && !draft.urgent && !draft.type);
+// `orders` (opcjonalne): załączniki rozkazu graficznego (domain/order.js), kopiowane do wiadomości przy wysłaniu.
+export const isDraftEmpty = (draft) => !draft || (!draft.text?.trim() && !draft.attachIds?.length && !draft.orders?.length && !draft.urgent && !draft.type);
 
 // ---------- wzmianki w treści ----------
 // Własne jednostki wymienione w treści, które nie są adresatem (ani jego podwładnymi — o nich dowódca wie).

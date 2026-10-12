@@ -24,6 +24,7 @@ export function initialState() {
     messages: [], // wszystkie wiadomości (inbox + outbox)
     notes: [], // szkice gracza dla oglądanej tury
     places: [], // gazeter
+    equipment: null, // katalog wyposażenia (data/equipment.json) albo null
     // --- wybór i preferencje widoku ---
     selection: null, // { id, kind } — jedyny zaznaczony obiekt (mapa, struktura, inspektor); kanał komunikatora go nie zmienia
     hoverUnit: null, // jednostka wskazana myszą (podświetla podwładnych)
@@ -33,12 +34,13 @@ export function initialState() {
     layers: defaultLayers(),
     basemap: DEFAULT_BASEMAP, // nazwa podkładu mapy
     activeChannel: null, // id wybranego kanału komunikatora
-    drafts: {}, // szkice wiadomości per kanał: { [channelId]: { text, type, urgent, attachIds } } (domain/compose.js)
+    drafts: {}, // szkice wiadomości per kanał: { [channelId]: { text, type, urgent, attachIds, orders? } } (domain/compose.js; orders: domain/order.js)
     pinned: [], // id kanałów przypiętych na pasku komunikatora
     fresh: new Set(), // wiadomości nieprzeczytane w chwili otwarcia kanału (separator „NOWE”)
     read: new Set(), // id przeczytanych wiadomości
     ui: { leftCollapsed: false, rightCollapsed: false, mobile: 'map', narrow: false, leader: true, animations: true, reducedMotion: false },
     animation: null, // jednorazowe zlecenie dla mapy: { nonce, from, to, plan, ms } — odtwórz przemieszczenia między turami (domain/motion.js)
+    orderMode: null, // tryb rozkazu graficznego (T44): null | { selected: [id], task, kind, delivery } (domain/order.js)
     popover: null, // otwarty popover mapy: 'legend' | 'layers' | 'dos' | 'bell' | null
     omnibox: { open: false },
     command: null, // jednorazowe polecenie dla widoku: { name, arg, nonce }

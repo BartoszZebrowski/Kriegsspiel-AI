@@ -155,3 +155,35 @@ Cel: ≤ ~300 linii na plik, podział wg odpowiedzialności, zachowanie bez zmia
 | `views/map/index.js` (319 → 282) | `views/map/logistics.js` (warstwa logistyczna wzorem `ewzones.js`); `LG_SIDC` w `domain/logistics.js` (jedno miejsce dla mapy i inspektora). |
 
 Zostają większe niż ~300 linii: `views/draw.js` (389) i `core/controller.js` (367) — dalszy podział wymagałby przekazywania wspólnego, często zmienianego stanu (aktywne narzędzie / edycja kształtu; epoki nawigacji i odświeżenie) między modułami, co pogorszyłoby czytelność. `tools/smoke.mjs` (1190), `tools/umpire/deploy.mjs` (473), `terrain-view.mjs` (367) i testy są poza zakresem T40.
+
+## Katalog wyposażenia (T46)
+
+Jawny katalog sprzętu i uzbrojenia (dane z jawnych źródeł; zasięgi skuteczne, orientacyjne). Jedno źródło prawdy, trzy warstwy:
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Dane | `data/equipment.json` | `{ categories:[{id, portable?}], weaponKinds:{kind: opis}, items:[{id, name, side: PL\|RU, category, crew?, weapons?:[{name, range_m, kind}], note}] }`. Kolejność i lista kategorii oraz rodzajów broni są **w danych** (nie dublujemy ich w kodzie). Część `side: "RU"` = przeciwnik (RU/BY). |
+| Walidacja | `shared/equipment.js` (czysty JS, bez DOM i Node) | `checkCatalog(catalog)` → lista błędów (id unikalne, kategoria i `kind` z listy katalogu, broń bez `range_m` > 0 = błąd), `indexCatalog`, `checkEquipmentRef`. Używają go walidator scenariusza (`tools/validate-equipment.js`) i testy. |
+| Serwowanie | `server/app.js` | jawna lista `DATA` (jak `VENDOR` i `SHARED`): tylko `GET /data/equipment.json`; nic innego z `data/`. |
+| Klient | `core/api.js` → `controller.init` → plaster `equipment` w store | katalog ładuje się raz przy starcie (brak katalogu = karty działają jak dotąd). |
+| Logika | `domain/equipment.js` (czysta; katalog dostaje jako parametr, bo `domain/` nie importuje z `shared/`) | `indexCatalog`, `groupEquipment` (wg kategorii, z zasięgami), `subordinateTotals` (suma z podwładnych), `portableSummary` („3 × UKM-2000, 2 × Pirat”), `formatRange`. |
+| Widok | `domain/cards.js` (HTML karty) + `views/inspector.js` | inspektor podaje `ctx.catalog` z store; karta renderuje grupy. Bez nowych zależności między widokami. |
+
+Zgodność wstecz: `equipment[]` i `estimate_equipment[]` mogą mieć `ref` (id z katalogu) obok `name`; wpis bez `ref` działa jak dotąd (grupa „Inne”). Walidator: `ref` spoza katalogu = błąd. Katalog nie jest plikiem gracza ani sędziego, więc nie obowiązuje go strażnik wycieku; zasięgi wroga w kliencie wynikają wyłącznie z **szacunku** gracza (`estimate_equipment` + `ref`), nigdy z prawdy.
+
+## Rozkaz graficzny na mapie (T44)
+
+Gracz zaznacza jednostki, wskazuje na mapie punkt / trasę / rubież / rejon i wybiera zadanie. Wynik to **załącznik strukturalny do szkicu wiadomości** (nie wykonanie): `{ id, kind: "order", name, units:[id], task, geometry }`. Tarcie (T25) i interpretacja przez podwładnego zostają po stronie sędziego.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/order.js` (czysty JS) | `ORDER_TASKS` (zadanie → dozwolone typy geometrii), limity, `checkOrderAttachment(a)` → `{ order }` albo `{ error }`. Używają go serwer (`store.sendMessage`), walidator scenariusza i testy. Osobny plik, bo `shared/schema.js` ma jednego właściciela naraz. |
+| Logika | `domain/order.js` (czysta, testowana w Node) | `ORDER_TASKS` z nazwami dla UI (id jak w `shared/order.js` — komentarz zamiast importu, bo `domain/` nie importuje z `shared/`), `selectableUnits`, `unitsInBounds` (ramka), `toggleUnit`, `geometryFromPoints`, `orderGraphic` (zadanie + typ geometrii → rodzaj i znak z `domain/tactical.js`), `deliveryGroups` (jednostki → kanały), `buildOrderAttachments`, `orderPreviewNote`, `addDraftOrders` / `removeDraftOrder`. |
+| Stan | `core/store.js` | plaster `orderMode`: `null` albo `{ selected:[id], task, kind, delivery }`. Geometria w trakcie klikania jest lokalna dla widoku mapy; szkice (`drafts[kanał].orders`) już istnieją (T33). |
+| Intencje | `core/orders.js` (podkontroler jak `messaging.js`) | `toggleOrderMode`, `orderPick`, `orderSetTask`, `orderSetKind`, `orderSetDelivery`, `orderRemoveUnit`, `orderCommit(geometry)`: buduje załączniki, dopisuje je do szkiców właściwych kanałów **jednym** `store.set`, otwiera pierwszy kanał. Zmiana tury (`applyView`) zeruje tryb. |
+| Widoki | `views/map/order.js` (tryb: zaznaczanie klikiem / Shift+klik / Shift+ramką, panel zadań, zbieranie punktów) i `views/map/order-preview.js` (podgląd wszystkich załączników ze szkiców znakiem taktycznym, do czasu wysłania) | importują tylko `domain/` i `lib/`; `index.js` mapy przekazuje im `markers` i oddaje kliknięcie w symbol, gdy tryb jest aktywny. Messenger (`views/messenger/orders.js`) pokazuje załączniki w szkicu i wysyła je razem z wiadomością. |
+| Wspólny render znaku | `lib/tactical-layers.js` | `addBuiltLayers(group, built, color, toLL)` rysuje wynik `buildGraphic` na grupie Leaflet (bez importu `domain/`: `built` dostaje jako dane). Używają go `views/draw/shapes.js` i podgląd rozkazu — jedna implementacja. |
+
+**Decyzja (WA3): kanały.** Domyślnie (`delivery: "own"`) każda zaznaczona jednostka dostaje osobny załącznik w szkicu **własnego** kanału (dowódcy tej jednostki), z tą samą geometrią. Przełącznik „przez wspólnego przełożonego” (`"common"`) składa jednostki w jeden załącznik w kanale najniższego wspólnego przełożonego, o ile ma kanał podwładnego; w przeciwnym razie zachowuje się jak `own`. Jednostki bez kanału (sąsiedzi, przełożony) są pomijane z komunikatem. Szkice w kanałach są niezależne, gracz wysyła je osobno (z możliwością edycji tekstu).
+
+**Serwer:** `POST /api/outbox` przyjmuje dodatkowe `orders: [...]`; każdy element przechodzi `checkOrderAttachment`, jednostki muszą istnieć w bieżącej turze gracza i nie należeć do formacji sąsiada. Do pliku `outbox` trafiają w `attachments` obok kopii szkiców. Zapis do `player/outbox`, `docs/SCHEMA.md`, walidator (`tools/validate.js`) sprawdza `kind: "order"` tym samym `checkOrderAttachment`.

@@ -18,6 +18,8 @@ import { createHierarchyLayer } from './hierarchy.js';
 import { createMapControls } from './controls.js';
 import { createMotion } from './motion.js';
 import { createLogisticsLayer } from './logistics.js';
+import { createOrderMode } from './order.js';
+import { createOrderPreview } from './order-preview.js';
 
 // Rozmiar symbolu zależy od szczebla: im mniejsza jednostka, tym mniejszy znak.
 function unitSize(u) {
@@ -101,12 +103,17 @@ export function createMapView({ store, controller, root = document }) {
 
   const logistics = createLogisticsLayer({ group: situation.logistics, markers, scenario, controller, onAdd: () => applySelection() });
 
+  // Rozkaz graficzny (T44): tryb zaznaczania i wskazywania oraz podgląd niewysłanych rozkazów.
+  const order = createOrderMode({ store, controller, map, markers, root });
+  createOrderPreview({ store, map });
+
   const markerEl = (id) => markers.get(id)?.getElement();
 
   function applySelection() {
     const id = S().selection?.id ?? null;
     for (const [mid, m] of markers) m.getElement()?.classList.toggle('is-selected', mid === id);
     logistics.applySelection(id);
+    order.applyMarks();
   }
 
   // Najechanie na wiersz drzewa albo symbol: jasna ramka; przełożony podświetla podwładnych i wzmacnia linie.
@@ -131,7 +138,9 @@ export function createMapView({ store, controller, root = document }) {
       direction: 'top',
       offset: [0, -12],
     });
-    marker.on('click', () => controller.selectEntity(item.id, { pan: false }));
+    marker.on('click', (ev) => {
+      if (!order.handleMarkerClick(item.id, ev)) controller.selectEntity(item.id, { pan: false });
+    });
     // Dwuklik na jednostce własnej otwiera jej kanał w komunikatorze.
     marker.on('dblclick', () => {
       if (S().turn?.units?.some((u) => u.id === item.id)) controller.openUnitChannel(item.id);

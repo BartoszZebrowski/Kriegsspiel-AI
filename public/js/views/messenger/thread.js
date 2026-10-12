@@ -6,6 +6,7 @@ import { parseSender, messageTags } from '../../domain/messages.js';
 import { symbolSvg } from '../../lib/symbols.js';
 import { ic } from '../../lib/icons.js';
 import { channelGlyph } from './glyphs.js';
+import { attachmentKindLabel } from './orders.js';
 
 // `box` — element wątku. Zwraca render(s), stickToBottom() (następne renderowanie zjedzie na dół) i attachment(klucz).
 export function createThread({ box }) {
@@ -19,7 +20,7 @@ export function createThread({ box }) {
       .map((a) => {
         const key = `${m.id}:${a.id}`;
         attachmentsById.set(key, a);
-        return `<button type="button" class="att" data-attachment="${e(key)}" title="Pokaż na mapie">${ic('clip', 's')}${e(a.name)}<small>${e(a.kind || 'szkic')}</small></button>`;
+        return `<button type="button" class="att" data-attachment="${e(key)}" title="Pokaż na mapie">${ic('clip', 's')}${e(a.name)}<small>${e(attachmentKindLabel(a))}</small></button>`;
       })
       .join('')}</div>`;
   }

@@ -62,7 +62,7 @@ export function createMessaging({ store, api, storage, S, keyOf, notify, syncSel
     selectChannel(first.id);
   }
 
-  // Zwraca wysłaną wiadomość albo null (archiwum, brak kanału, błąd). meta: { type, priority }.
+  // Zwraca wysłaną wiadomość albo null (archiwum, brak kanału, błąd). meta: { type, priority, orders }.
   async function sendMessage(text, attachments = [], meta = {}) {
     const s = S();
     const body = (text || '').trim();

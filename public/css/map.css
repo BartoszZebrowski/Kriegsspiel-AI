@@ -144,3 +144,22 @@ body.l-collapsed .leader,body.r-collapsed .leader{}
 .ms-icon.lg-bridge{background:none;border:0}
 .ms-icon.lg-bridge svg{display:block;filter:drop-shadow(0 1px 2px rgba(0,0,0,.6))}
 .leaflet-interactive.lg-route.is-selected{filter:drop-shadow(0 0 4px rgba(76,144,240,.9))}
+
+/* ---- rozkaz graficzny na mapie (T44) ---- */
+.order-panel{left:54px;top:12px;width:268px;padding:8px 10px 10px;display:flex;flex-direction:column;gap:7px;font-size:12px}
+.order-panel[hidden]{display:none}
+.order-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.order-row{display:flex;flex-direction:column;gap:4px}
+.order-chips{display:flex;flex-wrap:wrap;gap:4px}
+.order-chip{display:inline-flex;align-items:center;gap:4px;padding:1px 4px 1px 7px;border-radius:var(--r-2);background:var(--accent-soft);border:1px solid var(--accent-line);color:var(--t-1);font-size:11px}
+.order-chip a{display:inline-grid;place-items:center;cursor:pointer;color:var(--t-3)}
+.order-chip a:hover{color:var(--t-1)}
+.order-tasks{flex-wrap:wrap}
+.order-opt{display:flex;align-items:center;gap:6px;color:var(--t-2);font-size:11px}
+.order-hint{color:var(--t-3);font-size:11px}
+.order-hint--now{color:var(--t-2)}
+.order-actions{display:flex;gap:6px}
+.order-box{position:absolute;z-index:var(--z-map-ui);border:1.5px dashed var(--accent);background:var(--accent-soft);pointer-events:none}
+#mapwrap.is-order-drawing .leaflet-container,#mapwrap.is-order-drawing .leaflet-interactive{cursor:crosshair}
+.ms-icon.is-order::before{border-color:#ffd54a;box-shadow:0 0 0 3px rgba(255,213,74,.25),0 0 14px rgba(255,213,74,.45)}
+.att--order a{cursor:pointer}

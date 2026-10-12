@@ -5,6 +5,7 @@ import { describeSidc } from '../../domain/sidc.js';
 import { escapeHtml } from '../../domain/markdown.js';
 import { arrowHead, pathLengthKm, formatKm, toLatLng } from '../../domain/geo.js';
 import { graphicInfo, buildGraphic, mainStyle, pointIconSvg } from '../../domain/tactical.js';
+import { builtLayers } from '../../lib/tactical-layers.js';
 import { COLORS, COLOR_NAMES, KIND_NAMES } from './graphics.js';
 
 export function createShapes({ map }) {
@@ -85,17 +86,7 @@ export function createShapes({ map }) {
         group.addLayer(l);
         extra.push(l);
       };
-      for (const s of built.shapes) {
-        if (!s.parts.length) continue;
-        const base = { interactive: false, color, weight: s.weight, dashArray: s.dash, lineJoin: 'round' };
-        if (s.role === 'fill') add(L.polygon(s.parts[0].map(toLL), { interactive: false, stroke: false, fillColor: color, fillOpacity: s.fillOpacity }));
-        else if (s.closed) add(L.polygon(s.parts.map((p) => [p.map(toLL)]), { ...base, fill: !!s.solid, fillColor: color, fillOpacity: 1 }));
-        else add(L.polyline(s.parts.map((p) => p.map(toLL)), { ...base, fill: false }));
-      }
-      for (const lb of built.labels) {
-        const html = `<span class="tac-label tac-label--${lb.cls} tac-label--${lb.anchor}" style="color:${color};--a:${lb.angle}deg">${escapeHtml(lb.text).replace(/\n/g, '<br>')}</span>`;
-        add(L.marker(toLL(lb), { icon: L.divIcon({ className: 'tac-lbl', html, iconSize: [0, 0] }), interactive: false, keyboard: false }));
-      }
+      for (const l of builtLayers(built, color, toLL)) add(l);
     };
     decors.add(rebuild);
     main.on('pm:markerdrag pm:drag pm:edit pm:vertexadded pm:vertexremoved pm:dragend', rebuild);

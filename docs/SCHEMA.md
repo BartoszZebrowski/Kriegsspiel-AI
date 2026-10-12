@@ -87,7 +87,7 @@ Wszystkie elementy `units`/`contacts`/`assets` mają unikalne w pliku `id`.
 | `status` | tekst | nie | `w marszu`, `SD rozwinięte`… |
 | `task` | tekst | nie | Bieżące zadanie. |
 | `personnel` | `{current, authorized}` | nie | Liczby całkowite ≥ 0; `current > authorized` = uwaga. |
-| `equipment` | `[{name, current, authorized}]` | nie | Główny sprzęt. |
+| `equipment` | `[{name, current, authorized, ref?}]` | nie | Główny sprzęt. `ref` = id pozycji katalogu wyposażenia (`data/equipment.json`, T46): karta pokazuje grupy wg kategorii i zasięgi; `ref` spoza katalogu = błąd, brak `ref` = jak dotąd. |
 | `parent` | tekst | nie | Id jednostki nadrzędnej (istniejącej, bez cykli). Przełożony i sąsiedzi bez `parent`. |
 | `formation` | tekst | nie | **Jednostka sąsiada** (nie podlega graczowi): id dowództwa sąsiada z tej samej tury (np. `zt-mamry`), zamiast `parent`. Cel nie ma ani `parent`, ani `formation` (brak cykli); `parent` i `formation` naraz = błąd. Podwładni takiej jednostki mogą używać `parent` (należą do formacji pośrednio). Takie jednostki nie mają kanałów komunikatora (serwer odrzuca wiadomość: 400). |
 | `track` | `[[lon,lat], …]` | nie | Trasa przejechana w turze, która **kończy się** w `pos` (pierwszy punkt = pozycja z poprzedniej tury). ≥ 2 poprawne punkty (inaczej błąd); ostatni punkt ≠ `pos` (tolerancja 1e-6°) albo pierwszy punkt dalej niż ~100 m od poprzedniej pozycji = uwaga. Służy tylko animacji przemieszczenia; bez `track` jednostka jedzie po prostej. Dotyczy jednostek własnych i sąsiadów. |
@@ -126,7 +126,7 @@ Obiekt z czterema opcjonalnymi listami. Ten sam kształt w `player/turns` (to, c
 | `confidence` | tekst | nie | `wysoka` / `średnia` / `niska`. |
 | `estimate` | tekst | nie | Opis szacunku (`batalionowa grupa taktyczna`). |
 | `estimate_personnel` | `{count, approx}` | nie | `count` całkowite ≥ 0. |
-| `estimate_equipment` | `[{name, count, approx}]` | nie | Szacunek sprzętu. |
+| `estimate_equipment` | `[{name, count, approx, ref?}]` | nie | Szacunek sprzętu. `ref` jak w `equipment` (część `side: "RU"` katalogu); zasięgi na karcie są szacunkowe. |
 
 **Kontakt-nadajnik (T26):** namierzony nadajnik to kontakt z SIDC funkcji `UUMSEI` (np. `SHGAUUMSEI----`), **zawsze status `A`** (niepotwierdzony, ramka przerywana; błąd, gdy inny), `source` powinno wskazywać REW/DF (brak = uwaga), `uncertainty_m` zwykle duże. Pozostałe SIDC REW (`SIDC` w `public/js/domain/sidc.js`): `UUMS` rozpoznanie radiowe (SIGINT), `UUMSE` jednostka REW, `UUMSED` namierzanie (DF), `UUMSEJ` zagłuszanie.
 
@@ -146,7 +146,22 @@ Wiadomość: `id` (tekst, unikalny w całym scenariuszu, np. `in-000-01`, tak), 
 
 ## `player/outbox/NNN.json` — jawny, zapisuje aplikacja
 
-`{ "messages": [ … ] }` — rozkazy gracza z tury N. **Sędzia nie modyfikuje tego pliku** (tylko czyta). Wiadomość: `id` (`out-xxxxxxxx`), `channel`, `turn`, `time` (czas gry tury), `sent` (rzeczywisty czas wysłania, ISO UTC), `type` (kategoria rozkazu wybrana przez gracza: `rozkaz`, `zarzadzenie`, `meldunek`, `wiadomosc`; domyślnie `wiadomosc`), `priority` (`normal` albo `urgent` — przełącznik „Pilne”; domyślnie `normal`), `text`, opcjonalne `attachments` (kopie szkiców, jak w `notes`). Zapis przez API jest serializowany (kolejka per scenariusz), a plik zapisywany atomowo przez unikalny plik tymczasowy.
+`{ "messages": [ … ] }` — rozkazy gracza z tury N. **Sędzia nie modyfikuje tego pliku** (tylko czyta). Wiadomość: `id` (`out-xxxxxxxx`), `channel`, `turn`, `time` (czas gry tury), `sent` (rzeczywisty czas wysłania, ISO UTC), `type` (kategoria rozkazu wybrana przez gracza: `rozkaz`, `zarzadzenie`, `meldunek`, `wiadomosc`; domyślnie `wiadomosc`), `priority` (`normal` albo `urgent` — przełącznik „Pilne”; domyślnie `normal`), `text`, opcjonalne `attachments` (kopie szkiców, jak w `notes`, oraz rozkazy graficzne `kind: "order"` — niżej). Zapis przez API jest serializowany (kolejka per scenariusz), a plik zapisywany atomowo przez unikalny plik tymczasowy.
+
+### Rozkaz graficzny w `attachments` (T44)
+
+Gracz zaznacza jednostki na mapie i wskazuje punkt, trasę, rubież albo rejon; wynik jest **załącznikiem do rozkazu**, nie jego wykonaniem (tarcie, czas i interpretacja podwładnego zostają po stronie sędziego). Sędzia czyta geometrię razem z treścią wiadomości; niejasność = interpretacja podwładnego. Walidacja: `checkOrderAttachment` z `shared/order.js` (serwer przy `POST /api/outbox` — pole `orders` w ciele żądania — i walidator scenariusza).
+
+| Pole | Typ | Wym. | Znaczenie |
+|---|---|---|---|
+| `id` | tekst `[\w-]{1,40}` | tak | `o-xxxxxxxx`. |
+| `kind` | `"order"` | tak | Odróżnia od kopii szkicu (`arrow`, `line`, `area`, `point`, `symbol`). |
+| `name` | tekst ≤ 80 | tak | Np. „Marsz do — 1 bzmot”. |
+| `units` | lista id (1–12) | tak | Jednostki własne z bieżącej tury gracza, których dotyczy wskazanie. |
+| `task` | `move`, `occupy`, `defend`, `attack`, `recon` | tak | Marsz do, zajmij rejon, broń rubieży, natarcie na, rozpoznanie. |
+| `geometry` | `{type, coordinates}` | tak | GeoJSON `[lon, lat]`: `move` → Point (punkt) albo LineString (trasa); `occupy` → Polygon; `defend` → LineString (rubież); `attack`, `recon` → Point, LineString (oś / trasa) albo Polygon. |
+
+Zaznaczenie jednostek różnych dowódców tworzy osobne szkice w ich kanałach (ten sam rozkaz z tą samą geometrią, osobna wiadomość do każdego dowódcy) — albo jeden załącznik w kanale wspólnego przełożonego, gdy gracz tak wybierze. Gdy gracz omija dowódcę (rozkaz do kompanii), obowiązują zasady z CLAUDE.md („Rozkazy do dowolnej jednostki własnej”).
 
 ## `player/notes/NNN.json` — jawny, zapisuje aplikacja
 

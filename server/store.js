@@ -5,6 +5,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 
 import { MAX_MESSAGE_LENGTH, MAX_NOTES, NOTE_KINDS, NOTE_COLORS, NOTE_GRAPHICS, NOTE_ECHELONS, checkNote, checkMessageText, checkMessageMeta } from '../shared/schema.js';
+import { checkOrderAttachment } from '../shared/order.js';
 
 // Stałe schematu żyją w shared/schema.js; tu tylko re-eksport dla zgodności wstecznej.
 export { MAX_MESSAGE_LENGTH, MAX_NOTES, NOTE_KINDS, NOTE_COLORS, NOTE_GRAPHICS, NOTE_ECHELONS };
@@ -191,7 +192,7 @@ export function createStore(scenarioDir) {
     return locked(() => sendMessageUnlocked(body));
   }
 
-  async function sendMessageUnlocked({ channel, text, attachments, type, priority }) {
+  async function sendMessageUnlocked({ channel, text, attachments, orders, type, priority }) {
     const scenario = await readScenario();
     const n = await currentTurn();
     const turn = await readTurn(n);
@@ -220,6 +221,18 @@ export function createStore(scenarioDir) {
         return note;
       });
     }
+    // Rozkazy graficzne (T44): załączniki strukturalne; jednostki muszą być własne i obecne w bieżącej turze gracza.
+    let orderAtts = [];
+    if (orders !== undefined) {
+      if (!Array.isArray(orders) || orders.length > 20) throw new StoreError(400, 'Nieprawidłowe rozkazy graficzne');
+      const own = new Set(units.filter((u) => u?.id && !isNeighbourFormationUnit(units, u.id)).map((u) => u.id));
+      orderAtts = orders.map((o) => {
+        const r = checkOrderAttachment(o, own);
+        if (r.error) throw new StoreError(400, `Rozkaz graficzny ${o?.id ?? '?'}: ${r.error}`);
+        return r.order;
+      });
+      if (new Set(orderAtts.map((o) => o.id)).size !== orderAtts.length) throw new StoreError(400, 'Zduplikowane id rozkazu graficznego');
+    }
     const file = path.join(dirs.outbox, turnFileName(n));
     const data = await readJson(file, { messages: [] });
     const message = {
@@ -232,7 +245,7 @@ export function createStore(scenarioDir) {
       priority: priority ?? 'normal',
       text: text.trim(),
     };
-    if (attached?.length) message.attachments = attached;
+    if (attached?.length || orderAtts.length) message.attachments = [...(attached ?? []), ...orderAtts];
     data.messages = [...(data.messages || []), message];
     await writeJson(file, data);
     return message;
