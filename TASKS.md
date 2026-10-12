@@ -499,7 +499,7 @@ Sąsiednie brygady (np. `zt-mamry`, `zt-biebrza`) mają własne pododdziały w p
 **Scenariusze testowe**
 - [A] „bcz (RU) naciera” nie tworzy linku do jednostki `bcz`.
 
-## T35 — Hierarchia po przepięciu podporządkowania ⬜
+## T35 — Hierarchia po przepięciu podporządkowania ✅
 **WA**
 1. Drzewo ORBAT przelicza się z bieżącej tury: zmiana `parent` (np. `krozp-2p` → `1bzmot-3k`) i nowa jednostka (np. `bopl-1p`) są widoczne od tury, w której wystąpiły.
 2. Karta jednostki pokazuje aktualnego przełożonego.

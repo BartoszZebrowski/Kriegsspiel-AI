@@ -29,6 +29,18 @@ export function buildTree(units) {
   return roots;
 }
 
+// Jednostki, których przełożony różni się między dwiema turami (przepięcie podporządkowania) albo które pojawiły się
+// w nowej turze z przełożonym. Zwraca id nowych przełożonych, których trzeba rozwinąć w drzewie, aby zmiana była widoczna.
+export function reparentedParents(prevUnits, units) {
+  const prev = new Map((prevUnits || []).map((u) => [u.id, parentIdOf(u)]));
+  const out = new Set();
+  for (const u of units || []) {
+    const pid = parentIdOf(u);
+    if (pid && (!prev.has(u.id) || prev.get(u.id) !== pid)) out.add(pid);
+  }
+  return [...out];
+}
+
 export function childrenOf(units, id) {
   return units.filter((u) => u.parent === id || u.formation === id);
 }

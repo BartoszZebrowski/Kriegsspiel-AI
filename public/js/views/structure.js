@@ -1,7 +1,7 @@
 // Widok: lewy dok, panel „Struktura” — własne siły (drzewo z liniami łączącymi, paskami siły i plakietkami
 // nieprzeczytanych) oraz zwijane sekcje: przełożony i sąsiedzi, kontakty przeciwnika, środki rozpoznania.
 // Zaznaczenie jest jedno (store.selection): klik zaznacza, dwuklik / ikona kanału otwiera rozmowę.
-import { buildTree, echelonRank, BATTALION_RANK, splitUnits, channelForUnit, subtreeSum, formationTree, parentIdOf, isNeighbourUnit } from '../domain/orbat.js';
+import { buildTree, echelonRank, BATTALION_RANK, splitUnits, channelForUnit, subtreeSum, formationTree, parentIdOf, isNeighbourUnit, reparentedParents, indexById } from '../domain/orbat.js';
 import { symbolSvg } from '../lib/symbols.js';
 import { ic } from '../lib/icons.js';
 import { escapeHtml as e } from '../domain/markdown.js';
@@ -39,6 +39,7 @@ export function createStructureView({ store, controller, root = document }) {
   const sections = { own: true, ext: true, con: true, ast: false };
   let filter = '';
   let turnKey = null;
+  let prevUnits = null; // jednostki poprzednio narysowanej tury (wykrywanie przepięć podporządkowania)
   const nbSeen = new Set(); // dowództwa sąsiadów, które już raz rozwinięto domyślnie
 
   const q = () => filter.trim().toLowerCase();
@@ -96,6 +97,17 @@ export function createStructureView({ store, controller, root = document }) {
     }
     const { own, external, formation } = splitUnits(turn.units || [], s.channels);
     ensureOpen(own);
+    // Przepięcie podporządkowania lub nowa jednostka: rozwiń nowego przełożonego (i jego przodków), by zmiana była widoczna.
+    if (prevUnits && prevUnits !== turn.units) {
+      const byId = indexById(turn.units || []);
+      for (let id of reparentedParents(prevUnits, turn.units)) {
+        for (const seen = new Set(); id && !seen.has(id); id = parentIdOf(byId.get(id))) {
+          open.add(id);
+          seen.add(id);
+        }
+      }
+    }
+    prevUnits = turn.units || [];
     const ctx = { unreadUnits: s.unreadUnits, channels: s.channels, selId: s.selection?.id ?? null };
     const tree = buildTree(own).filter(subtreeMatches);
     const parts = [];
