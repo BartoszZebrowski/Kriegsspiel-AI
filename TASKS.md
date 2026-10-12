@@ -677,6 +677,35 @@ Rozkaz do jednostki niżej niż bezpośredni podwładny (np. kompania z pominię
 - [A] Domena: kanał bezpośredniego podwładnego = 0 pominiętych szczebli, kompania pod batalionem = 1, pluton = 2; tryb hard blokuje wysyłkę poza urgent.
 - [M] W trybie soft rozkaz do kompanii działa, a batalion w następnej turze melduje zastrzeżenia lub kolizję planu.
 
+## T46 — Szczegółowe wyposażenie ⬜
+Sprzęt i uzbrojenie z katalogu zamiast samych nazw: gracz widzi, czym naprawdę dysponuje pododdział.
+
+**WA**
+1. Katalog sprzętu (jawny, np. `data/equipment.json` + walidacja w `shared/`): `{id, name, category (pojazd, broń zespołowa, broń indywidualna, ppk, moździerz, BSP…), crew?, weapons?:[{name, range_m, kind: ppanc|plot|ogólny|pośredni}], note}` — np. KTO Rosomak (30 mm), Spike-LR, Piorun, moździerz 60/98 mm, UKM-2000, Grot, Pirat, FlyEye. Dane z jawnych źródeł.
+2. `equipment[]` jednostki może wskazywać pozycję katalogu (`ref`) obok `name`; stare pliki bez `ref` działają jak dotąd.
+3. Karta jednostki: sprzęt pogrupowany wg kategorii, z zasięgami i liczbami (bieżący / etatowy); dla plutonu także uzbrojenie drużyn (np. „3 × UKM, 2 × Pirat”).
+4. Szacunki wroga (`estimate_equipment`) też mogą mieć `ref` do katalogu sprzętu RU/BY (osobna część katalogu).
+5. Etap planu architektonicznego: katalog i jego walidacja w jednym miejscu, logika grupowania w `domain/`.
+
+**Scenariusze testowe**
+- [A] Walidator: `ref` do nieistniejącej pozycji → błąd; pozycja katalogu bez `range_m` przy broni → błąd.
+- [A] Domena: grupowanie sprzętu jednostki wg kategorii, suma z podwładnych.
+- [M] Karta plutonu pokazuje drużynowe uzbrojenie z zasięgami.
+
+## T47 — Wizualizacja zasięgu ognia ⬜
+Na mapie widać, dokąd sięga ogień jednostki (wymaga T46: zasięgi z katalogu).
+
+**WA**
+1. Dla zaznaczonej jednostki własnej: okręgi (albo pierścienie) zasięgu wg rodzaju broni — ppanc, plot, broń ogólna, ogień pośredni — w kolorach z legendą; przełączniki rodzajów.
+2. Tryb „wszystkie jednostki” dla wybranego rodzaju (np. pokrycie plot całego zgrupowania) jako warstwa.
+3. Kontakty wroga: zasięg z szacunku (`estimate_equipment` z `ref`), oznaczony jako szacunkowy (przerywany), z niepewnością pozycji.
+4. Wersja 2 (opcjonalnie, z T43): sektory ognia i martwe pola z uwzględnieniem terenu (linia widoczności z danych wysokościowych).
+5. Etap planu architektonicznego: geometria zasięgów w `domain/`, warstwa jako osobny plik w `views/map/`.
+
+**Scenariusze testowe**
+- [A] Domena: jednostka ze Spike-LR i Piorunem → pierścienie ppanc i plot o właściwych promieniach; brak broni danego rodzaju → brak pierścienia.
+- [M] Zaznaczam kompanię: widzę zasięgi; włączam pokrycie plot zgrupowania: widzę luki.
+
 ---
 
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
