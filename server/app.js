@@ -16,6 +16,8 @@ const MAX_BODY = 2 * 1024 * 1024;
 const VENDOR = {
   'leaflet/leaflet.js': 'node_modules/leaflet/dist/leaflet.js',
   'leaflet/leaflet.css': 'node_modules/leaflet/dist/leaflet.css',
+  'maplibre/maplibre-gl.js': 'node_modules/maplibre-gl/dist/maplibre-gl.js',
+  'maplibre/maplibre-gl.css': 'node_modules/maplibre-gl/dist/maplibre-gl.css',
   'milsymbol.js': 'node_modules/milsymbol/dist/milsymbol.js',
   'geoman/leaflet-geoman.js': 'node_modules/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.js',
   'geoman/leaflet-geoman.css': 'node_modules/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css',

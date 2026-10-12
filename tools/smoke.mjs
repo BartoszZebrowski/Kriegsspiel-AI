@@ -1636,6 +1636,20 @@ try {
     assert(await ev(`document.getElementById('ab-btn').disabled`), '„Po bitwie” znów zablokowane');
   });
 
+  await step('T43 widok 3D: przycisk „3D” otwiera rejon mapy (MapLibre albo komunikat „Brak WebGL”), Esc wraca do 2D bez błędów', async () => {
+    await waitFor(`${store()}.mapView && ${store()}.mapView.bounds.length === 4`, 'rejon mapy 2D zgłoszony do store');
+    await clickSel('#z-3d');
+    await waitFor(`${store()}.view3d.open === true && document.getElementById('map3d').classList.contains('open')`, 'nakładka 3D otwarta');
+    // Headless może nie mieć WebGL: wtedy widok pokazuje komunikat; w przeciwnym razie powstaje kanwa MapLibre.
+    await waitFor(`document.querySelector('#map3d-canvas canvas.maplibregl-canvas') || (!document.getElementById('map3d-msg').hidden && document.getElementById('map3d-msg').textContent.length > 0)`, 'mapa 3D albo komunikat o braku WebGL');
+    console.log('       ścieżka 3D: ' + ((await ev(`!!document.querySelector('#map3d-canvas canvas.maplibregl-canvas')`)) ? 'WebGL dostępny, MapLibre uruchomiony' : 'brak WebGL, komunikat: ' + (await ev(`document.getElementById('map3d-msg').textContent`))));
+    await sleep(500);
+    await key('Escape');
+    await waitFor(`${store()}.view3d.open === false && !document.getElementById('map3d').classList.contains('open')`, 'Esc zamyka widok 3D');
+    assert(await ev(`document.querySelectorAll('#map3d-canvas *').length === 0`), 'po zamknięciu kanwa 3D usunięta');
+    assert(await ev(`document.querySelector('#map .leaflet-marker-icon') !== null`), 'mapa 2D nadal działa');
+  });
+
   await step('brak błędów JS w konsoli', async () => {
     assert(consoleErrors.length === 0, 'błędy konsoli:\n         ' + consoleErrors.join('\n         '));
   });

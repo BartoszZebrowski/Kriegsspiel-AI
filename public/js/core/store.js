@@ -37,6 +37,8 @@ export function initialState() {
     focus: null, // jednorazowe polecenie dla widoku: { kind: 'entity'|'place'|'geometry', ..., nonce }
     detail: null, // wybór szczegółowości: null (automat) | 'battalion' | 'company' | 'platoon'
     mapZoom: null, // zoom mapy (raportuje go widok mapy; potrzebny do automatycznej szczegółowości)
+    mapView: null, // widoczny rejon mapy 2D, raportowany przez widok mapy: { center: [lon,lat], zoom, bounds: [zach, płd, wsch, płn] }
+    view3d: { open: false, view: null }, // widok 3D terenu (T43): otwarty rejon (kopia mapView z chwili otwarcia)
     layers: defaultLayers(),
     basemap: DEFAULT_BASEMAP, // nazwa podkładu mapy
     activeChannel: null, // id wybranego kanału komunikatora

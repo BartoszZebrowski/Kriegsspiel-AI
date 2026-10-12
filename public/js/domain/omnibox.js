@@ -23,6 +23,7 @@ export const COMMANDS = [
   { id: 'dos', title: 'Panel DOS (zaopatrzenie jednostek)', key: 'D' },
   { id: 'measure', title: 'Rozpocznij pomiar odległości', key: 'M' },
   { id: 'fit', title: 'Pokaż wszystkie siły własne', key: 'F' },
+  { id: 'view3d', title: 'Widok 3D terenu (bieżący rejon mapy)', key: '' },
   { id: 'base-dark', title: 'Podkład: ciemny', key: '' },
   { id: 'base-sat', title: 'Podkład: satelitarny', key: '' },
   { id: 'base-topo', title: 'Podkład: topograficzny', key: '' },

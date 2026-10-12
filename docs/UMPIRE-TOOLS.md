@@ -223,6 +223,22 @@ Stan mostu stałego z prawdy trafia do `logistics.bridges` sędziego (`status`, 
 
 `test/fixtures/logistics-sample.json` (1 MSR, 1 ASR, 2 składy, 2 mosty, 1 konwój z `track`, `dos` dla 5 jednostek z różnymi progami) i `test/fixtures/logistics-sample.mjs` (`injectLogisticsSample(katalogScenariusza)` wstrzykuje je do ostatniej tury gracza i sędziego kopii; czasy `"T-30"` są rozwiązywane względem czasu tury). Podgląd: `node test/fixtures/logistics-sample.mjs <katalog>` kopiuje 00-test-przesmyk i wstrzykuje dane; potem `PORT=8090 npm start -- <katalog-absolutny>`.
 
+## Dowódcy-agenci (`commander.mjs`, T14)
+
+Każdy dowódca z `umpire/commanders/<id>.md` jest osobnym subagentem Claude Code, który zna tylko swój plik i wiadomość wejściową. Narzędzie składa tę wiadomość i zapisuje wynik; nie czyta prawdy sędziego (`umpire/turns`) ani plików innych dowódców.
+
+```
+node tools/umpire/commander.mjs init    <scenariusz> <id> [--name "ppłk X"] [--role "dowódca 1 bzmot"] [--side PL|RU]
+node tools/umpire/commander.mjs prepare <scenariusz> <id> [--turn N] [--reports meldunki.json] [--observations obs.json]
+node tools/umpire/commander.mjs apply   <scenariusz> <id> --result odpowiedz.txt [--turn N] [--reports …] [--observations …] [--dry]
+```
+
+- **Podwładny gracza** (kanał ze `commander: <id>`): wejście z widoku gracza: jednostka kanału (`unit` albo id kanału) i jej poddrzewo (`parent`), rozkazy z `player/outbox/NNN.json` skierowane do kanału lub jednostki (z `attachments`, czyli szkicami), kontakty w promieniu 15 km od jego jednostek. `--reports`: tablica `[{from, time, text}]` z meldunkami podwładnych (sędzia pisze je po rozstrzygnięciu poprzedniej tury). `--observations`: `{notes: [{time?, text}]}`, czyli to, co dowódca sam widzi (sędzia dobiera wg rozpoznania, nie wg całej prawdy).
+- **Dowódca przeciwnika** (brak kanału): `--observations` z `{root, units, contacts, orders, reports, notes}` napisane przez sędziego wyłącznie z wyników rozpoznania przeciwnika. Wejście przechodzi przez białą listę pól gracza, więc `side`, `supply`, `events` nie wyciekną.
+- `prepare` wypisuje pełny prompt (zasady, plik wiedzy, wejście, format odpowiedzi) do przekazania subagentowi; subagent nie ma innych źródeł.
+- `apply` sprawdza odpowiedź (`checkCommanderResult`: adresaci rozkazów tylko bezpośredni podwładni, bez obcych pól), dopisuje otrzymane rozkazy i szkice, zastępuje „Co wiem o sytuacji” i dopisuje wpis do dziennika decyzji. Na stdout: `{messages, orders}`: wiadomość meldunkowa do wstawienia do `player/inbox` (czas dostosuj do rozstrzyganego okresu) i rozkazy dla podwładnych do rozstrzygnięcia wobec prawdy.
+- Czyste funkcje (testowalne): `subtreeIds`, `distanceM`, `buildCommanderInput`, `playerCommanderArgs`, `renderAgentPrompt`, `applyTurnToKnowledge`, `resultToMessages` (narzędzie) oraz `checkCommanderFile`, `checkCommanderResult`, `parseCommanderResult`, `commanderTemplate`, `getSection`/`setSection`/`appendToSection` (`shared/commander.js`).
+
 ## Testy
 
 `npm test` zawiera `test/umpire-deploy.test.js`: zakresy rozstawów, orientację względem azymutu, determinizm, ograniczenie jitteru, marsz po trasie, nieliniowość artylerii, poligony wody (z wyspą) i korektę, a także test, że kompanie o różnych zadaniach, azymutach i ziarnach dają wyraźnie różne układy względne, a nie obrócone kopie jednego wzoru.

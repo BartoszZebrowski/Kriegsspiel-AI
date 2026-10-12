@@ -408,3 +408,32 @@ Dwie części. **Karta tury** to lekki widok w inspektorze (DTG, dzień kampanii
 | Walidator | `tools/validate-checks.js`, `tools/validate.js` | Ciągłość: `time` tury N+1 = `time` tury N + (`duration_min` ?? `turnMinutes`) (tura 0 = `start`); `duration_min` > 0; `phases` przez `checkPhases`. |
 
 Zależności: `shared/` → nic; `domain/campaign.js` ← `domain/timeline.js`? Nie: `timeline` dostaje gotowe `offsets` jako parametr (słabe sprzężenie), a `core/` i `views/` wołają `domain/campaign.js` osobno. Pliki mieszczą się w ≤ 300 linii.
+
+## Dowódcy jako osobni agenci (T14)
+
+Zadanie dotyczy wyłącznie strony sędziego: klient i serwer się nie zmieniają (serwer nadal nigdy nie czyta `umpire/`; `commander` w kanale `scenario.json` to tylko id pliku). Każdy dowódca (podwładny gracza i przeciwnik) to osobny subagent Claude Code, który zna wyłącznie swój plik `umpire/commanders/<id>.md` i wiadomość wejściową przygotowaną przez sędziego.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/commander.js` (nowy, czysty, bez API Node) | `checkCommanderId`, `COMMANDER_SECTIONS` (obowiązkowe nagłówki pliku wiedzy), `checkCommanderFile(md)`, `commanderTemplate({...})` (szablon pliku), `checkCommanderResult(result, ctx)` (format odpowiedzi agenta), `parseCommanderResult(text)` (JSON z odpowiedzi). Jedyne miejsce reguł formatu. |
+| Wejście agenta | `tools/umpire/commander.mjs` (nowy; czyste funkcje + cienkie CLI) | `subtreeIds`, `buildCommanderInput` (z widoku gracza: własne jednostki podwładnego i jego poddrzewo, rozkazy i szkice z `player/outbox` skierowane do jego kanału lub jednostki, meldunki podwładnych dostarczone przez sędziego, kontakty w promieniu od własnych jednostek), `renderAgentPrompt`, `applyTurnToKnowledge` (aktualizacja pliku wiedzy), `resultToMessages`. |
+| Walidator | `tools/validate-commanders.js` (nowy; wołany z `tools/validate.js`) | Każdy kanał z `commander`: poprawne id, istniejący plik, wymagane sekcje; pliki w `umpire/commanders/` sprawdzane też bez kanału (dowódcy przeciwnika). Wypisuje tylko identyfikatory. |
+| Procedura | `CLAUDE.md` („Dowódcy-agenci”), `docs/UMPIRE-TOOLS.md`, `docs/SCHEMA.md` | Kolejność: wejście → agent → wynik → rozstrzygnięcie wobec prawdy → zapis tury. |
+
+**Zależności.** `shared/commander.js` → nic. `tools/umpire/commander.mjs` → `shared/` (`PLAYER_FIELDS`, `commander`, `order`) i `turn-merge.mjs` (`pickFields`). Narzędzie czyta tylko pliki jawne dla gracza (`player/turns`, `player/outbox`), `scenario.json` i `umpire/commanders/<id>.md` jednego dowódcy; **nie czyta** prawdy sędziego ani plików innych dowódców. Dowódca przeciwnika dostaje wejście z pliku „obserwacji” napisanego przez sędziego (wyniki rozpoznania przeciwnika), nie z prawdy o graczu. Strażnik wycieku: wejście składa się wyłącznie z pól białej listy gracza (`pickFields`), więc `side`, `supply`, `events` nie mają jak się znaleźć w wiadomości agenta; test sprawdza, że moduł nie sięga do `umpire/turns`.
+
+**Wpływ na istniejący kod.** Brak zmian w `public/`, `core/`, `server/`. W `tools/validate.js` jedno wywołanie. Pliki ≤ ~300 linii.
+
+## Widok 3D terenu (T43)
+
+Leaflet 2D zostaje; dochodzi osobny widok 3D bieżącego rejonu mapy na MapLibre GL JS (wybór i źródła danych: [MAP3D.md](MAP3D.md)). Widok jest tylko do odczytu.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Stan | `core/store.js` | `mapView` (rejon mapy 2D: środek, zoom, `bounds`; raportuje go widok mapy po każdym `moveend`) i `view3d: { open, view }` (kopia `mapView` z chwili otwarcia). |
+| Intencje | `core/controller.js` | `mapViewChanged`, `open3d()` (czyta `mapView`), `close3d()`; polecenie omniboksu `view3d` wchodzi przez `runCommand`. |
+| Domena | `domain/map3d.js` | Czyste przekształcenia: `buildScene(turn, { level, layers })` → `{ markers, lines, zones }` (jednostki wg szczegółowości, kontakty z przezroczystością wg wieku, linie i strefy REW, logistyka), `linesToGeoJson`, `zonesToGeoJson`, `cameraFor(mapView)`, `terrariumHeight`, adresy źródeł danych. Bez DOM i bez biblioteki. |
+| Widok | `views/map3d/index.js` | Subskrybuje `view3d`, `turn`, `layers`, `level`. Leniwie ładuje `/vendor/maplibre/` (skrypt i CSS), sprawdza WebGL (brak = komunikat „Brak WebGL”), buduje styl (raster OSM, `raster-dem` Terrarium, cieniowanie, budynki z OpenFreeMap), rysuje scenę (markery HTML z milsymbol, warstwy GeoJSON) i sprząta mapę przy zamknięciu. Klik w symbol woła `controller.selectEntity`. |
+| Wejście | `public/index.html` (`#z-3d`, `#map3d`), `views/map/controls.js` (tylko `controller.open3d()`), `domain/omnibox.js` | Zamknięcie: przycisk i Esc → `controller.close3d()`. |
+
+**Zależności.** `views/map3d/` importuje wyłącznie `domain/`, `lib/` (symbole) i dostaje `store` oraz `controller`; **nie importuje z `views/map/`** i nie dotyka powierzchni Leaflet. `views/map/` zna 3D tylko przez raport `mapViewChanged` i przycisk wołający intencję. Biblioteka jest zależnością `maplibre-gl` (wersja przypięta), serwowaną z `VENDOR` w `server/app.js`; serwer niczego więcej nie zmienia.

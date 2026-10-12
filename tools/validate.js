@@ -14,6 +14,7 @@ import { checkScenarioStatus } from '../shared/status.js';
 import { checkPhases, turnDurationMin } from '../shared/campaign.js';
 import { checkOverlay } from '../shared/overlay.js';
 import { checkFormContent, missingFields } from '../public/js/domain/forms.js';
+import { checkCommanders } from './validate-commanders.js';
 import { createFireChecker } from './validate-fire.js';
 import { checkCcirFile, checkReportCycleField, checkMessageCcirFields } from './validate-ccir.js';
 import { loadCatalogIndex, checkEquipmentRefs } from './validate-equipment.js';
@@ -85,6 +86,8 @@ export async function validateScenario(dir) {
     if (!CHANNEL_KINDS.includes(c.kind)) report.warn(`scenario.json: kanał „${c.id}” ma nieznany rodzaj „${c.kind}”`);
   }
   if (channelIds.size === 0) report.error('scenario.json: brak kanałów komunikatora');
+
+  await checkCommanders(dir, scenario, report); // T14
 
   try {
     await fs.access(path.join(dir, 'briefing.md'));

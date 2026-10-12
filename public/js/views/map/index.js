@@ -91,6 +91,14 @@ export function createMapView({ store, controller, root = document }) {
   // Zoom wpływa na automatyczną szczegółowość, więc trafia do store.
   controller.mapZoomChanged(map.getZoom());
   map.on('zoomend', () => controller.mapZoomChanged(map.getZoom()));
+  // Rejon widoczny na mapie (wejście do widoku 3D, T43).
+  const reportView = () => {
+    const b = map.getBounds();
+    const c = map.getCenter();
+    controller.mapViewChanged({ center: [c.lng, c.lat], zoom: map.getZoom(), bounds: [b.getWest(), b.getSouth(), b.getEast(), b.getNorth()] });
+  };
+  reportView();
+  map.on('moveend', reportView);
 
   // ---------- symbole ----------
   const markers = new Map(); // id -> L.Marker

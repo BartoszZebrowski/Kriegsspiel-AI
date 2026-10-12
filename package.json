@@ -15,6 +15,7 @@
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.17.0",
     "leaflet": "^1.9.4",
+    "maplibre-gl": "5.7.0",
     "milsymbol": "^2.2.0"
   }
 }

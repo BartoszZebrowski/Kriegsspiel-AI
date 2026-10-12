@@ -24,6 +24,7 @@ import { createTimelineView } from './views/timeline.js';
 import { createOmniboxView } from './views/omnibox.js';
 import { createMapView } from './views/map/index.js';
 import { createDrawView } from './views/draw.js';
+import { createMap3dView } from './views/map3d/index.js';
 import { createLeaderView } from './views/leader.js';
 
 async function start() {
@@ -71,6 +72,7 @@ async function start() {
   // Powierzchnia mapy (Leaflet) jest współdzielonym zasobem renderowania: widoki nakładek dostają ją od bootstrapu.
   const drawing = createDrawView({ store, controller, surface: mapView.surface });
   createLeaderView({ store, surface: mapView.surface });
+  createMap3dView({ store, controller }); // T43: widok 3D terenu (osobny widok, tylko odczyt)
   createHotkeysView({ store, controller });
 
   if (new URLSearchParams(location.search).has('debug')) {

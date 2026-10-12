@@ -317,6 +317,17 @@ export function createController({ store, api, storage = nullStorage, env = {} }
 
   // ---------- stan mapy raportowany przez widok ----------
   const mapZoomChanged = (zoom) => store.set({ mapZoom: zoom });
+  const mapViewChanged = (view) => store.set({ mapView: view });
+  // Widok 3D (T43): otwiera rejon bieżącego widoku mapy; zamknięcie wraca do 2D.
+  function open3d() {
+    const view = S().mapView;
+    if (!view || S().view3d.open) return;
+    store.set({ view3d: { open: true, view } });
+  }
+  function close3d() {
+    if (!S().view3d.open) return;
+    store.set({ view3d: { open: false, view: null } });
+  }
   function setLayerVisible(name, on) {
     if (S().layers[name] === on) return;
     store.set({ layers: { ...S().layers, [name]: on } });
@@ -386,6 +397,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     if (id === 'dos') return setPopover('dos');
     if (id === 'measure') return command('tool', 'measure');
     if (id === 'fit') return command('fit');
+    if (id === 'view3d') return open3d();
     if (id === 'dock-l') return toggleDock('l');
     if (id === 'dock-r') return toggleDock('r');
     if (BASEMAP_BY_COMMAND[id]) return setBasemap(BASEMAP_BY_COMMAND[id]);
@@ -396,7 +408,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     init, load, listen, refresh, onUpdate, notify, markNoticesSeen,
     showTurn, prevTurn, nextTurn, showCurrent, replayTurn,
     selectEntity, focusEntity, clearSelection, showTurnCard, hoverUnit, mentionClick, showAttachment, flyToPlace,
-    setDetail, mapZoomChanged, setLayerVisible, setBasemap,
+    setDetail, mapZoomChanged, mapViewChanged, open3d, close3d, setLayerVisible, setBasemap,
     command, setPopover, togglePopover, openOmnibox, closeOmnibox, runCommand,
     selectChannel, setDraft, clearChannelDraft, ensureActiveChannel, unpinChannel, openUnitChannel, openChannel, sendMessage, withdrawMessage,
     saveNotes,

@@ -42,7 +42,7 @@ Metadane i kanały komunikatora.
 | `reportCycle` | `{sitrep, logstat, anchor?}` | nie | Rytm meldunków cyklicznych w minutach czasu gry (T48), np. `{"sitrep": 240, "logstat": 1440}`; liczby całkowite > 0; `anchor` (czas ISO) = godzina odniesienia. Nieznane pole albo zła wartość = błąd. |
 | `commandRules` | `{skipEchelon}` | nie | Reguły dowodzenia (T45). `skipEchelon`: `off` (bez ograniczeń), `soft` (domyślny: ostrzeżenie w komunikatorze, skutki rozstrzyga sędzia wg CLAUDE.md), `hard` (wysyłka do kanałów poniżej bezpośrednich podwładnych zablokowana — w kliencie i na serwerze — poza `priority: urgent`). Inna wartość albo nieznane pole = błąd. |
 
-Kanał (`channels[]`): `id` (tekst, unikalny, tak), `name` (tak), `kind` (`superior`, `neighbor`, `subordinate`, `logistics`, `recon`, `other`; inny = uwaga), `description` (nie), `short` (nie, skrót w UI), `unit` (nie, id jednostki, której kanał dotyczy), planowane `commander` (id pliku `umpire/commanders/<id>.md`, T14). Wiadomość można też zaadresować do dowolnej jednostki własnej z bieżącej tury (`channel` = id jednostki). Ile szczebli pominięto, liczy się z `parent` (bezpośredni podwładny = 0, kompania pod batalionem = 1, pluton = 2; sąsiedzi i `formation` nie dotyczą); zob. `commandRules`.
+Kanał (`channels[]`): `id` (tekst, unikalny, tak), `name` (tak), `kind` (`superior`, `neighbor`, `subordinate`, `logistics`, `recon`, `other`; inny = uwaga), `description` (nie), `short` (nie, skrót w UI), `unit` (nie, id jednostki, której kanał dotyczy), `commander` (nie; id pliku wiedzy dowódcy-agenta `umpire/commanders/<id>.md`, T14; litery, cyfry, `_`, `-`, maks. 40 znaków; plik musi istnieć, inaczej błąd walidatora; serwer i klient go nie czytają). Wiadomość można też zaadresować do dowolnej jednostki własnej z bieżącej tury (`channel` = id jednostki). Ile szczebli pominięto, liczy się z `parent` (bezpośredni podwładny = 0, kompania pod batalionem = 1, pluton = 2; sąsiedzi i `formation` nie dotyczą); zob. `commandRules`.
 
 ## `briefing.md` — jawny
 
@@ -284,9 +284,15 @@ Plan przeciwnika w Markdownie (zamiar, siły, fazy czasowe). Swobodna forma. Nie
 
 Dziennik rozstrzygnięć: nagłówek `## Tura N (HH:MM)` i krótkie punkty „co i dlaczego”. Dopisywany przy każdej turze.
 
-## `umpire/commanders/<id>.md` — TYLKO sędzia (planowane, T14)
+## `umpire/commanders/<id>.md` — TYLKO sędzia (T14)
 
-Plik wiedzy dowódcy-agenta (podwładny gracza lub przeciwnik): kim jest (osobowość, doświadczenie, styl), jego jednostki, otrzymane rozkazy i szkice, co sam wie o sytuacji, dziennik własnych decyzji. Agent dostaje tylko swój plik i swoją wiadomość wejściową — nigdy `umpire/turns/` ani plików innych dowódców. Nazwa pliku = `commander` z kanału w `scenario.json`.
+Plik wiedzy dowódcy-agenta (podwładny gracza lub przeciwnik). Agent dostaje tylko swój plik i swoją wiadomość wejściową — nigdy `umpire/turns/` ani plików innych dowódców. Nazwa pliku = `commander` z kanału w `scenario.json`; dowódcy przeciwnika nie mają kanału (plik jest walidowany tak samo). Format (stałe i walidator: `shared/commander.js`):
+
+- nagłówek `# imię i funkcja` oraz obowiązkowe, niepuste sekcje `##`: **Kim jestem** (osobowość, doświadczenie, styl, słabości), **Moje jednostki**, **Otrzymane rozkazy i szkice** (nazwa, zadanie), **Co wiem o sytuacji** (tylko to, co sam widzi i co mu zameldowano), **Dziennik decyzji** (wpisy `### Tura N (HH:MM)`);
+- szablon: `node tools/umpire/commander.mjs init <scenariusz> <id>`;
+- odpowiedź agenta (JSON): `{commander, turn, orders:[{to, text, task?, area?}], report?:{text}, knowledge:{situation, decision}}`; `orders[].to` to tylko bezpośredni podwładny.
+
+Procedura: CLAUDE.md („Dowódcy-agenci”), narzędzie: docs/UMPIRE-TOOLS.md.
 
 ## Kto co zapisuje
 

@@ -328,7 +328,7 @@ Uwaga gracza: panel jest za wąski i nie da się zmieniać jego rozmiaru.
 - [A] Serwer: `POST /api/outbox` do kanału kompanii (jednostka z bieżącej tury) daje 201, a nieznane id daje 400. Walidator akceptuje wiadomość do kompanii.
 - [M] Rozkaz wysłany z komunikatora do „1k 1bzmot” trafia do outbox z `channel: "1bzmot-1k"`. Zwinięcie 1 bzmot w drzewie kanałów pokazuje sumę nieprzeczytanych.
 
-## T14 — Dowódcy jako osobni agenci ⬜
+## T14 — Dowódcy jako osobni agenci ✅
 Każdy dowódca (podwładny gracza i przeciwnika) ma własny kontekst i nie widzi kontekstu innych.
 
 **WA**
@@ -633,7 +633,7 @@ Zadanie badawcze: wynik w `docs/STUDY-REALTIME.md`. Tury zostają (rozstrzyga je
 **Scenariusze testowe**
 - [M] Przegląd studium i prototypu z graczem; wybór wariantu.
 
-## T43 — Widok 3D terenu (hybryda) ⬜
+## T43 — Widok 3D terenu (hybryda) ✅
 Mapa sztabowa zostaje w Leaflet 2D; dochodzi **widok 3D wybranego rejonu** (wariant D z rozmowy 2026-10-12) na MapLibre GL JS.
 
 **WA**

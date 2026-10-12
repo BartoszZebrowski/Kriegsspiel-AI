@@ -21,6 +21,7 @@
   <link rel="stylesheet" href="/css/fires.css">
   <link rel="stylesheet" href="/css/engineering.css">
   <link rel="stylesheet" href="/css/staff.css">
+  <link rel="stylesheet" href="/css/map3d.css">
   <link rel="stylesheet" href="/css/responsive.css">
 </head>
 <body data-m="map">
@@ -174,6 +175,7 @@
         <button class="tool" id="z-in" data-tip="Przybliż" data-pos="l" aria-label="Przybliż"><svg class="i"><use href="#i-plus"/></svg></button>
         <button class="tool" id="z-out" data-tip="Oddal" data-pos="l" aria-label="Oddal"><svg class="i"><use href="#i-minus"/></svg></button>
         <button class="tool" id="z-fit" data-tip="Pokaż wszystkie siły własne" data-k="F" data-pos="l" aria-label="Pokaż wszystkie siły własne"><svg class="i"><use href="#i-aim"/></svg></button>
+        <button class="tool tool-txt" id="z-3d" data-tip="Widok 3D bieżącego rejonu" data-pos="l" aria-label="Widok 3D">3D</button>
       </div>
 
       <div class="float pop" id="layers" role="dialog" aria-label="Warstwy">
@@ -279,6 +281,13 @@
     <div class="omni-list" id="o-list" role="listbox"></div>
     <div class="omni-ft"><span><kbd>↑</kbd><kbd>↓</kbd> wybór</span><span><kbd>↵</kbd> przejdź</span><span><kbd>Shift</kbd><kbd>↵</kbd> kanał / szczegóły</span><span class="grow"></span><span><kbd>Ctrl</kbd><kbd>K</kbd></span></div>
   </div>
+</div>
+
+<!-- ======================= WIDOK 3D (T43) ======================= -->
+<div id="map3d" role="dialog" aria-label="Widok 3D terenu" aria-modal="true">
+  <div class="m3-top"><h2>Widok 3D</h2><span class="m3-hint">przeciągnij: obrót · Ctrl/prawy przycisk + przeciągnij: pochylenie · kółko: zoom</span><span class="grow"></span><button class="btn sm" id="map3d-close">Zamknij <kbd>Esc</kbd></button></div>
+  <div id="map3d-canvas"></div>
+  <div id="map3d-msg" class="m3-msg" hidden></div>
 </div>
 
 <!-- ======================= ODPRAWA ======================= -->

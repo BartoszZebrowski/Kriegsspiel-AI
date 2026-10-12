@@ -73,6 +73,17 @@ Gdy spełniony jest warunek końca bitwy (z `umpire/enemy-plan.md` i scenariusza
 3. **Dopiero potem** ustaw `"status": "finished"` w `scenario.json` (od tej chwili serwer zwalnia prawdę i AAR, a w czacie wolno już omawiać `umpire/`).
 4. `npm run validate -- <nazwa>`: zły `status` jest błędem, `finished` bez `aar.md` uwagą. Odpowiedz graczowi jednym zdaniem.
 
+## Dowódcy-agenci (T14)
+
+Dowódcy z `umpire/commanders/<id>.md` (podwładni gracza z `commander` w kanale oraz dowódcy przeciwnika) działają jako osobne subagenty. W kroku „Rozstrzygnij” procedury „koniec tury”, **przed** rozstrzygnięciem skutków:
+
+1. Dla każdego dowódcy, który ma coś do zdecydowania: `node tools/umpire/commander.mjs prepare <nazwa> <id>` (z `--reports` i `--observations`, gdy sędzia ma dopisać meldunki podwładnych lub to, co dowódca widzi). Dowódca nie dostaje niczego poza tym promptem: nigdy `umpire/turns/`, `enemy-plan.md`, `log.md` ani plików innych dowódców. Dowódca przeciwnika dostaje tylko wyniki rozpoznania swojej strony.
+2. Uruchom osobnego subagenta (Agent) z tym promptem; agent zwraca blok JSON (`orders`, `report`, `knowledge`).
+3. Zapisz odpowiedź do pliku w katalogu tymczasowym i uruchom `apply ... --result <plik>`: narzędzie waliduje wynik i aktualizuje plik wiedzy dowódcy.
+4. Rozstrzygnij wszystkie decyzje naraz wobec prawdy (agent decyduje, sędzia rozstrzyga skutki). `report` trafia do `player/inbox` (kanał dowódcy, `type: "meldunek"`), a `orders` stają się zadaniami podwładnych w turze.
+5. Nie ujawniaj w czacie treści odpowiedzi agentów (zasady uczciwości bez zmian). Dowódca 2 bzmot nie wie o rozkazie wydanym 1 bzmot: nie podawaj mu go w wejściu.
+6. `npm run validate -- <nazwa>` sprawdza kanały `commander` i strukturę plików wiedzy.
+
 ## Zasady sędziego (wnioski z rozgrywki nr 1, docs/WNIOSKI-PRZESMYK-1.md)
 
 - **Realizm strat:** przy obronie przygotowanej stosunek strat ok. 2–3:1, nie 7:1. Atakujący, który wchodzi w ogień, też trafia: każde większe starcie kosztuje gracza sprzęt.

@@ -34,6 +34,7 @@ export function createMapControls({ store, controller, map, root = document }) {
   $('z-in').addEventListener('click', () => map.zoomIn());
   $('z-out').addEventListener('click', () => map.zoomOut());
   $('z-fit').addEventListener('click', () => controller.command('fit'));
+  $('z-3d').addEventListener('click', () => controller.open3d());
   $('b-layers').addEventListener('click', () => controller.togglePopover('layers'));
   $('b-legend').addEventListener('click', () => controller.togglePopover('legend'));
 
