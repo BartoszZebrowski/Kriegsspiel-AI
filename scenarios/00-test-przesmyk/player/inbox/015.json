@@ -1,0 +1,114 @@
+{
+  "messages": [
+    {
+      "id": "in-015-01",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T10:05:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem wariant C z ograniczonym podejściem. Strzałka na mapie: rozumiem jako oś przez las od Karolina ku Wierśniom — „Wiereśnie” to Wierśnie, mam je już na mapie. Jeśli strzałka miała kierunek odwrotny, proszę o korektę. 3k z FPV i kppanc idą ostrożnie ok. 2 km lasami od 10:30, 1k trzyma Pogorzelec i CHARLIE."
+    },
+    {
+      "id": "in-015-02",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-15T10:08:00+02:00",
+      "type": "rozkaz",
+      "text": "Duży kontratak wstrzymany — przyjąłem. Powolne podejście 2 bzmot od S akceptuję, bez głębokiego wejścia w las."
+    },
+    {
+      "id": "in-015-03",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T10:10:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem: bez kontrataku, front na E ku Folwarkowi Berżniki. 2k zajmuje wąskie pasy i okopuje się, ksap kładzie ok. 150 min na drodze od Berżnik. Kolumna T-90 widziana, ogień dart zgłaszam przez S2."
+    },
+    {
+      "id": "in-015-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T10:12:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. BSP-2 nad Żelwą od 10:00, WR-40 i dart w gotowości. Koordynuję kontrbaterię."
+    },
+    {
+      "id": "in-015-05",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T10:42:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-2: w Żelwie bateria BM-21 (ok. 12 wyrzutni, korekta Orlan). 10:30 salwa WR-40, 10:40 dart 3b (3 salwy): ok. 8 wyrzutni zniszczonych (potwierdzenie BSP-2), pożary amunicji. WR-40 przeładowuje do ok. 13:30. Pewność wysoka."
+    },
+    {
+      "id": "in-015-06",
+      "channel": "bopl",
+      "from": "kpt. Zając, dowódca bopl",
+      "time": "2026-05-15T10:57:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "10:55 Piorun zestrzelił trzeci Orlan-10 nad skrzyżowaniem. Zapas: 5 Piorun przy bcz."
+    },
+    {
+      "id": "in-015-07",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T11:15:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "11:10 ostrzał 2S19 na 1k w Bachanowie: 2 rannych. Z obserwacji 3k i krozp 2p: przy Wiżajnach ok. 10 czołgów i ok. 10 BTR formuje szyk. Spodziewam się natarcia ok. 12:00–12:30 na kierunku Wiżajny–Jeleniewo. Proszę o decyzję co do odwodu."
+    },
+    {
+      "id": "in-015-08",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T11:22:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-1 (10:00–10:45): potwierdzam — przy Wiżajnach ok. 10 T-72 i ok. 11 BTR w szyku do natarcia, 2S19 w lesie (ogień rzadki). Pewność wysoka. BSP-1 gotowy 11:45, proszę o rozkaz lotu."
+    },
+    {
+      "id": "in-015-09",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T11:30:00+02:00",
+      "type": "meldunek",
+      "text": "11:20 3k na skraju lasu ok. 2 km od Karolina: posterunek BY (ok. 20 ludzi, 1 BMP-2) — FPV zniszczył BMP-2, BY się wycofał. 3 rannych. Do Wierśni ok. 2 km. W Gibach duży ruch pojazdów."
+    },
+    {
+      "id": "in-015-10",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T11:41:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "11:40 od Folwarku Berżniki ok. 7 T-90M i ok. 4 BMP-3. Ogień dart, mina. Kontakt czołgów z 2k od 11:45."
+    },
+    {
+      "id": "in-015-13",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-15T11:45:00+02:00",
+      "type": "meldunek",
+      "text": "Po rozdziale dowozów: blog amunicja ok. 1,2 DOS, paliwo ok. 1,6. Kolejny dowóz korpusu ok. 14:00. Proszę o priorytety dowozów na następne 6 godzin."
+    },
+    {
+      "id": "in-015-11",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-15T11:50:00+02:00",
+      "type": "meldunek",
+      "text": "10:40 ogień 3b na BM-21; 11:45 ogień obronny na czołgi przy Berżnikach. 1b i 2b ok. 0,75 DOS, 3b ok. 0,8. Kolejny dowóz korpusu ok. 14:00."
+    },
+    {
+      "id": "in-015-12",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T11:57:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Natarcie odparte: ok. 4 T-90M spalone (2 w polu minowym), ok. 2 BMP-3; reszta cofa się ku Suborowu. Straty: 1 Leopard zniszczony (2k), 5 rannych. Amunicja 2k ok. 1,1 DOS. Drugi rzut RU (ok. 28 BMP) dotarł do Gib–Żelwy."
+    }
+  ]
+}

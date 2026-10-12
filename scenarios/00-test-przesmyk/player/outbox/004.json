@@ -9,6 +9,66 @@
       "type": "rozkaz",
       "priority": "urgent",
       "text": "masz zgode na uderzenie i odskok"
+    },
+    {
+      "id": "out-1c6f11c9",
+      "channel": "dd",
+      "turn": 4,
+      "time": "2026-05-14T14:00:00+02:00",
+      "sent": "2026-10-11T20:27:14.785Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "flankuja nas z lewej na pólnocy i cofamy sie na wschodzie sytułacja nie wyglada dobrze chociaz na wschodzie białorusini chyba maja niske morale bo szybko przestali nacierac"
+    },
+    {
+      "id": "out-e2c742d9",
+      "channel": "dd",
+      "turn": 4,
+      "time": "2026-05-14T14:00:00+02:00",
+      "sent": "2026-10-11T20:27:27.874Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "jaki jest twój plan dowódco?"
+    },
+    {
+      "id": "out-9a50e1b6",
+      "channel": "2bzmot",
+      "turn": 4,
+      "time": "2026-05-14T14:00:00+02:00",
+      "sent": "2026-10-11T20:28:34.408Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "mieszaj działania opóźniajace z flankowaniem z południa w zależnosci czy uznasz to za stosowne, wazne by nie oddać w pełni drogi nr 16"
+    },
+    {
+      "id": "out-bbaacfcc",
+      "channel": "1bzmot",
+      "turn": 4,
+      "time": "2026-05-14T14:00:00+02:00",
+      "sent": "2026-10-11T20:29:04.320Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "Utrzymuj pozycje bcz atakuje lewą flankę wroga"
+    },
+    {
+      "id": "out-03081a50",
+      "channel": "krozp",
+      "turn": 4,
+      "time": "2026-05-14T14:00:00+02:00",
+      "sent": "2026-10-11T20:29:48.079Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "kieruj ogniem nadal, do odwołania"
+    },
+    {
+      "id": "out-2aa63d6c",
+      "channel": "s2",
+      "turn": 4,
+      "time": "2026-05-14T14:00:00+02:00",
+      "sent": "2026-10-11T20:30:14.698Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "prosze o raport jak może spływać logistyka wroga i gdzie sa jej słabe punkty"
     }
   ]
 }

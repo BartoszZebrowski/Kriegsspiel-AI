@@ -1,0 +1,94 @@
+{
+  "messages": [
+    {
+      "id": "out-64800e68",
+      "channel": "bcz",
+      "turn": 9,
+      "time": "2026-05-15T00:00:00+02:00",
+      "sent": "2026-10-12T10:48:40.776Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "proponuje ustawic sie szerzej też na wschód od drogi nr 16 Bravo to wasza nowa rubierz",
+      "attachments": [
+        {
+          "id": "n-45tpv965",
+          "kind": "line",
+          "name": "BRAVO",
+          "color": "blue",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                23.414802,
+                54.073189
+              ],
+              [
+                23.388059,
+                54.071392
+              ],
+              [
+                23.346006,
+                54.067679
+              ],
+              [
+                23.286601,
+                54.029926
+              ]
+            ]
+          },
+          "graphic": "phase_line"
+        }
+      ]
+    },
+    {
+      "id": "out-9c767f0b",
+      "channel": "2bzmot",
+      "turn": 9,
+      "time": "2026-05-15T00:00:00+02:00",
+      "sent": "2026-10-12T10:49:05.384Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "nowa rubież to Bravo"
+    },
+    {
+      "id": "out-7209c9a7",
+      "channel": "2bzmot",
+      "turn": 9,
+      "time": "2026-05-15T00:00:00+02:00",
+      "sent": "2026-10-12T10:49:36.563Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "trzeba obstwaić południowy fragment rubierzy"
+    },
+    {
+      "id": "out-355d1c17",
+      "channel": "2bzmot",
+      "turn": 9,
+      "time": "2026-05-15T00:00:00+02:00",
+      "sent": "2026-10-12T10:49:52.546Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "okolice pogorzelec Karolin i Wiereśnie"
+    },
+    {
+      "id": "out-15a1aca7",
+      "channel": "krozp",
+      "turn": 9,
+      "time": "2026-05-15T00:00:00+02:00",
+      "sent": "2026-10-12T10:50:35.879Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "przekaż 1k pod komende bcz"
+    },
+    {
+      "id": "out-e760b848",
+      "channel": "dd",
+      "turn": 9,
+      "time": "2026-05-15T00:00:00+02:00",
+      "sent": "2026-10-12T10:51:19.731Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "Meldunek: stabilnie na wschodzie coraz wiecej wojsk ale trzymamy sie"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "messages": [
+    {
+      "id": "in-013-01",
+      "channel": "bopl",
+      "from": "kpt. Zając, dowódca bopl",
+      "time": "2026-05-15T06:04:00+02:00",
+      "type": "meldunek",
+      "text": "Rozkaz „zmień pozycje” jest niejasny. Rozumiem: wzmocnić OPL przy bcz (Orlan, prośba Kowala). Wydzielam zespół (6 Piorun, 2 Poprad) do skrzyżowania DK16/DK663, wyjazd 06:20, ETA ok. 07:20. Druga połowa zostaje w Jeleniewie przy 1 bzmot."
+    },
+    {
+      "id": "in-013-02",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-15T06:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. 2p przekazuję pod 3k 1 bzmot, rozstawienie na prawej flance (E brzeg Szeszupy). Ruch od 06:15, na miejscu ok. 06:50."
+    },
+    {
+      "id": "in-013-03",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T06:12:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. BSP-2 nad parkiem SE od 06:00, BSP-1 nad drogą Żelwa–Suborowo–Folwark Berżniki od 06:05. WR-40 przygotowuję do salwy po potwierdzeniu parku. Dart: 3b do ognia, 1b i 2b trzymam w rezerwie obronnej (ok. 0,3–0,4 DOS)."
+    },
+    {
+      "id": "in-013-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T06:46:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-1 (06:05–06:45) na drodze Żelwa–Suborowo–Folwark Berżniki: kolumna ok. 12 czołgów T-90 i ok. 4 BMP-3, czoło ok. 06:40 w rejonie Suborowa, kierunek N ku Berżnikom — manewr na prawe skrzydło bcz. Pewność wysoka. Ostrzegam bcz bezpośrednio."
+    },
+    {
+      "id": "in-013-05",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T06:52:00+02:00",
+      "type": "meldunek",
+      "text": "Park zaopatrzenia SE od Gib rozbity: 06:32 salwa WR-40, 06:45 dart 3b dobił. Ok. 15 ciężarówek i 7 cystern zniszczonych, duże pożary (BSP-2). WR-40 przeładowuje do ok. 09:30."
+    },
+    {
+      "id": "in-013-06",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T06:55:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Ostrzeżenie S2 przyjąłem. 2k przesuwam na prawe skrzydło obok 3k, front E/SE. 06:50 salwa BM-21 na 2k: 4 rannych, 1 Bergepanzer zniszczony. Proszę o rezerwę ognia dart na kierunek E."
+    },
+    {
+      "id": "in-013-07",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-15T07:05:00+02:00",
+      "type": "wiadomosc",
+      "text": "Meldunek przyjąłem. Zdjęcia satelitarne korpusu ok. 08:00 — przekażę S2. Jeśli stracicie Sejny, dywizja nie ma odwodu; prawe skrzydło bcz ma być utrzymane."
+    },
+    {
+      "id": "in-013-08",
+      "channel": "bopl",
+      "from": "kpt. Zając, dowódca bopl",
+      "time": "2026-05-15T07:22:00+02:00",
+      "type": "meldunek",
+      "text": "Zespół OPL (6 Piorun, 2 Poprad) na skrzyżowaniu od 07:20, rozstawiony za 1k i 2k. Orlan słyszalny."
+    },
+    {
+      "id": "in-013-09",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T07:25:00+02:00",
+      "type": "meldunek",
+      "text": "2p krozp dotarła 06:50 na prawą flankę 3k (E brzeg Szeszupy). Na północy spokój. Od 05:00 brak BSP nad północą — proszę o loty."
+    },
+    {
+      "id": "in-013-10",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T07:35:00+02:00",
+      "type": "meldunek",
+      "text": "Spokojnie. 1k patrol na W bez kontaktu. FPV w gotowości. Potwierdzam odcinek jezioro Białowierśnie–Karolin–Pogorzelec. Amunicja ok. 1,35 DOS."
+    },
+    {
+      "id": "in-013-11",
+      "channel": "bopl",
+      "from": "kpt. Zając, dowódca bopl",
+      "time": "2026-05-15T07:41:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "07:40 Piorun zestrzelił Orlan-10 nad skrzyżowaniem."
+    },
+    {
+      "id": "in-013-12",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T07:42:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "07:35 ok. 12 T-90M i ok. 4 BMP-3 uderzyły spod Berżnik na prawe skrzydło. Kontakt 07:40 z ok. 2 km. Walczymy."
+    },
+    {
+      "id": "in-013-13",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-15T07:50:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "07:40 ogień z rezerwy obronnej na czołgi przy Berżnikach: ok. 2 T-90M uszkodzone. 3b ok. 0,55 DOS, 1b i 2b ok. 0,3. Bez dowozu do 08:30 nie mam czym strzelać dalej."
+    },
+    {
+      "id": "in-013-14",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T07:58:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "07:55 natarcie odparte: ok. 5 T-90M spalonych, reszta cofa się ku Suborowu. Straty: 2 Leopardy zniszczone (3k), 1 uszkodzony (2k), 12 poległych i rannych. Paliwo ok. 2,0 DOS, amunicja ok. 1,0. Na DK16 07:45 demonstracja BMP-3 odparta (1 spalony)."
+    },
+    {
+      "id": "in-013-15",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T07:55:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 i BSP-2 gotowe ok. 07:50. WR-40 po salwie — przeładowanie do ok. 09:30. Proszę o rozkaz lotu: północ czy wschód."
+    }
+  ]
+}

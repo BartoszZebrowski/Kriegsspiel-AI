@@ -1,0 +1,84 @@
+{
+  "messages": [
+    {
+      "id": "out-04cfdddb",
+      "channel": "s2",
+      "turn": 13,
+      "time": "2026-05-15T08:00:00+02:00",
+      "sent": "2026-10-12T11:34:58.698Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "jeden północ jeden wschód"
+    },
+    {
+      "id": "out-05ce7cda",
+      "channel": "2bzmot",
+      "turn": 13,
+      "time": "2026-05-15T08:00:00+02:00",
+      "sent": "2026-10-12T11:39:23.913Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "przygotować wraz z bcz atak na kierunek Zelwa, przedstawić raport czego potrzebujecie i studiom wykonalności oraz warianty"
+    },
+    {
+      "id": "out-a2b865d5",
+      "channel": "bcz",
+      "turn": 13,
+      "time": "2026-05-15T08:00:00+02:00",
+      "sent": "2026-10-12T11:39:43.713Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "współpracować z przygotowaniem raportu z 2 bzmot"
+    },
+    {
+      "id": "out-7ea3aff2",
+      "channel": "s2",
+      "turn": 13,
+      "time": "2026-05-15T08:00:00+02:00",
+      "sent": "2026-10-12T11:40:27.527Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "słucham raportu z zdjec satelitarnych, poza tym powinienes nanosic wiecej informacji na mapie o kierunkach ataku wroga itp bo mało tego robisz mam wrazenie"
+    },
+    {
+      "id": "out-d56f2c38",
+      "channel": "1bzmot",
+      "turn": 13,
+      "time": "2026-05-15T08:00:00+02:00",
+      "sent": "2026-10-12T11:40:40.706Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "pozostac na pozycjach do odwołania"
+    },
+    {
+      "id": "out-dd5cb9e7",
+      "channel": "krozp",
+      "turn": 13,
+      "time": "2026-05-15T08:00:00+02:00",
+      "sent": "2026-10-12T11:41:05.450Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "poprosze pełny raport jednostka stan zasobów w procentach"
+    },
+    {
+      "id": "out-788a6ab1",
+      "channel": "krozp",
+      "turn": 13,
+      "time": "2026-05-15T08:00:00+02:00",
+      "sent": "2026-10-12T11:41:17.945Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "na poziomie batalionu"
+    },
+    {
+      "id": "out-8fa8eaf5",
+      "channel": "dd",
+      "turn": 13,
+      "time": "2026-05-15T08:00:00+02:00",
+      "sent": "2026-10-12T11:42:47.091Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "MELDUNEK \nSytuacja: odpieramy kontratak na wschodzie\nStan jednostek: niski stan pojazdów w 2 bzmot i sredni w ludziach, coraz mniej czołgów w bcz jakies 70% stanu\nZamiary: kontratak na kierunku zelwa\nProszę o: napalm do uzycia na lasach na wschodzie"
+    }
+  ]
+}

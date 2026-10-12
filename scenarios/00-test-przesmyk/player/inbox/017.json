@@ -1,0 +1,118 @@
+{
+  "messages": [
+    {
+      "id": "in-017-01",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T14:05:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem: kppanc do Dumbela, 1k do Karolina, ruch 14:10–15:00. Pogorzelec i CHARLIE obserwuję patrolem."
+    },
+    {
+      "id": "in-017-02",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T14:10:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. 3p z 3k przesuwam do 2k w centrum i rozdzielam amunicję. Odwodu nie mam — dziękuję za otwartość."
+    },
+    {
+      "id": "in-017-03",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-15T14:12:00+02:00",
+      "type": "meldunek",
+      "text": "Dostawa na północ ok. 15:40: do 1 bzmot amunicja +0,5, paliwo +0,1. Uzupełnień osobowych nie mam."
+    },
+    {
+      "id": "in-017-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T14:15:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem: BSP-1 północ, BSP-2 południe (Wierśnie–Giby), od 14:00. Misję ognia dart na kolumnę w Wiżajnach przygotowuję — dart ma ok. 0,47 DOS, ograniczę do 3b."
+    },
+    {
+      "id": "in-017-05",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T14:42:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-1: kolumna zaopatrzenia BGT w Wiżajnach 14:20 (ok. 12 ciężarówek i cystern). 14:35 dart 3b: ok. 8 pojazdów zniszczonych, w tym 3 cysterny, pożar. BSP-2: w Gibach słabi BY (2 BMP-2); od Koszar dołączyło ok. 10 BMP-3, razem ok. 18 BMP-3. Pewność średnia–wysoka."
+    },
+    {
+      "id": "in-017-06",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-15T14:50:00+02:00",
+      "type": "meldunek",
+      "text": "14:35 ogień 3b na kolumnę w Wiżajnach: 6 salw. 3b ok. 0,35 DOS przed dowozem."
+    },
+    {
+      "id": "in-017-07",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T15:05:00+02:00",
+      "type": "meldunek",
+      "text": "kppanc w Dumbelu od 15:00, 1k w Karolinie od 14:50. Pogorzelec obserwowany patrolem."
+    },
+    {
+      "id": "in-017-08",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-15T15:20:00+02:00",
+      "type": "wiadomosc",
+      "text": "ZT „Biebrza” melduje ruch ok. 20 pojazdów w Sopoćkiniach. Czoło sojuszniczej brygady nadal ok. 05:00. Meldunek o położeniu o 18:00."
+    },
+    {
+      "id": "in-017-09",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T15:32:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz dotarł 15:30: amunicja +0,6, paliwo +0,3. Okopanie prawie kompletne. 3k w odwodzie. Cisza."
+    },
+    {
+      "id": "in-017-10",
+      "channel": "ksap",
+      "from": "kpt. Mazur, dowódca ksap",
+      "time": "2026-05-15T15:35:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz 300 min dotarł 15:30 — zapas 350. Proponuję drugi pas min na DK16 S od skrzyżowania i na E. Czekam na zgodę bcz."
+    },
+    {
+      "id": "in-017-11",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T15:42:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "15:40 BY (ok. 30 ludzi i 2 BMP-2) próbuje podejść na Dumbel. Ppk kppanc niszczą oba BMP-2, BY się cofa. 1 ranny."
+    },
+    {
+      "id": "in-017-12",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T15:46:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 i BSP-2 gotowe ok. 15:45. Ocena S2: RU uzupełnia 2. rzut; natarcie wieczorem (ok. 18:00–20:00) po DK16 na skrzyżowanie, możliwe też od Berżnik. BGT wyczerpany, ale czeka na zaopatrzenie."
+    },
+    {
+      "id": "in-017-13",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T15:50:00+02:00",
+      "type": "meldunek",
+      "text": "Amunicja dotarła 15:40: 1k ok. 1,9, 2k ok. 2,0, 3k ok. 1,7 DOS. 2k wzmocniona plutonem z 3k. Brak ludzi na uzupełnienia — proszę o piechotę."
+    },
+    {
+      "id": "in-017-14",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-15T15:55:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz 155 mm dotarł 15:30: 1b i 2b ok. 0,95 DOS, 3b ok. 0,85."
+    }
+  ]
+}

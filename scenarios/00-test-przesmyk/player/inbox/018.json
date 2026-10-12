@@ -1,0 +1,111 @@
+{
+  "messages": [
+    {
+      "id": "in-018-01",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T16:05:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. BSP-2 na oś Poćkuny–Berżniki od 16:00, BSP-1 nad północą."
+    },
+    {
+      "id": "in-018-02",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T16:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. 2k wycofuję ok. 2,5 km na S na wzgórza Baczyna–Zalewki–Lisia, ruch od 16:15; lepsza obserwacja i dalej od 2S19. Smolniki i droga Wiżajny–Jeleniewo zostają bez osłony piechoty — kryje je ogień kw."
+    },
+    {
+      "id": "in-018-03",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-15T16:15:00+02:00",
+      "type": "rozkaz",
+      "text": "Przyjąłem. Przydzielam wam kompanię piechoty zmotoryzowanej z korpusu (ok. 100 ludzi, bez wozów) — w Sejnach ok. 20:00; decyzja, do której jednostki, po waszej stronie."
+    },
+    {
+      "id": "in-018-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T16:47:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-2 (16:00–16:45): w Poćkunach pluton rozpoznawczy RU (ok. 2 BRDM i 2 BMP-3) — na tyłach prawego skrzydła bcz. W Berżnikach 2 T-90M w zasadzce w zabudowie. Kolumn większych nie widać. Pewność wysoka."
+    },
+    {
+      "id": "in-018-05",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T17:02:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "16:55 krozp-1p melduje pojazdy w Poćkunach. Wysyłam pluton 3k i krozp-1p; 3k pozostaje w odwodzie."
+    },
+    {
+      "id": "in-018-06",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T17:18:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "17:15 starcie w Poćkunach: 1 BRDM spalony, reszta wycofuje się NE. Straty własne: 0."
+    },
+    {
+      "id": "in-018-07",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T17:27:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1: 17:10 do Wiżajn dociera kolumna zaopatrzenia BGT (ok. 8 ciężarówek). 17:20 dart 3b: ok. 5 zniszczonych. BSP-1 i BSP-2 gotowe ok. 17:45. Ocena S2: natarcie RU po DK16 prawdopodobne po zmroku (18:30–20:00)."
+    },
+    {
+      "id": "in-018-08",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-15T17:30:00+02:00",
+      "type": "meldunek",
+      "text": "17:20 ogień 3b na kolumnę w Wiżajnach: 6 salw. 3b ok. 0,65 DOS, 1b i 2b ok. 0,95."
+    },
+    {
+      "id": "in-018-09",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T17:35:00+02:00",
+      "type": "meldunek",
+      "text": "17:30 ogień BM-21 (ok. 4 wyrzutnie) i moździerzy na 2k: 2 rannych."
+    },
+    {
+      "id": "in-018-10",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T17:40:00+02:00",
+      "type": "meldunek",
+      "text": "2k na wzgórzach od 16:50. 17:35 patrol BGT (2 BTR) w Smolnikach — zawrócił po ogniu 2k. krozp 3p obserwuje."
+    },
+    {
+      "id": "in-018-11",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T17:52:00+02:00",
+      "type": "meldunek",
+      "text": "Dotarły 3 Leopardy z napraw (2 do 1k, 1 do 2k) — razem 29 czołgów. Załogi zmęczone. Gotowość ok. 85% sprzętu."
+    },
+    {
+      "id": "in-018-12",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-15T17:56:00+02:00",
+      "type": "meldunek",
+      "text": "Zapasy: blog amunicja ok. 0,8, paliwo ok. 1,2. Kolumna korpusu ok. 21:00. Kompania piechoty od dd będzie w Sejnach ok. 20:00 — proszę o decyzję, dokąd ją skierować."
+    },
+    {
+      "id": "in-018-13",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T17:58:00+02:00",
+      "type": "meldunek",
+      "text": "Spokój. 3k i kppanc przy Dumbelu, 1k w Karolinie. BY cichy."
+    }
+  ]
+}

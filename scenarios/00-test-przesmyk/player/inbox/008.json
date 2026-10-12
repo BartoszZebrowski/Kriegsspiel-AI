@@ -1,0 +1,122 @@
+{
+  "messages": [
+    {
+      "id": "in-008-01",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T20:04:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem: 11 jeńców do dd. Kolumna z eskortą WP wyjeżdża 20:20, w Ełku ok. 23:00."
+    },
+    {
+      "id": "in-008-02",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T20:06:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Natarcie wzdłuż DK16 na Konstantynówkę: 1k po prawej, 2k po lewej, 3k za. Start 20:15 po ogniu dart. Zmierzch, ograniczona widoczność, drogę rozpoznaję bez saperów — ksap nie przydzielony."
+    },
+    {
+      "id": "in-008-03",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-14T20:08:00+02:00",
+      "type": "meldunek",
+      "text": "Kontynuujemy. Ogień przygotowania 20:10–20:15, potem na wezwanie S2. 1b i 2b ok. 0,8 DOS, po przygotowaniu ok. 0,5; dowóz 155 mm o 21:00."
+    },
+    {
+      "id": "in-008-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T20:10:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. BSP-2 w powietrzu od 20:00 nad DK16, BSP-1 od 20:45 na północ — zmierzch pogarsza obserwację optyczną. Ogień dart kieruję na bieżąco."
+    },
+    {
+      "id": "in-008-05",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T20:15:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem sugestię. 3k idzie na Rutkę-Tartak i rozstawia się szeroko wzdłuż Szeszupy od 21:00. Zwracam uwagę: między 2k a 3k luka ok. 2 km, osłonię patrolami krozp."
+    },
+    {
+      "id": "in-008-06",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T20:35:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "20:20 bcz wszedł do natarcia po DK16. Moje 3k i kppanc wiążą skrzydło bcz (RU) od W. Kontakt ogniowy."
+    },
+    {
+      "id": "in-008-07",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T20:52:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-2 (20:00–20:50): bcz (RU) w obronie doraźnej, ok. 10 czołgów. Na DK16 N od Konstantynówki świeże wykopy — możliwe zagrodzenie minowe (pewność średnia). Ok. 18 km na SE od Gib kolumna ok. 20 pojazdów gąsienicowych, kierunek Giby."
+    },
+    {
+      "id": "in-008-08",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T21:02:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "20:55 2k wjechała w pole minowe na DK16 N od Konstantynówki: 2 Leopardy unieruchomione. 1k obeszła z prawej, 1 czołg 1k zniszczony ppk. Ok. 5 T-72 spalonych. Potrzebni saperzy."
+    },
+    {
+      "id": "in-008-09",
+      "channel": "zt-biebrza",
+      "from": "płk Rudnicki, dowódca ZT „Biebrza”",
+      "time": "2026-05-14T21:10:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Nasze rozpoznanie: kolumna ok. 20 pojazdów gąsienicowych z kierunku Sopoćkin ku Gibom, czoło do Gib ok. 23:00 (pewność średnia). Ostrzegam: to odwód, który pojawi się za waszym przeciwnikiem."
+    },
+    {
+      "id": "in-008-10",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T21:30:00+02:00",
+      "type": "meldunek",
+      "text": "3k na Szeszupie w Rutce-Tartak, front ok. 3 km, rozstawiona szeroko. 21:10 pojedyncza salwa 2S19 na kolumnę 3k, bez strat. Patrole krozp w luce."
+    },
+    {
+      "id": "in-008-11",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T21:40:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Bzmot BY wycofuje się z Konstantynówki ku Gibom, bcz (RU) ostatni schodzi na S. Moje 3k na W skraju Konstantynówki. Strata: 1 BWP. Amunicja ok. 0,95 DOS."
+    },
+    {
+      "id": "in-008-12",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-14T21:45:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz 155 mm dotarł 21:00: 1b i 2b ok. 0,75 DOS, 3b ok. 0,9. Wsparcie bcz zakończone, gotowość na wezwanie."
+    },
+    {
+      "id": "in-008-13",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T21:55:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "21:50 czoło (1k) na skrzyżowaniu DK16/DK663 przy Konstantynówce. Bzmot BY wycofany ku Gibom (ok. 6 BMP spalonych), bcz (RU): ok. 7 T-72 spalonych, 3 odchodzą. Nasze straty: 1 Leopard zniszczony, 2 w minach, 6 poległych i rannych. Paliwo ok. 1,7 DOS, amunicja ok. 1,5. Noc: okopuję się na skrzyżowaniu, Giby ok. 3 km — dalej bez rozkazu nie idę. Proszę o saperów dla 2k."
+    },
+    {
+      "id": "in-008-14",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T21:58:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 (20:45–21:25, zmierzch): BGT w obronie, bez ruchu, pewność średnia. BSP-2 po lądowaniu, gotowy ok. 21:45 do lotu nocnego. Kolumna z SE 21:40 ok. 8 km od Gib — czoło ok. 23:00."
+    }
+  ]
+}

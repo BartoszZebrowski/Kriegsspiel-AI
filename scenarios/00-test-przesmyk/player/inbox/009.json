@@ -1,0 +1,111 @@
+{
+  "messages": [
+    {
+      "id": "in-009-01",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T22:05:00+02:00",
+      "type": "meldunek",
+      "text": "Rozkaz niejasny — rozumiem jako wzmocnienie rozpoznania: 2p patrol na W od Bachanowa od 22:30, 1p przerzucam do Sejn (osłona bcz od S i E, ETA 23:50), 3p zostaje na PO. Proszę o doprecyzowanie, jeśli chodziło o coś innego."
+    },
+    {
+      "id": "in-009-02",
+      "channel": "ksap",
+      "from": "kpt. Mazur, dowódca ksap",
+      "time": "2026-05-14T22:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Ruszam 22:20 do Sejn, ETA 23:50. Rozminowanie rozpocznę, gdy bcz da zgodę i będzie osłona — nocą pod ogniem nie wchodzę. Mam 2 zestawy minowania i ok. 600 min."
+    },
+    {
+      "id": "in-009-03",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T22:10:00+02:00",
+      "type": "meldunek",
+      "text": "Okopujemy się na skrzyżowaniu. 2k wyprowadza 2 Leopardy z pola minowego z Bergepanzerem, ok. 23:30. Czekam na ksap."
+    },
+    {
+      "id": "in-009-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T22:12:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem, kontynuuję. BSP-2 w powietrzu od 22:10 nad Giby, BSP-1 od 22:20 na północ. Lot nocny, pogorszona widoczność."
+    },
+    {
+      "id": "in-009-05",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T22:18:00+02:00",
+      "type": "rozkaz",
+      "text": "Przyjąłem meldunek. Środków do porażania logistyki dywizja nie ma; przydzielę wam pluton dronów uderzeniowych FPV, w Suwałkach ok. 03:00. Wywiad dywizji (ocena niska): w ciągu doby koncentracja dalszych dwóch batalionów w rejonie Grodna. Trzymać DK16 i ALFA; bcz nie angażować za Konstantynówkę."
+    },
+    {
+      "id": "in-009-06",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T22:55:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-2 (22:10–22:50): kolumna ok. 20 BMP-3 weszła do Gib; bzmot BY za nią, ok. 3 czołgi w Gibach. 22:45 ogień dart na czoło kolumny: ok. 1 BMP i 2 ciężarówki zniszczone. Przygotowują kontratak, prawdopodobnie przed świtem. BSP-1: BGT bez ruchu, ciężarówki z Żytkiejm. Pewność wysoka na wschodzie."
+    },
+    {
+      "id": "in-009-07",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-14T23:00:00+02:00",
+      "type": "meldunek",
+      "text": "Ogień 22:45 na zlecenie S2: 4 salwy 1b i 2b. Stan 1b i 2b ok. 0,6 DOS, 3b ok. 0,9. Dowóz 155 mm ok. 02:00."
+    },
+    {
+      "id": "in-009-08",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T23:18:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "23:15 patrol rozpoznawczy przeciwnika (4 BMP-3) wjechał na nasze przedpole ok. 600 m od 1k. Odparty, 1 BMP-3 spalony, reszta ku Gibom."
+    },
+    {
+      "id": "in-009-09",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T23:25:00+02:00",
+      "type": "meldunek",
+      "text": "Na północy spokojnie. 3k nad Szeszupą bez kontaktu, 1k okopana w Bachanowie. BGT bez aktywności."
+    },
+    {
+      "id": "in-009-10",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T23:30:00+02:00",
+      "type": "meldunek",
+      "text": "2p z patrolu na W od Bachanowa: grupa obejścia (ok. 3 czołgi, 5 BTR) stoi ok. 6 km na W, bez ruchu. 1p w drodze do Sejn."
+    },
+    {
+      "id": "in-009-11",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T23:42:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "23:40 ostrzał moździerzy 120 mm na skrzyżowanie: 2 ranni w 1k. 23:30 2k wyciągnęła oba Leopardy z pola minowego; jeden po naprawie polowej wrócił do służby, drugi w naprawie. Okopanie ok. 70%. Paliwo ok. 1,65 DOS, amunicja ok. 1,45."
+    },
+    {
+      "id": "in-009-12",
+      "channel": "ksap",
+      "from": "kpt. Mazur, dowódca ksap",
+      "time": "2026-05-14T23:50:00+02:00",
+      "type": "meldunek",
+      "text": "W Sejnach. Czekam na zgodę bcz. Rozminowanie pod ostrzałem moździerzy bez osłony ogniowej nie rozpoczynam."
+    },
+    {
+      "id": "in-009-13",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T23:55:00+02:00",
+      "type": "meldunek",
+      "text": "Jeńcy przekazani dd 23:10. Stan: paliwo ZT średnio ok. 2,2 DOS, amunicja ogólna ok. 1,9. Dowóz do bcz ok. 01:30 (paliwo +0,5 DOS, amunicja +0,4), do dart ok. 02:00 (155 mm +0,3)."
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "messages": [
+    {
+      "id": "in-007-01",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T18:05:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Marsz kolumną przez Szypliszki, czoło w Sejnach ok. 19:15, całość ok. 19:45. Natarcie wzdłuż DK16 możliwe dopiero po przegrupowaniu i rozpoznaniu — gotowość ok. 20:15. Proszę o plan: kierunek, rubież, wsparcie."
+    },
+    {
+      "id": "in-007-02",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T18:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem, utrzymujemy. O 19:00 wycofuję 2k za 1k (wyczerpana), na jej odcinek wchodzi kppanc."
+    },
+    {
+      "id": "in-007-03",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T18:10:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. 1k wraca do Bachanowa i okopuje się od 18:30. Jeńców (2) przekazałem do tyłu."
+    },
+    {
+      "id": "in-007-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T18:12:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. BSP-2 na wschód od 18:15, BSP-1 na północ po gotowości (ok. 19:00). Dart pod moim kierowaniem ognia — przyjmuję; ostrzegam, że 1b i 2b mają ok. 1,1 DOS, więc strzelam tylko do celów wartościowych."
+    },
+    {
+      "id": "in-007-05",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-14T18:15:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem: od 18:15 ogień dart kieruje S2. Stan: 1b i 2b ok. 1,1 DOS, 3b ok. 1,15 DOS; kolejny dowóz 155 mm ok. 21:00."
+    },
+    {
+      "id": "in-007-06",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T18:18:00+02:00",
+      "type": "meldunek",
+      "text": "Rozkaz „do dowództwa dywizji” jest niepełny — nie wiem, co przekazać. Wysłałam do dd standardowy raport (18:00: paliwo ok. 2,4 DOS, amunicja ogólna ok. 2,0 DOS, dart ok. 1,1, 2 bzmot ok. 1,1). Proszę o doprecyzowanie, jeśli chodziło o coś innego."
+    },
+    {
+      "id": "in-007-07",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T18:20:00+02:00",
+      "type": "rozkaz",
+      "text": "Przyjąłem. Zgoda na bcz do Sejn, ale kierunek Wiżajny zostaje na 1 bzmot — nie osłabiać go. Odwodów dywizji nie mam. Meldunek o położeniu o 20:00."
+    },
+    {
+      "id": "in-007-08",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T18:57:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-2 (18:15–18:55): bcz (RU) zgrupowany ok. 3 km S od Sejn, ok. 14 czołgów i ciężarówki. Ogień dart 18:40 z korektą BSP-2: ok. 1 czołg i 3 ciężarówki zniszczone. Bzmot BY dalej na N skraju Gib. Pewność wysoka."
+    },
+    {
+      "id": "in-007-09",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T19:12:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "19:10 natarcie bcz (RU) po DK16, ok. 10–13 czołgów, bzmot BY stoi w miejscu. Ppk kppanc i 1k, ogień dart z korektą S2."
+    },
+    {
+      "id": "in-007-10",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T19:35:00+02:00",
+      "type": "meldunek",
+      "text": "19:30 grupa obejścia (ok. 3 czołgi, 5–6 BTR) sondowała Bachanowo od W. Odparta ppk Spike, 1 BTR zniszczony, 1 ranny. 1k okopana. Naprawiony Rosomak wrócił do 1p."
+    },
+    {
+      "id": "in-007-11",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T19:42:00+02:00",
+      "type": "meldunek",
+      "text": "Natarcie odparte: 3 T-72 spalone, bcz (RU) odchodzi na S i przegrupowuje się. Straty: 1 BWP, 6 rannych. 2k w odwodzie. Amunicja ok. 1,15 DOS."
+    },
+    {
+      "id": "in-007-12",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T19:46:00+02:00",
+      "type": "meldunek",
+      "text": "Czoło w Sejnach 19:15, cały bcz w rejonie na E od Sejn od 19:45. Paliwo ok. 2,0 DOS (1k, 2k), 3k ok. 2,3. Rozpoznaję drogę na S. Czekam na plan natarcia — gotowość 20:15."
+    },
+    {
+      "id": "in-007-13",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T19:48:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 (19:00–19:45): BGT w obronie przy Wiżajnach, 19:30 dotarła do niego kolumna zaopatrzenia (ok. 8 ciężarówek). Grupa obejścia ok. 6 km na W od Bachanowa. Dywizjon 2S19 widoczny w lesie ok. 12 haubic, pozycja ok. 40 km od dart — poza praktycznym zasięgiem, ognia nie otwieram. Pewność wysoka."
+    },
+    {
+      "id": "in-007-14",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T19:52:00+02:00",
+      "type": "wiadomosc",
+      "text": "ZT „Mamry” ustabilizował front pod Gołdapią (ok. 2 km na E od poprzedniej linii). Zagrożenie waszego lewego skrzydła przed świtem oceniam jako umiarkowane."
+    },
+    {
+      "id": "in-007-15",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T19:56:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz amunicji do 2 bzmot dotarł 18:30. Dowóz 155 mm do dart ok. 21:00, paliwo do bcz po natarciu. Jeńców (11 łącznie) odeszła kolumna sanitarna do tyłu — czekam na decyzję dywizji."
+    }
+  ]
+}

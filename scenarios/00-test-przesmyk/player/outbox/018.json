@@ -1,0 +1,14 @@
+{
+  "messages": [
+    {
+      "id": "out-17d9f194",
+      "channel": "dart",
+      "turn": 18,
+      "time": "2026-05-15T18:00:00+02:00",
+      "sent": "2026-10-12T12:26:41.213Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "daj jedna kompanie do Poćkuny"
+    }
+  ]
+}

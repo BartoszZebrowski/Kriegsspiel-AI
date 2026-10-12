@@ -735,6 +735,186 @@
         "rzeki Szeszupy"
       ],
       "note": "Współrzędne: OpenStreetMap Nominatim (punkt na rzece na E od Rutki-Tartak)."
+    },
+    {
+      "id": "konstantynowka",
+      "name": "Konstantynówka",
+      "kind": "wieś",
+      "pos": [
+        23.3469,
+        54.0658
+      ],
+      "zoom": 13,
+      "forms": [
+        "Konstantynówka",
+        "Konstantynówki",
+        "Konstantynówce",
+        "Konstantynówką",
+        "Konstantynówkę"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (gmina Giby). Skrzyżowanie DK16/DK663 obok wsi."
+    },
+    {
+      "id": "karolin",
+      "name": "Karolin",
+      "kind": "wieś",
+      "pos": [
+        23.2759,
+        54.0491
+      ],
+      "zoom": 13,
+      "forms": [
+        "Karolin",
+        "Karolina",
+        "Karolinie",
+        "Karolinem",
+        "Karolinowi"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (gmina Giby)."
+    },
+    {
+      "id": "pogorzelec",
+      "name": "Pogorzelec",
+      "kind": "wieś",
+      "pos": [
+        23.2545,
+        54.0415
+      ],
+      "zoom": 13,
+      "forms": [
+        "Pogorzelec",
+        "Pogorzelca",
+        "Pogorzelcu",
+        "Pogorzelcem",
+        "Pogorzelcowi"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (gmina Giby)."
+    },
+    {
+      "id": "bialowiersnie",
+      "name": "Białowierśnie",
+      "kind": "wieś",
+      "pos": [
+        23.3105,
+        54.056
+      ],
+      "zoom": 13,
+      "forms": [
+        "Białowierśnie",
+        "Białowierśni",
+        "Białowierśniem",
+        "jezioro Białowierśnie",
+        "jeziora Białowierśnie",
+        "jezioru Białowierśnie"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (gmina Giby); „Wiereśnie” z rozkazu to prawdopodobnie ta miejscowość."
+    },
+    {
+      "id": "zelwa",
+      "name": "Żelwa",
+      "kind": "wieś",
+      "pos": [
+        23.4492,
+        54.0266
+      ],
+      "zoom": 13,
+      "forms": [
+        "Żelwa",
+        "Żelwy",
+        "Żelwie",
+        "Żelwą",
+        "Żelwę"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (gmina Giby/Sejny)."
+    },
+    {
+      "id": "suborowo",
+      "name": "Suborowo",
+      "kind": "wieś",
+      "pos": [
+        23.4647,
+        54.0556
+      ],
+      "zoom": 13,
+      "forms": [
+        "Suborowo",
+        "Suborowa",
+        "Suborowie",
+        "Suborowem",
+        "Suborowu"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (gmina Giby/Sejny)."
+    },
+    {
+      "id": "folwark-berzniki",
+      "name": "Folwark Berżniki",
+      "kind": "wieś",
+      "pos": [
+        23.4656,
+        54.0746
+      ],
+      "zoom": 13,
+      "forms": [
+        "Folwark Berżniki",
+        "Folwarku Berżniki",
+        "Folwarkiem Berżniki",
+        "Folwarkowi Berżniki"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (gmina Giby/Sejny)."
+    },
+    {
+      "id": "wiersnie",
+      "name": "Wierśnie",
+      "kind": "wieś",
+      "pos": [
+        23.3067,
+        54.0266
+      ],
+      "zoom": 13,
+      "forms": [
+        "Wierśnie",
+        "Wierśni",
+        "Wierśniach",
+        "Wierśniami",
+        "Wierśniom"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (gmina Giby). Rozkaz „Wiereśnie” oznacza prawdopodobnie tę wieś."
+    },
+    {
+      "id": "dumbel",
+      "name": "Dumbel",
+      "kind": "wieś",
+      "pos": [
+        23.3118,
+        54.0345
+      ],
+      "zoom": 14,
+      "forms": [
+        "Dumbel",
+        "Dumbela",
+        "Dumblu",
+        "Dumbelem",
+        "Dumbelowi"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (osada przy Wierśniach, gmina Giby)."
+    },
+    {
+      "id": "pockuny",
+      "name": "Poćkuny",
+      "kind": "wieś",
+      "pos": [
+        23.4103,
+        54.1059
+      ],
+      "zoom": 13,
+      "forms": [
+        "Poćkuny",
+        "Poćkun",
+        "Poćkunach",
+        "Poćkunami",
+        "Poćkunom"
+      ],
+      "note": "Współrzędne: OpenStreetMap Nominatim (gmina Sejny)."
     }
   ]
 }

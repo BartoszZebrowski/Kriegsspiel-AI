@@ -1,0 +1,103 @@
+{
+  "messages": [
+    {
+      "id": "in-010-01",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T00:04:00+02:00",
+      "type": "meldunek",
+      "text": "Rubież BRAVO przyjąłem. 3k przesuwam na E od DK16, 1k zostaje na skrzyżowaniu, 2k czeka na przejście. Uwaga: przy ok. 35 czołgach bez piechoty szeroka obrona jest cienka — przy kontrataku odwodu nie będę miał czym go zamknąć."
+    },
+    {
+      "id": "in-010-02",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T00:06:00+02:00",
+      "type": "meldunek",
+      "text": "Rubież BRAVO przyjąłem. Karolin i Pogorzelec mam na mapie, miejscowości „Wiereśnie” nie znajduję — rozumiem jako rejon między nimi. 3k do Karolina, 1k na W między Karolinem a Pogorzelcem, kppanc w centrum, 2k odwód. Ruch od 00:30. Siły słabe: 1k ok. 120 ludzi, 3k ok. 105."
+    },
+    {
+      "id": "in-010-03",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-15T00:08:00+02:00",
+      "type": "meldunek",
+      "text": "Nie mam „1k”, rozumiem 1p krozp: przekazuję ją pod komendę bcz, obserwacja E flanki rubieży BRAVO."
+    },
+    {
+      "id": "in-010-04",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-15T00:12:00+02:00",
+      "type": "rozkaz",
+      "text": "Przyjąłem. FPV ok. 03:00 w Suwałkach. Oceniam, że przeciwnik uderzy przed świtem, ok. 03:00. Zmieniać tylko to, co konieczne."
+    },
+    {
+      "id": "in-010-05",
+      "channel": "ksap",
+      "from": "kpt. Mazur, dowódca ksap",
+      "time": "2026-05-15T00:20:00+02:00",
+      "type": "meldunek",
+      "text": "Na prośbę dowódcy bcz wchodzę do pola minowego W od DK16 pod osłoną moździerzy 2 bzmot. Praca 00:30–01:45, przejście 6 m dla 2k."
+    },
+    {
+      "id": "in-010-06",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T00:58:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-2 (00:10–00:55): odwód w Gibach na pozycjach wyjściowych — ok. 19 BMP-3 i ok. 6 moździerzy 120 mm, ok. 3 czołgi i bzmot BY w tyle. Do 00:55 brak ruchu ku nam. BSP-1: BGT bez ruchu. Pewność wysoka."
+    },
+    {
+      "id": "in-010-07",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T01:12:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "01:10 patrol 2 BMP-3 na prawym skrzydle 3k (E od DK16). Odparty, 1 BMP-3 spalony. 1 ranny w 3k."
+    },
+    {
+      "id": "in-010-08",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-15T01:25:00+02:00",
+      "type": "meldunek",
+      "text": "1p z E flanki: ciągły ruch silników w Gibach, ciężki sprzęt. Kontratak najpóźniej ok. 03:00 (ocena)."
+    },
+    {
+      "id": "in-010-09",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-15T01:42:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz do bcz dotarł 01:30 (paliwo +0,5, amunicja +0,4). Do 2 bzmot 01:45 (+0,25 DOS amunicji), do dart ok. 01:55 (+0,3 DOS 155 mm)."
+    },
+    {
+      "id": "in-010-10",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T01:50:00+02:00",
+      "type": "meldunek",
+      "text": "01:30 sondaż BY (ok. 10 ludzi) na 1k W od Karolina — po ogniu odszedł. 1k stoi między Karolinem a Pogorzelcem, 3k w Karolinie, kppanc w centrum. „Wiereśnie” nadal bez pozycji na mapie. Amunicja ok. 1,2 DOS."
+    },
+    {
+      "id": "in-010-11",
+      "channel": "ksap",
+      "from": "kpt. Mazur, dowódca ksap",
+      "time": "2026-05-15T01:55:00+02:00",
+      "type": "meldunek",
+      "text": "01:45 przejście 6 m przez pole minowe W od DK16 gotowe i oznakowane. 1 saper ranny od moździerza 01:10. Mogę wejść na zapory wokół skrzyżowania, jeśli bcz wskaże."
+    },
+    {
+      "id": "in-010-12",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T01:58:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "2k przeszła przez przejście 01:50, jest obok 1k. Okopanie ok. 90%. Paliwo ok. 2,05 DOS, amunicja ok. 1,8. Gotowi na kontratak, czekam."
+    }
+  ]
+}

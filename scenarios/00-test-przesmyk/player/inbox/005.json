@@ -1,0 +1,118 @@
+{
+  "messages": [
+    {
+      "id": "in-005-01",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T14:05:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem rozkaz. Uderzenie na kolumny zaopatrzenia pod Wiżajnami: 1k i 2k przez Szeszupę, 3k osłania odskok. Ruszamy 14:10."
+    },
+    {
+      "id": "in-005-02",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T14:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Utrzymujemy pozycje, 1k w Bachanowie frontem na W. Dobrze, że bcz uderza na lewą flankę wroga."
+    },
+    {
+      "id": "in-005-03",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T14:10:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. 1k i 2k opóźniają na DK16 na płd. od Sejn, 3k wychodzi na skrzydło przeciwnika od płd.-zach. Nie oddamy drogi nr 16 w całości."
+    },
+    {
+      "id": "in-005-04",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T14:12:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Kierujemy ogień ze stanowisk PO do odwołania. 3. pluton na wzgórzu prowadzi obserwację przedpola ALFA."
+    },
+    {
+      "id": "in-005-05",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T14:15:00+02:00",
+      "type": "rozkaz",
+      "text": "Przyjąłem Wasz meldunek o flankowaniu lewego skrzydła. Rubieży na Sejny nie oddawać bez mojej zgody. Kompania przeciwpancerna wchodzi od 15:20 w rejon SW od Sejn — przydzielam ją do 2 bzmot."
+    },
+    {
+      "id": "in-005-06",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T14:18:00+02:00",
+      "type": "wiadomosc",
+      "text": "Mój plan: utrzymać przesmyk. ZT „Hańcza” trzyma ALFA i DK16 (Giby–Sejny), ZT „Mamry” broni Gołdapi, ZT „Biebrza” trzyma Augustów. Wasz odwód — bcz — wykorzystaj do uderzeń na tyły nieprzyjaciela, ale bądź gotów wrócić na Sejny, jeśli 2 bzmot się załamie. Meldunek o sytuacji co 2 godziny, z położeniem wojsk."
+    },
+    {
+      "id": "in-005-07",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T14:25:00+02:00",
+      "type": "meldunek",
+      "text": "Logistyka wroga, ocena S2 (pewność niska–średnia): BGT zaopatrywana drogą Żytkiejmy–Wiżajny z Kaliningradu; od Wiżajn na zachód idą ciężarówki i cysterny. Słabe punkty: kolumny w rejonie Wiżajn (13:30, słabo osłonięte) — bcz może je rozbić, jeśli ruszy teraz. Paliwo BGT wg oceny ok. 1,5 doby. Ogień 2S19 coraz rzadszy, amunicja prawdopodobnie na wyczerpaniu. Bez BSP nie potwierdzę."
+    },
+    {
+      "id": "in-005-08",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T15:02:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "14:40–14:55 rozbiliśmy kolumny zaopatrzenia pod Wiżajnami — ok. 10 pojazdów spalonych, osłona rozproszona. Odskok pod ostrzałem 2S19: 1 czołg uszkodzony (ewakuowany na naprawę), 2 rannych. Wszyscy na stanowiskach na E od Szeszupy, 15:00."
+    },
+    {
+      "id": "in-005-09",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T15:05:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "14:00–15:00 odparliśmy natarcie grupy obejścia w Bachanowie. Wg 1k: zniszczone 3 czołgi i 3 BTR. Nasze straty: 1 Rosomak zniszczony, 1 uszkodzony, 5 rannych. Przeciwnik odchodzi na W ku Wiżajnom."
+    },
+    {
+      "id": "in-005-10",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T15:12:00+02:00",
+      "type": "meldunek",
+      "text": "3. pluton (PO na wzgórzu): 14:50–15:05 ruch BTR i kilku czołgów na W, ku Wiżajnom, ok. 2–3 km od pozycji sprzed godziny. Na przedpolu zostały pojedyncze BTR. Pewność średnia."
+    },
+    {
+      "id": "in-005-11",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-14T15:20:00+02:00",
+      "type": "meldunek",
+      "text": "1. i 2. bateria — ogień ciągły na DK16, zużycie amunicji ok. 60%, zapas na ok. 2 h przy tym tempie. 3. bateria wspiera 1k w Bachanowie. 14:40 salwa artylerii przeciwnika na bcz (kierunek NW, pewność niska)."
+    },
+    {
+      "id": "in-005-12",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T15:25:00+02:00",
+      "type": "meldunek",
+      "text": "Kompania przeciwpancerna dywizji (Rosomak-S) w rejonie SW od Sejn od 15:20 — przydzielona do 2 bzmot. Rozwijamy do kontrataku na skrzydło bcz (RU) na DK16. Giby: bzmot BY wychodzi za bcz na północ. 2k straty umiarkowane."
+    },
+    {
+      "id": "in-005-13",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T15:40:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1, lot nad Wiżajny 15:00–15:40: pogorzelisko kolumny zaopatrzenia pod Wiżajnami — ok. 10 pojazdów spalonych. Na drodze z Przerośli na W, ok. 4 km na W od Bachanowa, ok. 4 czołgi i 7 BTR, kierunek Wiżajny. Pewność wysoka. BSP-1 na ziemi (zakłócenia), gotowy ok. 16:50. BSP-2 po lądowaniu 15:05, gotowy ok. 16:30."
+    },
+    {
+      "id": "in-005-14",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T15:50:00+02:00",
+      "type": "meldunek",
+      "text": "Po rajdzie bcz: paliwo ok. 2 doby. Dowóz paliwa z blogu wyruszył 15:45, na Szeszupę ok. 16:45. Leopard na naprawę — ewakuacja na tyły, bez wpływu na zadanie. Ksap czeka na zadanie; zapory na DK8 gotowe."
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "messages": [
+    {
+      "id": "out-221419c3",
+      "channel": "bopl",
+      "turn": 12,
+      "time": "2026-05-15T06:00:00+02:00",
+      "sent": "2026-10-12T11:20:48.026Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "zmien pozycje"
+    },
+    {
+      "id": "out-378743ab",
+      "channel": "s2",
+      "turn": 12,
+      "time": "2026-05-15T06:00:00+02:00",
+      "sent": "2026-10-12T11:23:21.600Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "ogień altyleri rakietowej oraz pobliskiego dart na park zaopatrzenia kontynułowac rozpoznanie w rejonie"
+    },
+    {
+      "id": "out-f7df023f",
+      "channel": "krozp",
+      "turn": 12,
+      "time": "2026-05-15T06:00:00+02:00",
+      "sent": "2026-10-12T11:24:41.447Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "przekazac jeden pluton rozopznania do 3k 1bzmt, niech umieszcza ja na swojej prawej flance"
+    },
+    {
+      "id": "out-f803d3f4",
+      "channel": "s2",
+      "turn": 12,
+      "time": "2026-05-15T06:00:00+02:00",
+      "sent": "2026-10-12T11:25:37.472Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "sprawdzić tez droge Zelwa Suborowo Folwark Berżnik"
+    },
+    {
+      "id": "out-3c4d7eed",
+      "channel": "dd",
+      "turn": 12,
+      "time": "2026-05-15T06:00:00+02:00",
+      "sent": "2026-10-12T11:26:36.254Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "MELDUNEK \nSytuacja: bez zmian\nStan jednostek: bez zmian\nZamiary: dalsza obrona łatanie dziur w lini\nProszę o: nic poza tym co wczesniej"
+    }
+  ]
+}

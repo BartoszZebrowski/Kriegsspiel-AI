@@ -1,0 +1,54 @@
+{
+  "messages": [
+    {
+      "id": "out-6cb28c92",
+      "channel": "krozp",
+      "turn": 8,
+      "time": "2026-05-14T22:00:00+02:00",
+      "sent": "2026-10-12T10:35:45.935Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "uzycie wiecej tego rozpoznania"
+    },
+    {
+      "id": "out-0bca5120",
+      "channel": "ksap",
+      "turn": 8,
+      "time": "2026-05-14T22:00:00+02:00",
+      "sent": "2026-10-12T10:37:21.715Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "wesprzec bcz w rozminowywaniu ale dopiero jak bedzie bezpiecznie"
+    },
+    {
+      "id": "out-083983e4",
+      "channel": "bcz",
+      "turn": 8,
+      "time": "2026-05-14T22:00:00+02:00",
+      "sent": "2026-10-12T10:38:00.366Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "zostać na pozycjach okpać sie i wzmocnić trzymac droge nr 16"
+    },
+    {
+      "id": "out-219e998d",
+      "channel": "s2",
+      "turn": 8,
+      "time": "2026-05-14T22:00:00+02:00",
+      "sent": "2026-10-12T10:38:33.761Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "kontynułować dalej to samo, do odwołania"
+    },
+    {
+      "id": "out-cc36f9d6",
+      "channel": "dd",
+      "turn": 8,
+      "time": "2026-05-14T22:00:00+02:00",
+      "sent": "2026-10-12T10:40:20.583Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "MELDUNEK \nSytuacja: Stabilnie na północy, wróg odnowił logistyke na północy. Na wschodzie zdążyli rozłożyć miny w okolicach Konstantynówki i wpadliśmy na nie, ale bez dużych strat okopujemy sie i trzymamy droge nr 16\nStan jednostek: niewielkie straty\nZamiary: kontynułowanie obrony, chciałbym osłabiać logistykę na przedpolu ale nie mam na to środków \nProszę o: środki do porażania logistyki i więcej danych wywiadowczych"
+    }
+  ]
+}

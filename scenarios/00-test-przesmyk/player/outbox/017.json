@@ -1,0 +1,34 @@
+{
+  "messages": [
+    {
+      "id": "out-f2a7fdc7",
+      "channel": "s2",
+      "turn": 17,
+      "time": "2026-05-15T16:00:00+02:00",
+      "sent": "2026-10-12T12:19:51.432Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "sprawdz jednym dronem oś Poćkuny i Berżniki\nreszte kontunułowac jak wczesniej"
+    },
+    {
+      "id": "out-0655be0d",
+      "channel": "dd",
+      "turn": 17,
+      "time": "2026-05-15T16:00:00+02:00",
+      "sent": "2026-10-12T12:20:10.051Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "narazie wszystko stabilnie wróg osłab i zbiera siły do drugiego natarcia"
+    },
+    {
+      "id": "out-81f42566",
+      "channel": "1bzmot",
+      "turn": 17,
+      "time": "2026-05-15T16:00:00+02:00",
+      "sent": "2026-10-12T12:21:42.823Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "cofnij sie troche 2k bo nizej masz znacznie lepszy teren do obrony"
+    }
+  ]
+}

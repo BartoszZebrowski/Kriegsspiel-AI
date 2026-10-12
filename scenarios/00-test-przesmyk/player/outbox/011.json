@@ -1,0 +1,190 @@
+{
+  "messages": [
+    {
+      "id": "out-a1b81aa7",
+      "channel": "s2",
+      "turn": 11,
+      "time": "2026-05-15T04:00:00+02:00",
+      "sent": "2026-10-12T11:12:35.123Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "przekierować FPV do 2 bzmot (do AI fajnie jakby sie pojawiła jednostka FVPek na mapie)"
+    },
+    {
+      "id": "out-7a1f8fe0",
+      "channel": "s2",
+      "turn": 11,
+      "time": "2026-05-15T04:00:00+02:00",
+      "sent": "2026-10-12T11:13:10.754Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "trzymać odcinek do jeziora Białowierśnie"
+    },
+    {
+      "id": "out-c64b54e8",
+      "channel": "s2",
+      "turn": 11,
+      "time": "2026-05-15T04:00:00+02:00",
+      "sent": "2026-10-12T11:13:19.968Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "2 bzmot musze przekierować bardziej na południe"
+    },
+    {
+      "id": "out-001f60f4",
+      "channel": "s2",
+      "turn": 11,
+      "time": "2026-05-15T04:00:00+02:00",
+      "sent": "2026-10-12T11:13:33.397Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "całe bravo dla was",
+      "attachments": [
+        {
+          "id": "n-45tpv965",
+          "kind": "line",
+          "name": "BRAVO",
+          "color": "blue",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                23.414802,
+                54.073189
+              ],
+              [
+                23.388059,
+                54.071392
+              ],
+              [
+                23.346006,
+                54.067679
+              ],
+              [
+                23.286601,
+                54.029926
+              ]
+            ]
+          },
+          "graphic": "phase_line"
+        }
+      ]
+    },
+    {
+      "id": "out-802ce6d2",
+      "channel": "s2",
+      "turn": 11,
+      "time": "2026-05-15T04:00:00+02:00",
+      "sent": "2026-10-12T11:14:02.309Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "trzymać rubierz charlie",
+      "attachments": [
+        {
+          "id": "n-ausvq8qn",
+          "kind": "line",
+          "name": "CHARLIE",
+          "color": "blue",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                23.298138,
+                54.052821
+              ],
+              [
+                23.253534,
+                54.040701
+              ],
+              [
+                23.220019,
+                54.02843
+              ]
+            ]
+          },
+          "graphic": "phase_line"
+        }
+      ]
+    },
+    {
+      "id": "out-c67b3201",
+      "channel": "s2",
+      "turn": 11,
+      "time": "2026-05-15T04:00:00+02:00",
+      "sent": "2026-10-12T11:14:35.655Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "skupic sie nadal na troche po poszerzyłem głownie na zachodnim kierunku sie skupic",
+      "attachments": [
+        {
+          "id": "n-7lqr4acg",
+          "kind": "area",
+          "name": "Obszar rozpoznania",
+          "color": "blue",
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  23.209436,
+                  54.020572
+                ],
+                [
+                  23.250672,
+                  53.981216
+                ],
+                [
+                  23.351926,
+                  53.963806
+                ],
+                [
+                  23.498091,
+                  53.943144
+                ],
+                [
+                  23.575144,
+                  53.937416
+                ],
+                [
+                  23.54714,
+                  53.985314
+                ],
+                [
+                  23.508166,
+                  54.017893
+                ],
+                [
+                  23.469192,
+                  54.085178
+                ],
+                [
+                  23.424732,
+                  54.070104
+                ],
+                [
+                  23.363817,
+                  54.054685
+                ],
+                [
+                  23.209436,
+                  54.020572
+                ]
+              ]
+            ]
+          },
+          "graphic": "generic"
+        }
+      ]
+    },
+    {
+      "id": "out-640ebac8",
+      "channel": "dd",
+      "turn": 11,
+      "time": "2026-05-15T04:00:00+02:00",
+      "sent": "2026-10-12T11:16:07.238Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "MELDUNEK \nSytuacja: stabilnie, odparliśmy kontratak\nStan jednostek: głownie straty w 2bzmot\nZamiary: dalsza obrona i poprawa lini obronnych\nProszę o: wsparcie na Giby tak jak poprzednio, może chociaz wywiadowcze, satelitarne czy cos"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "messages": [
+    {
+      "id": "in-011-01",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-15T02:05:00+02:00",
+      "type": "meldunek",
+      "text": "Mam 30 żołnierzy z rezerwy osobowej ZT (piechota, bez wozów) — przydzielam do 2k 2 bzmot, na miejscu ok. 03:20. Priorytet dowozów na wschód przyjąłem."
+    },
+    {
+      "id": "in-011-02",
+      "channel": "ksap",
+      "from": "kpt. Mazur, dowódca ksap",
+      "time": "2026-05-15T02:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Do 03:40 stawiam pas min przeciwpancernych na S od skrzyżowania DK16 (z przejściem) i na E flance 3k — zużyję ok. 400 min. Koparka kopie stanowiska dla 2k. Teren ostrzeliwany moździerzami."
+    },
+    {
+      "id": "in-011-03",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T02:10:00+02:00",
+      "type": "meldunek",
+      "text": "Meldunek przyjąłem. Wniosek o ogień rakietowy lub lotnictwo na Giby przekazuję dywizji. Własne środki: dart ok. 0,9 DOS."
+    },
+    {
+      "id": "in-011-04",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-15T02:12:00+02:00",
+      "type": "wiadomosc",
+      "text": "Meldunek przyjąłem. Dywizja nie ma artylerii rakietowej ani lotnictwa. Wystąpiłem do dowództwa korpusu — decyzja po 04:00. FPV dotarł do Suwałk 03:00 (przekazany pod S2)."
+    },
+    {
+      "id": "in-011-05",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T02:15:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. BSP-2 od 02:00 nad obszarem SE od Gib, BSP-1 od 02:05 na północ. Ogień dart na Giby — priorytet."
+    },
+    {
+      "id": "in-011-06",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T02:36:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-2 (02:00–02:35): w Gibach ok. 17 BMP-3 formuje kolumnę. 02:20 ogień dart: ok. 2 BMP-3, 1 moździerz i kilka ciężarówek zniszczone, pożary. Ok. 10 km SE od Gib park zaopatrzenia (ok. 20 ciężarówek, cysterny), pewność średnia."
+    },
+    {
+      "id": "in-011-07",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T02:38:00+02:00",
+      "type": "meldunek",
+      "text": "Plutony 1k i 2k rozstawione szerzej (odstępy 400–600 m). Obrona bardziej rozciągnięta, luki zabezpieczone obserwacją."
+    },
+    {
+      "id": "in-011-08",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T02:55:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "02:50 przeciwnik rusza do natarcia: kolumna ok. 15 BMP-3 po DK16 i ok. 4 BMP-3 na E flankę 3k. Ogień moździerzy 120 mm na skrzyżowanie."
+    },
+    {
+      "id": "in-011-09",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T03:12:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "03:00 BY (ok. 8 BMP-2, ok. 100 ludzi) naciera na Karolin i 1k. Ppk niszczą 3 BMP-2, BY się cofa. Straty: 1 BWP, 7 rannych."
+    },
+    {
+      "id": "in-011-10",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T03:12:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "03:05 BMP-3 weszły w pas min S od skrzyżowania: ok. 5 spalonych lub unieruchomionych, reszta cofa się. 1 Leopard 1k zniszczony. 3 ostatnie czołgi bcz (RU) spalone."
+    },
+    {
+      "id": "in-011-11",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-15T03:25:00+02:00",
+      "type": "meldunek",
+      "text": "Żołnierze dołączyli do 2k 03:20. Stan blog: amunicja ok. 1,2 DOS, paliwo ok. 1,8. Dowozy do bcz i 2 bzmot planuję ok. 05:00. Korpus zapowiada uzupełnienie ok. 08:00."
+    },
+    {
+      "id": "in-011-12",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T03:40:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Natarcie odparte 03:35. Spalone ok. 6 BMP-3 i 3 czołgi. Straty własne: 1 Leopard zniszczony, 1 uszkodzony, 8 poległych i rannych. Paliwo ok. 1,8 DOS, amunicja ok. 1,2. Przeciwnik cofa się ku Gibom, ogień moździerzy ustaje."
+    },
+    {
+      "id": "in-011-13",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T03:50:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 (02:05–02:50): BGT bez ruchu. BSP-2 po lądowaniu 02:45, gotowy ok. 03:50. Wg bcz odwód wycofał się do Gib, widoczne ok. 11 BMP-3. FPV w Suwałkach, gotowy od 04:30 (zasięg ok. 10 km)."
+    }
+  ]
+}

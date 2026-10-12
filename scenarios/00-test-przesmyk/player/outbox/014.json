@@ -1,0 +1,66 @@
+{
+  "messages": [
+    {
+      "id": "out-ae5ac913",
+      "channel": "2bzmot",
+      "turn": 14,
+      "time": "2026-05-15T10:00:00+02:00",
+      "sent": "2026-10-12T11:50:57.886Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "warian C ale z bardzo ograniczonym kontratakiem głównie południem przez lasy wzdloz i ostrożnie",
+      "attachments": [
+        {
+          "id": "n-k1lpxtp7",
+          "kind": "arrow",
+          "name": "Oś gł. 1",
+          "color": "red",
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                23.322736,
+                54.016603
+              ],
+              [
+                23.274842,
+                54.043726
+              ]
+            ]
+          },
+          "graphic": "axis_main"
+        }
+      ]
+    },
+    {
+      "id": "out-3a89c36e",
+      "channel": "dd",
+      "turn": 14,
+      "time": "2026-05-15T10:00:00+02:00",
+      "sent": "2026-10-12T11:51:21.465Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "stopuje kontratak duży ograniczam sie do powolnego podejscia 2bzmot na południu"
+    },
+    {
+      "id": "out-293c293d",
+      "channel": "bcz",
+      "turn": 14,
+      "time": "2026-05-15T10:00:00+02:00",
+      "sent": "2026-10-12T11:52:13.543Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "narazie bez kontrataku skupić sie na kierunku Folwark Bierżniki jedzie w waszym kierunku kolumna T-90 okopać sie w tamtą stronę"
+    },
+    {
+      "id": "out-fb06b2c0",
+      "channel": "s2",
+      "turn": 14,
+      "time": "2026-05-15T10:00:00+02:00",
+      "sent": "2026-10-12T11:52:51.773Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "altyleria rakietowa i dart ogien kontrbateryjny na Zalwa z kordynacja z BSP"
+    }
+  ]
+}

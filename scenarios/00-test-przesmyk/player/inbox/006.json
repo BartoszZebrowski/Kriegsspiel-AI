@@ -1,0 +1,129 @@
+{
+  "messages": [
+    {
+      "id": "in-006-01",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T16:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Szturm Wiżajn bez piechoty i rozpoznania uważam za zbyt ryzykowny — BGT przeszedł do obrony. Uderzę na zaopatrzenie po danych z BSP-1 (od 17:00). 3k osłania, 1k w odwodzie."
+    },
+    {
+      "id": "in-006-02",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T16:10:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Miejscowości „Blenda” nie mam na mapie — rozumiem rozkaz jako kontratak 1k na W/NW od Bachanowa ku Przerośli, z moździerzami 120 mm i 3b dart. Ruch od 16:30. Pozycje ALFA utrzymuję."
+    },
+    {
+      "id": "in-006-03",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T16:12:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. BSP-2 startuje 16:30 nad DK16 i Giby, BSP-1 o 17:00 nad Wiżajny, wspiera bcz — dane na łącze S2–bcz bezpośrednio."
+    },
+    {
+      "id": "in-006-04",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T16:15:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Opóźniamy. O 16:40 kppanc i 3k uderzają na skrzydło bcz (RU). Przygotowuję komunikat głośnikowy i ulotki po rosyjsku i białorusku w stronę Gib; nie liczę na szybki skutek."
+    },
+    {
+      "id": "in-006-05",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T16:18:00+02:00",
+      "type": "rozkaz",
+      "text": "Przyjąłem Wasz zamiar. Uderzenia na zaopatrzenie — zgoda; zajęcia Wiżajn nie żądam. bcz ma być gotowy do powrotu na Sejny do 18:30. Meldunek o położeniu o 18:00."
+    },
+    {
+      "id": "in-006-06",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T16:20:00+02:00",
+      "type": "meldunek",
+      "text": "Raport ogólny, 16:00: paliwo w ZT średnio ok. 2,6 DOS, amunicja ogólna ok. 2,3 DOS. Artyleria 155 mm: 1b i 2b ok. 1,15 DOS, 3b ok. 1,3 DOS. Najniższy stan: 2 bzmot — amunicja ok. 1,35 DOS. Dowóz: 155 mm do dart na 17:40 (+0,3 DOS), do 2 bzmot na 17:30 (+0,3 DOS), paliwo do bcz na 17:10."
+    },
+    {
+      "id": "in-006-07",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-14T16:25:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem, kontynuujemy. 1b i 2b: ogień na wezwanie 2 bzmot, oszczędzamy amunicję do dowozu o 17:40. 3b gotowa do wsparcia 1k."
+    },
+    {
+      "id": "in-006-08",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T16:42:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "16:40 kppanc i 3k uderzyły na skrzydło bcz (RU) od SW i W. Kontakt ogniowy z 1,8–2,2 km, ppk niszczą czołgi. Od 16:45 komunikat głośnikowy w stronę Gib."
+    },
+    {
+      "id": "in-006-09",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-14T17:15:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-2 (16:30–17:10): bzmot BY stoi na N skraju Gib, nie wychodzi za bcz (RU); bcz (RU) ma ok. 14 czołgów, kilka płonie. BSP-1 (od 17:00) nad Wiżajnami: park zaopatrzenia na E skraju — ok. 15 cystern i ciężarówek, osłona 3 BTR i Kornet. Pewność wysoka."
+    },
+    {
+      "id": "in-006-10",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-14T17:20:00+02:00",
+      "type": "rozkaz",
+      "priority": "urgent",
+      "text": "ZT „Mamry” cofnął od 16:30 prawe skrzydło o ok. 2 km pod Gołdapią — wasze lewe skrzydło otwiera się od W. 1 bzmot nie zapuszcza się dalej niż ok. 3 km na W od Bachanowa. Zabezpieczyć kierunek od Przerośli."
+    },
+    {
+      "id": "in-006-11",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-14T17:32:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "1k doszła ok. 2 km na W od Bachanowa, ubezpieczenie wycofało się pod ogniem 120 mm. Zdobyty 1 T-72 (uszkodzony), 2 jeńców (kcz). 17:20 salwa 2S19 na 1k: 1 Rosomak uszkodzony, 3 rannych. Grupa obejścia (ok. 3 czołgi, 6 BTR) ok. 4 km na W. Dalej bez rozkazu nie idę."
+    },
+    {
+      "id": "in-006-12",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-14T17:36:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Natarcie bcz (RU) zatrzymane: ok. 6–7 T-72 spalonych (potw. kppanc). Straty: 2 BWP (2k, 3k), 2 Rosomaki kppanc, ok. 20 rannych i poległych; 2k wyczerpana. Komunikat głośnikowy: 9 żołnierzy BY poddało się 3k — mówią o rozkazach „obrony przed prowokacją”. Bzmot BY stoi na N skraju Gib. Amunicja ok. 1,1 DOS."
+    },
+    {
+      "id": "in-006-13",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-14T17:50:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "17:15–17:40 2k i 3k zniszczyły park zaopatrzenia na E skraju Wiżajn: ok. 14 pojazdów, w tym ok. 6 cystern, 2 BTR. Kornet: 1 Leopard zniszczony, 1 uszkodzony (ewakuowany); 2 poległych, 3 rannych. 17:35 ogień 2S19 na odskok — bez strat. Miasteczka nie zajmowałem. Wracamy na E brzeg Szeszupy; do Sejn ok. 40 min marszu."
+    },
+    {
+      "id": "in-006-14",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-14T17:55:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz 155 mm dotarł do dart 17:40 (+0,3 DOS: 1b i 2b ok. 1,1, 3b ok. 1,15). 2 bzmot amunicja ok. 1,1 DOS, kolejna kolumna +0,3 do 18:30. Paliwo do bcz od 17:10. Jeńcy: 2 (1 bzmot), 9 (2 bzmot) — proszę o decyzję, gdzie ich skierować."
+    },
+    {
+      "id": "in-006-15",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-14T17:58:00+02:00",
+      "type": "meldunek",
+      "text": "3p na wzgórzu: 17:40 ruch pojazdów gąsienicowych drogą ku Wiżajnom, ok. 8 pojazdów (pewność średnia). Ostrzał 2S19 na Bachanowo 17:20 jednorazowy."
+    }
+  ]
+}

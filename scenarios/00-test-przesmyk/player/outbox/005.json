@@ -1,0 +1,74 @@
+{
+  "messages": [
+    {
+      "id": "out-562e826e",
+      "channel": "bcz",
+      "turn": 5,
+      "time": "2026-05-14T16:00:00+02:00",
+      "sent": "2026-10-12T10:03:47.290Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "Możecie wykonać szturm by zając wizajny jesli uznacie to za stosowne, skupiac sie na logistyce wroga"
+    },
+    {
+      "id": "out-23c252da",
+      "channel": "1bzmot",
+      "turn": 5,
+      "time": "2026-05-14T16:00:00+02:00",
+      "sent": "2026-10-12T10:04:22.877Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "utrzymać pozycje, możecie prowadzić kontrataki 1kompania w strone Blenda"
+    },
+    {
+      "id": "out-a3056e46",
+      "channel": "s2",
+      "turn": 5,
+      "time": "2026-05-14T16:00:00+02:00",
+      "sent": "2026-10-12T10:05:11.990Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "skupić sie na wsparciu zwiadowczym bcz"
+    },
+    {
+      "id": "out-9b0c7c7b",
+      "channel": "2bzmot",
+      "turn": 5,
+      "time": "2026-05-14T16:00:00+02:00",
+      "sent": "2026-10-12T10:06:07.529Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "prowadzić działania opóźniające, wrazie okazji kontratakować, podobno białuruscy żołnierze mają niskie morale, można zagrać na ich psychice że napadaja na sasiadów czy cos tam wiem że tego nie chca itp"
+    },
+    {
+      "id": "out-2efe05e1",
+      "channel": "dd",
+      "turn": 5,
+      "time": "2026-05-14T16:00:00+02:00",
+      "sent": "2026-10-12T10:06:55.665Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "Atakuję logistykę wroga za pomocą bcz na kierunku Wiżajny, na wschodzie prowadze działania opóźniające i lokalne kontrataki"
+    },
+    {
+      "id": "out-33f246d9",
+      "channel": "log",
+      "turn": 5,
+      "time": "2026-05-14T16:00:00+02:00",
+      "sent": "2026-10-12T10:07:22.447Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "Raport ogólnej logistyki poprosze, jak amunicja dla altyleri?"
+    },
+    {
+      "id": "out-e25556f3",
+      "channel": "dart",
+      "turn": 5,
+      "time": "2026-05-14T16:00:00+02:00",
+      "sent": "2026-10-12T10:07:36.507Z",
+      "type": "rozkaz",
+      "priority": "normal",
+      "text": "Kontynułować"
+    }
+  ]
+}

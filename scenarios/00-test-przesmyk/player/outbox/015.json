@@ -1,0 +1,64 @@
+{
+  "messages": [
+    {
+      "id": "out-be65c5c8",
+      "channel": "log",
+      "turn": 15,
+      "time": "2026-05-15T12:00:00+02:00",
+      "sent": "2026-10-12T11:57:07.047Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "priorytet to wschód"
+    },
+    {
+      "id": "out-bf956a79",
+      "channel": "s2",
+      "turn": 15,
+      "time": "2026-05-15T12:00:00+02:00",
+      "sent": "2026-10-12T11:57:41.822Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "masz rozkaz do lotu informuj sam tych na północy"
+    },
+    {
+      "id": "out-5113c388",
+      "channel": "1bzmot",
+      "turn": 15,
+      "time": "2026-05-15T12:00:00+02:00",
+      "sent": "2026-10-12T11:58:11.460Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "nie macie odwodu musicie wytrzymać i okopać sie"
+    },
+    {
+      "id": "out-e398d025",
+      "channel": "2bzmot",
+      "turn": 15,
+      "time": "2026-05-15T12:00:00+02:00",
+      "sent": "2026-10-12T12:00:38.799Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "dalej sie nie wychylaj mozesz podejsc lekko 3k na wschód do Dumbel"
+    },
+    {
+      "id": "out-fcba4f68",
+      "channel": "dd",
+      "turn": 15,
+      "time": "2026-05-15T12:00:00+02:00",
+      "sent": "2026-10-12T12:01:48.327Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "coraz wiecej sił na wschodzie powoli koncza mi sie czołgi, prosze o informacje na temat ogólen sytułacji i kontekstu w jakim mam podejmować decyzje i jaki jest cel, moge co najwyzej sie bronic i opóżniać przeciwnika"
+    },
+    {
+      "id": "out-3ed39d8a",
+      "channel": "bcz",
+      "turn": 15,
+      "time": "2026-05-15T12:00:00+02:00",
+      "sent": "2026-10-12T12:02:12.382Z",
+      "type": "meldunek",
+      "priority": "normal",
+      "text": "graj coraz bardziej pod ograniczanie strat własnych mimo terenu, uzywaj saperów"
+    }
+  ]
+}

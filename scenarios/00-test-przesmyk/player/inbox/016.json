@@ -1,0 +1,122 @@
+{
+  "messages": [
+    {
+      "id": "in-016-01",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-15T12:05:00+02:00",
+      "type": "meldunek",
+      "text": "Priorytet dowozów — wschód (bcz, 2 bzmot, dart). Kolumna korpusu dotrze do blog ok. 14:00, do jednostek ok. 15:30. Zamawiam 300 min dla ksap — dowóz ok. 15:30."
+    },
+    {
+      "id": "in-016-02",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T12:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. BSP-1 od 12:00 nad północą z obrazem bezpośrednio do 1 bzmot, BSP-2 nad wschodem."
+    },
+    {
+      "id": "in-016-03",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T12:10:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Bronimy się i okopujemy. Obraz z BSP-1 mam na bieżąco — BGT ruszył 12:10."
+    },
+    {
+      "id": "in-016-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T12:12:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-1: o 12:10 BGT rusza do natarcia — ok. 10 T-72 i ok. 10 BTR drogą Wiżajny–Jeleniewo, osobna grupa (ok. 3 czołgi i 5 BTR) od W na Bachanowo. Dane przekazane 1 bzmot na bieżąco. Pewność wysoka."
+    },
+    {
+      "id": "in-016-05",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-15T12:15:00+02:00",
+      "type": "rozkaz",
+      "text": "Kontekst i cel: ZT „Hańcza” jest północnym filarem obrony przesmyku suwalskiego. Sojusznicza brygada pancerna dociera od Ełku — czoło ok. 06:00 jutro. Zadanie: utrzymać Sejny–Suwałki do rana; wolno opóźniać z rubieży BRAVO na CHARLIE i dalej na ALFA, ale Sejn nie oddawać bez mojej zgody. Kontrataki tylko za zgodą. Ograniczajcie straty. bcz dostanie 3 odzyskane Leopardy z napraw ok. 18:00."
+    },
+    {
+      "id": "in-016-06",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-15T12:22:00+02:00",
+      "type": "meldunek",
+      "text": "12:20 ogień 3b na zgrupowanie BGT na prośbę 1 bzmot. 3b ok. 0,5 DOS, 1b i 2b ok. 0,45 po ogniu obronnym. Dowóz korpusu ok. 14:00 do blog."
+    },
+    {
+      "id": "in-016-07",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T12:48:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "12:35 kontakt: czołgi BGT z ok. 1,5 km na 2k, grupa obejścia na Bachanowo. 2 T-72 spalone, 2 Rosomaki stracone. Walczymy, wsparcie dart i moździerzy 120 mm."
+    },
+    {
+      "id": "in-016-08",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T13:08:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "13:05 natarcie ok. 30 BMP-3 i kilku czołgów po DK16 od Gib na skrzyżowanie. Ogień dart, ppk, miny. Walczymy, 3k w odwodzie za 2k."
+    },
+    {
+      "id": "in-016-09",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T13:12:00+02:00",
+      "type": "meldunek",
+      "text": "3k przy W brzegu jeziora Gieręt na W od Dumbela (nie wchodzę dalej). 13:10 grupa BY (ok. 20 ludzi) odparta ogniem, 1 ranny. Ogień kppanc z flanki na natarcie po DK16."
+    },
+    {
+      "id": "in-016-10",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T13:28:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "13:20 natarcie BGT odparte: ok. 6 T-72 i ok. 4 BTR spalonych. Straty: 5 Rosomaków, ok. 25 rannych i poległych. Amunicja ok. 1,6 DOS. Odwodu nie mam — proszę o amunicję i ludzi."
+    },
+    {
+      "id": "in-016-11",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T13:45:00+02:00",
+      "type": "meldunek",
+      "text": "13:40 salwa WR-40 na koncentrację przy Koszarach/Gibach (pozycja wg bcz): ok. 6 BMP-3 zniszczonych. WR-40 przeładowuje do ok. 16:40. BSP-1 i BSP-2 gotowe ok. 13:45."
+    },
+    {
+      "id": "in-016-12",
+      "channel": "ksap",
+      "from": "kpt. Mazur, dowódca ksap",
+      "time": "2026-05-15T13:50:00+02:00",
+      "type": "meldunek",
+      "text": "Zapas min: 50. Zapora S od skrzyżowania w ok. 30% rozbita przez BMP-3. Wzmacniam stanowiska 1k i 2k koparką. Proszę o dowóz min."
+    },
+    {
+      "id": "in-016-13",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T13:56:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "13:50 natarcie odparte: ok. 14 BMP-3 spalonych i 1 T-90M. Straty: 2 Leopardy zniszczone, 1 uszkodzony (1k), 9 rannych i poległych. Amunicja ok. 1,0 DOS. Zgodnie z rozkazem oszczędzam siły: 3k w odwodzie za 2k, ogień z maksymalnej odległości."
+    },
+    {
+      "id": "in-016-14",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-15T13:58:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Stan: 1b i 2b ok. 0,45 DOS, 3b ok. 0,5. Bez dowozu starczy na ok. 1 misję. Dowóz 155 mm ok. 15:30."
+    }
+  ]
+}

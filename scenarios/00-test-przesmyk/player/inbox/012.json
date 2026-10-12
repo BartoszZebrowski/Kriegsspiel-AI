@@ -1,0 +1,94 @@
+{
+  "messages": [
+    {
+      "id": "in-012-01",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T04:08:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. Rozkazy dla 2 bzmot (BRAVO, CHARLIE, odcinek do jeziora Białowierśnie) wysłane na mój kanał — przekazałem je Borowskiemu 04:10; dla 2 bzmot proszę kierować je bezpośrednio. BSP-2 nad poszerzonym obszarem od 04:20, FPV przekazuję 2 bzmot (na miejscu ok. 04:50)."
+    },
+    {
+      "id": "in-012-02",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T04:15:00+02:00",
+      "type": "meldunek",
+      "text": "Rozkazy przez S2 otrzymałem. Rozumiem: mój odcinek od jeziora Białowierśnie przez Karolin do Pogorzelca, CHARLIE jako druga rubież na W od Pogorzelca; bcz zostaje na skrzyżowaniu i na E. „Całe BRAVO” przekracza moje siły (ok. 330 ludzi) — proszę o potwierdzenie."
+    },
+    {
+      "id": "in-012-03",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-15T04:25:00+02:00",
+      "type": "rozkaz",
+      "text": "Korpus zgodził się na baterię WR-40 Langusta (6 wyrzutni, 1 salwa) w rejonie Suwałk od 05:30; cele przez S2. Zdjęcia satelitarne ok. 08:00. Lotnictwa brak. Dodatkowo: dowóz 155 mm dla dart dopiero ok. 08:00."
+    },
+    {
+      "id": "in-012-04",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-15T04:40:00+02:00",
+      "type": "meldunek",
+      "text": "04:35 ogień na wezwanie S2 na BMP-3 w Gibach (BSP-2): ok. 2 BMP-3 zniszczone. 1b i 2b ok. 0,4 DOS — zachowuję rezerwę 0,3 DOS na ogień obronny."
+    },
+    {
+      "id": "in-012-05",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T04:57:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "BSP-2 (04:20–05:00): w Gibach ok. 9 BMP-3, bzmot BY w tyle. Zachodnia część obszaru — bez przeciwnika. Ok. 25 km SE od Gib kolumna ok. 12 czołgów, kierunek Giby, czoło ok. 06:30–07:00. Park zaopatrzenia ok. 10 km SE nadal na miejscu. Pewność średnia."
+    },
+    {
+      "id": "in-012-06",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T05:12:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "05:10 salwa BM-21 (ok. 12 wyrzutni) na skrzyżowanie, korekta z Orlana (widoczny od 04:50). 1 Leopard uszkodzony, 5 rannych w 1k. Kierunek ognia SE. Orlan nad nami — proszę o środki OPL."
+    },
+    {
+      "id": "in-012-07",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T05:32:00+02:00",
+      "type": "meldunek",
+      "text": "WR-40 w stanowisku w Suwałkach, gotowa od 05:30 — jedna salwa na wyrzutnię. Proponuję cel: park zaopatrzenia SE od Gib albo zgrupowanie w Gibach. Czekam na decyzję."
+    },
+    {
+      "id": "in-012-08",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T05:25:00+02:00",
+      "type": "meldunek",
+      "text": "05:20 patrol BGT (2 BTR) przy Szeszupie — 3k odparła ogniem. 05:30 pojedyncze strzały 2S19 na Jeleniewo, bez strat."
+    },
+    {
+      "id": "in-012-09",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T05:40:00+02:00",
+      "type": "meldunek",
+      "text": "FPV dotarł 04:50. 05:35 patrol 2 BMP-2 BY na W od Karolina — FPV zniszczył 1 BMP-2, drugi się wycofał. Potrzebuję uzupełnienia dronów. Amunicja ok. 1,35 DOS po dowozie."
+    },
+    {
+      "id": "in-012-10",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-15T05:48:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz dotarł 05:15: bcz paliwo +0,5, amunicja +0,4; 2 bzmot +0,3/+0,3. Stan blog: amunicja ok. 0,9 DOS, paliwo ok. 1,5. Korpus zapowiada uzupełnienie ok. 08:00; do tego czasu zapasy cienkie."
+    },
+    {
+      "id": "in-012-11",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T05:58:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 (04:10–04:55): BGT bez ruchu, 2S19 w lesie, ciężarówki w Wiżajnach. BSP-1 i BSP-2 gotowe ok. 05:55."
+    }
+  ]
+}

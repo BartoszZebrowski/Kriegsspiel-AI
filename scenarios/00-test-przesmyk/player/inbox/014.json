@@ -1,0 +1,111 @@
+{
+  "messages": [
+    {
+      "id": "in-014-01",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T08:05:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem. BSP-1 na północ i BSP-2 na wschód od 08:00 (lot ok. 45 min)."
+    },
+    {
+      "id": "in-014-02",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T08:12:00+02:00",
+      "type": "meldunek",
+      "text": "Przyjąłem, pozostajemy na pozycjach do odwołania."
+    },
+    {
+      "id": "in-014-03",
+      "channel": "krozp",
+      "from": "por. Lis, dowódca krozp",
+      "time": "2026-05-15T08:15:00+02:00",
+      "type": "meldunek",
+      "text": "Jestem dowódcą kompanii; dane o batalionach mam z ostatnich meldunków (08:00). krozp: personel 80% (74/92), BRDM 60% (6/10), drony 100%. 1 bzmot: personel 90%, Rosomaki 80%. 2 bzmot: personel 84%, BWP 38%. bcz: personel 83%, Leopardy 68%. dart: personel 96%, Krab 100%, amunicja 0,4 DOS (przed dowozem)."
+    },
+    {
+      "id": "in-014-04",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T08:20:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "Zdjęcia satelitarne korpusu (08:15), pewność średnia–wysoka: w Gibach ok. 8 BMP-3 i ok. 7 BMP-2; w Suborowie ok. 7 czołgów T-90; bateria BM-21 ok. 3 km na S od skrzyżowania; ok. 30 pojazdów gąsienicowych w kolumnie w rejonie Sopoćkin ku Gibom; ok. 15 pojazdów (czołgi, cysterny) przy Żytkiejmach ku Wiżajnom. Przyjąłem uwagę o mapie — nanoszę osie natarcia wroga (warstwa osi)."
+    },
+    {
+      "id": "in-014-05",
+      "channel": "dd",
+      "from": "gen. bryg. Nowicki, dowódca dywizji",
+      "time": "2026-05-15T08:25:00+02:00",
+      "type": "rozkaz",
+      "text": "Napalmu nie mamy i nie planujemy go — nie ma go w wyposażeniu ZT, a użycie przeciw lasom wykraczałoby poza to, co dopuszcza prawo konfliktów zbrojnych. Kontratak na Żelwę tylko za moją zgodą po otrzymaniu studium. Dowóz korpusu dotrze do blog ok. 08:30."
+    },
+    {
+      "id": "in-014-06",
+      "channel": "log",
+      "from": "mjr Sadowska, S4",
+      "time": "2026-05-15T08:35:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz korpusu dotarł do blog 08:30: amunicja ok. 1,9 DOS, paliwo ok. 2,2. Rozdzielam: dart (155 mm) 09:30, bcz (+0,4 amunicji, +0,3 paliwa) i 2 bzmot (+0,35) o 09:15."
+    },
+    {
+      "id": "in-014-07",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T08:55:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "08:50 salwa BM-21 na 3k: 2 ranni, bez strat w sprzęcie. Trzeci Orlan nad nami od 08:40. Współpracuję z 2 bzmot nad studium natarcia."
+    },
+    {
+      "id": "in-014-08",
+      "channel": "2bzmot",
+      "from": "mjr Borowski, dowódca 2 bzmot",
+      "time": "2026-05-15T09:00:00+02:00",
+      "type": "meldunek",
+      "text": "STUDIUM (wspólnie z bcz). Siły: bcz 30 Leopardów (68%), 2 bzmot 16 BWP (38%), ludzi 84%. Przeciwnik: ok. 7 T-90M w Suborowie, ok. 8 BMP-3 i 7 BMP-2 w Gibach, drugi rzut ok. 30 pojazdów (czoło ok. 11:30). Warianty: A — ograniczony cel Berżniki–Suborowo (ok. 4 km), 2k i 3k bcz + kppanc, możliwy ok. 12:00 po uzupełnieniach; B — głęboki na Żelwę (ok. 10 km), wymaga ognia dart ≥1,0 DOS, WR-40, saperów i piechoty, której nie mam — ocena: ryzykowny; C — obrona i kontratak po odparciu następnego natarcia. Rekomendacja: C, a w razie okazji A. Potrzeby: amunicja, piechota, saperzy, ogień rakietowy po 09:30, rozpoznanie dronami."
+    },
+    {
+      "id": "in-014-09",
+      "channel": "bcz",
+      "from": "mjr Kowal, dowódca bcz",
+      "time": "2026-05-15T09:05:00+02:00",
+      "type": "meldunek",
+      "text": "Potwierdzam studium. Natarcie A mogę poprowadzić od ok. 12:00 po uzupełnieniu amunicji i przy pewnym ogniu (dart ok. 1,0 DOS, WR-40). 1k zostaje na DK16. Drugi rzut RU idzie ku Gibom — raczej to oni uderzą pierwsi."
+    },
+    {
+      "id": "in-014-10",
+      "channel": "bopl",
+      "from": "kpt. Zając, dowódca bopl",
+      "time": "2026-05-15T09:25:00+02:00",
+      "type": "meldunek",
+      "text": "09:15 Orlan nad skrzyżowaniem — jeden strzał Piorun niecelny, Orlan odleciał. Zapas Piorun: 6."
+    },
+    {
+      "id": "in-014-11",
+      "channel": "dart",
+      "from": "mjr Jasiński, dowódca dart",
+      "time": "2026-05-15T09:35:00+02:00",
+      "type": "meldunek",
+      "text": "Dowóz dotarł 09:30: 1b i 2b ok. 1,0 DOS, 3b ok. 1,05. Gotowość do ognia."
+    },
+    {
+      "id": "in-014-12",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T09:42:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 (08:00–08:45) północ: BGT w obronie, 2S19 w lesie, kolumna wzmocnienia ok. 15 pojazdów zbliża się do Wiżajn. BSP-2 (08:00–08:45) wschód: w Suborowie ok. 7 T-90M odtwarza gotowość, w Gibach ok. 8 BMP-3 i 7 BMP-2; kolumna z SE ok. 30 pojazdów, czoło ok. 11:30. BSP gotowe ok. 09:45. WR-40 gotowa od 09:30."
+    },
+    {
+      "id": "in-014-13",
+      "channel": "1bzmot",
+      "from": "mjr Wrzos, dowódca 1 bzmot",
+      "time": "2026-05-15T09:50:00+02:00",
+      "type": "meldunek",
+      "priority": "urgent",
+      "text": "09:30 do Wiżajn dotarła kolumna (ok. 10 czołgów i cysterny) — wg 3k i krozp 2p. BGT wzmacnia się. Proszę o uwagę na północy."
+    }
+  ]
+}
