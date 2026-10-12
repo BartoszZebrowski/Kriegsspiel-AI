@@ -13,11 +13,11 @@ Jedyny, obowiązujący opis formatu danych. Gdy ten dokument i kod się rozchodz
 
 ### Zasada widoczności (leak guard)
 
-Pliki dzielą się na **jawne dla gracza** (serwer je czyta i wysyła do przeglądarki) i **tylko sędziego** (`umpire/`, serwer ich nigdy nie czyta). Pliki gracza mogą zawierać wyłącznie pola z kolumny „gracz” poniżej (biała lista `PLAYER_FIELDS` w `shared/schema.js`). Każde pole spoza listy (np. `side`, `supply`, `events`, `endurance_min`) w pliku gracza to **błąd walidatora** — pilnuje tego `npm run validate`, który trzeba uruchamiać po każdej turze.
+Pliki dzielą się na **jawne dla gracza** (serwer je czyta i wysyła do przeglądarki) i **tylko sędziego** (`umpire/`, serwer ich nigdy nie czyta). Pliki gracza mogą zawierać wyłącznie pola z kolumny „gracz” poniżej (biała lista `PLAYER_FIELDS` w `shared/schema.js`). Każde pole spoza listy (np. `side`, `supply`, `events`, `endurance_min`, `stamina_min`, `morale`) w pliku gracza to **błąd walidatora** — pilnuje tego `npm run validate`, który trzeba uruchamiać po każdej turze.
 
 ### Niespójności nazewnictwa (świadomie zachowane)
 
-Pliki mieszają `camelCase` (`turnMinutes`, `schemaVersion`) i `snake_case` (`uncertainty_m`, `estimate_personnel`, `endurance_min`, `enemy_flot`), a `current`/`authorized` w jednostkach kontra `count` w szacunkach. Decyzja: **nie zmieniamy nazw istniejących pól** (zgodność ze scenariuszami, testami i klientem). Nowe pola nazywamy w `camelCase`; ewentualne ujednolicenie tylko razem z podniesieniem `schemaVersion` i migracją.
+Pliki mieszają `camelCase` (`turnMinutes`, `schemaVersion`) i `snake_case` (`uncertainty_m`, `estimate_personnel`, `endurance_min`, `stamina_min`, `enemy_flot`), a `current`/`authorized` w jednostkach kontra `count` w szacunkach. Decyzja: **nie zmieniamy nazw istniejących pól** (zgodność ze scenariuszami, testami i klientem). Nowe pola nazywamy w `camelCase`; ewentualne ujednolicenie tylko razem z podniesieniem `schemaVersion` i migracją.
 
 ---
 
@@ -102,8 +102,9 @@ Do 3 pozycji `{ role, name, text, time }`: `role` ∈ `s2` / `s3` / `s4` (unikal
 | `track` | `[[lon,lat], …]` | nie | Trasa przejechana w turze, która **kończy się** w `pos` (pierwszy punkt = pozycja z poprzedniej tury). ≥ 2 poprawne punkty (inaczej błąd); ostatni punkt ≠ `pos` (tolerancja 1e-6°) albo pierwszy punkt dalej niż ~100 m od poprzedniej pozycji = uwaga. Służy tylko animacji przemieszczenia; bez `track` jednostka jedzie po prostej. Dotyczy jednostek własnych i sąsiadów. |
 | `notes` | tekst | nie | Opis do karty jednostki. |
 | `dos` | `{fuel, ammo, general, readiness, as_of}` | nie | **Meldowany** stan zaopatrzenia (T18): `fuel`/`ammo`/`general` = dni zaopatrzenia (liczby ≥ 0, każde opcjonalne, ale wymagany min. jeden wskaźnik razem z `readiness`), `readiness` = sprawność sprzętu 0–1, `as_of` = czas meldunku ISO (wymagany). To wiedza gracza, nie prawda: może być nieaktualna i zaokrąglona. Wartość ujemna, `readiness` > 1 albo zły `as_of` = błąd. Prawdziwy stan to `supply` w `umpire/turns/`. |
+| `fatigue` | `wypoczęta` / `zmęczona` / `wyczerpana` | nie | Kategoria zmęczenia jednostki własnej (T28), wyliczana przez sędziego z `stamina_min` (< 12 h = zmęczona, < 4 h = wyczerpana). To jedyna wiedza gracza o wytrzymałości; liczby (`stamina_min`, `morale`) są tylko w `umpire/turns/`. Inna wartość = błąd. |
 
-Pola **tylko sędziego** (w `umpire/turns/`, zabronione w pliku gracza): `side`, `supply`.
+Pola **tylko sędziego** (w `umpire/turns/`, zabronione w pliku gracza): `side`, `supply`, `stamina_min`, `morale`.
 
 ### `logistics` (gracz i sędzia, T17)
 
@@ -248,7 +249,7 @@ Zaznaczenie jednostek różnych dowódców tworzy osobne szkice w ich kanałach 
 Pełna prawda dla tury N. Serwer nigdy go nie czyta i nie wysyła; walidator sprawdza strukturę, a w logach wypisuje tylko identyfikatory.
 
 Ma te same pola co plik gracza (`turn`, `time`, `units`, `assets`, `lines`), plus:
-- `units[]`/`assets[]`: `side` (`PL` / `RU` / …), `supply` (jednostki: `{fuel, ammo, general}` w dniach zaopatrzenia, DOS; gracz widzi tylko meldowane `dos`), `endurance_min` (środki: pozostały czas lotu), pełne i prawdziwe `personnel`/`equipment` (dla jednostek własnych identyczne jak w pliku gracza),
+- `units[]`/`assets[]`: `side` (`PL` / `RU` / …), `supply` (jednostki: `{fuel, ammo, general}` w dniach zaopatrzenia, DOS; gracz widzi tylko meldowane `dos`), `endurance_min` (tylko środki: pozostały czas lotu; to inne pole niż `stamina_min` jednostek), `stamina_min` (jednostki: reszta wytrzymałości w minutach, ≥ 0) i `morale` (jednostki: 0–1), z których sędzia wylicza `fatigue` gracza, pełne i prawdziwe `personnel`/`equipment` (dla jednostek własnych identyczne jak w pliku gracza),
 - jednostki wroga (`side` ≠ strona gracza) z prawdziwymi pozycjami i stanami (kontaktów się tu nie zapisuje — to widok gracza),
 - `logistics`: prawdziwy stan warstwy logistycznej (kształt jak u gracza, patrz „`logistics`”; pola dodatkowe dozwolone),
 - `events`: lista tekstów — zdarzenia tury dla sędziego,

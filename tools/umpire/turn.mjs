@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { PLAYER_FIELDS, PLAYER_TURN_FIELDS, LOGISTICS_FIELDS, extraFields, isCoord, isValidTime, checkTrack, checkPosTime } from '../../shared/schema.js';
 import { checkDeliveries, checkEw, checkEwZone } from '../../shared/ew.js';
 import { checkStaff, STAFF_FIELDS } from '../../shared/staff.js';
+import { fatigueLevel } from '../../shared/fatigue.js';
 import { applyEngineering, syncBridgeStatus } from './engineering-merge.mjs';
 import { clone, pad3, pickFields, moved, computeTrack, nextTime, mergeById, checkIds, patchMissing, applyLogistics, buildInbox } from './turn-merge.mjs';
 
@@ -90,6 +91,8 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
     // pos_time (BFT, T49) nie jest dziedziczone: bez łatki widok gracza = prawda, z czasem raportu = czas tury.
     const { pos_time: _bft, ...inherited } = prevById.get(u.id) || {};
     base.push({ ...inherited, ...pickFields(u, PLAYER_FIELDS.units.filter((f) => f !== 'dos')) }); // dos to meldunek gracza: nie z prawdy
+    const fatigue = fatigueLevel(u.stamina_min); // T28: gracz widzi kategorię, nigdy endurance_min ani morale
+    if (fatigue) base[base.length - 1].fatigue = fatigue;
     seen.add(u.id);
   }
   for (const u of prevPlayer.units || []) if (!seen.has(u.id) && !umpireIds.has(u.id)) base.push(clone(u));

@@ -8,6 +8,8 @@ import { dosIndicators, dosAgeMin, isDosStale, formatDosValue, dosBarPct } from 
 import { echelonRank, PLATOON_RANK } from './orbat.js';
 import { groupEquipment, subordinateTotals, portableSummary, OTHER_CATEGORY } from './equipment.js';
 import { bftStatus } from './bft.js';
+import { fatigueBlock } from './fatigue.js';
+import { contactFreshness } from './contactage.js';
 import { formatStrength, readinessRatio, readinessLevel, formatEstimateEquipment, formatEstimatePersonnel } from './strength.js';
 
 const e = escapeHtml;
@@ -124,7 +126,7 @@ export function unitCard(u, byId = new Map(), kids = [], ctx = {}) {
         ${kids.length ? `<div class="kvr"><span>Podwładni</span><span class="chips">${kids.map((k) => unitChip(k, symbolOf)).join('')}</span></div>` : ''}</div>`
     : '';
   const note = ctx.neighbour ? `<div class="nb-note" role="note"><b>Sąsiad — brak dowodzenia</b><span>Jednostka sąsiada: dane tylko do odczytu, nie przyjmuje rozkazów od gracza.</span></div>` : '';
-  return `<div class="card">${header}${note}${personnelBlock(u, ctx)}${equipmentBlock(u, ctx)}${dosBlock(ctx.dosView, ctx)}
+  return `<div class="card">${header}${note}${personnelBlock(u, ctx)}${fatigueBlock(u)}${equipmentBlock(u, ctx)}${dosBlock(ctx.dosView, ctx)}
     <div class="kv"><div class="cap">Zadanie i położenie</div>${positionBlock(u.pos, rows)}${row('Uwagi', u.notes)}</div>${sub}</div>`;
 }
 
@@ -148,9 +150,11 @@ export function contactCard(c, turnTime, tz, ctx = {}) {
   const header = ctx.header === false ? '' : `<h4>${e(c.estimate || 'Kontakt ' + c.id)}</h4><div class="card__type">${e(describeSidc(c.sidc))}</div>`;
   const age = c.observed && turnTime ? formatAge(c.observed, turnTime) : '';
   const seen = c.observed ? `<div class="kvr"><span>Zaobserwowano</span><span class="mono">${e(formatClock(c.observed, tz))}${age ? ` <span class="age">· ${e(age)}</span>` : ''}</span></div>` : '';
+  const fr = contactFreshness(c, turnTime);
+  const stale = fr.old ? `<div class="kvr"><span>Aktualność</span><span><span class="tag rep warn">${e(fr.text)}</span></span></div>` : '';
   const conf = c.confidence ? `<div class="kvr"><span>Pewność</span><span><span class="tag rep${c.confidence === 'niska' ? ' warn' : ''}">${e(c.confidence)}</span></span></div>` : '';
   const unc = c.uncertainty_m ? `<div class="kvr"><span>Niepewność</span><span class="mono">± ${e((c.uncertainty_m / 1000).toFixed(1))} km</span></div>` : '';
-  return `<div class="card">${header}<div class="kv"><div class="cap">Obserwacja</div>${seen}${row('Źródło', c.source)}${conf}${unc}${positionBlock(c.pos, '')}${row('Uwagi', c.notes)}</div>${estimateBlock(c, ctx)}</div>`;
+  return `<div class="card">${header}<div class="kv"><div class="cap">Obserwacja</div>${seen}${stale}${row('Źródło', c.source)}${conf}${unc}${positionBlock(c.pos, '')}${row('Uwagi', c.notes)}</div>${estimateBlock(c, ctx)}</div>`;
 }
 
 export function assetCard(a, ctx = {}) {

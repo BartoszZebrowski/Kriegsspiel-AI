@@ -55,7 +55,7 @@ Gdy gracz napisze „koniec tury” (albo podobnie), dla aktywnego scenariusza `
    - `player/turns/(N+1).json`: widok gracza (patrz niżej),
    - `player/inbox/(N+1).json`: wiadomości postaci,
    - dopisz wpis do `umpire/log.md`: krótko, co i dlaczego rozstrzygnięto.
-4. **Sprawdź:** `npm run validate -- <nazwa>` po **każdej** turze. Popraw błędy, zanim odpowiesz graczowi. Walidator jest strażnikiem wycieku: zgłasza błąd, gdy w plikach gracza (`player/turns`, `inbox`, `outbox`) pojawi się pole sędziego (`side`, `supply`, `events`, `endurance_min` albo jakiekolwiek spoza białej listy z `docs/SCHEMA.md`), oraz waliduje `player/notes`. Nie kopiuj obiektów z `umpire/turns/` do `player/turns/` bez usunięcia pól sędziego.
+4. **Sprawdź:** `npm run validate -- <nazwa>` po **każdej** turze. Popraw błędy, zanim odpowiesz graczowi. Walidator jest strażnikiem wycieku: zgłasza błąd, gdy w plikach gracza (`player/turns`, `inbox`, `outbox`) pojawi się pole sędziego (`side`, `supply`, `events`, `endurance_min`, `stamina_min`, `morale` albo jakiekolwiek spoza białej listy z `docs/SCHEMA.md`), oraz waliduje `player/notes`. Nie kopiuj obiektów z `umpire/turns/` do `player/turns/` bez usunięcia pól sędziego.
 5. **Odpowiedz w czacie** jednym zdaniem.
 
 Nie modyfikuj `player/outbox/` ani `player/notes/`, bo to pliki gracza. Kolejność zapisu: najpierw `umpire/`, potem `inbox`, na końcu `player/turns/`, bo pojawienie się nowej tury przełącza aplikację.
@@ -91,6 +91,15 @@ Pododdziały rozstawiaj ręcznie na zrzucie mapy terenu (`tools/umpire/terrain-v
 - **Mosty:** stan (cały / uszkodzony / zburzony) i „kto, kiedy” (`changed_by`, `changed_at`) w prawdzie; zburzenie zmienia trasy konwojów i marsz (T15, T17). Własne mosty gracz zna, wrogie z rozpoznania.
 - **Saperzy przeciwnika (SOP):** rozpoznanie inżynieryjne przed natarciem (kierunki, mosty, zapory), przejścia w zaporach wykonują pod osłoną ognia i dymów w 1–3 godziny (`laneTime`), a przy braku czasu wchodzą w pole minowe ze stratami. Ich zapory i zniszczone mosty trafiają do `engineering` (prawda) oraz `enemy-plan.md`.
 - **Zapora gracza** zatrzymuje albo rozbija natarcie przeciwnika w swoim rejonie tylko, gdy jest `done` (częściowa: proporcjonalnie do `progress`); bez obserwacji i ognia zapora to tylko opóźnienie, nie bariera.
+
+## Zmęczenie i morale (T28)
+
+- **Prawda** (`umpire/turns`, jednostki własne i wroga): `stamina_min` (reszta wytrzymałości, ok. 1440 po pełnym odpoczynku) i `morale` (0–1). Gracz widzi tylko `fatigue` (`wypoczęta` ≥ 720 min / `zmęczona` 240–719 / `wyczerpana` < 240), wyliczane przez `turn.mjs`. Nigdy nie wpisuj tych liczb do plików gracza.
+- **Zużycie na turę** (proporcjonalnie do `turnMinutes`): postój w ukryciu 0, marsz ok. 1× czasu, obrona pod ostrzałem ok. 1,5×, natarcie pod ogniem ok. 2×; doba bez snu dodatkowo −25%.
+- **Regeneracja:** noc w spokoju lub odwód ok. +1× czasu (do maksimum); wyczerpana jednostka wraca do zmęczonej po ok. 6 h odpoczynku.
+- **Skutki:** zmęczona: marsz ok. −15%, opóźnienia i dosłowne rozumienie rozkazów; wyczerpana: marsz ok. −35%, możliwe zaśnięcie na stanowiskach, odmowa natarcia.
+- **Próba morale** przy ciężkich stratach (> 30% w turze), okrążeniu albo utracie dowódcy: sędzia rozstrzyga swobodnie wg `morale` i zmęczenia, od zatrzymania przez samowolny odwrót po (skrajnie, słabe formacje) poddanie się; wynik i kolejne `morale` zapisz w `umpire/`.
+- **Meldunki** ludzkim głosem, bez liczb: „ludzi nie stać na kolejne natarcie”, „kompania zasnęła na stanowiskach”.
 
 ## Widok gracza (`player/turns/NNN.json`)
 

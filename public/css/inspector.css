@@ -72,3 +72,8 @@
 .eq-w.est{opacity:.8}
 .eq-sub{font:11px var(--font-mono);color:var(--t-3);padding-bottom:1px}
 .eq-squads{margin-top:6px}
+
+/* ---- zmęczenie (T28) ---- */
+.fatigue{display:flex;align-items:center;gap:8px;font-size:13px}
+.fatigue i{width:10px;height:10px;border-radius:50%;background:var(--ok)}
+.fatigue--warn i{background:var(--warn)} .fatigue--bad i{background:var(--danger)}

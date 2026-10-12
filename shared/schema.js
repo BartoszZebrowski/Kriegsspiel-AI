@@ -86,7 +86,7 @@ export const NOTE_ECHELONS = ['D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 export const PLAYER_TURN_FIELDS = ['turn', 'time', 'units', 'contacts', 'assets', 'lines', 'logistics', 'staff', 'engineering'];
 export const PLAYER_FIELDS = {
-  units: ['id', 'name', 'sidc', 'pos', 'strength', 'status', 'task', 'personnel', 'equipment', 'parent', 'formation', 'track', 'notes', 'dos', 'pos_time'],
+  units: ['id', 'name', 'sidc', 'pos', 'strength', 'status', 'task', 'personnel', 'equipment', 'parent', 'formation', 'track', 'notes', 'dos', 'pos_time', 'fatigue'],
   contacts: ['id', 'sidc', 'pos', 'uncertainty_m', 'observed', 'source', 'confidence', 'estimate', 'estimate_personnel', 'estimate_equipment'],
   assets: ['id', 'name', 'type', 'sidc', 'pos', 'status', 'task'],
   lines: ['id', 'kind', 'label', 'coords', 'formation', 'observed'],

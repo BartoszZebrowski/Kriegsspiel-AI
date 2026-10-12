@@ -308,3 +308,19 @@ Na starcie tury gracz dostaje krótką odprawę trzech stanowisk sztabu (`staff`
 | Widoki | `views/staff.js` (panel „Odprawa sztabu” + ikona przy zegarze), `views/staffviews.js` (przełącznik S2/S3/S4/Ogień/Moje), `views/hotkeys.js` (Shift + 1…4, Shift + 0), `public/css/staff.css` | Brak importów między widokami; tekst przez `escapeHtml`. Panel jest pływającym oknem mapy (na telefonie na szerokość zakładki „Mapa”), działa w archiwum (odprawa oglądanej tury). |
 
 Bieżąca tura otwiera panel sama, dopóki gracz jej nie zamknie; w archiwum panel pokazuje się tylko na żądanie. Presety nie zmieniają podkładów ani nakładek kafelkowych. Sędzia: procedura w [CLAUDE.md](../CLAUDE.md), format w [SCHEMA.md](SCHEMA.md).
+
+## Starzenie się kontaktów (T16)
+
+Czysta logika w `domain/contactage.js` (bez DOM): `contactAgeClass(sidc)` wybiera klasę wg SIDC (dron / pancerne i rozpoznanie / piechota, artyleria, OPL, REW / logistyka / inne) z progami „świeży” i „stary”; `contactFreshness(contact, turnTime)` zwraca `{ageMin, opacity, old, text}` (wiek z `ageMinutes` z `domain/format.js`, krycie liniowo 1 → 0,35, `text` „informacja sprzed X” od progu starego). `views/map/index.js` używa `opacity` dla symbolu i koła niepewności, a `text` dopisuje do podpowiedzi; `domain/cards.js` (`contactCard`) pokazuje ten sam napis. Widoki nie liczą progów same; BFT własnych jednostek (`domain/bft.js`) pozostaje osobny.
+
+## Zmęczenie i morale (T28)
+
+Wytrzymałość jest zasobem sędziego. Prawda (`umpire/turns`, jednostki) ma `stamina_min` (reszta wytrzymałości w minutach) i `morale` (0–1). Gracz dostaje w `player/turns` wyłącznie kategorię `fatigue` (`wypoczęta` / `zmęczona` / `wyczerpana`); liczby nie wychodzą poza `umpire/`, a stan ducha ludzie opisują słowami w meldunkach (`inbox`).
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/fatigue.js` (osobny plik, bo `shared/schema.js` ma jednego właściciela naraz) | `FATIGUE_LEVELS`, progi (`fatigueLevel(stamina_min)` → kategoria), `checkFatigue(unit)` (kategoria z listy), `checkUmpireFatigue(unit)` (`stamina_min` ≥ 0, `morale` 0–1). W `shared/schema.js` tylko `fatigue` dopisane do `PLAYER_FIELDS.units`; `stamina_min` i `morale` zostają poza białą listą, więc strażnik wycieku działa bez zmian. |
+| Logika klienta | `domain/fatigue.js` (czysta; lista kategorii lustrzana do `shared/`) | `fatigueInfo(level)` → etykieta, ton (`ok` / `warn` / `bad`) i opis; `fatigueBlock(unit)` → HTML sekcji karty (escapeHtml). Bez DOM, bez importów z `core/` i `views/`. |
+| Widok | `views/inspector.js` przez `domain/cards.js` (`unitCard` dokłada `fatigueBlock`), `public/css/inspector.css` | Wskaźnik „Zmęczenie” z kolorem w karcie jednostki własnej; sąsiedzi i kontakty go nie mają. Bez nowego stanu w store. |
+| Sędzia | `tools/umpire/turn.mjs`, [CLAUDE.md](../CLAUDE.md) | `fatigue` w widoku gracza wyliczane z `stamina_min` prawdy (`fatigueLevel`), z możliwością nadpisania łatką `plan.player.units.<id>.fatigue`; `stamina_min` i `morale` dziedziczone w prawdzie z tury N. Reguły zużycia, regeneracji i prób morale: CLAUDE.md. |
+| Walidator | `tools/validate-checks.js` | `fatigue` w `player/turns` (kategoria z listy); `stamina_min` / `morale` w `umpire/turns` (zakresy); w plikach gracza oba pola są błędem (biała lista). |

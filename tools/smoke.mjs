@@ -1467,6 +1467,45 @@ try {
     await waitFor(`document.querySelectorAll('.eng-mark').length === 2`, 'warstwa „Zapory i mosty” włączona');
   });
 
+  await step('T16 starzenie kontaktów: stary kontakt czołgów blaknie mocniej niż młodszy, karta i podpowiedź mają „informacja sprzed”', async () => {
+    const cur = await state('s.currentTurn');
+    const f = `player/turns/${String(cur).padStart(3, '0')}.json`;
+    const turn0 = await readJson(f);
+    const [lon, lat] = await state('s.scenario.map.center');
+    const t = Date.parse(turn0.time);
+    const iso = (min) => new Date(t - min * 60000).toISOString();
+    turn0.contacts = [
+      { id: 'age-fresh', sidc: 'SHGAUCAT---E---', pos: [lon, lat], observed: iso(5), source: 'BSP-1', confidence: 'średnia', estimate: 'Czołgi świeże' },
+      { id: 'age-old', sidc: 'SHGAUCAT---E---', pos: [lon + 0.01, lat], observed: iso(200), source: 'BSP-1', confidence: 'niska', estimate: 'Czołgi stare' },
+    ];
+    await writeJson(f, turn0);
+    await waitFor(`${store()}.turn.contacts?.some((c) => c.id === 'age-old')`, 'kontakty po SSE');
+    await waitFor(`document.querySelectorAll('#map .leaflet-marker-icon').length > 0`, 'symbole na mapie');
+    const cardOk = await ev(`import('/js/domain/cards.js').then(async (m) => { const turn = ${store()}.turn; const c = turn.contacts.find((x) => x.id === 'age-old'); return m.contactCard(c, turn.time, 'Europe/Warsaw', {}).includes('informacja sprzed 3 h 20 min'); })`);
+    assert(cardOk, 'karta starego kontaktu pokazuje „informacja sprzed 3 h 20 min”');
+    const opac = await ev(`import('/js/domain/contactage.js').then((m) => { const t = ${store()}.turn; const g = (id) => m.contactFreshness(t.contacts.find((c) => c.id === id), t.time).opacity; return [g('age-fresh'), g('age-old')]; })`);
+    assert(await ev(`[...document.querySelectorAll('#map .leaflet-marker-icon')].some((e) => parseFloat(e.style.opacity) >= 0.35 && parseFloat(e.style.opacity) < 0.6)`), 'na mapie jest symbol przygaszony wiekiem');
+    assert(opac[0] === 1 && opac[1] < 0.6 && opac[1] >= 0.35, 'krycie: świeży 1, stary (200 min, pancerne) = 0,35: ' + opac);
+  });
+
+  await step('T28 zmęczenie: fatigue w turze → wskaźnik w karcie jednostki (kategoria, kolor), brak dla jednostki bez pola', async () => {
+    const cur = await state('s.currentTurn');
+    await waitFor(`${store()}.viewTurn === ${cur}`, 'oglądana jest bieżąca tura');
+    const f = `player/turns/${String(cur).padStart(3, '0')}.json`;
+    const turn0 = await readJson(f);
+    const [a, b] = turn0.units.filter((u) => !u.formation);
+    a.fatigue = 'wyczerpana';
+    delete b.fatigue;
+    await writeJson(f, turn0);
+    await waitFor(`${store()}.turn.units.find((u) => u.id === '${a.id}')?.fatigue === 'wyczerpana'`, 'fatigue po SSE');
+    await ev(`window.__ks.controller.selectEntity('${a.id}', { pan: false })`);
+    await waitFor(`document.querySelector('#insp-body [data-fatigue="wyczerpana"]')`, 'wskaźnik zmęczenia w karcie');
+    assert(await ev(`document.querySelector('#insp-body .fatigue--bad') !== null`), 'wyczerpana: kolor czerwony');
+    await ev(`window.__ks.controller.selectEntity('${b.id}', { pan: false })`);
+    await waitFor(`document.querySelector('#insp-body .insp-top') && !document.querySelector('#insp-body [data-fatigue]')`, 'jednostka bez fatigue: brak wskaźnika');
+    await ev(`window.__ks.controller.clearSelection()`);
+  });
+
   await step('brak błędów JS w konsoli', async () => {
     assert(consoleErrors.length === 0, 'błędy konsoli:\n         ' + consoleErrors.join('\n         '));
   });

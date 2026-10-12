@@ -818,6 +818,20 @@ Gracz widzi logistykę tak, jak ją zna jego S4: stan może być nieaktualny, pr
 - [A] Walidator: `dos` z wartością ujemną lub `readiness` > 1 — błąd; `supply` w pliku gracza nadal błąd.
 - [M] Panel DOS na scenariuszu testowym, klik w wiersz otwiera kartę.
 
+## T16 — Starzenie się kontaktów ✅
+**WA**
+1. Wiek kontaktu = czas oglądanej tury − `observed` (minuty); kontakt bez `observed` nie starzeje się (krycie 1, brak napisu).
+2. Progi zależą od typu z SIDC (funkcja, wymiar): każda klasa ma próg „świeży” (do niego krycie 1) i „stary” (od niego krycie minimalne). Klasy: drony (wymiar `A`) 10 min / 30 min; pancerne, przeciwpancerne, zmechanizowane, zmotoryzowane, rozpoznanie 30 min / 2 h; piechota inna, artyleria, OPL, saperzy, wywiad i REW 1 h / 6 h; logistyka (stałe obiekty, `US…`) 3 h / 12 h; inne i nieznane 45 min / 3 h.
+3. Krycie symbolu i koła niepewności maleje liniowo od 1 (wiek ≤ świeży) do minimum 0,35 (wiek ≥ stary).
+4. Od progu „stary” podpowiedź nad symbolem i karta kontaktu pokazują napis „informacja sprzed X” (np. „sprzed 2 h 10 min”); karta dodatkowo klasę („stare dane”).
+5. Dotyczy wszystkich kontaktów, także z samym `estimate`; nie zmienia danych ani schematu. Nie zmienia logiki BFT własnych jednostek (T49).
+6. Logika w czystym module `domain/contactage.js`; widoki tylko go wywołują.
+
+**Scenariusze testowe**
+- [A] Domena: klasa z SIDC (dron, czołg, haubica, logistyka, nieznany); wiek 0, na progu świeżym, w połowie, na progu starym i dalej → krycie 1, 0,675, 0,35; brak `observed` → 1.
+- [A] Domena: napis „sprzed …” tylko od progu starego; wiek ujemny traktowany jak 0.
+- [M] Na scenariuszu testowym stary kontakt czołgów jest wyraźnie bledszy niż ten sam wiek artylerii; karta pokazuje „informacja sprzed …”.
+
 ## T25 — Czas doręczenia rozkazów ✅
 Rozkaz zaczyna obowiązywać w chwili **doręczenia**, nie wysłania. Czas przejścia zależy od odległości, środka łączności (radio UKF w zasięgu / retransmisja / kurier), stref zagłuszenia (T26) i ciszy radiowej.
 
@@ -866,11 +880,11 @@ Saperzy jako jednostki z zadaniami; zapory i mosty jako rzeczywistość na mapie
 - [A] Walidator: geometria zapory, stany z listy, brak pól sędziego w plikach gracza.
 - [M] Rozkaz „postawić pole min wg szkicu ZAPORA-1" → po turach obiekt „gotowe" i meldunek; natarcie przeciwnika w tym rejonie ponosi straty na minach.
 
-## T28 — Zmęczenie i morale ⬜
+## T28 — Zmęczenie i morale ✅
 Wytrzymałość jako zasób: rotacja i odpoczynek stają się decyzją.
 
 **WA**
-1. `endurance_min` (reszta wytrzymałości) i `morale` w `umpire/turns/` (pole już strzeżone przez walidator); gracz widzi własne jednostki jako kategorię `fatigue` (`wypoczęta` / `zmęczona` / `wyczerpana`) w turach gracza.
+1. `stamina_min` (reszta wytrzymałości jednostki; `endurance_min` zostaje dla czasu lotu środków) i `morale` w `umpire/turns/` (pole już strzeżone przez walidator); gracz widzi własne jednostki jako kategorię `fatigue` (`wypoczęta` / `zmęczona` / `wyczerpana`) w turach gracza.
 2. Zużycie: natarcie pod ogniem > obrona pod ostrzałem > marsz > postój; doba bez snu obniża; noc w spokoju i pobyt w odwodzie regenerują.
 3. Skutki rozstrzygane: tempo marszu, jakość wykonania rozkazów (opóźnienia, literalne zrozumienie), próba morale przy ciężkich stratach/okrążeniu (zatrzymanie, samowolny odwrót, w skrajnych przypadkach poddanie się — częściej u słabych formacji).
 4. Meldunki mówią ludzkim głosem, nie liczbami: „ludzi nie stać na kolejne natarcie", „kompania zasnęła na stanowiskach".
@@ -878,7 +892,7 @@ Wytrzymałość jako zasób: rotacja i odpoczynek stają się decyzją.
 6. CLAUDE.md: reguły zużycia i regeneracji, próby morale.
 
 **Scenariusze testowe**
-- [A] Walidator: `fatigue` z listy kategorii; `endurance_min` w pliku gracza → błąd (strażnik wycieku).
+- [A] Walidator: `fatigue` z listy kategorii; `stamina_min` w pliku gracza → błąd (strażnik wycieku).
 - [A] Inspektor pokazuje kategorię i kolor.
 - [M] Brygada po dobie ciągłej walki melduje „nie stać nas na natarcie" i realnie zwalnia; świeża rezerwa działa pełnym tempem.
 

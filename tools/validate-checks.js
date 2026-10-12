@@ -4,6 +4,7 @@ import milsymbol from 'milsymbol';
 import { isDescribed } from '../public/js/sidc.js';
 import { distanceKm } from '../public/js/domain/geo.js';
 import { LINE_KINDS, PLACE_KINDS, PLAYER_TURN_FIELDS, PLAYER_FIELDS, checkTrack, checkPosTime, checkDos, checkLogistics, isCoord as validPos, isValidTime as validTime, isCount, extraFields } from '../shared/schema.js';
+import { checkFatigue, checkUmpireFatigue } from '../shared/fatigue.js';
 import { checkEwZone, checkEmitterContact } from '../shared/ew.js';
 
 const ms = milsymbol.default ?? milsymbol;
@@ -124,6 +125,11 @@ export function checkSituation(label, data, n, scenario, report, strictLogistics
       if (needsSymbol) checkSidc(where, item.sidc, report);
       if ((key !== 'assets' || item.pos) && !validPos(item.pos)) report.error(`${where}: nieprawidłowe pos [lon, lat]`);
       if (key === 'units') checkStrength(where, item, report);
+      if (key === 'units' && item.fatigue !== undefined) {
+        const e = checkFatigue(item.fatigue);
+        if (e) report.error(`${where}: ${e}`);
+      }
+      if (key === 'units' && !strictLogistics) for (const e of checkUmpireFatigue(item)) report.error(`${where}: ${e}`);
       if (key === 'units' && item.dos !== undefined) {
         const e = checkDos(item.dos);
         if (e) report.error(`${where}: ${e}`);

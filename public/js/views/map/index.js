@@ -11,6 +11,7 @@ import { findEntity, entityPos } from '../../domain/entities.js';
 import { toLatLng } from '../../domain/geo.js';
 import { ageMinutes } from '../../domain/format.js';
 import { bftStatus, BFT_STALE_OPACITY } from '../../domain/bft.js';
+import { contactFreshness } from '../../domain/contactage.js';
 import { indexById, isUnitVisible, echelonRank, BATTALION_RANK, COMPANY_RANK, splitUnits, parentIdOf, isNeighbourUnit } from '../../domain/orbat.js';
 import { BASEMAPS, OVERLAYS, DARK_BASES } from './basemaps.js';
 import { renderLines } from './lines.js';
@@ -33,8 +34,6 @@ function unitSize(u) {
   if (r < 0 || r >= BATTALION_RANK) return 30;
   return r >= COMPANY_RANK ? 26 : 22;
 }
-// Kontakt blaknie wraz z wiekiem informacji (minimum .38).
-const contactOpacity = (ageMin) => Math.max(0.38, 1 - (ageMin ?? 0) / 600);
 
 export function createMapView({ store, controller, root = document }) {
   const el = root.getElementById('map');
@@ -184,8 +183,9 @@ export function createMapView({ store, controller, root = document }) {
     if (!turn) return;
 
     for (const c of turn.contacts || []) {
-      const age = c.observed ? ageMinutes(c.observed, turn.time) : null;
-      const fade = contactOpacity(age);
+      const fr = contactFreshness(c, turn.time); // krycie wg typu i wieku informacji (T16)
+      const age = fr.ageMin;
+      const fade = fr.opacity;
       if (c.uncertainty_m && Array.isArray(c.pos)) {
         situation.contacts.addLayer(
           L.circle(toLatLng(c.pos), {
@@ -200,7 +200,7 @@ export function createMapView({ store, controller, root = document }) {
           }),
         );
       }
-      addSymbol(situation.contacts, c, { size: 26, uniqueDesignation: c.id, dtg: age == null ? undefined : `${age} min` }, contactBrief(c), { opacity: fade, zIndexOffset: 100 });
+      addSymbol(situation.contacts, c, { size: 26, uniqueDesignation: c.id, dtg: age == null ? undefined : `${age} min` }, [contactBrief(c), fr.text].filter(Boolean).join(' · '), { opacity: fade, zIndexOffset: 100 });
     }
 
     unitList = turn.units || [];
