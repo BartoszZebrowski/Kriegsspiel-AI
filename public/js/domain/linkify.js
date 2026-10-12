@@ -40,11 +40,14 @@ export function buildCandidates({ places = [], units = [], contacts = [], assets
     if (!c.id) continue;
     const title = [c.estimate || 'kontakt', c.confidence ? `pewność ${c.confidence}` : ''].filter(Boolean).join(' — ');
     list.push({ text: c.id, kind: 'contact', id: c.id, caseSensitive: true, title });
+    // Nazwa kontaktu (np. „bcz (RU)”) wygrywa jako dłuższa z nazwą własnej jednostki.
+    if (c.name && c.name !== c.id) list.push({ text: c.name, kind: 'contact', id: c.id, caseSensitive: true, title });
   }
   return list;
 }
 
 const CLASS_OF = { place: 'place', unit: 'own', asset: 'own', contact: 'enemy' };
+const FOREIGN_TAG = /^\s*\([A-Z]{2}\)/u; // dopisek „(RU)”, „(BY)” zaraz po nazwie
 const RANK = { unit: 0, asset: 1, contact: 2, place: 3 };
 
 // Zwraca listę nienakładających się trafień { start, end, cand }, najdłuższe mają pierwszeństwo.
@@ -55,6 +58,8 @@ export function findMentions(text, candidates) {
     for (const m of text.matchAll(re)) {
       // Miejsca tylko z wielkiej litery (żeby „sejny” małą literą nie było miastem).
       if (cand.kind === 'place' && m[0] === m[0].toLowerCase()) continue;
+      // „bcz (RU)” to wróg, nie własna jednostka `bcz`: dopisek przynależności wyklucza link do własnych.
+      if ((cand.kind === 'unit' || cand.kind === 'asset') && FOREIGN_TAG.test(text.slice(m.index + m[0].length))) continue;
       spans.push({ start: m.index, end: m.index + m[0].length, cand });
     }
   }

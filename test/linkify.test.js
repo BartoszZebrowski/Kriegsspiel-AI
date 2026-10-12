@@ -79,6 +79,26 @@ describe('T12.3 — linkify', () => {
   });
 });
 
+describe('T34 — linkowanie bez kolizji nazw', () => {
+  const ctx2 = { ...ctx, contacts: [{ id: 'c-002', name: 'bcz (RU)', estimate: 'batalion czołgów' }] };
+
+  test('„bcz (RU)” nie linkuje do własnej jednostki bcz', () => {
+    assert.deepEqual(kinds(linkify('bcz (RU) naciera', { ...ctx, contacts: [] })), []);
+    assert.deepEqual(kinds(linkify('bcz(BY) naciera', { ...ctx, contacts: [] })), []);
+    assert.deepEqual(kinds(linkify('bcz naciera', { ...ctx, contacts: [] })), ['unit:bcz']);
+  });
+
+  test('nazwa kontaktu wygrywa z krótszą nazwą jednostki', () => {
+    assert.deepEqual(kinds(linkify('bcz (RU) naciera', ctx2)), ['contact:c-002']);
+    assert.deepEqual(kinds(linkify('bcz (RU) i bcz', ctx2)), ['contact:c-002', 'unit:bcz']);
+  });
+
+  test('najdłuższe pierwsze: „1k 1bzmot” i miejsca z myślnikiem', () => {
+    assert.deepEqual(kinds(linkify('1k 1bzmot (RU)', { ...ctx, contacts: [] })), []);
+    assert.deepEqual(kinds(linkify('1k 1bzmot melduje', ctx2)), ['unit:1bzmot-1k']);
+  });
+});
+
 describe('T12.3 — gazeter: API i walidator', () => {
   let app, sc;
   before(async () => {
