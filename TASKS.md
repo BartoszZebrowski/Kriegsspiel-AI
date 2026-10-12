@@ -706,6 +706,22 @@ Na mapie widać, dokąd sięga ogień jednostki (wymaga T46: zasięgi z katalogu
 - [A] Domena: jednostka ze Spike-LR i Piorunem → pierścienie ppanc i plot o właściwych promieniach; brak broni danego rodzaju → brak pierścienia.
 - [M] Zaznaczam kompanię: widzę zasięgi; włączam pokrycie plot zgrupowania: widzę luki.
 
+## T48 — CCIR i cykl meldunków ⬜
+Praca sztabu jak w realnym punkcie dowodzenia: gracz określa, o czym chce być alarmowany, a meldunki przychodzą w stałym rytmie i formacie.
+
+**WA**
+1. **CCIR (krytyczne potrzeby informacyjne dowódcy):** gracz definiuje listę (np. 3–7 pozycji) w podziale na PIR (o przeciwniku, np. „czołgi RU na wschód od linii Wiżajny–Rutka-Tartak”) i FFIR (o własnych siłach, np. „stan DOS paliwa batalionu < 1”, „utrata mostu w Szypliszkach”). Edycja w aplikacji, zapis w `player/` (np. `player/ccir.json`, schemat + walidator).
+2. Opcjonalnie pozycja CCIR ma geometrię (rejon/linia z mapy) i jest widoczna jako nakładka.
+3. **Sędzia (CLAUDE.md):** postacie meldują pilnie (`priority: urgent`) tylko to, co spełnia CCIR, a resztę w meldunkach cyklicznych; meldunek spełniający CCIR ma odwołanie do pozycji (np. `ccir: "PIR-2"` w wiadomości). Postacie mogą się mylić (fałszywy alarm, przeoczenie) — tarcie zostaje.
+4. **Cykl meldunków:** w `scenario.json` rytm (np. `reportCycle: {sitrep: 240, logstat: 1440}` w minutach czasu gry, godziny odniesienia). Podwładni wysyłają meldunek sytuacyjny (SITREP) i logistyczny (LOGSTAT) w ustalonym formacie (szablon w CLAUDE.md: położenie, stan, działania, zamiar, potrzeby); spóźniony lub brakujący meldunek sam jest informacją (łączność, kłopoty).
+5. Komunikator: wiadomości z `ccir` oznaczone znacznikiem pozycji CCIR; filtr „tylko CCIR”; meldunki cykliczne rozpoznawalne (`type: meldunek`, `report: sitrep|logstat`) i grupowane w osi czasu.
+6. Etap planu architektonicznego: model CCIR i dopasowanie wiadomości w `domain/`, edytor jako osobny widok.
+
+**Scenariusze testowe**
+- [A] Walidator: `player/ccir.json` poprawny / zły; wiadomość z `ccir` wskazującym nieistniejącą pozycję → uwaga.
+- [A] Domena: filtr „tylko CCIR”, grupowanie meldunków cyklicznych.
+- [M] Gracz ustawia PIR na kolumnę pancerną; w turze z takim kontaktem przychodzi pilny meldunek z odwołaniem do PIR; drobne kontakty trafiają do SITREP.
+
 ---
 
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
