@@ -582,6 +582,18 @@ Zadanie planistyczne, powiązane z T38: wynik w `docs/AI-INTERFACE.md`. Cel: sę
 **Scenariusze testowe**
 - [M] Przegląd dokumentu z graczem; wybrany wariant zaakceptowany.
 
+## T40 — Porządki architektoniczne ⬜
+Wyrównanie kodu do etapu „plan architektoniczny” (nagłówek pliku).
+
+**WA**
+1. Warstwa logistyki mapy wydzielona z `views/map/index.js` do `views/map/logistics.js`; `LG_SIDC` w jednym miejscu (domain), bez duplikatu w `inspector.js`.
+2. Pliki > ~300 linii przejrzane i rozbite wg odpowiedzialności, gdy ma to sens (`views/draw.js`, `core/controller.js`, `views/messenger.js`, `tools/validate.js`, `domain/tactical.js`, `views/structure.js`, `tools/umpire/turn.mjs`).
+3. Test reguły zależności: `domain/` nie importuje spoza `domain/`, `views/` nie importują innych widoków, `core/` nie dotyka DOM (skan importów w `npm test`).
+4. Zachowanie aplikacji bez zmian: `npm test` i `npm run smoke` zielone.
+
+**Scenariusze testowe**
+- [A] Test reguły zależności wykrywa celowo dodany zakazany import.
+
 ---
 
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
