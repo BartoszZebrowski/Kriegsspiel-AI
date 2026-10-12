@@ -563,9 +563,40 @@ Zalecana kolejność: **T17 + T18** (logistyka jako system) → **T25 + T26** (d
 
 - **T15 Pomiar po drogach:** odległość drogowa (routing) i czas marszu dla wybranego typu jednostki. Prosta miarka jest w T12.
 - **T16 Starzenie się kontaktów:** symbol blaknie wraz z wiekiem informacji. Próg zależy od typu (pancerne starzeją się szybciej niż artyleria w stanowiskach).
-- **T17 Warstwa logistyczna:** składy, MSR/ASR, mosty krytyczne, konwoje. WA: każdy element ma kartę ze stanem.
-- **T18 Panel DOS:** paliwo, amunicja, sprawność i zaopatrzenie ogólne dla każdej jednostki, z progami kolorów.
+- **T17 Warstwa logistyczna:** patrz sekcja T17 niżej.
+- **T18 Panel DOS:** patrz sekcja T18 niżej.
 - **T19 Utrata łączności:** jednostka bez łączności jest pokazana na ostatniej znanej pozycji, z czasem ostatniego kontaktu.
+
+## T17 — Warstwa logistyczna ⬜
+Gracz widzi logistykę tak, jak ją zna jego S4: stan może być nieaktualny, prawda jest tylko w `umpire/`.
+
+**WA**
+1. Schemat (shared/schema.js, docs/SCHEMA.md): pole najwyższego poziomu `logistics` w `player/turns` i `umpire/turns`:
+   - `depots[]`: `{id, name, pos, stock:{fuel, ammo, general} (t), status, as_of}`,
+   - `routes[]`: `{id, name, kind: MSR|ASR, coords, status: open|threatened|closed}`,
+   - `bridges[]`: `{id, name, pos, mlc?, status: intact|damaged|destroyed}`,
+   - `convoys[]`: `{id, name, pos, from, to, cargo:{fuel, ammo, general}, eta, status, track?}`.
+   Walidator sprawdza typy, enumy i unikalność id.
+2. Mapa: osobna warstwa „Logistyka” (włącz/wyłącz w legendzie lub warstwach). Trasy MSR/ASR w kolorze statusu, składy, mosty, konwoje jako symbole. Konwoje animowane po `track` jak jednostki.
+3. Każdy element ma kartę ze stanem (klik → inspektor), z czasem `as_of` i oznaczeniem, gdy dane są starsze niż 1 turę.
+4. `tools/umpire/turn.mjs`: plan może zmieniać `logistics` (umpire i player osobno).
+
+**Scenariusze testowe**
+- [A] Walidator: poprawne `logistics` — 0 błędów; zły status / duplikat id — błąd.
+- [A] Domena: model karty elementu logistycznego (status, wiek danych).
+- [M] Na scenariuszu testowym warstwa pokazuje trasę, skład, most i konwój; klik otwiera kartę.
+
+## T18 — Panel DOS ⬜
+**WA**
+1. Schemat: jednostka własna w `player/turns` może mieć `dos: {fuel, ammo, general, readiness, as_of}` — meldowany stan (dni zaopatrzenia, `readiness` 0–1 = sprawność sprzętu). To meldunek, nie prawda (`supply` zostaje tylko w `umpire/`).
+2. Karta jednostki pokazuje DOS z paskami i progami kolorów: ≥ 2 dni zielony, 1–2 żółty, < 1 czerwony (sprawność: ≥ 0,8 / 0,5–0,8 / < 0,5), z wiekiem meldunku.
+3. Zbiorczy panel DOS (tabela jednostek własnych, sortowanie po najgorszym wskaźniku); wiersz klikalny → karta jednostki.
+4. Jednostka nadrzędna bez własnego `dos` pokazuje minimum z podwładnych (oznaczone jako wyliczone).
+
+**Scenariusze testowe**
+- [A] Domena: progi kolorów, agregacja minimum, sortowanie.
+- [A] Walidator: `dos` z wartością ujemną lub `readiness` > 1 — błąd; `supply` w pliku gracza nadal błąd.
+- [M] Panel DOS na scenariuszu testowym, klik w wiersz otwiera kartę.
 
 ## T25 — Czas doręczenia rozkazów ⬜
 Rozkaz zaczyna obowiązywać w chwili **doręczenia**, nie wysłania. Czas przejścia zależy od odległości, środka łączności (radio UKF w zasięgu / retransmisja / kurier), stref zagłuszenia (T26) i ciszy radiowej.
