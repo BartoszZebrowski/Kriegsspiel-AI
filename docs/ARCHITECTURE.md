@@ -44,7 +44,7 @@ public/js/
   views/               każdy widok: subskrybuje plastry store, emituje intencje
     topbar, docks (splittery, szyny, pasek zakładek), hotkeys, tooltips, toasts, briefing,
     structure, inspector, legend, messenger, timeline, omnibox, leader, draw,
-    map/{index,controls,basemaps,lines,hierarchy,motion,ewzones,logistics}
+    map/{index,controls,basemaps,lines,hierarchy,motion,ewzones,logistics,ranges}
     podkatalogi widoków (patrz „Podział dużych plików”): draw/, messenger/, structure/
   lib/                 liście bez zależności od warstw: storage (localStorage), symbols (milsymbol), icons (sprite SVG)
   sidc.js              cienki re-export domain/sidc.js (importuje go tools/validate.js)
@@ -187,3 +187,43 @@ Gracz zaznacza jednostki, wskazuje na mapie punkt / trasę / rubież / rejon i w
 **Decyzja (WA3): kanały.** Domyślnie (`delivery: "own"`) każda zaznaczona jednostka dostaje osobny załącznik w szkicu **własnego** kanału (dowódcy tej jednostki), z tą samą geometrią. Przełącznik „przez wspólnego przełożonego” (`"common"`) składa jednostki w jeden załącznik w kanale najniższego wspólnego przełożonego, o ile ma kanał podwładnego; w przeciwnym razie zachowuje się jak `own`. Jednostki bez kanału (sąsiedzi, przełożony) są pomijane z komunikatem. Szkice w kanałach są niezależne, gracz wysyła je osobno (z możliwością edycji tekstu).
 
 **Serwer:** `POST /api/outbox` przyjmuje dodatkowe `orders: [...]`; każdy element przechodzi `checkOrderAttachment`, jednostki muszą istnieć w bieżącej turze gracza i nie należeć do formacji sąsiada. Do pliku `outbox` trafiają w `attachments` obok kopii szkiców. Zapis do `player/outbox`, `docs/SCHEMA.md`, walidator (`tools/validate.js`) sprawdza `kind: "order"` tym samym `checkOrderAttachment`.
+
+## Zasięg ognia na mapie (T47)
+
+Plan: zasięgi z katalogu wyposażenia (T46) rysowane jako pierścienie. WA 4 (sektory ognia i martwe pola z liniami widoczności z danych wysokościowych, T43) jest **przyszłe**: promień to zasięg skuteczny „na płasko”, a `domain/ranges.js` zostaje miejscem, do którego dojdzie kształt inny niż okrąg.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Logika | `domain/ranges.js` (czysta; katalog jako parametr) | `RANGE_KINDS` (rodzaje broni, kolejność, kolory — jedno miejsce dla mapy, panelu i legendy), `matchItem` (wpis sprzętu → pozycja katalogu), `unitRanges` (maks. zasięg na rodzaj wyłącznie z WŁASNEGO sprzętu jednostki — stany szczebli nadrzędnych już obejmują podwładnych, dowództwo bez broni nie ma pierścieni; rodzaj bez broni = brak pierścienia), `contactRanges` (wyłącznie z `estimate_equipment`, `estimate: true`, `uncertainty_m`), `entityRanges`, `coverageRings` (tryb „wszystkie jednostki”: widoczne wg szczegółowości jednostki własne, bez sąsiadów, bez dublowania rodzic+podwładni: najniższy widoczny szczebel z daną bronią). |
+| Widok | `views/map/ranges.js` (własna `L.layerGroup`, wzorem `ewzones.js`) | Subskrybuje `turn, selection, equipment, layers, level`. Pierścienie zaznaczenia (jednostka: linia ciągła; kontakt: przerywana + obwódka „zasięg + niepewność”), pierścienie pokrycia dla włączonych warstw, mały panel z przełącznikami rodzajów (stan lokalny widoku) i kolorową legendą. |
+| Warstwy | `layers['range:<rodzaj>']` w store, wiersze w `views/map/controls.js` | „Zasięg ppanc: wszystkie jednostki” itd.; przełącznik jak każda inna warstwa (`controller.setLayerVisible`), bez nowych intencji. |
+| Legenda | `views/legend.js` | Wiersz „Zasięg ognia” z `RANGE_KINDS`. |
+
+**Dopasowanie bez `ref`:** istniejące scenariusze (np. `01-obrona-bialegostoku`) nie mają jeszcze `ref` w `equipment`. `matchItem` używa `ref`, a gdy go brak — nazwy: słowa kluczowe pozycji katalogu (nazwa bez nawiasów, słowa > 2 znaki, bez diakrytyków) muszą wystąpić w nazwie wpisu (zgodność przedrostkowa, więc „moździerze” ≈ „moździerz”); wygrywa pozycja z największą liczbą słów kluczowych. Ogólne wpisy („czołgi”, „drony rozpoznawcze”) nie dopasują się i nie dają pierścieni — to świadome (lepiej brak niż błędny zasięg). Docelowo scenariusze dostają `ref`, a fallback po nazwie wygasa. Zasięgi wroga biorą się z **szacunku gracza**, nigdy z prawdy sędziego.
+
+## Pomijanie szczebli dowodzenia (T45)
+
+Koszt rozkazu wydanego z pominięciem dowódcy pośredniego. Tryb: `scenario.commandRules.skipEchelon` = `off` | `soft` (domyślny) | `hard`.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/schema.js` | `SKIP_ECHELON_MODES`, `checkCommandRules(rules)` (lista błędów); używa go `tools/validate.js`. Opis pól: [SCHEMA.md](SCHEMA.md). |
+| Logika | `domain/command.js` (czysta) | `skipEchelonMode(scenario)` (domyślnie soft), `skippedEchelons(units, unitId)` → `{count, skipped}` z `parent` (bezpośredni podwładny 0, kompania 1, pluton 2; sąsiedzi i `formation` 0), `assessSkip({scenario, units, channels?, channelId, priority})` → `{level: none/warn/block, count, skipped, text}`, `skipMessage`. Tryby są tam porównywane jako teksty (`domain/` nie importuje z `shared/`). |
+| Klient | `core/messaging.js` + `views/messenger.js` | widok pokazuje nieblokujące ostrzeżenie pod polem tekstu (`renderWarn`); kontroler odmawia wysyłki przy `block` (hard, bez `urgent`). Brak nowych plastrów store i zależności między widokami. |
+| Serwer | `server/store.js` (`sendMessage`) | to samo `assessSkip` (import z `public/js/domain/command.js`, jak `tools/` z `domain/geo.js`): `block` → 403 przy `POST /api/outbox`. Jedna reguła w jednym pliku. |
+| Sędzia | [CLAUDE.md](../CLAUDE.md) | skutki fabularne i licznik pominięć w `umpire/log.md` (serwer nie czyta `umpire/`). |
+
+## CCIR i cykl meldunków (T48)
+
+Gracz definiuje 3–7 krytycznych potrzeb informacyjnych (PIR o przeciwniku, FFIR o własnych siłach); postacie meldują pilnie tylko to, co je spełnia, a resztę w meldunkach cyklicznych (SITREP, LOGSTAT). Wiadomości mają odwołanie `ccir` (id pozycji) i/lub `report`.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/ccir.js` (osobny plik, bo `shared/schema.js` ma jednego właściciela naraz) | `checkCcirItem`, `checkCcir` (plik `player/ccir.json`: ≤ 7 pozycji błąd, < 3 uwaga, id `PIR-N`/`FFIR-N` zgodne z `kind`, opcjonalna geometria), `checkReportCycle` (`scenario.reportCycle`), `checkMessageReport` (pola `ccir`, `report`). Pola `ccir` i `report` dopisane do `PLAYER_MESSAGE_FIELDS`. Używają go serwer, `tools/validate-ccir.js` (z `validate.js`) i testy. |
+| Serwer | `server/store.js` + `server/app.js` | `GET/PUT /api/ccir` jak szkice gracza: zapis do `player/ccir.json` pod blokadą, walidacja `checkCcir`. Nie zależy od tury. Sędzia nie modyfikuje pliku. |
+| Logika | `domain/ccir.js` (czysta; stałe lustrzane do `shared/`) | edycja listy (`addCcirItem`, `updateCcirItem`, `removeCcirItem`, `setCcirGeometry`, `cleanCcirItems`), `ccirOf`, `filterCcir` / `countCcir` (filtr „tylko CCIR”), `ccirTags` (znaczniki `PIR-2`, `SITREP`; wołane z `messageTags`), `groupReports` (jeden element na rodzaj meldunku i turę, używa go `buildTimeline`), `reportCycleText`. |
+| Stan | `core/store.js` | `ccir` (zapisana lista) i `ccirEditor { open, draft, pick }` (kopia robocza i tryb wskazywania geometrii). Filtr „tylko CCIR” jest lokalny dla komunikatora. |
+| Intencje | `core/ccir.js` (podkontroler jak `orders.js`) | `openCcirEditor`, `ccirAdd/Edit/Remove`, `ccirPickStart/Cancel`, `ccirSetGeometry`, `ccirSave` (jedno `set`); `fetchCcir` w `load` i `refresh` (brak API = pusta lista). |
+| Widoki | `views/ccir.js` (edytor, osobny widok), `views/map/ccir.js` (nakładka geometrii i wskazywanie punktu / linii / rejonu), `views/messenger/thread.js` + `messenger.js` (znaczniki i przycisk filtra), `views/timeline.js` (zgrupowane znaczniki meldunków) | Brak importów między widokami; edytor i mapa komunikują się przez `store.ccirEditor.pick`. |
+
+Geometria CCIR jest widoczna zawsze (zapisane pozycje) albo w edytorze (kopia robocza); osobnego przełącznika warstwy nie ma. Sędzia: reguły w [CLAUDE.md](../CLAUDE.md), format w [SCHEMA.md](SCHEMA.md).

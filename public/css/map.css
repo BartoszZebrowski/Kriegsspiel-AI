@@ -163,3 +163,15 @@ body.l-collapsed .leader,body.r-collapsed .leader{}
 #mapwrap.is-order-drawing .leaflet-container,#mapwrap.is-order-drawing .leaflet-interactive{cursor:crosshair}
 .ms-icon.is-order::before{border-color:#ffd54a;box-shadow:0 0 0 3px rgba(255,213,74,.25),0 0 14px rgba(255,213,74,.45)}
 .att--order a{cursor:pointer}
+
+/* Zasięgi ognia (T47): panel przełączników rodzajów i legenda kolorów */
+.range-panel{left:12px;bottom:44px;padding:6px 8px;display:flex;flex-direction:column;gap:4px;max-width:360px}
+.range-panel[hidden]{display:none}
+.rp-h{font:600 10px var(--font-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--t-2)}
+.rp-est{text-transform:none;letter-spacing:0;font-weight:400}
+.rp-row{display:flex;flex-wrap:wrap;gap:4px}
+.rp-chip{display:inline-flex;align-items:center;gap:5px;background:transparent;color:var(--t-1);border:1px solid var(--rc);border-radius:var(--r-3);padding:2px 7px;font:600 11px var(--font-ui);cursor:pointer;opacity:.45}
+.rp-chip i{width:10px;height:10px;border-radius:50%;background:var(--rc)}
+.rp-chip small{font-weight:400;color:var(--t-2)}
+.rp-chip.on{opacity:1}
+.rp-static{cursor:default}

@@ -127,6 +127,15 @@ Gracz może adresować wiadomość (`player/outbox`) do **każdej jednostki wła
 - **`type`** ustawiaj zawsze, gdy da się go określić: `rozkaz` (rozkaz przełożonego), `zarzadzenie`, `meldunek` (meldunek podwładnych, S2, S4), `wiadomosc` (zwykła rozmowa). Aplikacja pokazuje go jako znacznik na karcie i w osi czasu.
 - **Rozkazy gracza:** w `player/outbox` pole `type` to kategoria wybrana przez gracza (`rozkaz` / `zarzadzenie` / `meldunek` / `wiadomosc`), a `priority: "urgent"` oznacza przełącznik „Pilne”. Traktuj `type` jako kategorię rozkazu (rozkaz bojowy ma wyższą wagę niż zwykła wiadomość), a „Pilne” jako prośbę o szybsze potraktowanie — nie jako automatyczne wykonanie.
 
+## CCIR i meldunki cykliczne (T48)
+
+Przy rozstrzyganiu tury czytaj `player/ccir.json` (PIR o przeciwniku, FFIR o własnych siłach; format w `docs/SCHEMA.md`) i `scenario.reportCycle` (minuty czasu gry, np. `{sitrep: 240, logstat: 1440}`).
+
+- **Pilnie** (`priority: "urgent"`) postacie meldują tylko to, co spełnia pozycję CCIR, i **zawsze** z odwołaniem `ccir: "PIR-2"` w wiadomości. Reszta (drobne kontakty, rutyna) idzie do meldunku cyklicznego.
+- **Postacie mogą się mylić:** fałszywy alarm (odwołanie do CCIR, choć nie było spełnienia), przeoczenie albo opóźnienie. CCIR nie gwarantuje, że wiadomość przyjdzie; tarcie zostaje.
+- **SITREP i LOGSTAT** (`type: "meldunek"`, `report: "sitrep"|"logstat"`) wysyłają podwładni w rytmie `reportCycle`, o stałej godzinie odniesienia. Szablon (pięć punktów, krótko): *1. położenie, 2. stan (ludzie, sprzęt, DOS), 3. działania (ostatnie i bieżące), 4. zamiar, 5. potrzeby.* LOGSTAT kładzie nacisk na punkty 2 i 5 (DOS paliwa, amunicji, ogólnego; naprawy; dowóz).
+- **Brak albo spóźnienie meldunku cyklicznego jest informacją** (łączność, walka, kłopoty podwładnego): nie dopisuj wtedy „zastępczego” meldunku, pozwól graczowi wyciągnąć wniosek.
+
 ## Gazeter miejsc (`gazetteer.json`)
 
 Plik `scenarios/<id>/gazetteer.json` jest jawny dla gracza: `{"places":[{"id","name","kind","pos":[lon,lat],"zoom"?,"forms":[…],"note"?}]}`. Aplikacja zamienia nazwy z `forms` w wiadomościach na klikalne linki do mapy.

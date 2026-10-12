@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="/css/draw.css">
   <link rel="stylesheet" href="/css/timeline.css">
   <link rel="stylesheet" href="/css/overlays.css">
+  <link rel="stylesheet" href="/css/ccir.css">
   <link rel="stylesheet" href="/css/responsive.css">
 </head>
 <body data-m="map">
@@ -93,6 +94,7 @@
     <span class="pill hide-m" id="outbox-pill" data-tip="Rozkazy w skrzynce nadawczej — zostaną rozpatrzone po „koniec tury”">SKRZYNKA · 0</span>
     <span class="vsep"></span>
     <button class="tb-btn" id="tb-brief" data-tip="Odprawa" data-k="B"><svg class="i"><use href="#i-doc"/></svg><span class="lbl">Odprawa</span></button>
+    <button class="tb-btn" id="tb-ccir" data-tip="CCIR — o czym mam być alarmowany" aria-label="CCIR"><svg class="i"><use href="#i-flag"/></svg><span class="lbl">CCIR</span></button>
     <button class="tb-btn" id="tb-bell" data-tip="Powiadomienia" aria-label="Powiadomienia"><svg class="i"><use href="#i-bell"/></svg><span class="dot-badge" id="bell-badge" hidden>0</span></button>
     <button class="tb-btn" id="tb-help" data-tip="Legenda symboli" data-k="?" aria-label="Legenda"><svg class="i"><use href="#i-help"/></svg></button>
     <button class="tb-btn on" id="tb-l" data-tip="Lewy panel" data-k="Alt 1" aria-label="Lewy panel"><svg class="i"><use href="#i-panel-l"/></svg></button>
@@ -208,6 +210,7 @@
     <div class="dock-body">
       <div class="panel-h"><span class="cap">Komunikator</span><span class="count" id="cnt-unread">brak nowych</span><span class="grow"></span>
         <button class="ibtn on" data-tip="Linia łączności z jednostką na mapie" id="m-leader" aria-label="Linia łączności z jednostką"><svg class="i s"><use href="#i-line"/></svg></button>
+        <button class="ibtn" data-tip="Tylko wiadomości z odwołaniem do CCIR" id="m-ccir" aria-pressed="false" aria-label="Tylko CCIR"><svg class="i s"><use href="#i-flag"/></svg></button>
         <button class="ibtn" data-tip="Szukaj (Ctrl K)" id="m-search" aria-label="Szukaj"><svg class="i s"><use href="#i-search"/></svg></button></div>
       <div class="m-chs">
         <input class="m-chs-search" id="ch-search" type="search" placeholder="Szukaj kanału (np. kompania)…" autocomplete="off" aria-label="Szukaj kanału">
@@ -270,6 +273,8 @@
     <aside class="br-side" id="br-side"></aside>
   </div>
 </div>
+<!-- ======================= EDYTOR CCIR ======================= -->
+<aside id="ccir-panel" class="ccir-panel" role="dialog" aria-label="CCIR — krytyczne potrzeby informacyjne" hidden></aside>
 <div id="tip"></div>
 
 <!-- ======================= OKNO EDYCJI SZKICU ======================= -->

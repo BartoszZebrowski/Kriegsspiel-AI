@@ -3,6 +3,7 @@
 // Klik w przeszłą turę = podgląd archiwalny (controller.showTurn).
 import { buildTimeline, hourStep, showTurnLabel, lanesVisible } from '../domain/timeline.js';
 import { addMinutes, formatClock } from '../domain/format.js';
+import { REPORT_LABELS } from '../domain/ccir.js';
 import { escapeHtml as e } from '../domain/markdown.js';
 
 export function createTimelineView({ store, controller, root = document }) {
@@ -38,7 +39,8 @@ export function createTimelineView({ store, controller, root = document }) {
       const tip = `Tura ${t.turn} · ${clock(t.turn)}${t.state === 'fut' ? ' (przyszła)' : t.state === 'cur' ? ' (bieżąca)' : ''}`;
       h += `<button type="button" class="tl-node ${cls}" data-turn="${t.turn}" ${t.clickable ? '' : 'tabindex="-1" aria-disabled="true"'} style="left:${t.pct}%" data-tip="${e(tip)}" aria-label="${e(tip)}"><em${showTurnLabel(t.turn, width) ? '' : ' style="display:none"'}>T${t.turn}</em><i></i></button>`;
     }
-    const lane = (cls, items) => `<div class="tl-lane ${cls}">${items.map((x) => `<i class="${x.urgent ? 'u' : ''}${x.late ? ' late' : ''}" style="left:${x.pct}%"></i>`).join('')}</div>`;
+    const repTip = (x) => (x.report ? ` data-tip="${REPORT_LABELS[x.report]}${x.count > 1 ? ` ×${x.count}` : ''}"` : '');
+    const lane = (cls, items) => `<div class="tl-lane ${cls}">${items.map((x) => `<i class="${x.urgent ? 'u' : ''}${x.late ? ' late' : ''}${x.report ? ` rep rep-${x.report}` : ''}" style="left:${x.pct}%"${repTip(x)}></i>`).join('')}</div>`;
     h += lane('msgs', tl.lanes.msgs) + lane('ords', tl.lanes.ords) + lane('cons', tl.lanes.cons);
     h += `<div class="tl-play" style="left:${tl.playheadPct}%"></div>`;
     axis.innerHTML = h;

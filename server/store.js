@@ -6,6 +6,7 @@ import crypto from 'node:crypto';
 
 import { MAX_MESSAGE_LENGTH, MAX_NOTES, NOTE_KINDS, NOTE_COLORS, NOTE_GRAPHICS, NOTE_ECHELONS, checkNote, checkMessageText, checkMessageMeta } from '../shared/schema.js';
 import { checkOrderAttachment } from '../shared/order.js';
+import { checkCcir } from '../shared/ccir.js';
 import { assessSkip, skipMessage } from '../public/js/domain/command.js';
 
 // Stałe schematu żyją w shared/schema.js; tu tylko re-eksport dla zgodności wstecznej.
@@ -189,6 +190,22 @@ export function createStore(scenarioDir) {
     return { turn: n, items: clean, inheritedFrom: null };
   }
 
+  // CCIR gracza (T48): jeden plik player/ccir.json, niezależny od tury; brak pliku = pusta lista.
+  async function readCcir() {
+    const data = await readJson(path.join(playerDir, 'ccir.json'), { items: [] });
+    // Plik mógł być edytowany ręcznie: do klienta (HTML w znacznikach) trafiają tylko pozycje zgodne ze schematem.
+    return { items: checkCcir(data).items };
+  }
+
+  function writeCcir(items) {
+    return locked(async () => {
+      const r = checkCcir({ items });
+      if (r.errors.length) throw new StoreError(400, r.errors[0]);
+      await writeJson(path.join(playerDir, 'ccir.json'), { items: r.items });
+      return { items: r.items };
+    });
+  }
+
   function sendMessage(body) {
     return locked(() => sendMessageUnlocked(body));
   }
@@ -288,5 +305,7 @@ export function createStore(scenarioDir) {
     withdrawMessage,
     readNotes,
     writeNotes,
+    readCcir,
+    writeCcir,
   };
 }

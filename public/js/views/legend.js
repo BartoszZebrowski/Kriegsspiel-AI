@@ -5,6 +5,7 @@ import { symbolSvg } from '../lib/symbols.js';
 import { groupSymbolTypes } from '../domain/sidc.js';
 import { escapeHtml as e } from '../domain/markdown.js';
 import { logisticsElements, ROUTE_COLORS } from '../domain/logistics.js';
+import { RANGE_KINDS } from '../domain/ranges.js';
 import { EW_ZONE_KIND, EW_ZONE_NAME } from '../domain/ewzones.js';
 
 const row = (sidc, title, small = '', right = '', size = 26) =>
@@ -49,6 +50,7 @@ export function renderOnMap(el, turn) {
     svgRow('<svg width="34" height="20"><circle cx="17" cy="10" r="8" fill="rgba(255,128,128,.12)" stroke="#ff8080" stroke-dasharray="3 2"/></svg>', 'Okrąg niepewności', 'promień = niepewność położenia kontaktu') +
     svgRow('<svg width="34" height="20"><circle cx="9" cy="10" r="5" fill="#ff8080"/><circle cx="25" cy="10" r="5" fill="#ff8080" opacity=".38"/></svg>', 'Wiek informacji', 'kontakt blaknie wraz z upływem czasu') +
     (hasEw ? svgRow('<svg width="34" height="20"><rect x="3" y="3" width="28" height="14" fill="rgba(168,85,247,.16)" stroke="#a855f7" stroke-dasharray="4 4"/></svg>', EW_ZONE_NAME, 'zasięg zagłuszenia wg meldunku; wiek w etykiecie') : '') +
+    svgRow(`<svg width="34" height="20">${RANGE_KINDS.map((k, i) => `<circle cx="17" cy="10" r="${3 + i * 2}" fill="none" stroke="${k.color}" stroke-width="1.5"/>`).join('')}</svg>`, 'Zasięg ognia', RANGE_KINDS.map((k) => `<span style="color:${k.color}">${k.short}</span>`).join(' · ') + '; kontakt wroga: linia przerywana = szacunek') +
     svgRow('<svg width="34" height="20"><path d="M2 10h30" stroke="#d6dde6" stroke-width="3"/></svg>', 'Granica pasa', 'rozgraniczenie pasów zgrupowań') +
     svgRow('<svg width="34" height="20"><path d="M2 10h30" stroke="#ff2bd6" stroke-width="2.5" stroke-dasharray="7 5"/></svg>', 'Podporządkowanie', 'przełożony → podwładny');
 }

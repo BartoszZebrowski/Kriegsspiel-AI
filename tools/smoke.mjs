@@ -325,6 +325,26 @@ try {
     await ev(`window.__ks.controller.setPopover(null); window.__ks.controller.clearSelection()`);
   });
   // ===== koniec T17 =====
+  await step('T47 zasięg ognia: pierścienie zaznaczonej jednostki, przełącznik rodzaju, kontakt przerywany (szacunek), warstwa pokrycia', async () => {
+    const rings = () => ev(`[...document.querySelectorAll('#map path.leaflet-interactive, #map svg path')].filter((p) => p.getAttribute('stroke') && ['#ef4444', '#38bdf8', '#facc15', '#a78bfa'].includes(p.getAttribute('stroke'))).length`);
+    assert((await rings()) === 0, 'bez zaznaczenia brak pierścieni');
+    await ev(`window.__ks.controller.selectEntity('1bzmot')`);
+    await waitFor(`document.querySelectorAll('#range-panel .rp-chip').length >= 2`, 'panel z rodzajami broni 1 bzmot');
+    const n = await rings();
+    assert(n >= 2, 'pierścienie zaznaczonej jednostki: ' + n);
+    await ev(`document.querySelector('#range-panel .rp-chip').click()`);
+    await waitFor(`!document.querySelector('#range-panel .rp-chip').classList.contains('on')`, 'chip wyłączony');
+    assert((await rings()) === n - 1, 'wyłączony rodzaj znika z mapy');
+    await ev(`window.__ks.controller.selectEntity('c-001')`);
+    await waitFor(`/szacunek/.test(document.getElementById('range-panel').innerText)`, 'panel kontaktu oznaczony jako szacunek');
+    assert(await ev(`[...document.querySelectorAll('#map svg path')].some((p) => p.getAttribute('stroke-dasharray') && /^#(ef4444|38bdf8|facc15|a78bfa)$/.test(p.getAttribute('stroke')))`), 'pierścień kontaktu przerywany');
+    await ev(`window.__ks.controller.clearSelection(); window.__ks.controller.setLayerVisible('range:ppanc', true)`);
+    await waitFor(`document.querySelectorAll('#range-panel .rp-static').length === 1`, 'legenda pokrycia ppanc');
+    assert((await rings()) >= 2, 'pokrycie ppanc: pierścienie wielu jednostek');
+    await ev(`window.__ks.controller.setLayerVisible('range:ppanc', false)`);
+    await waitFor(`document.getElementById('range-panel').hidden`, 'panel znika bez zasięgów');
+  });
+  // ===== koniec T47 =====
 
   await step('szczegółowość: kompanie, plutony i linie podporządkowania (magenta)', async () => {
     const icons = () => ev(`document.querySelectorAll('#map .ms-icon').length`);
@@ -1225,6 +1245,46 @@ try {
     await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
     await sleep(500);
     assert(await state('s.ui.narrow === false'), 'powrót do układu desktop');
+  });
+
+  await step('T48 CCIR: edytor (PIR, tekst, punkt z mapy, zapis), nakładka, wiadomość z ccir (znacznik, filtr „tylko CCIR”), SITREP zgrupowany na osi', async () => {
+    await clickSel('#tb-ccir');
+    await waitFor(`!document.getElementById('ccir-panel').hidden`, 'panel CCIR otwarty');
+    await clickSel('#ccir-panel [data-add="PIR"]');
+    await waitFor(`!!document.querySelector('#ccir-panel input[data-text="PIR-1"]')`, 'pozycja PIR-1');
+    await ev(`(() => { const i = document.querySelector('#ccir-panel input[data-text="PIR-1"]'); i.value = 'Czołgi przeciwnika na wschód od linii obrony'; i.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    assert(await state('s.ccirEditor.draft[0].text.startsWith("Czołgi")'), 'tekst trafił do kopii roboczej');
+    // wskazanie punktu: tryb wskazywania, kliknięcie mapy (zdarzenie Leaflet), geometria w kopii roboczej
+    await clickSel('#ccir-panel [data-pick="point"]');
+    await waitFor(`!!${store()}.ccirEditor.pick`, 'tryb wskazywania');
+    await ev(`(() => { const m = window.__ks.map; m.fire('click', { latlng: m.getCenter() }); })()`);
+    await waitFor(`${store()}.ccirEditor.draft[0].geometry?.type === 'Point' && !${store()}.ccirEditor.pick`, 'punkt wskazany na mapie');
+    await waitFor(`[...document.querySelectorAll('.ccir-label')].some((t) => t.textContent === 'PIR-1')`, 'etykieta PIR-1 na mapie');
+    await clickSel('#ccir-panel [data-act="save"]');
+    await waitFor(`${store()}.ccir.length === 1 && document.getElementById('ccir-panel').hidden`, 'zapis CCIR');
+    const saved = await fetchJson('/api/ccir');
+    assert(saved.items.length === 1 && saved.items[0].id === 'PIR-1' && saved.items[0].geometry.type === 'Point', 'player/ccir.json zapisany przez API');
+    // wiadomości sędziego: pilny meldunek z ccir i zgrupowane SITREP-y
+    const f = 'player/inbox/000.json';
+    const inbox = await readJson(f);
+    inbox.messages.push(
+      { id: 'in-smoke-ccir', channel: 'log', from: 'por. Test, S2', time: '2026-05-14T06:40:00+02:00', type: 'meldunek', priority: 'urgent', ccir: 'PIR-1', text: 'smoke: kolumna pancerna' },
+      { id: 'in-smoke-sit1', channel: 'log', from: 'por. Test, S2', time: '2026-05-14T06:50:00+02:00', type: 'meldunek', report: 'sitrep', text: 'smoke: SITREP 1' },
+      { id: 'in-smoke-sit2', channel: 'dd', from: 'por. Test, dca', time: '2026-05-14T06:55:00+02:00', type: 'meldunek', report: 'sitrep', text: 'smoke: SITREP 2' },
+    );
+    await writeJson(f, inbox);
+    await waitFor(`${store()}.messages.some((m) => m.id === 'in-smoke-sit2')`, 'odświeżenie wiadomości po SSE');
+    await ev(`window.__ks.controller.selectChannel('log')`);
+    await waitFor(`!!document.querySelector('#thread .msg[data-ccir="PIR-1"] .tag.ccir')`, 'znacznik PIR-1 na karcie wiadomości');
+    assert(await ev(`!!document.querySelector('#thread .msg.rpt-sitrep .tag.rpt')`), 'znacznik SITREP');
+    // filtr „tylko CCIR”
+    await clickSel('#m-ccir');
+    await waitFor(`document.querySelectorAll('#thread .msg').length > 0 && [...document.querySelectorAll('#thread .msg')].every((m) => m.dataset.ccir)`, 'filtr: tylko wiadomości z ccir');
+    assert(await ev(`document.getElementById('m-ccir').getAttribute('aria-pressed') === 'true'`), 'przycisk filtra włączony');
+    await clickSel('#m-ccir');
+    await waitFor(`[...document.querySelectorAll('#thread .msg')].some((m) => !m.dataset.ccir)`, 'filtr wyłączony: wszystkie wiadomości');
+    // oś czasu: dwa SITREP-y z jednej tury = jeden znacznik z licznikiem
+    assert(await ev(`document.querySelectorAll('.tl-lane.msgs i.rep').length === 1 && document.querySelector('.tl-lane.msgs i.rep').dataset.tip === 'SITREP ×2'`), 'SITREP-y zgrupowane na osi czasu');
   });
 
   await step('brak błędów JS w konsoli', async () => {

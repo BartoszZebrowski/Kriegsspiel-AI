@@ -127,6 +127,13 @@ async function handleApi(req, res, store, watcher, parts) {
     const body = await readBody(req);
     return sendJson(res, 200, await store.writeNotes(body.turn, body.items));
   }
+  if (method === 'GET' && resource === 'ccir' && !arg) {
+    return sendJson(res, 200, await store.readCcir());
+  }
+  if (method === 'PUT' && resource === 'ccir' && !arg) {
+    const body = await readBody(req);
+    return sendJson(res, 200, await store.writeCcir(body.items));
+  }
   if (method === 'GET' && resource === 'events' && !arg) {
     return watcher.subscribe(req, res);
   }

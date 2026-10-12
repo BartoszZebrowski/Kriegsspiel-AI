@@ -11,6 +11,7 @@ export function createTopbarView({ store, controller, root = document }) {
   $('t-cur').addEventListener('click', () => controller.showCurrent());
   $('omni-open').addEventListener('click', () => controller.openOmnibox());
   $('tb-brief').addEventListener('click', () => controller.openBriefing());
+  $('tb-ccir').addEventListener('click', () => controller.toggleCcirEditor());
   $('tb-help').addEventListener('click', () => controller.togglePopover('legend'));
   $('tb-l').addEventListener('click', () => controller.toggleDock('l'));
   $('tb-r').addEventListener('click', () => controller.toggleDock('r'));

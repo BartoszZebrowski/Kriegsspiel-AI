@@ -4,6 +4,7 @@
 import { ic } from '../../lib/icons.js';
 import { formatLatLon, toMgrs } from '../../domain/mgrs.js';
 import { BASEMAP_ORDER } from './basemaps.js';
+import { RANGE_KINDS, allLayerKey } from '../../domain/ranges.js';
 
 const OVERLAY_ROWS = [
   ['lines', 'Granice pasów i linie'],
@@ -13,9 +14,11 @@ const OVERLAY_ROWS = [
   ['assets', 'Środki rozpoznania'],
   ['logistics', 'Logistyka: składy, trasy, mosty, konwoje'],
   ['notes', 'Moje szkice'],
+  ['ccir', 'Pozycje CCIR (geometria)'],
   ['Koleje', 'Koleje (OpenRailwayMap)'],
   ['Rzeźba terenu', 'Rzeźba terenu (cieniowanie)'],
   ['Nazwy i granice', 'Nazwy i granice (Esri)'],
+  ...RANGE_KINDS.map((k) => [allLayerKey(k.kind), 'Zasięg ' + k.short + ': wszystkie jednostki']),
 ];
 
 export function createMapControls({ store, controller, map, root = document }) {

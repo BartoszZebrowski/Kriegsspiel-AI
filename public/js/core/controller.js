@@ -14,6 +14,7 @@ import { createSelection } from './selection.js';
 import { createMessaging } from './messaging.js';
 import { createLayout } from './layout.js';
 import { createOrders } from './orders.js';
+import { createCcir } from './ccir.js';
 
 const nullStorage = { load: (_key, fallback) => fallback, save() {} };
 
@@ -59,6 +60,9 @@ export function createController({ store, api, storage = nullStorage, env = {} }
 
   // Rozkaz graficzny na mapie (T44): tryb zaznaczania i wskazywania; wynik trafia do szkiców kanałów dowódców.
   const orders = createOrders({ store, S, notify, openChannel: (id) => openChannel(id) });
+
+  // CCIR (T48): edytor listy PIR/FFIR i wskazywanie geometrii na mapie.
+  const ccir = createCcir({ store, api, S, notify });
 
   // Podświetla na mapie jednostkę wybranego kanału (gdy nic nie jest zaznaczone albo przy zmianie kanału).
   const syncSelectionToChannel = () => setSelection(S().channelUnit);
@@ -134,9 +138,9 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   async function load() {
     const current = S().currentTurn;
     const epoch = ++navEpoch;
-    const [view, { messages }] = await Promise.all([fetchView(current), api.messages()]);
-    if (epoch === navEpoch) applyView(current, view, { messages });
-    else store.set({ messages });
+    const [view, { messages }, ccirItems] = await Promise.all([fetchView(current), api.messages(), ccir.fetchCcir()]);
+    if (epoch === navEpoch) applyView(current, view, { messages, ccir: ccirItems });
+    else store.set({ messages, ccir: ccirItems });
     // Pierwsze uruchomienie: przypięte kanały = przełożony, sztab i jednostki ze scenariusza.
     if (!S().pinned.length) {
       const pinned = defaultPinned(S().channels);
@@ -221,10 +225,11 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     const turns = info.turns || [];
     const advanced = current > previous;
     const target = advanced ? current : turns.includes(basis) ? basis : current;
-    const [view, { messages }] = await Promise.all([fetchView(target), api.messages()]);
+    const [view, { messages }, ccirItems] = await Promise.all([fetchView(target), api.messages(), ccir.fetchCcir()]);
 
     const s = S();
     const global = {
+      ccir: keep(s.ccir, ccirItems),
       scenario: keep(s.scenario, info.scenario),
       turns: keep(s.turns, turns),
       currentTurn: current,
@@ -348,6 +353,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     if (id === 'turn-current') return showCurrent();
     if (id === 'replay') return replayTurn();
     if (id === 'briefing') return openBriefing();
+    if (id === 'ccir') return ccir.openCcirEditor();
     if (id === 'legend') return setPopover('legend');
     if (id === 'layers') return setPopover('layers');
     if (id === 'dos') return setPopover('dos');
@@ -368,6 +374,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     selectChannel, setDraft, clearChannelDraft, ensureActiveChannel, unpinChannel, openUnitChannel, openChannel, sendMessage, withdrawMessage,
     saveNotes,
     ...orders,
+    ...ccir,
     setDock, toggleDock, setMobile, setNarrow, toggleLeader, setAnimations, setReducedMotion,
     openBriefing, closeBriefing,
   };

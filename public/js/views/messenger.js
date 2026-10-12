@@ -6,6 +6,7 @@ import { escapeHtml as e } from '../domain/markdown.js';
 import { draftType, foreignUnitMentions, unknownPlaceNames, channelListModel } from '../domain/compose.js';
 import { draftOrders } from '../domain/order.js';
 import { assessSkip } from '../domain/command.js';
+import { countCcir } from '../domain/ccir.js';
 import { ic } from '../lib/icons.js';
 import { TEMPLATES, PLACEHOLDERS, TEMPLATE_MENU, isTemplate } from './messenger/templates.js';
 import { channelGlyph } from './messenger/glyphs.js';
@@ -35,6 +36,7 @@ export function createMessengerView({ store, controller, root = document }) {
     urgent: $('sw-urg'),
     types: $('seg-type'),
     mention: $('mention-pop'),
+    ccirBtn: $('m-ccir'),
   };
   const S = () => store.get();
 
@@ -46,7 +48,8 @@ export function createMessengerView({ store, controller, root = document }) {
   let channelQuery = '';
   let pendingPin = null; // { channel } — pinezka rysowana na prośbę podpowiedzi; po zapisie trafia jako załącznik
   let knownNoteIds = new Set();
-  const thread = createThread({ box: els.thread });
+  let ccirOnly = false; // filtr „tylko CCIR” (T48) — stan lokalny widoku
+  const thread = createThread({ box: els.thread, ccirOnly: () => ccirOnly });
   const mentions = createMentionPopup({ text: els.text, pop: els.mention, S, patchDraft, onSend: () => send() });
 
   // ---------- lista kanałów (stale na wierzchu: przełożony, sztab, sąsiedzi, podwładni) ----------
@@ -308,7 +311,19 @@ export function createMessengerView({ store, controller, root = document }) {
     renderTabs(s);
     renderHead(s);
   }, { immediate: true });
-  store.subscribe(['channel', 'visibleMessages', 'archive', 'currentTurn', 'scenario', 'turn', 'places', 'fresh'], (s) => {
+  function renderCcirFilter(s) {
+    els.ccirBtn.classList.toggle('on', ccirOnly);
+    els.ccirBtn.setAttribute('aria-pressed', String(ccirOnly));
+    const n = countCcir(s.visibleMessages);
+    els.ccirBtn.dataset.tip = ccirOnly ? 'Pokaż wszystkie wiadomości' : `Tylko wiadomości z odwołaniem do CCIR (${n})`;
+  }
+  els.ccirBtn.addEventListener('click', () => {
+    ccirOnly = !ccirOnly;
+    renderCcirFilter(S());
+    thread.render(S());
+  });
+  store.subscribe('visibleMessages', renderCcirFilter, { immediate: true });
+  store.subscribe(['channel', 'visibleMessages', 'archive', 'currentTurn', 'scenario', 'turn', 'places', 'fresh', 'ccir'], (s) => {
     if (s.scenario) thread.render(s);
   }, { immediate: true });
   store.subscribe(['archive', 'channel', 'currentTurn'], renderCompose, { immediate: true });

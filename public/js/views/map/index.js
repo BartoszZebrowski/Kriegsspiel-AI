@@ -14,12 +14,14 @@ import { indexById, isUnitVisible, echelonRank, BATTALION_RANK, COMPANY_RANK, sp
 import { BASEMAPS, OVERLAYS, DARK_BASES } from './basemaps.js';
 import { renderLines } from './lines.js';
 import { createEwZonesLayer } from './ewzones.js';
+import { createRangesLayer } from './ranges.js';
 import { createHierarchyLayer } from './hierarchy.js';
 import { createMapControls } from './controls.js';
 import { createMotion } from './motion.js';
 import { createLogisticsLayer } from './logistics.js';
 import { createOrderMode } from './order.js';
 import { createOrderPreview } from './order-preview.js';
+import { createCcirLayer } from './ccir.js';
 
 // Rozmiar symbolu zależy od szczebla: im mniejsza jednostka, tym mniejszy znak.
 function unitSize(u) {
@@ -106,6 +108,7 @@ export function createMapView({ store, controller, root = document }) {
   // Rozkaz graficzny (T44): tryb zaznaczania i wskazywania oraz podgląd niewysłanych rozkazów.
   const order = createOrderMode({ store, controller, map, markers, root });
   createOrderPreview({ store, map });
+  createCcirLayer({ store, controller, map }); // T48: nakładka CCIR i wskazywanie geometrii dla edytora
 
   const markerEl = (id) => markers.get(id)?.getElement();
 
@@ -262,6 +265,7 @@ export function createMapView({ store, controller, root = document }) {
   store.subscribe('basemap', syncBasemap, { immediate: true });
   store.subscribe('layers', syncLayers, { immediate: true });
   createEwZonesLayer({ store, map });
+  createRangesLayer({ store, map }); // zasięgi ognia (T47)
   store.subscribe('selection', () => {
     applySelection();
     hierarchy.style(S().selection?.id ?? null, S().hoverUnit);

@@ -62,6 +62,9 @@ export const api = {
         body: JSON.stringify({ turn, items }),
       })
     ).json(),
+  // CCIR gracza (T48): lista pozycji PIR/FFIR; zapis całej listy.
+  ccir: async () => (await request('/api/ccir')).json(),
+  saveCcir: async (items) => (await request('/api/ccir', { method: 'PUT', body: JSON.stringify({ items }) })).json(),
   withdraw: async (id) => (await request(`/api/outbox/${encodeURIComponent(id)}`, { method: 'DELETE' })).json(),
   events: () => new EventSource('/api/events'),
 };

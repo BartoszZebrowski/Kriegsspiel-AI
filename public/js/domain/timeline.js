@@ -1,4 +1,5 @@
 // Oś czasu tur: pozycje węzłów i ścieżek zdarzeń (czyste funkcje, bez DOM).
+import { groupReports } from './ccir.js';
 
 export const MIN_TICKS = 13; // makieta: T0…T12
 export const FUTURE_TICKS = 6; // ile tur „przyszłych” pokazać za bieżącą
@@ -45,10 +46,14 @@ export function buildTimeline({ turns = [], currentTurn = 0, viewTurn = 0, start
   }
   const playheadMin = viewTurn * turnMinutes;
   const toMin = (iso) => (start && iso ? minutesBetween(start, iso) : null);
-  const lane = (items) => items.filter((x) => x.min !== null).map((x) => ({ pct: pct(x.min), urgent: Boolean(x.urgent), late: x.min > playheadMin + 0.01 }));
+  const lane = (items) => items.filter((x) => x.min !== null).map((x) => ({ pct: pct(x.min), urgent: Boolean(x.urgent), late: x.min > playheadMin + 0.01, ...(x.report ? { report: x.report, count: x.count } : {}) }));
   const isOrder = (m) => m.direction === 'out' && (m.type === 'rozkaz' || m.type === 'zarzadzenie');
   const lanes = {
-    msgs: lane(messages.filter((m) => !isOrder(m)).map((m) => ({ min: toMin(m.time), urgent: m.priority === 'urgent' }))),
+    // Meldunki cykliczne (SITREP, LOGSTAT) z jednej tury i rodzaju zlewają się w jeden znacznik (T48).
+    msgs: lane([
+      ...messages.filter((m) => !isOrder(m) && !(m.report && m.direction === 'in')).map((m) => ({ min: toMin(m.time), urgent: m.priority === 'urgent' })),
+      ...groupReports(messages).map((g) => ({ min: toMin(g.time), report: g.report, count: g.count })),
+    ]),
     ords: lane(messages.filter(isOrder).map((m) => ({ min: toMin(m.time), urgent: m.priority === 'urgent' }))),
     cons: lane(contacts.map((c) => ({ min: toMin(c.observed) }))),
   };

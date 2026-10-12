@@ -1,0 +1,28 @@
+/* T48: CCIR (edytor, znaczniki wiadomości, nakładka mapy) i meldunki cykliczne */
+.ccir-panel{position:fixed;z-index:var(--z-pop);top:calc(var(--topbar-h) + 10px);left:calc(var(--dock-l) + 24px);width:400px;max-width:calc(100vw - 24px);max-height:calc(100vh - var(--topbar-h) - var(--tl-h) - 24px);overflow:auto;padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px;background:rgba(16,22,29,.97);border:1px solid var(--line-2);border-radius:var(--r-4);box-shadow:var(--e-float);font-size:12px}
+.ccir-panel[hidden]{display:none}
+.ccir-top{display:flex;align-items:center;gap:8px}
+.ccir-top strong{font-size:13px}
+.ccir-sub{color:var(--t-3);font:11px var(--font-mono)}
+.ccir-note{margin:0;color:var(--t-3);font-size:11px;line-height:1.45}
+.ccir-h{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.ccir-h b{font-size:12px;letter-spacing:.06em}
+.ccir-h span{color:var(--t-3)}
+.ccir-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ccir-item{border:1px solid var(--line);border-radius:var(--r-2);padding:6px;background:var(--bg-2)}
+.ccir-row{display:flex;align-items:center;gap:6px}
+.ccir-row input{flex:1;min-width:0;height:26px;background:var(--bg-1);border:1px solid var(--line-2);border-radius:var(--r-2);color:var(--t-1);padding:0 8px;font:12px var(--font-ui)}
+.ccir-geoRow{margin-top:5px;flex-wrap:wrap}
+.ccir-geoRow .sw.on{color:var(--accent);border-color:var(--accent-line);background:var(--accent-soft)}
+.ccir-geo{display:inline-flex;align-items:center;gap:4px;color:var(--warn);font-size:11px;margin-left:auto}
+.ccir-geo a{cursor:pointer;display:inline-flex}
+.ccir-empty{color:var(--t-3);font-size:11px;padding:2px 2px}
+.ccir-pick{border-left:2px solid var(--warn);background:rgba(232,179,57,.08);padding:6px 8px;color:var(--t-2)}
+.ccir-advice{color:var(--warn);font-size:11px}
+.ccir-actions{display:flex;justify-content:flex-end;gap:6px}
+.is-ccir-pick,.is-ccir-pick .leaflet-interactive{cursor:crosshair}
+.tag.ccir{color:#ff9f43;border-color:rgba(255,159,67,.55);background:rgba(255,159,67,.1)}
+.tag.rpt{color:var(--t-2);border-color:var(--line-3);background:var(--bg-3)}
+.msg.is-ccir .mc{border-left:2px solid #ff9f43;padding-left:8px}
+.ccir-label{background:rgba(16,22,29,.85);border:1px solid var(--line-2);color:var(--t-1);font:700 11px var(--font-ui);padding:1px 4px}
+#m-ccir.on{color:var(--accent);background:var(--accent-soft)}

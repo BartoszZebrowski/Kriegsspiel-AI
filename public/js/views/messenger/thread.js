@@ -3,13 +3,14 @@ import { escapeHtml as e } from '../../domain/markdown.js';
 import { linkify } from '../../domain/linkify.js';
 import { formatClock, formatDay, dayKey, formatDtgShort, formatGameTime, addMinutes } from '../../domain/format.js';
 import { parseSender, messageTags } from '../../domain/messages.js';
+import { filterCcir } from '../../domain/ccir.js';
 import { symbolSvg } from '../../lib/symbols.js';
 import { ic } from '../../lib/icons.js';
 import { channelGlyph } from './glyphs.js';
 import { attachmentKindLabel } from './orders.js';
 
-// `box` — element wątku. Zwraca render(s), stickToBottom() (następne renderowanie zjedzie na dół) i attachment(klucz).
-export function createThread({ box }) {
+// `box` — element wątku; `ccirOnly()` — czy pokazywać tylko wiadomości z odwołaniem do CCIR (filtr komunikatora, T48). Zwraca render(s), stickToBottom() (następne renderowanie zjedzie na dół) i attachment(klucz).
+export function createThread({ box, ccirOnly = () => false }) {
   const attachmentsById = new Map();
   let shownChannel = null; // kanał, którego wątek jest teraz wyrenderowany (do decyzji o przewijaniu)
   let forceBottom = false;
@@ -46,9 +47,10 @@ export function createThread({ box }) {
     const ch = s.channel;
     const sender = out ? { name: 'Ty', role: '' } : parseSender(m.from);
     const urgentMsg = m.priority === 'urgent';
+    const ccirAttr = m.ccir ? ` data-ccir="${e(m.ccir)}"` : '';
     const av = out ? 'TY' : channelGlyph(s, ch, 22);
-    const tags = messageTags(m)
-      .map((t) => `<span class="tag ${t.cls}">${t.label}</span>`)
+    const tags = messageTags(m, s.ccir)
+      .map((t) => `<span class="tag ${t.cls}"${t.title ? ` title="${e(t.title)}"` : ''}>${e(t.label)}</span>`)
       .join('');
     let foot = '';
     if (out) {
@@ -61,7 +63,7 @@ export function createThread({ box }) {
       }
     }
     const text = decorateMentions(linkify(m.text, ctx.link), s);
-    return `<div class="msg${urgentMsg ? ' urgent' : ''}${out ? ' out' : ''}" data-id="${e(m.id)}"><div class="av">${av}</div><div class="mc">
+    return `<div class="msg${urgentMsg ? ' urgent' : ''}${out ? ' out' : ''}${m.ccir ? ' is-ccir' : ''}${m.report ? ` is-report rpt-${e(m.report)}` : ''}" data-id="${e(m.id)}"${ccirAttr}><div class="av">${av}</div><div class="mc">
       <div class="mh"><b>${e(sender.name || ch.name)}</b>${sender.role ? `<span class="role">${e(sender.role)}</span>` : ''}${tags}<time title="${e(formatGameTime(m.time, tz))}">${e(formatDtgShort(m.time, tz))} · T${m.turn}</time></div>
       <div class="mb">${text}</div>${attachmentsHtml(m)}${foot}</div></div>`;
   }
@@ -73,11 +75,14 @@ export function createThread({ box }) {
       box.innerHTML = `<div class="insp-empty"><b>Wybierz kanał</b><span>Wybierz kartę kanału powyżej albo kanał z listy.</span></div>`;
       return;
     }
-    const list = s.visibleMessages.filter((m) => m.channel === ch.id);
+    const only = ccirOnly();
+    const list = filterCcir(s.visibleMessages.filter((m) => m.channel === ch.id), only);
     const keepScroll = shownChannel === ch.id && !forceBottom && box.scrollHeight - box.scrollTop - box.clientHeight > 40;
     const top = box.scrollTop;
     if (!list.length) {
-      box.innerHTML = `<div class="insp-empty">${ic('msg')}<b>Brak wiadomości</b><span>Napisz rozkaz lub meldunek do: ${e(ch.name)}.</span></div>`;
+      box.innerHTML = only
+        ? `<div class="insp-empty">${ic('flag')}<b>Brak wiadomości CCIR</b><span>W tym kanale nie ma wiadomości z odwołaniem do CCIR. Wyłącz filtr, aby zobaczyć wszystkie.</span></div>`
+        : `<div class="insp-empty">${ic('msg')}<b>Brak wiadomości</b><span>Napisz rozkaz lub meldunek do: ${e(ch.name)}.</span></div>`;
     } else {
       const ctx = { link: { places: s.places, units: s.turn?.units ?? [], contacts: s.turn?.contacts ?? [], assets: s.turn?.assets ?? [] } };
       const tz = s.scenario.timezone;

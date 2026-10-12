@@ -17,6 +17,7 @@ export const COMMANDS = [
   { id: 'turn-current', title: 'Przejdź do tury bieżącej', key: '.' },
   { id: 'replay', title: 'Odtwórz turę (animacja przemieszczeń)', key: '' },
   { id: 'briefing', title: 'Otwórz odprawę', key: 'B' },
+  { id: 'ccir', title: 'Edytuj CCIR (krytyczne potrzeby informacyjne)', key: '' },
   { id: 'legend', title: 'Pokaż legendę', key: '?' },
   { id: 'layers', title: 'Warstwy i podkład', key: 'W' },
   { id: 'dos', title: 'Panel DOS (zaopatrzenie jednostek)', key: 'D' },

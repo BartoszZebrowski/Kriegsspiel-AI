@@ -38,6 +38,7 @@ Metadane i kanały komunikatora.
 | `turnMinutes` | liczba > 0 | tak | Długość tury w minutach. |
 | `map` | `{center:[lon,lat], zoom}` | nie | Początkowy widok mapy. |
 | `channels` | lista kanałów | tak, ≥ 1 | Rozmówcy komunikatora (poniżej). |
+| `reportCycle` | `{sitrep, logstat, anchor?}` | nie | Rytm meldunków cyklicznych w minutach czasu gry (T48), np. `{"sitrep": 240, "logstat": 1440}`; liczby całkowite > 0; `anchor` (czas ISO) = godzina odniesienia. Nieznane pole albo zła wartość = błąd. |
 | `commandRules` | `{skipEchelon}` | nie | Reguły dowodzenia (T45). `skipEchelon`: `off` (bez ograniczeń), `soft` (domyślny: ostrzeżenie w komunikatorze, skutki rozstrzyga sędzia wg CLAUDE.md), `hard` (wysyłka do kanałów poniżej bezpośrednich podwładnych zablokowana — w kliencie i na serwerze — poza `priority: urgent`). Inna wartość albo nieznane pole = błąd. |
 
 Kanał (`channels[]`): `id` (tekst, unikalny, tak), `name` (tak), `kind` (`superior`, `neighbor`, `subordinate`, `logistics`, `recon`, `other`; inny = uwaga), `description` (nie), `short` (nie, skrót w UI), `unit` (nie, id jednostki, której kanał dotyczy), planowane `commander` (id pliku `umpire/commanders/<id>.md`, T14). Wiadomość można też zaadresować do dowolnej jednostki własnej z bieżącej tury (`channel` = id jednostki). Ile szczebli pominięto, liczy się z `parent` (bezpośredni podwładny = 0, kompania pod batalionem = 1, pluton = 2; sąsiedzi i `formation` nie dotyczą); zob. `commandRules`.
@@ -143,7 +144,7 @@ Obiekt z czterema opcjonalnymi listami. Ten sam kształt w `player/turns` (to, c
 
 `{ "messages": [ … ] }` — wiadomości do gracza z rozstrzyganego okresu (między turą N a N+1); plik NNN odpowiada turze, w której wiadomości się pojawiają. Zapisuje sędzia.
 
-Wiadomość: `id` (tekst, unikalny w całym scenariuszu, np. `in-000-01`, tak), `channel` (id kanału lub jednostki z tury, tak), `from` (tekst: „stopień nazwisko, funkcja”), `time` (ISO, tak), `type` (`rozkaz`, `zarzadzenie`, `meldunek`, `wiadomosc`; nie), `priority` (`normal`, `urgent`; nie), `text` (niepusty, ≤ 4000 znaków, tak). Aplikacja pokazuje `type` jako znacznik na karcie wiadomości, a `priority: "urgent"` jako „PILNE”.
+Wiadomość: `id` (tekst, unikalny w całym scenariuszu, np. `in-000-01`, tak), `channel` (id kanału lub jednostki z tury, tak), `from` (tekst: „stopień nazwisko, funkcja”), `time` (ISO, tak), `type` (`rozkaz`, `zarzadzenie`, `meldunek`, `wiadomosc`; nie), `priority` (`normal`, `urgent`; nie), `text` (niepusty, ≤ 4000 znaków, tak). Opcjonalnie (T48): `ccir` (id pozycji z `player/ccir.json`, np. `PIR-2` — wiadomość spełnia tę potrzebę informacyjną; nieistniejąca pozycja = uwaga walidatora) i `report` (`sitrep` albo `logstat` — meldunek cykliczny; z `type: meldunek`). Aplikacja pokazuje `type` jako znacznik na karcie wiadomości, a `priority: "urgent"` jako „PILNE”.
 
 ## `player/outbox/NNN.json` — jawny, zapisuje aplikacja
 
@@ -181,6 +182,17 @@ Zaznaczenie jednostek różnych dowódców tworzy osobne szkice w ich kanałach 
 | `sidc` | tekst(15) | dla `symbol` | Symbol NATO. |
 | `geometry` | `{type, coordinates}` | tak | GeoJSON: Point `[lon,lat]`; LineString ≥ 2 punkty; Polygon: pierścienie ≥ 4 punkty. |
 
+## `player/ccir.json` — jawny, zapisuje aplikacja (T48)
+
+`{ "items": [ … ] }` — CCIR gracza (krytyczne potrzeby informacyjne dowódcy). Jeden plik na scenariusz (nie per tura); brak pliku = pusta lista. **Sędzia nie modyfikuje** (tylko czyta, żeby wiedzieć, o czym alarmować). Walidowane przez `checkCcir` z `shared/ccir.js` (API `GET/PUT /api/ccir` i walidator). Maks. 7 pozycji (więcej = błąd), zalecane 3–7 (mniej niż 3 = uwaga).
+
+| Pole | Typ | Wym. | Znaczenie |
+|---|---|---|---|
+| `id` | `PIR-N` / `FFIR-N` | tak | Unikalne; przedrostek zgodny z `kind`. |
+| `kind` | `PIR`, `FFIR` | tak | PIR = o przeciwniku, FFIR = o własnych siłach. |
+| `text` | tekst ≤ 200 | tak | Treść, np. „czołgi RU na wschód od linii Wiżajny–Rutka-Tartak”. |
+| `geometry` | `{type, coordinates}` | nie | Rejon / linia / punkt z mapy: `Point`, `LineString` (≥ 2 punkty) albo `Polygon` (pierścienie ≥ 4 punkty), `[lon, lat]`. Aplikacja rysuje ją jako nakładkę. |
+
 ## `umpire/turns/NNN.json` — TYLKO sędzia
 
 Pełna prawda dla tury N. Serwer nigdy go nie czyta i nie wysyła; walidator sprawdza strukturę, a w logach wypisuje tylko identyfikatory.
@@ -211,7 +223,7 @@ Plik wiedzy dowódcy-agenta (podwładny gracza lub przeciwnik): kim jest (osobow
 |---|---|---|
 | `scenario.json`, `briefing.md`, `gazetteer.json` | tworzy, edytuje | tylko odczyt |
 | `player/turns`, `player/inbox` | zapisuje | tylko odczyt |
-| `player/outbox`, `player/notes` | tylko czyta | zapisuje (API, atomowo, serializowane) |
+| `player/outbox`, `player/notes`, `player/ccir.json` | tylko czyta | zapisuje (API, atomowo, serializowane) |
 | `umpire/**` | zapisuje i czyta | **nigdy** (serwer nie czyta) |
 
 Kolejność zapisu nowej tury: `umpire/` → `player/inbox` → na końcu `player/turns` (pojawienie się nowej tury przełącza aplikację). Po każdej turze: `npm run validate -- <nazwa>`.

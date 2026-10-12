@@ -692,7 +692,7 @@ Sprzęt i uzbrojenie z katalogu zamiast samych nazw: gracz widzi, czym naprawdę
 - [A] Domena: grupowanie sprzętu jednostki wg kategorii, suma z podwładnych.
 - [M] Karta plutonu pokazuje drużynowe uzbrojenie z zasięgami.
 
-## T47 — Wizualizacja zasięgu ognia ⬜
+## T47 — Wizualizacja zasięgu ognia ✅
 Na mapie widać, dokąd sięga ogień jednostki (wymaga T46: zasięgi z katalogu).
 
 **WA**
@@ -706,7 +706,7 @@ Na mapie widać, dokąd sięga ogień jednostki (wymaga T46: zasięgi z katalogu
 - [A] Domena: jednostka ze Spike-LR i Piorunem → pierścienie ppanc i plot o właściwych promieniach; brak broni danego rodzaju → brak pierścienia.
 - [M] Zaznaczam kompanię: widzę zasięgi; włączam pokrycie plot zgrupowania: widzę luki.
 
-## T48 — CCIR i cykl meldunków ⬜
+## T48 — CCIR i cykl meldunków ✅
 Praca sztabu jak w realnym punkcie dowodzenia: gracz określa, o czym chce być alarmowany, a meldunki przychodzą w stałym rytmie i formacie.
 
 **WA**

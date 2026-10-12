@@ -1,4 +1,5 @@
 // Wiadomości komunikatora: filtr wg oglądanej tury, liczniki nieprzeczytanych, rodzaje i nadawcy (czyste funkcje).
+import { ccirTags } from './ccir.js';
 
 // W archiwum widać tylko wiadomości do oglądanej tury włącznie (bez „spoilerów” z późniejszych tur).
 // W trybie bieżącym — wszystkie (inbox następnej tury bywa zapisany tuż przed plikiem tury).
@@ -45,13 +46,15 @@ export function parseSender(from) {
 }
 
 // Znaczniki karty wiadomości: [{ cls, label }] — PILNE, rodzaj (rozkaz od przełożonego = bursztyn, własny = akcent).
-export function messageTags(m) {
+// Dodatkowo: odwołanie do pozycji CCIR (T48) i rodzaj meldunku cyklicznego (SITREP, LOGSTAT); `ccirItems` — lista pozycji gracza.
+export function messageTags(m, ccirItems = []) {
   const tags = [];
   if (m.priority === 'urgent') tags.push({ cls: 'urg', label: 'Pilne' });
   const out = m.direction === 'out';
   if (m.type === 'rozkaz') tags.push({ cls: out ? 'ord' : 'dir', label: out ? 'Rozkaz bojowy' : 'Rozkaz' });
   else if (m.type === 'zarzadzenie') tags.push({ cls: out ? 'ord' : 'dir', label: 'Zarządzenie' });
-  else if (m.type === 'meldunek') tags.push({ cls: 'rep', label: 'Meldunek' });
+  else if (m.type === 'meldunek' && !m.report) tags.push({ cls: 'rep', label: 'Meldunek' });
+  tags.push(...ccirTags(m, ccirItems));
   return tags;
 }
 
