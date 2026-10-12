@@ -594,6 +594,27 @@ Wyrównanie kodu do etapu „plan architektoniczny” (nagłówek pliku).
 **Scenariusze testowe**
 - [A] Test reguły zależności wykrywa celowo dodany zakazany import.
 
+## T41 — Plan silnika rozstrzygania (obliczenia poza AI) ⬜
+Zadanie planistyczne: wynik w `docs/ENGINE.md`. Cel: deterministyczny silnik (`engine/`, czysty JS, bez zależności) liczy to, co jest rachunkiem, a sędzia (Claude) zostaje przy decyzjach, intencjach, doktrynie przeciwnika i narracji. Spójniejsze wyniki, mniej tokenów, powtarzalność (ziarno losowania).
+
+**Kandydaci do silnika**
+- ruch: czas marszu po drogach i w terenie (prędkości wg typu jednostki, teren z `terrain.mjs`, pogoda, noc),
+- logistyka: zużycie DOS wg działania (postój < obrona < marsz < natarcie), dowóz po MSR (czas, przepustowość, przerwanie),
+- doręczenie rozkazów: czas wg odległości, środka, zagłuszenia, ciszy radiowej (T25/T26),
+- wykrycie: prawdopodobieństwo wykrycia przez drony/obserwację (zasięg, czas lotu, pogoda, maskowanie, makiety),
+- walka: straty z modelu (np. stosunek sił z modyfikatorami terenu i przygotowania obrony, kalibrowany do ok. 2–3:1 przy obronie przygotowanej), z losowością w rozsądnych granicach,
+- rozdział strat na plutony → kompanie → batalion (spójne `personnel`/`equipment`/`strength`).
+
+**WA**
+1. Podział odpowiedzialności silnik ↔ sędzia AI: co silnik liczy, co AI decyduje, jak AI może nadpisać wynik (z uzasadnieniem w `umpire/log.md`).
+2. Interfejs: wejście (tura N z `umpire/`, rozkazy, plan przeciwnika w formie danych) → wyjście (propozycja tury N+1 dla `tools/umpire/turn.mjs`); powtarzalność przez ziarno.
+3. Modele i współczynniki dla każdego kandydata, ze źródłami (doktryna, dane historyczne) i kalibracją na rozgrywce „Przesmyk” nr 1.
+4. Miejsce w architekturze (nowy katalog, kierunek zależności, małe moduły) zgodnie z etapem planu architektonicznego; związek z T39 (np. narzędzia silnika wystawione przez MCP).
+5. Lista zadań wykonawczych z WA, w kolejności wartości (np. najpierw ruch i DOS, potem doręczenie, wykrycie, walka).
+
+**Scenariusze testowe**
+- [M] Przegląd dokumentu z graczem; podział silnik/AI zaakceptowany.
+
 ---
 
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
