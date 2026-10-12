@@ -473,6 +473,69 @@ Sąsiednie brygady (np. `zt-mamry`, `zt-biebrza`) mają własne pododdziały w p
 
 ---
 
+# Etap v0.1.3 — uwagi po rozgrywce „Przesmyk” nr 1
+
+Źródło: [docs/WNIOSKI-PRZESMYK-1.md](docs/WNIOSKI-PRZESMYK-1.md) (18 tur, 2026-10-12).
+
+## T33 — Komunikator wygodniejszy ⬜
+**WA**
+1. Dwuklik na jednostkę (mapa, hierarchia, karta) otwiera jej kanał w komunikatorze.
+2. Szkic wiadomości jest osobny dla każdego kanału: po przełączeniu adresata niewysłany tekst zostaje przy poprzednim i wraca po powrocie.
+3. Wybór adresata bez dropdownu: lista kanałów (przełożony, sąsiedzi, podwładni, sztab) stale na wierzchu, z wyszukiwaniem dla kompanii.
+4. Domyślny typ wiadomości dla kanału podwładnego: „rozkaz”.
+5. Ostrzeżenie (nieblokujące), gdy treść wymienia inną własną jednostkę niż adresat.
+6. Nazwa spoza gazetera w treści: podpowiedź „wskaż na mapie” (pinezka trafia jako załącznik).
+7. Strzałka w załączniku ma widoczny grot już przy rysowaniu.
+
+**Scenariusze testowe**
+- [M] Dwuklik na bcz otwiera kanał bcz; szkic wpisany do 1 bzmot nie przechodzi do 2 bzmot po przełączeniu.
+- [A] Stan szkiców per kanał w store (test domeny).
+
+## T34 — Linkowanie nazw bez kolizji ⬜
+**WA**
+1. Dopasowanie nazw najdłuższe pierwsze.
+2. Fraza z dopiskiem „(RU)”/„(BY)” albo nazwa kontaktu nie linkuje do własnej jednostki.
+
+**Scenariusze testowe**
+- [A] „bcz (RU) naciera” nie tworzy linku do jednostki `bcz`.
+
+## T35 — Hierarchia po przepięciu podporządkowania ⬜
+**WA**
+1. Drzewo ORBAT przelicza się z bieżącej tury: zmiana `parent` (np. `krozp-2p` → `1bzmot-3k`) i nowa jednostka (np. `bopl-1p`) są widoczne od tury, w której wystąpiły.
+2. Karta jednostki pokazuje aktualnego przełożonego.
+
+**Scenariusze testowe**
+- [A] Test domeny orbat: dwie tury z różnym `parent` dają różne drzewa.
+- [M] W rozgrywce „Przesmyk” nr 1 (tura 13+) 2p krozp jest pod 3k 1 bzmot.
+
+## T36 — Narzędzie tury dla sędziego ⬜
+**WA**
+1. `tools/umpire/turn.mjs`:
+   - tworzy `umpire/turns/(N+1).json` z tury N (zmiany z pliku planu lub API),
+   - wylicza `track` z różnicy pozycji,
+   - generuje `player/turns/(N+1).json` tylko z pól z białej listy,
+   - sortuje wiadomości `inbox` po czasie,
+   - zapisuje w kolejności umpire → inbox → player/turns.
+2. `pick.mjs`: limit czasu dla Overpass; po przekroczeniu tryb offline z ostrzeżeniem, bez zawieszenia.
+3. Opis w docs/UMPIRE-TOOLS.md.
+
+**Scenariusze testowe**
+- [A] Tura bez ruchu nie ma `track`; tura z ruchem ma `track` od starej do nowej pozycji; pola sędziego nie trafiają do gracza.
+- [A] `pick --check-water` przy niedostępnym Overpass kończy się w < 30 s z ostrzeżeniem.
+
+## T37 — Walidator: spójność i realizm ⬜
+**WA** (uwagi, nie błędy):
+1. Suma `personnel`/`equipment` plutonów różna od stanu kompanii.
+2. Jednostka w wodzie (z cache `terrain.mjs`, bez sieci).
+3. Wiadomości `inbox` poza kolejnością czasu.
+4. Nazwa jednostki wroga zawiera nazwę własnej jednostki.
+5. `status: finished` bez `umpire/aar.md` (z T29).
+
+**Scenariusze testowe**
+- [A] Każdy z pięciu przypadków daje uwagę; czysty scenariusz — 0 uwag.
+
+---
+
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
 
 Cel etapu (ustalone w dialogu 2026-10-11): **gra, nie dowód architektury** — decyzje pod presją realnych ograniczeń. Zasady tarcia: **żadnej informacji zwrotnej o doręczeniu** — gracz nie widzi ani „w drodze", ani potwierdzenia; o skutkach rozkazu dowiaduje się wyłącznie z meldunków podwładnych albo z ich milczenia. Mechaniki wprowadzamy **na żywo**, dokańczając bieżącą bitwę w `00-test-przesmyk` jako poligon.

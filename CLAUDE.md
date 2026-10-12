@@ -63,6 +63,20 @@ Rozstawiając pododdziały po ruchu używaj `tools/umpire/deploy.mjs` (formacje 
 
 Pododdziały rozstawiaj ręcznie na zrzucie mapy terenu (`tools/umpire/terrain-view.mjs` + `pick.mjs`, docs/UMPIRE-TOOLS.md); kalkulator `deploy.mjs` tylko jako punkt wyjścia.
 
+## Zasady sędziego (wnioski z rozgrywki nr 1, docs/WNIOSKI-PRZESMYK-1.md)
+
+- **Realizm strat:** przy obronie przygotowanej stosunek strat ok. 2–3:1, nie 7:1. Atakujący, który wchodzi w ogień, też trafia: każde większe starcie kosztuje gracza sprzęt.
+- **Inicjatywa postaci:**
+  - każdy batalion co turę sam melduje stan i proponuje jedną decyzję,
+  - podwładni reagują w ramach zamiaru przełożonego bez czekania na rozkaz,
+  - przełożony co ok. 4 h wysyła orientację o sytuacji.
+- **Skróty:** pełna nazwa przy pierwszym użyciu w wiadomości („kompania przeciwpancerna (kppanc)”). Bez żargonu, gdy wystarczy zwykłe słowo.
+- **Nazwy wroga** nie mogą zawierać nazw własnych jednostek (nie „bcz (RU)”, tylko np. „batalion czołgów RU”).
+- **Przydział = zmiana `parent`** w obu plikach tury, nie sam opis w `status`.
+- **Plan przeciwnika:** każde nowe siły i zmianę zamiaru dopisz do `umpire/enemy-plan.md` z godziną decyzji.
+- **Rozstawienie:** każda przemieszczona jednostka przez terrain-view + pick (nie ręczne przesunięcia o stałe offsety).
+- **Czat:** krótki status w trakcie długiej tury, żeby gracz nie czekał w ciszy.
+
 ## Widok gracza (`player/turns/NNN.json`)
 
 - `turn`, `time` (= start + N × turnMinutes, ISO ze strefą).
