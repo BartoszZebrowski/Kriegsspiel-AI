@@ -324,3 +324,28 @@ Wytrzymałość jest zasobem sędziego. Prawda (`umpire/turns`, jednostki) ma `s
 | Widok | `views/inspector.js` przez `domain/cards.js` (`unitCard` dokłada `fatigueBlock`), `public/css/inspector.css` | Wskaźnik „Zmęczenie” z kolorem w karcie jednostki własnej; sąsiedzi i kontakty go nie mają. Bez nowego stanu w store. |
 | Sędzia | `tools/umpire/turn.mjs`, [CLAUDE.md](../CLAUDE.md) | `fatigue` w widoku gracza wyliczane z `stamina_min` prawdy (`fatigueLevel`), z możliwością nadpisania łatką `plan.player.units.<id>.fatigue`; `stamina_min` i `morale` dziedziczone w prawdzie z tury N. Reguły zużycia, regeneracji i prób morale: CLAUDE.md. |
 | Walidator | `tools/validate-checks.js` | `fatigue` w `player/turns` (kategoria z listy); `stamina_min` / `morale` w `umpire/turns` (zakresy); w plikach gracza oba pola są błędem (biała lista). |
+
+## Pomiar po drogach (T15)
+
+Miarka z T12 dostaje tryb „Po drogach”: trasa z routera OSRM przez serwer gry, czas marszu wg typu jednostki i ostrzeżenia o mostach.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Logika | `domain/roadmarch.js` (czysta, bez DOM i sieci) | `MARCH_PROFILES` (kołowa / gąsienicowa / piesza: prędkości dzień i noc, masa sprzętu), `profileFromSidc`, `isNightAt(time, tz)`, `marchMinutesFor(km, profile, night)`, `estimateRoute(coords)` (prosta × 1,3, `estimate: true`), `bridgesOnRoute(path, bridges, mass)` → ostrzeżenia, `routeSummary(...)`. Masy: tabela w module (katalog `data/equipment.json` nie ma mas). |
+| Serwer | `server/route.js` (bez zależności) + `POST /api/route` w `server/app.js` | `createRouter({ fetchImpl, timeoutMs, ttlMs, max, disabled })`: walidacja punktów (2–25, zakres, 5 miejsc po przecinku), zapytanie GET do OSRM `driving` z limitem czasu, pamięć podręczna (klucz = punkty), odpowiedź `{ coords, km, source: 'osrm' }`. Do routera idą wyłącznie współrzędne. Błąd routera → 502, wyłączony (`KS_ROUTER=off`) → 503; klient wtedy liczy szacunek. `createApp(dir, { router })` pozwala podstawić atrapę (smoke, testy). Serwer nadal nie czyta `umpire/`. |
+| API / kontroler | `core/api.js` (`api.route(coords)`), `core/controller.js` (`measureRoute`) | Wywołanie sieci tylko tu; widok dostaje wynik albo wyjątek. Bez nowego plastra store. |
+| Widok | `views/draw/roadmeasure.js` (nowy), podpięty z `views/draw/measure.js`; styl `public/css/draw.css` | Własny panel nad miarką: przełącznik „Po drogach”, wybór typu i dzień/noc, wynik, ostrzeżenia o mostach (z `turn.logistics.bridges`); linia drogowa w osobnej warstwie Leaflet. Numer żądania odrzuca spóźnione odpowiedzi; każdy błąd → szacunek z oznaczeniem. Tekst przez `escapeHtml`. |
+
+Przepływ: kliknięcie punktu → `roadmeasure.update(points)` → `controller.measureRoute` → `POST /api/route` → render. Przy błędzie render z `estimateRoute`.
+
+## Utrata łączności (T19)
+
+Stan łączności jednostki to wiedza sztabu: pole `comms: {status, last_contact}` w `player/turns` (brak = `ok`). Prawda (`comms_true: {status, since, cause}`) jest tylko w `umpire/turns`.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/comms.js` (osobny plik, jak `fatigue.js`) | `COMMS_STATUSES`, `checkComms(comms, turnTime)` → tekst błędu lub null (status z listy, `last_contact` ISO, wymagany przy `degraded`/`lost`, nie późniejszy niż tura), `checkUmpireComms(unit)`. W `shared/schema.js` tylko `comms` dopisane do `PLAYER_FIELDS.units`; `comms_true` poza białą listą, więc strażnik wycieku działa bez zmian. |
+| Logika klienta | `domain/comms.js` (czysta; lista statusów lustrzana do `shared/`) | `commsInfo(unit, turnTime, tz)` → `{status, lost, degraded, ageMin, lastContact, text, tone}`; brak pola = `ok` z pustym `text`. `commsWarning(unit, turnTime, tz)` – tekst ostrzeżenia komunikatora, `channelComms`, `commsCardText`. Bez DOM, bez nowego stanu w store. |
+| Widoki | `views/map/index.js` (znacznik przy symbolu i podpowiedź), `domain/cards.js` (wiersz „Łączność”), `views/messenger.js` + `views/messenger/warn.js` (znacznik kanału, ostrzeżenie), `public/css/*.css` | Wyłącznie odczyt `comms` z tury; BFT (`domain/bft.js`) pozostaje osobny. Wysyłka nie jest blokowana (decyzja T25: bez statusów doręczenia). |
+| Sędzia | `tools/umpire/turn.mjs`, [CLAUDE.md](../CLAUDE.md) | `comms` w widoku gracza z `comms_true` (`since` → `last_contact`) albo łatką `plan.player.units.<id>.comms`; nie dziedziczone z tury N. `comms_true` nie trafia do pliku gracza. Zasady utraty i odzyskania łączności: CLAUDE.md. |
+| Walidator | `tools/validate-checks.js` | `comms` w `player/turns` przez `checkComms`; `comms_true` w `umpire/turns` przez `checkUmpireComms`. |

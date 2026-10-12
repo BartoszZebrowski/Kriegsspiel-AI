@@ -818,6 +818,23 @@ Gracz widzi logistykę tak, jak ją zna jego S4: stan może być nieaktualny, pr
 - [A] Walidator: `dos` z wartością ujemną lub `readiness` > 1 — błąd; `supply` w pliku gracza nadal błąd.
 - [M] Panel DOS na scenariuszu testowym, klik w wiersz otwiera kartę.
 
+## T15 — Pomiar po drogach ✅
+**WA**
+1. Miarka (T12) ma przełącznik „Po drogach”: punkty A→…→B klikane jak dotąd, a trasa jest prowadzona po drogach między kolejnymi punktami. Linia drogowa jest rysowana na mapie (osobno od linii prostej), a okno pokazuje długość drogową obok prostej.
+2. Trasę liczy publiczny router OSRM (`router.project-osrm.org`, profil `driving`) przez serwer gry jako pośrednika: `POST /api/route` z samymi współrzędnymi `[długość, szerokość]` (2–25 punktów, zakres geograficzny, zaokrąglenie do 5 miejsc). Serwer ma limit czasu (4 s), pamięć podręczną (te same punkty = jedna odpowiedź) i wyłącznik (`KS_ROUTER=off`). Przeglądarka nie łączy się z routerem bezpośrednio, serwer nie wysyła nic poza współrzędnymi. Serwer nadal bez zależności.
+3. Brak odpowiedzi routera (offline, błąd, limit czasu, brak drogi) nie blokuje miarki: wynik to odległość w linii prostej × współczynnik krętości 1,3, wyraźnie oznaczona „szacunek (linia prosta × 1,3)”, bez linii drogowej.
+4. Czas marszu liczony dla wybranego typu jednostki: kołowa, gąsienicowa, piesza; osobne prędkości marszowe dzień i noc (stałe w `domain/`). Typ domyślny wynika z SIDC zaznaczonej jednostki (pancerna → gąsienicowa, zmechanizowana → kołowa, piechota → piesza), gracz może go zmienić; dzień/noc wynika z godziny oglądanej tury (strefa scenariusza) i też można go przełączyć.
+5. Mosty z `turn.logistics.bridges` leżące na trasie (do 150 m od linii drogowej) są sprawdzane z masą sprzętu wybranego typu (tabela w `domain/`: kołowa ~26 t Rosomak, gąsienicowa ~60 t Leopard 2, piesza 0): nośność `mlc` mniejsza od masy, most uszkodzony albo zburzony daje ostrzeżenie z nazwą mostu. Przy szacunku (bez trasy) mosty nie są sprawdzane i okno o tym mówi.
+6. Logika (typy, prędkości, czas, szacunek, mosty na trasie, odczyt odpowiedzi routera) w czystych modułach `domain/` i `server/route.js`; wywołanie sieci w `core/api.js` + kontrolerze; widok w nowym module `views/draw/roadmeasure.js`. Archiwum: miarka po drogach działa.
+
+**Scenariusze testowe**
+- [A] Domena: prędkości dzień/noc dla każdego typu; typ z SIDC; czas marszu = km / prędkość; szacunek = prosta × 1,3 z oznaczeniem.
+- [A] Domena: most w tolerancji i poza nią; `mlc` < masa → ostrzeżenie, `mlc` ≥ masa → brak; most zburzony / uszkodzony; pusta lista mostów.
+- [A] Domena: odczyt odpowiedzi OSRM (poprawna, `NoRoute`, uszkodzona).
+- [A] Serwer: `POST /api/route` z atrapą routera — poprawna trasa; zła liczba punktów / współrzędne spoza zakresu → 400; błąd i przekroczenie czasu → 502; cache (drugie zapytanie bez ponownego wywołania); `KS_ROUTER=off` → 503; wymagany Content-Type JSON.
+- [A] Smoke (offline): miarka po drogach z atrapą routera pokazuje „szacunek” albo trasę drogową, czas marszu dla typu i ostrzeżenie o moście.
+- [M] Z internetem: trasa wzdłuż drogi, czas dla Leoparda dłuższy niż dla Rosomaka, ostrzeżenie przy moście o niskim `mlc`.
+
 ## T16 — Starzenie się kontaktów ✅
 **WA**
 1. Wiek kontaktu = czas oglądanej tury − `observed` (minuty); kontakt bez `observed` nie starzeje się (krycie 1, brak napisu).
@@ -831,6 +848,26 @@ Gracz widzi logistykę tak, jak ją zna jego S4: stan może być nieaktualny, pr
 - [A] Domena: klasa z SIDC (dron, czołg, haubica, logistyka, nieznany); wiek 0, na progu świeżym, w połowie, na progu starym i dalej → krycie 1, 0,675, 0,35; brak `observed` → 1.
 - [A] Domena: napis „sprzed …” tylko od progu starego; wiek ujemny traktowany jak 0.
 - [M] Na scenariuszu testowym stary kontakt czołgów jest wyraźnie bledszy niż ten sam wiek artylerii; karta pokazuje „informacja sprzed …”.
+
+## T19 — Utrata łączności ✅
+Jednostka bez łączności jest pokazana na ostatniej znanej pozycji, z czasem ostatniego kontaktu. Pozycja zamrożona i przygaszenie symbolu już są (T49: `pos_time`, `domain/bft.js`, `turn.mjs`); zgubione rozkazy opisuje T25. Brakuje jawnego **stanu łączności** jako wiedzy sztabu i jego pokazania w UI.
+
+**WA**
+1. Pole `comms: {status: "ok"|"degraded"|"lost", last_contact: <ISO>}` jednostki własnej w `player/turns` (opcjonalne; brak = `ok`). To wiedza sztabu (co wie SD), nie prawda; prawda łączności jest tylko w `umpire/turns` (`comms_true: {status, since, cause}`, poza białą listą). `last_contact` nie późniejszy niż czas tury; wymagany przy `degraded` i `lost`. Schemat (`shared/comms.js`), SCHEMA.md, walidator (inna wartość statusu, brak `last_contact`, czas z przyszłości = błąd; `comms_true` w pliku gracza = błąd strażnika).
+2. Mapa: jednostka `lost` ma wyraźny znacznik „brak łączności” (znak przy symbolu) oraz podpowiedź „brak łączności od HH:MM”; `degraded` — łagodniejszy znacznik („łączność słaba”). Pozycja i przygaszenie z BFT bez zmian.
+3. Karta jednostki: wiersz „Łączność” ze statusem, czasem ostatniego kontaktu i wiekiem („brak łączności od 06:12, 48 min”).
+4. Komunikator: kanał jednostki bez łączności oznaczony na liście i w nagłówku; wysyłka dozwolona, ale ostrzeżenie pod polem: „brak łączności od HH:MM — doręczenie niepewne”. Bez zmian w statusach doręczenia (zgodnie z T25).
+5. `turn.mjs`: `plan.player.units.<id>.comms` (łatka); domyślnie `comms` wyliczane z `comms_true` jednostki (`since` → `last_contact`), `comms` nie jest dziedziczone z tury N (sędzia podtrzymuje stan co turę, odzyskanie = brak `comms_true` lub `ok`). Ostrzeżenia: `last_contact` z przyszłości, `lost` bez zamrożonej pozycji (`pos_time` świeższe niż `last_contact` + próg BFT).
+6. Zasady sędziego (CLAUDE.md): kiedy jednostka traci łączność (REW/zagłuszenie T26, ruch w terenie zasłoniętym, zniszczenie wozu dowodzenia lub węzła łączności, odległość poza zasięg UKF bez retransmisji, cisza radiowa) i kiedy ją odzyskuje (wyjście ze strefy, retransmisja, kurier, odtworzenie węzła). Rozkazy do jednostki bez łączności: zgubione wg T25 albo dostarczone kurierem z opóźnieniem. Podwładny bez łączności działa wg ostatniego znanego zamiaru przełożonego i nie melduje; sztab opisuje ciszę w meldunku („brak łączności z 1k od 06:12”), bez prawdy.
+
+**Scenariusze testowe**
+- [A] `shared/comms.js`: `checkComms` — poprawny, brak `last_contact` przy `lost`, status spoza listy, czas po turze; `checkUmpireComms`.
+- [A] Walidator: `comms_true` w `player/turns` → błąd; `comms` w poprawnej formie → czysto.
+- [A] Domena (`domain/comms.js`): `commsInfo` — status, wiek, tekst „brak łączności od HH:MM”; brak pola = `ok`, bez tekstu.
+- [A] `turn.mjs`: `comms_true` w prawdzie daje `comms` w widoku gracza bez `comms_true`; łatka nadpisuje; brak dziedziczenia z tury N.
+- [A] Ostrzeżenie komunikatora (`warnHtml`) dla kanału jednostki `lost`; brak dla `ok`.
+- [S] Smoke: tura z jednostką `lost` → znacznik na mapie, wiersz w karcie, ostrzeżenie w komunikatorze; jednostka `ok` bez znaczników.
+- [M] Kompania w strefie zagłuszenia stoi na starej pozycji ze znacznikiem „brak łączności od 06:12”; rozkaz do niej wysłany z ostrzeżeniem; po wyjściu ze strefy znacznik znika.
 
 ## T25 — Czas doręczenia rozkazów ✅
 Rozkaz zaczyna obowiązywać w chwili **doręczenia**, nie wysłania. Czas przejścia zależy od odległości, środka łączności (radio UKF w zasięgu / retransmisja / kurier), stref zagłuszenia (T26) i ciszy radiowej.

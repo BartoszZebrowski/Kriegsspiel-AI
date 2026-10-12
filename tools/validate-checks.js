@@ -5,6 +5,7 @@ import { isDescribed } from '../public/js/sidc.js';
 import { distanceKm } from '../public/js/domain/geo.js';
 import { LINE_KINDS, PLACE_KINDS, PLAYER_TURN_FIELDS, PLAYER_FIELDS, checkTrack, checkPosTime, checkDos, checkLogistics, isCoord as validPos, isValidTime as validTime, isCount, extraFields } from '../shared/schema.js';
 import { checkFatigue, checkUmpireFatigue } from '../shared/fatigue.js';
+import { checkComms, checkUmpireComms } from '../shared/comms.js';
 import { checkEwZone, checkEmitterContact } from '../shared/ew.js';
 
 const ms = milsymbol.default ?? milsymbol;
@@ -129,7 +130,11 @@ export function checkSituation(label, data, n, scenario, report, strictLogistics
         const e = checkFatigue(item.fatigue);
         if (e) report.error(`${where}: ${e}`);
       }
-      if (key === 'units' && !strictLogistics) for (const e of checkUmpireFatigue(item)) report.error(`${where}: ${e}`);
+      if (key === 'units' && !strictLogistics) for (const e of [...checkUmpireFatigue(item), ...checkUmpireComms(item)]) report.error(`${where}: ${e}`);
+      if (key === 'units' && item.comms !== undefined) {
+        const e = checkComms(item.comms, data.time);
+        if (e) report.error(`${where}: ${e}`);
+      }
       if (key === 'units' && item.dos !== undefined) {
         const e = checkDos(item.dos);
         if (e) report.error(`${where}: ${e}`);

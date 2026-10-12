@@ -386,6 +386,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     command, setPopover, togglePopover, openOmnibox, closeOmnibox, runCommand,
     selectChannel, setDraft, clearChannelDraft, ensureActiveChannel, unpinChannel, openUnitChannel, openChannel, sendMessage, withdrawMessage,
     saveNotes,
+    measureRoute: (coords) => api.route(coords),
     ...orders,
     ...ccir,
     ...forms,

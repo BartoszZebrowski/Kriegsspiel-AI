@@ -3,6 +3,7 @@
 import { escapeHtml as e } from '../../domain/markdown.js';
 import { foreignUnitMentions, unknownPlaceNames } from '../../domain/compose.js';
 import { assessSkip } from '../../domain/command.js';
+import { channelComms, commsWarning } from '../../domain/comms.js';
 import { ic } from '../../lib/icons.js';
 
 export function warnHtml(s) {
@@ -16,6 +17,12 @@ export function warnHtml(s) {
     }
   }
   if (s.channel && !s.archive) {
+    // T19: kanał jednostki bez łączności — wysyłka dozwolona, doręczenie niepewne.
+    const cm = channelComms(s.channel, units, s.turn?.time, s.scenario?.timezone);
+    if (cm.status !== 'ok') {
+      const unit = units.find((u) => u.id === (s.channelUnit ?? s.channel.unit ?? s.channel.id));
+      parts.push(`<div class="warn warn--comms" data-comms="${cm.status}">${ic('zap', 's')}<span>${e(commsWarning(unit, s.turn?.time, s.scenario?.timezone))}</span></div>`);
+    }
     // T45: pominięcie szczebla dowodzenia (nieblokujące w „soft”; w „hard” wysyłka zablokowana poza pilnymi).
     const skip = assessSkip({ scenario: s.scenario, units, channels: s.channels, channelId: s.channel.id, priority: s.draft.urgent ? 'urgent' : 'normal' });
     if (skip.level !== 'none') {
@@ -28,4 +35,10 @@ export function warnHtml(s) {
     }
   }
   return parts.join('');
+}
+
+// T19: znacznik braku łączności kanału — krótki (lista: BŁ/ŁĄ) albo pełny tekst (nagłówek); '' gdy łączność ok.
+export function commsTagHtml(cm, full = false) {
+  if (cm.status === 'ok') return '';
+  return `<span class="nocomms-tag nocomms-tag--${cm.status}" data-comms="${cm.status}" title="${e(cm.text)}">${full ? e(cm.text) : cm.lost ? 'BŁ' : 'ŁĄ'}</span>`;
 }

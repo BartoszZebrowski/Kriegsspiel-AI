@@ -103,6 +103,7 @@ Do 3 pozycji `{ role, name, text, time }`: `role` ∈ `s2` / `s3` / `s4` (unikal
 | `notes` | tekst | nie | Opis do karty jednostki. |
 | `dos` | `{fuel, ammo, general, readiness, as_of}` | nie | **Meldowany** stan zaopatrzenia (T18): `fuel`/`ammo`/`general` = dni zaopatrzenia (liczby ≥ 0, każde opcjonalne, ale wymagany min. jeden wskaźnik razem z `readiness`), `readiness` = sprawność sprzętu 0–1, `as_of` = czas meldunku ISO (wymagany). To wiedza gracza, nie prawda: może być nieaktualna i zaokrąglona. Wartość ujemna, `readiness` > 1 albo zły `as_of` = błąd. Prawdziwy stan to `supply` w `umpire/turns/`. |
 | `fatigue` | `wypoczęta` / `zmęczona` / `wyczerpana` | nie | Kategoria zmęczenia jednostki własnej (T28), wyliczana przez sędziego z `stamina_min` (< 12 h = zmęczona, < 4 h = wyczerpana). To jedyna wiedza gracza o wytrzymałości; liczby (`stamina_min`, `morale`) są tylko w `umpire/turns/`. Inna wartość = błąd. |
+| `comms` | `{status, last_contact}` | nie | Stan łączności jednostki własnej według wiedzy sztabu (T19). `status`: `ok` / `degraded` / `lost` (brak pola = `ok`); `last_contact` – czas ISO ostatniego kontaktu, wymagany przy `degraded` i `lost`, nie późniejszy niż czas tury. Mapa i karta pokazują znacznik „brak łączności od HH:MM”, komunikator ostrzega przy wysyłce (bez blokady). Prawda łączności (`comms_true`) jest tylko w `umpire/turns/`. |
 
 Pola **tylko sędziego** (w `umpire/turns/`, zabronione w pliku gracza): `side`, `supply`, `stamina_min`, `morale`.
 
@@ -249,7 +250,7 @@ Zaznaczenie jednostek różnych dowódców tworzy osobne szkice w ich kanałach 
 Pełna prawda dla tury N. Serwer nigdy go nie czyta i nie wysyła; walidator sprawdza strukturę, a w logach wypisuje tylko identyfikatory.
 
 Ma te same pola co plik gracza (`turn`, `time`, `units`, `assets`, `lines`), plus:
-- `units[]`/`assets[]`: `side` (`PL` / `RU` / …), `supply` (jednostki: `{fuel, ammo, general}` w dniach zaopatrzenia, DOS; gracz widzi tylko meldowane `dos`), `endurance_min` (tylko środki: pozostały czas lotu; to inne pole niż `stamina_min` jednostek), `stamina_min` (jednostki: reszta wytrzymałości w minutach, ≥ 0) i `morale` (jednostki: 0–1), z których sędzia wylicza `fatigue` gracza, pełne i prawdziwe `personnel`/`equipment` (dla jednostek własnych identyczne jak w pliku gracza),
+- `units[]`/`assets[]`: `side` (`PL` / `RU` / …), `supply` (jednostki: `{fuel, ammo, general}` w dniach zaopatrzenia, DOS; gracz widzi tylko meldowane `dos`), `endurance_min` (tylko środki: pozostały czas lotu; to inne pole niż `stamina_min` jednostek), `stamina_min` (jednostki: reszta wytrzymałości w minutach, ≥ 0) i `morale` (jednostki: 0–1), `comms_true` (jednostki: `{status: ok|degraded|lost, since?: ISO, cause?: tekst}` – prawda łączności, z której `turn.mjs` wylicza `comms` gracza), z których sędzia wylicza `fatigue` gracza, pełne i prawdziwe `personnel`/`equipment` (dla jednostek własnych identyczne jak w pliku gracza),
 - jednostki wroga (`side` ≠ strona gracza) z prawdziwymi pozycjami i stanami (kontaktów się tu nie zapisuje — to widok gracza),
 - `logistics`: prawdziwy stan warstwy logistycznej (kształt jak u gracza, patrz „`logistics`”; pola dodatkowe dozwolone),
 - `events`: lista tekstów — zdarzenia tury dla sędziego,

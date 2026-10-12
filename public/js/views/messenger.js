@@ -12,7 +12,8 @@ import { channelGlyph } from './messenger/glyphs.js';
 import { createThread } from './messenger/thread.js';
 import { createMentionPopup } from './messenger/mentions.js';
 import { orderChipsHtml } from './messenger/orders.js';
-import { warnHtml } from './messenger/warn.js';
+import { warnHtml, commsTagHtml } from './messenger/warn.js';
+import { channelComms } from '../domain/comms.js';
 import { createFormPanel } from './messenger/form.js';
 import { FORM_MENU, missingFields, composeFormMessage } from '../domain/forms.js';
 
@@ -67,7 +68,8 @@ export function createMessengerView({ store, controller, root = document }) {
                 .map((c) => {
                   const n = s.unread.byChannel[c.id] || 0;
                   const on = s.channel?.id === c.id;
-                  return `<div class="cl-i k-${c.kind}${on ? ' on' : ''}" role="option" aria-selected="${on}" tabindex="0"${on ? ' data-leader-anchor' : ''} data-ch="${e(c.id)}" title="${e(c.description || c.name)}"><span class="ch-ic">${channelGlyph(s, c, 16)}</span><span>${e(c.name)}</span>${n ? `<span class="ubadge${c.kind === 'superior' ? ' urg' : ''}">${n}</span>` : ''}</div>`;
+                  const cm = channelComms(c, s.turn?.units, s.turn?.time, s.scenario?.timezone); // T19: znacznik braku łączności
+                  return `<div class="cl-i k-${c.kind}${on ? ' on' : ''}" role="option" aria-selected="${on}" tabindex="0"${on ? ' data-leader-anchor' : ''} data-ch="${e(c.id)}" title="${e(c.description || c.name)}"><span class="ch-ic">${channelGlyph(s, c, 16)}</span><span>${e(c.name)}</span>${commsTagHtml(cm)}${n ? `<span class="ubadge${c.kind === 'superior' ? ' urg' : ''}">${n}</span>` : ''}</div>`;
                 })
                 .join('')}`,
           )
@@ -83,7 +85,9 @@ export function createMessengerView({ store, controller, root = document }) {
       els.head.innerHTML = '<div class="m-none">Wybierz kanał</div>';
       return;
     }
-    els.head.innerHTML = `<div class="av">${channelGlyph(s, c, 28)}</div><div class="m-head-t"><h3>${e(c.name)}</h3><p>${e(c.description || '')}</p></div>`;
+    const cm = channelComms(c, s.turn?.units, s.turn?.time, s.scenario?.timezone);
+    const cmTag = commsTagHtml(cm, true);
+    els.head.innerHTML = `<div class="av">${channelGlyph(s, c, 28)}</div><div class="m-head-t"><h3>${e(c.name)}${cmTag}</h3><p>${e(c.description || '')}</p></div>`;
     els.head.title = 'Kliknij, aby pokazać jednostkę na mapie';
   }
 

@@ -38,6 +38,8 @@ export const api = {
       return null;
     }
   },
+  // Trasa po drogach (T15): serwer pyta router OSRM; błąd = klient liczy szacunek. Wysyłamy tylko współrzędne.
+  route: async (coords) => (await request('/api/route', { method: 'POST', body: JSON.stringify({ coords }) })).json(),
   messages: async () => (await request('/api/messages')).json(),
   // meta: { type, priority, orders, form } — rodzaj, przełącznik „Pilne”, rozkazy graficzne (T44) i formularz (T50) — pola opcjonalne.
   send: async (channel, text, attachments, meta = {}) =>

@@ -27,7 +27,7 @@ export function createDrawView({ store, controller, surface, root = document }) 
   let presetGraphic = null; // znak wybrany z flyoutu (null = domyślny dla narzędzia)
 
   const shapes = createShapes({ map });
-  const measure = createMeasure({ map, toast, isActive: () => tool === 'measure', onStop: () => stopTool() });
+  const measure = createMeasure({ map, toast, isActive: () => tool === 'measure', onStop: () => stopTool(), store, controller });
   const editor = createNoteEditor({ byId, getItems: () => items, persist: (next) => persist(next) });
   const layersById = new Map();
 

@@ -18,6 +18,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createApp } from '../server/app.js';
+import { StoreError } from '../server/store.js';
 import { GRAPHICS } from '../public/js/domain/tactical.js';
 import { injectLogisticsSample } from '../test/fixtures/logistics-sample.mjs';
 
@@ -93,7 +94,17 @@ if (!chromePath) {
   process.exit(2);
 }
 
-const { server } = createApp(scenarioDir);
+// Atrapa routera (T15): smoke nie zależy od internetu. Trasa przechodzi przez most-1 z injectLogisticsSample (nośność 40 t),
+// a przełącznik routerMode = 'fail' symuluje awarię routera (wtedy miarka liczy szacunek).
+let routerMode = 'ok';
+const stubRouter = {
+  async route(coords) {
+    if (routerMode === 'fail') throw new StoreError(502, 'Router niedostępny');
+    const line = [coords[0], [22.86, 54.03], coords.at(-1)];
+    return { source: 'osrm', km: 12.5, coords: line };
+  },
+};
+const { server } = createApp(scenarioDir, { router: stubRouter });
 await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
 const base = `http://127.0.0.1:${server.address().port}`;
 
@@ -678,6 +689,30 @@ try {
     await key('m');
     await waitFor(`document.querySelector('button[data-tool="measure"]').classList.contains('on')`, 'klawisz M włącza miarkę');
     await key('Escape');
+  });
+
+  await step('T15 miarka po drogach: trasa z routera, czas dla typu, ostrzeżenie o moście; awaria routera = oznaczony szacunek', async () => {
+    const [ox, oy] = await mapOrigin();
+    routerMode = 'ok';
+    await clickSel('button[data-tool="measure"]');
+    await click(ox + 200, oy + 450);
+    await click(ox + 420, oy + 470);
+    await waitFor('!!document.querySelector(".road-box [data-road-toggle]") && !document.querySelector(".road-box").hidden', 'panel „Po drogach”');
+    await clickSel('.road-box [data-road-toggle]');
+    await waitFor('/12,5 km/.test(document.querySelector(".road-box [data-road-km]")?.textContent || "")', 'odległość drogowa z routera');
+    assert(await ev('/trasa drogowa/.test(document.querySelector(".road-box").textContent)'), 'oznaczenie trasy drogowej');
+    await ev('(() => { const s = document.querySelector(".road-box [data-road-profile]"); s.value = "tracked"; s.dispatchEvent(new Event("change", { bubbles: true })); })()');
+    await waitFor('/gąsienicowa/.test(document.querySelector(".road-box [data-road-time]").textContent)', 'czas marszu dla typu gąsienicowego');
+    assert(await ev('/Most na MSR ZŁOTO.*40 t/.test(document.querySelector(".road-box__warn")?.textContent || "")'), 'ostrzeżenie o moście przy 60 t');
+    await ev('(() => { const s = document.querySelector(".road-box [data-road-profile]"); s.value = "wheeled"; s.dispatchEvent(new Event("change", { bubbles: true })); })()');
+    await waitFor('!document.querySelector(".road-box__warn")', 'brak ostrzeżenia dla 26 t');
+    // awaria routera → szacunek
+    routerMode = 'fail';
+    await click(ox + 500, oy + 480);
+    await waitFor('/szacunek/.test(document.querySelector(".road-box").textContent) && /niesprawdzone/.test(document.querySelector(".road-box").textContent)', 'szacunek przy awarii routera');
+    await key('Escape');
+    await clickSel('button[data-tool="clear-measure"]');
+    assert(await ev('document.querySelector(".road-box").hidden'), 'panel zniknął po wyczyszczeniu');
   });
 
   await step('T44 rozkaz graficzny: klawisz O, zaznaczenie klikiem, zadanie, punkt → załącznik w szkicu kanału, podgląd znaku, wysyłka z załącznikiem „order”', async () => {
@@ -1503,6 +1538,29 @@ try {
     assert(await ev(`document.querySelector('#insp-body .fatigue--bad') !== null`), 'wyczerpana: kolor czerwony');
     await ev(`window.__ks.controller.selectEntity('${b.id}', { pan: false })`);
     await waitFor(`document.querySelector('#insp-body .insp-top') && !document.querySelector('#insp-body [data-fatigue]')`, 'jednostka bez fatigue: brak wskaźnika');
+    await ev(`window.__ks.controller.clearSelection()`);
+  });
+
+  await step('T19 łączność: comms lost → znacznik na mapie, wiersz w karcie, ostrzeżenie w komunikatorze; ok bez znaczników', async () => {
+    const cur = await state('s.currentTurn');
+    await waitFor(`${store()}.viewTurn === ${cur}`, 'oglądana jest bieżąca tura');
+    const f = `player/turns/${String(cur).padStart(3, '0')}.json`;
+    const turn0 = await readJson(f);
+    const u = turn0.units.find((x) => x.id === '2bzmot');
+    assert(u, 'jest jednostka 2bzmot');
+    u.comms = { status: 'lost', last_contact: new Date(Date.parse(turn0.time) - 48 * 60000).toISOString() };
+    await writeJson(f, turn0);
+    await waitFor(`${store()}.turn.units.find((x) => x.id === '2bzmot')?.comms?.status === 'lost'`, 'comms po SSE');
+    await waitFor(`document.querySelector('#map .leaflet-marker-icon.nocomms')`, 'znacznik braku łączności na mapie');
+    await ev(`window.__ks.controller.selectEntity('2bzmot', { pan: false })`);
+    await waitFor(`document.querySelector('#insp-body [data-comms="lost"]')`, 'wiersz Łączność w karcie');
+    assert(await ev(`/brak łączności od [0-9]{2}:[0-9]{2}/.test(document.querySelector('#insp-body [data-comms="lost"]').textContent)`), 'karta: brak łączności od HH:MM');
+    await ev(`window.__ks.controller.selectChannel('2bzmot')`);
+    await waitFor(`document.querySelector('#compose-warn [data-comms="lost"]')`, 'ostrzeżenie w komunikatorze');
+    assert(await ev(`/doręczenie niepewne/.test(document.getElementById('compose-warn').textContent)`), 'ostrzeżenie: doręczenie niepewne');
+    delete u.comms;
+    await writeJson(f, turn0);
+    await waitFor(`!document.querySelector('#map .leaflet-marker-icon.nocomms') && !document.querySelector('#compose-warn [data-comms]')`, 'po przywróceniu łączności brak znaczników');
     await ev(`window.__ks.controller.clearSelection()`);
   });
 

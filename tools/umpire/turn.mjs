@@ -14,6 +14,7 @@ import { PLAYER_FIELDS, PLAYER_TURN_FIELDS, LOGISTICS_FIELDS, extraFields, isCoo
 import { checkDeliveries, checkEw, checkEwZone } from '../../shared/ew.js';
 import { checkStaff, STAFF_FIELDS } from '../../shared/staff.js';
 import { fatigueLevel } from '../../shared/fatigue.js';
+import { checkComms, commsFromTruth } from '../../shared/comms.js';
 import { applyEngineering, syncBridgeStatus } from './engineering-merge.mjs';
 import { clone, pad3, pickFields, moved, computeTrack, nextTime, mergeById, checkIds, patchMissing, applyLogistics, buildInbox } from './turn-merge.mjs';
 
@@ -89,10 +90,13 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
     if (u.side !== playerSide) continue;
     // Pola widoku gracza, których sędzia nie prowadzi (np. notes), dziedziczymy z poprzedniej tury gracza.
     // pos_time (BFT, T49) nie jest dziedziczone: bez łatki widok gracza = prawda, z czasem raportu = czas tury.
-    const { pos_time: _bft, ...inherited } = prevById.get(u.id) || {};
+    // comms (T19) też nie jest dziedziczone: stan łączności z comms_true prawdy albo łatki, odzyskanie = brak pola.
+    const { pos_time: _bft, comms: _comms, ...inherited } = prevById.get(u.id) || {};
     base.push({ ...inherited, ...pickFields(u, PLAYER_FIELDS.units.filter((f) => f !== 'dos')) }); // dos to meldunek gracza: nie z prawdy
     const fatigue = fatigueLevel(u.stamina_min); // T28: gracz widzi kategorię, nigdy endurance_min ani morale
     if (fatigue) base[base.length - 1].fatigue = fatigue;
+    const comms = commsFromTruth(u.comms_true); // T19: gracz widzi stan łączności, nigdy comms_true (przyczyny)
+    if (comms) base[base.length - 1].comms = comms;
     seen.add(u.id);
   }
   for (const u of prevPlayer.units || []) if (!seen.has(u.id) && !umpireIds.has(u.id)) base.push(clone(u));
@@ -119,6 +123,12 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
     if (r.error) warnings.push(`jednostka ${u.id}: ${r.error}`);
     else if (r.warn && !patch?.pos_time) warnings.push(`jednostka ${u.id}: ${r.warn}`);
     else if (Date.parse(u.pos_time) === Date.parse(time)) delete u.pos_time; // równy czasowi tury = domyślny
+  }
+  for (const u of pUnits) { // Łączność (T19): plan.player.units.<id>.comms = {status, last_contact} albo domyślnie z comms_true.
+    if (u.comms === undefined) continue;
+    const e = checkComms(u.comms, time);
+    if (e) warnings.push(`jednostka ${u.id}: ${e}`);
+    else if (u.comms.status === 'lost' && Date.parse(u.pos_time || time) > Date.parse(u.comms.last_contact) + 30 * 60000) warnings.push(`jednostka ${u.id}: lost bez zamrożonej pozycji (pos_time świeższe niż last_contact + 30 min)`);
   }
   for (const u of pUnits) {
     if (!isCoord(u.pos)) warnings.push(`jednostka ${u.id}: brak poprawnego pos`);

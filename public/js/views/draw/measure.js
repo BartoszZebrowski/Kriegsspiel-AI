@@ -2,9 +2,10 @@
 /* global L */
 import { pathLengthKm, marchTable, formatKm, formatMarch } from '../../domain/geo.js';
 import { HINTS } from './graphics.js';
+import { createRoadMeasure } from './roadmeasure.js';
 
 // `isActive()` — czy narzędzie miarki jest wybrane; `onStop()` — prośba o zakończenie (Esc, dwuklik).
-export function createMeasure({ map, toast, isActive, onStop }) {
+export function createMeasure({ map, toast, isActive, onStop, store, controller }) {
   const measureLayer = L.layerGroup().addTo(map);
   const MeasureBox = L.Control.extend({
     options: { position: 'bottomleft' },
@@ -16,6 +17,7 @@ export function createMeasure({ map, toast, isActive, onStop }) {
     },
   });
   const measureCtl = new MeasureBox().addTo(map);
+  const road = store && controller ? createRoadMeasure({ map, store, controller }) : null; // T15: tryb „Po drogach”
   const measureBox = {
     el: measureCtl.getContainer(),
     show(coords, segmentKm) {
@@ -62,6 +64,7 @@ export function createMeasure({ map, toast, isActive, onStop }) {
     map.on('dblclick', onMeasureEnd);
     document.addEventListener('keydown', onMeasureKey);
     measureBox.hide();
+    road?.clear();
   }
 
   const coordsOf = (latlngs) => latlngs.map((ll) => [ll.lng, ll.lat]);
@@ -71,10 +74,12 @@ export function createMeasure({ map, toast, isActive, onStop }) {
     mLine.setLatLngs(mPoints);
     L.circleMarker(e.latlng, { radius: 4.5, color: '#fff', weight: 2, fillColor: '#111', fillOpacity: 1, interactive: false }).addTo(measureLayer);
     measureBox.show(coordsOf(mPoints));
+    road?.update(coordsOf(mPoints));
   }
 
   function onMeasureMove(e) {
     if (mPoints.length === 0) return;
+    if (e.originalEvent?.target?.closest?.('.leaflet-control')) return; // nad panelami miarki nie aktualizuj odcinka (box by skakał)
     const last = mPoints.at(-1);
     mPreview.setLatLngs([last, e.latlng]);
     const seg = pathLengthKm(coordsOf([last, e.latlng]));
@@ -104,6 +109,7 @@ export function createMeasure({ map, toast, isActive, onStop }) {
   const clear = () => {
     measureLayer.clearLayers();
     measureBox.hide();
+    road?.clear();
   };
   return { start, end, clear, hasContent: () => measureLayer.getLayers().length > 0 };
 }

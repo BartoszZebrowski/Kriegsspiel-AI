@@ -5,6 +5,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createStore, parseTurnNumber, StoreError } from './store.js';
 import { createWatcher } from './watch.js';
+import { createRouter } from './route.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -91,7 +92,7 @@ function guardApi(req, port) {
   }
 }
 
-async function handleApi(req, res, store, watcher, parts) {
+async function handleApi(req, res, store, watcher, router, parts) {
   const [resource, arg] = parts;
   const method = req.method;
 
@@ -134,6 +135,9 @@ async function handleApi(req, res, store, watcher, parts) {
     const body = await readBody(req);
     return sendJson(res, 200, await store.writeCcir(body.items));
   }
+  if (method === 'POST' && resource === 'route' && !arg) {
+    return sendJson(res, 200, await router.route((await readBody(req)).coords));
+  }
   if (method === 'GET' && resource === 'events' && !arg) {
     return watcher.subscribe(req, res);
   }
@@ -168,7 +172,8 @@ async function handleStatic(res, pathname) {
   }
 }
 
-export function createApp(scenarioDir) {
+// options.router: atrapa routera (testy, smoke); domyślnie OSRM, wyłączany zmienną KS_ROUTER=off.
+export function createApp(scenarioDir, { router = createRouter({ disabled: process.env.KS_ROUTER === 'off' }) } = {}) {
   const store = createStore(scenarioDir);
   const watcher = createWatcher(scenarioDir);
 
@@ -187,7 +192,7 @@ export function createApp(scenarioDir) {
       if (pathname.startsWith('/api/')) {
         guardApi(req, server.address().port);
         const parts = pathname.slice(5).split('/').filter(Boolean);
-        return await handleApi(req, res, store, watcher, parts);
+        return await handleApi(req, res, store, watcher, router, parts);
       }
       if (req.method !== 'GET' && req.method !== 'HEAD') throw new StoreError(405, 'Niedozwolona metoda');
       return await handleStatic(res, pathname);

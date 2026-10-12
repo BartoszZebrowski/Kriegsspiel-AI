@@ -77,3 +77,4 @@
 .fatigue{display:flex;align-items:center;gap:8px;font-size:13px}
 .fatigue i{width:10px;height:10px;border-radius:50%;background:var(--ok)}
 .fatigue--warn i{background:var(--warn)} .fatigue--bad i{background:var(--danger)}
+.comms--warn{color:var(--warn)} .comms--bad{color:var(--danger);font-weight:600}

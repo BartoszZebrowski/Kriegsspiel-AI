@@ -149,3 +149,6 @@
 .form-tbl caption{text-align:left;font-weight:600;font-size:11px;letter-spacing:.06em;color:var(--t-3);padding-bottom:2px}
 .form-tbl th,.form-tbl td{border-top:1px solid var(--line-2);padding:2px 6px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
 .form-tbl th{font-weight:500;color:var(--t-3);width:30%}
+.nocomms-tag{margin-left:6px;padding:0 4px;border-radius:3px;font:700 9px/14px var(--font-mono,monospace);color:#fff;background:var(--danger);vertical-align:middle}
+.nocomms-tag--degraded{background:var(--warn);color:#000}
+.m-head-t .nocomms-tag{font-size:10px;font-weight:600}
