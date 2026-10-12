@@ -253,3 +253,29 @@ Szablony z polami (SPOTREP, LOGSTAT, FRAGO, zapotrzebowanie na ogień) obok woln
 | Serwer | `server/store.js` (`POST /api/outbox`) | pole `form`: `checkFormShape` + `checkFormContent` (400 przy błędzie), zapis w wiadomości. Walidator scenariusza sprawdza `form` w `outbox` (błąd) i `inbox` (braki wymaganych = uwaga). |
 
 Pola wartości: tekst lub liczba bez struktury albo geometria GeoJSON (`Point` / `LineString` / `Polygon`, `[długość, szerokość]`). Wysłany tekst = `formText` + opcjonalna dopiska gracza; wątek pokazuje tabelkę, a tekst tylko w części wykraczającej poza `formText`.
+
+## Zgłoszenie ognia i jego status (T52)
+
+Zgłoszenie to wiadomość `player/outbox` z `form.kind = "fire"` (szablon z T50, kanał wiadomości = środek wsparcia). Status zgłoszenia przychodzi od sędziego w wiadomości `player/inbox` z polem `fire: { request_id, status, time, rounds?, reason? }`. Pole **nigdy** nie niesie skutku ognia (skutek gracz poznaje z obserwacji i meldunków). Zgłoszenie bez odpowiedzi ma status „wysłane” (wyliczany, bez wiadomości).
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/fire.js` (osobny plik) | `FIRE_STATUSES` (`accepted`, `refused`, `done`), `checkMessageFire(m)`: `request_id` (tekst), `status`, `time` (ISO), `rounds` (liczba całkowita ≥ 0, tylko `done`), `reason` (tekst, wymagany przy `refused`); żadnych innych pól. `fire` dopisane do `PLAYER_MESSAGE_FIELDS`; `fire` tylko w inbox. |
+| Logika | `domain/fires.js` (czysta) | model cyklu: `FIRE_STATUS` (`sent` → `accepted` / `refused` → `done`; `sent` → `done` dozwolone), `canTransition`, `fireTasks(messages)` → zadania ogniowe z wiadomości outbox (`form.kind = fire`) i odpowiedzi inbox (najpóźniejsze dozwolone przejście wygrywa), `fireAnchor` (punkt znacznika: punkt albo środek rejonu), `fireStatusText`, `fireLabel`. Bez DOM, bez importów spoza `domain/`. |
+| Stan | `core/store.js` | tylko flaga warstwy `layers.fires`; zadania wyliczane z `messages` (bez nowego plastra). |
+| Widoki | `views/map/fires.js` (nowy plik, osobna warstwa), `views/map/controls.js` (wiersz „Ogień” w panelu warstw) | znacznik w celu (punkt) albo obrys rejonu, etykieta z godziną i statusem; tekst przez `escapeHtml`; subskrypcja `messages` + `layers` + `turn`. Brak importów między widokami. |
+| Walidator | `tools/validate-fire.js` (wołany z `validate.js`) | `fire` w inbox: `checkMessageFire`, `request_id` wskazuje zgłoszenie z outbox (brak = uwaga), `fire` w outbox = błąd. |
+| Sędzia | [CLAUDE.md](../CLAUDE.md) | zasady rozstrzygania i format odpowiedzi; skutek tylko z obserwacji. |
+
+## Nakładki od przełożonego (T51)
+
+Wiadomość sędziego (`inbox`) może nieść `overlay: { id, name, features: [szkic…] }` — graficzną nakładkę rozkazu (granice, rubieże, osie, rejony). Elementy to **te same szkice** co w `player/notes` (`checkNote`), więc rysuje je ten sam kod znaków taktycznych (`domain/tactical.js`, `lib/tactical-layers.js`). Nakładka jest tylko do odczytu; gracz może ją skopiować do szkiców i dołączyć do rozkazu.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/overlay.js` (osobny plik, bo `shared/schema.js` ma jednego właściciela naraz) | `checkOverlay(overlay)` → tekst błędu albo `null`: `id` (`[\w-]{1,30}`), `name` (≤ 60), `features` (1–`OVERLAY_MAX_FEATURES`), każdy element przez `checkNote` (nieznany znak / rodzaj = błąd), id elementów unikalne. W `shared/schema.js` tylko `overlay` dopisane do `PLAYER_MESSAGE_FIELDS`. |
+| Logika | `domain/overlays.js` (czysta) | `overlaysOf(messages)` → `{ id, name, time, from, channel, messageId, features }` z wiadomości przychodzących z `overlay`; **nowsza nakładka o tym samym `id` zastępuje starszą** (wg `time`, przy remisie tura), wynik od najnowszej. `overlayLayerKey(id)` (`ov:<id>`), `overlayNotes(overlay, existing, limit)` → kopie elementów jako szkice z nowymi, unikalnymi id (`MAX_NOTES` jako parametr, `domain/` nie importuje z `shared/`). |
+| Stan | `core/store.js` | pochodna `overlays` (z `visibleMessages`, więc archiwum nie zdradza przyszłych nakładek); widoczność nakładki to `layers['ov:<id>']` (domyślnie wyłączona), bez nowego plastra. |
+| Intencje | `core/overlays.js` (podkontroler jak `orders.js`) | `copyOverlayToNotes(id, { attach })`: kopie → `saveNotes`; z `attach` dodatkowo `attachIds` w szkicu aktywnego kanału (`setDraft`). Archiwum: odmowa. |
+| Widoki | `views/map/overlays.js` (nowy plik, osobna warstwa; czyta `overlays` i `layers`), `views/map/controls.js` (sekcja „Nakładki od przełożonego” w panelu warstw: nazwa, DTG, włącz/wyłącz, „Do szkiców”, „Do rozkazu”) | Warstwa rysuje przez `buildGraphic` + `builtLayers` (przeliczanie po zoomie); brak importów z innych widoków. |
+| Walidator | `tools/validate.js` | `overlay` w `inbox`: `checkOverlay` (błąd); w `outbox` pole jest błędem (tylko sędzia). |

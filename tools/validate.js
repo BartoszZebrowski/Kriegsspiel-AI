@@ -8,7 +8,9 @@ import { checkDeliveries, checkEw } from '../shared/ew.js';
 import { checkOrderAttachment } from '../shared/order.js';
 import { checkPlayerFields, checkSituation, checkTracksContinuity, checkGazetteer } from './validate-checks.js';
 import { checkFormShape } from '../shared/form.js';
+import { checkOverlay } from '../shared/overlay.js';
 import { checkFormContent, missingFields } from '../public/js/domain/forms.js';
+import { createFireChecker } from './validate-fire.js';
 import { checkCcirFile, checkReportCycleField, checkMessageCcirFields } from './validate-ccir.js';
 import { loadCatalogIndex, checkEquipmentRefs } from './validate-equipment.js';
 import { checkHierarchySums, unitsInWater, loadWaterPolygons, inboxOutOfOrder, enemyNameLeaks, checkFinishedAar } from './validate-realism.js';
@@ -110,6 +112,7 @@ export async function validateScenario(dir) {
   }
 
   const messageIds = new Set();
+  const fireChecker = createFireChecker(report);
   for (const kind of ['inbox', 'outbox']) {
     for (const n of await numbered(path.join(dir, 'player', kind))) {
       const label = `player/${kind}/${pad(n)}`;
@@ -136,6 +139,15 @@ export async function validateScenario(dir) {
         if (metaError) report.error(`${where}: ${metaError.toLowerCase()}`);
         if (kind === 'inbox') checkMessageCcirFields(where, m, ccirIds, report);
         else if (m.ccir !== undefined || m.report !== undefined) report.error(`${where}: pola ccir i report są tylko w wiadomościach sędziego (inbox)`);
+        fireChecker.check(kind, where, m);
+        if (m.overlay !== undefined) {
+          // Nakładka od przełożonego (T51): tylko sędzia (inbox); elementy to szkice, nieznany znak taktyczny = błąd.
+          if (kind === 'outbox') report.error(`${where}: pole overlay jest tylko w wiadomościach sędziego (inbox)`);
+          else {
+            const overlayError = checkOverlay(m.overlay);
+            if (overlayError) report.error(`${where}: ${overlayError}`);
+          }
+        }
         if (m.form !== undefined) {
           // Formularz (T50): struktura i pola szablonu zawsze; braki wymaganych: błąd w outbox, uwaga w inbox (sędzia pisze swobodniej).
           const formError = checkFormShape(m.form) ?? checkFormContent(m.form);
@@ -156,6 +168,8 @@ export async function validateScenario(dir) {
       }
     }
   }
+
+  fireChecker.finish();
 
   // Szkice gracza: każdy rysunek przechodzi tę samą walidację co zapis przez API.
   for (const n of await numbered(path.join(dir, 'player', 'notes'))) {

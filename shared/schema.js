@@ -91,7 +91,7 @@ export const PLAYER_FIELDS = {
   assets: ['id', 'name', 'type', 'sidc', 'pos', 'status', 'task'],
   lines: ['id', 'kind', 'label', 'coords', 'formation', 'observed'],
 };
-export const PLAYER_MESSAGE_FIELDS = ['id', 'channel', 'from', 'turn', 'time', 'sent', 'type', 'priority', 'text', 'attachments', 'ccir', 'report', 'form'];
+export const PLAYER_MESSAGE_FIELDS = ['id', 'channel', 'from', 'turn', 'time', 'sent', 'type', 'priority', 'text', 'attachments', 'ccir', 'report', 'form', 'fire', 'overlay'];
 
 // Rodzaj i priorytet wiadomości (gracza w outboxie; sędziego w inboxie). Oba pola opcjonalne.
 export const MESSAGE_TYPES = ['rozkaz', 'zarzadzenie', 'meldunek', 'wiadomosc'];

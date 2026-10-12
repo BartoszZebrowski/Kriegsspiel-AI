@@ -5,6 +5,9 @@ import { ic } from '../../lib/icons.js';
 import { formatLatLon, toMgrs } from '../../domain/mgrs.js';
 import { BASEMAP_ORDER } from './basemaps.js';
 import { RANGE_KINDS, allLayerKey } from '../../domain/ranges.js';
+import { overlayLayerKey } from '../../domain/overlays.js';
+import { formatDtg } from '../../domain/format.js';
+import { escapeHtml } from '../../domain/markdown.js';
 
 const OVERLAY_ROWS = [
   ['lines', 'Granice pasów i linie'],
@@ -19,6 +22,7 @@ const OVERLAY_ROWS = [
   ['Rzeźba terenu', 'Rzeźba terenu (cieniowanie)'],
   ['Nazwy i granice', 'Nazwy i granice (Esri)'],
   ...RANGE_KINDS.map((k) => [allLayerKey(k.kind), 'Zasięg ' + k.short + ': wszystkie jednostki']),
+  ['fires', 'Ogień: zgłoszenia i ich status'], // T52
 ];
 
 export function createMapControls({ store, controller, map, root = document }) {
@@ -46,7 +50,20 @@ export function createMapControls({ store, controller, map, root = document }) {
   }
 
   // ---------- popover „Warstwy i podkład” ----------
-  function renderLayers({ basemap, layers, ui }) {
+  // Nakładki od przełożonego (T51): wiersz = przełącznik warstwy (data-ov) + przyciski kopiowania do szkiców / rozkazu.
+  function overlayRows({ overlays, layers, scenario, archive }) {
+    if (!overlays?.length) return '';
+    const rows = overlays
+      .map((o) => {
+        const k = overlayLayerKey(o.id);
+        const dtg = formatDtg(o.time, scenario?.timezone);
+        const dis = archive ? ' disabled' : '';
+        return `<div class="lp-row lp-ovl${layers[k] ? ' on' : ''}" role="checkbox" aria-checked="${Boolean(layers[k])}" tabindex="0" data-ov="${escapeHtml(k)}"><span class="cb">${ic('check')}</span><span class="grow"><span class="lp-ovl__n">${escapeHtml(o.name)}</span><small>${escapeHtml(dtg)}</small></span><button class="btn sm" data-ov-copy="${escapeHtml(o.id)}" title="Skopiuj do moich szkiców"${dis}>Do szkiców</button><button class="btn sm" data-ov-copy="${escapeHtml(o.id)}" data-attach title="Skopiuj do szkiców i dołącz do rozkazu w aktywnym kanale"${dis}>Do rozkazu</button></div>`;
+      })
+      .join('');
+    return `<div class="lp-div"></div><span class="cap">Nakładki od przełożonego</span>${rows}`;
+  }
+  function renderLayers({ basemap, layers, ui, overlays, scenario, archive }) {
     $('lp-base').innerHTML = BASEMAP_ORDER.map(
       (k) => `<div class="lp-row${basemap === k ? ' on' : ''}" role="radio" aria-checked="${basemap === k}" tabindex="0" data-base="${k}"><span class="rd"></span><span class="grow">${k}</span></div>`,
     ).join('');
@@ -55,6 +72,7 @@ export function createMapControls({ store, controller, map, root = document }) {
     ).join('');
     $('lp-over').innerHTML =
       rows +
+      overlayRows({ overlays, layers, scenario, archive }) +
       `<div class="lp-div"></div>` +
       `<div class="lp-row${layers.labels ? ' on' : ''}" role="checkbox" aria-checked="${Boolean(layers.labels)}" tabindex="0" data-ov="labels"><span class="cb">${ic('check')}</span><span class="grow">Etykiety symboli</span></div>` +
       // Animacja przemieszczeń między turami: przełącznik zapamiętany; systemowe „ogranicz ruch” wyłącza ją zawsze.
@@ -64,11 +82,13 @@ export function createMapControls({ store, controller, map, root = document }) {
     const base = ev.target.closest('[data-base]');
     if (base) return controller.setBasemap(base.dataset.base);
     if (ev.target.closest('[data-anim]')) return controller.setAnimations(!S().ui.animations);
+    const copy = ev.target.closest('[data-ov-copy]');
+    if (copy) return controller.copyOverlayToNotes(copy.dataset.ovCopy, { attach: copy.hasAttribute('data-attach') });
     const ov = ev.target.closest('[data-ov]');
     if (ov) controller.setLayerVisible(ov.dataset.ov, !S().layers[ov.dataset.ov]);
   });
   $('layers').addEventListener('keydown', (ev) => {
-    if (ev.key === 'Enter' || ev.key === ' ') {
+    if ((ev.key === 'Enter' || ev.key === ' ') && !ev.target.closest('button')) {
       ev.preventDefault();
       ev.target.closest('.lp-row')?.click();
     }
@@ -105,7 +125,7 @@ export function createMapControls({ store, controller, map, root = document }) {
   showZoom();
 
   store.subscribe(['detail', 'level'], renderDetail, { immediate: true });
-  store.subscribe(['basemap', 'layers', 'ui'], renderLayers, { immediate: true });
+  store.subscribe(['basemap', 'layers', 'ui', 'overlays', 'scenario', 'archive'], renderLayers, { immediate: true });
   store.subscribe('basemap', ({ basemap }) => ($('st-b').textContent = basemap), { immediate: true });
   store.subscribe('popover', renderPopover, { immediate: true });
 }

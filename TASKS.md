@@ -749,7 +749,7 @@ Obok wolnego tekstu szablony z polami, jak w BMS (wiąże się z T44 — punkt i
 - [A] Walidator: `form` w outbox/inbox poprawny / zły.
 - [M] Gracz wysyła FRAGO z rubieżą z mapy; podwładny potwierdza w formacie.
 
-## T51 — Nakładki od przełożonego ⬜
+## T51 — Nakładki od przełożonego ✅
 Rozkaz przełożonego przychodzi z graficzną nakładką (granice, rubieże, osie, rejony), którą gracz włącza i wyłącza jak warstwę.
 
 **WA**
@@ -761,7 +761,7 @@ Rozkaz przełożonego przychodzi z graficzną nakładką (granice, rubieże, osi
 - [A] Walidator: `overlay` z nieznanym znakiem → błąd.
 - [M] Rozkaz brygady z nową granicą: nakładka pojawia się w warstwach, włączam / wyłączam, kopiuję do szkicu.
 
-## T52 — Zgłoszenie ognia i jego status ⬜
+## T52 — Zgłoszenie ognia i jego status ✅
 Gracz zamawia ogień (artyleria, moździerze, ewentualnie lotnictwo) i dostaje status bez prawdy o skutku.
 
 **WA**

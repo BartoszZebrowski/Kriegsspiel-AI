@@ -7,11 +7,12 @@
 import { mergeChannels, channelUnitId, detailLevel, unreadByUnit } from '../domain/orbat.js';
 import { visibleMessages, unreadCounts, outboxCount } from '../domain/messages.js';
 import { getDraft } from '../domain/compose.js';
+import { overlaysOf } from '../domain/overlays.js';
 
 // Warstwy mapy: sytuacja (jednostki, kontakty…), szkice, etykiety i nakładki kafelkowe (domyślnie wyłączone).
 export const DEFAULT_BASEMAP = 'Ciemna (Esri)';
 export const TILE_OVERLAYS = ['Rzeźba terenu', 'Koleje', 'Nazwy i granice'];
-export const defaultLayers = () => ({ units: true, hierarchy: true, contacts: true, assets: true, logistics: true, lines: true, notes: true, ccir: true, labels: true, ...Object.fromEntries(TILE_OVERLAYS.map((n) => [n, false])) });
+export const defaultLayers = () => ({ units: true, hierarchy: true, contacts: true, assets: true, logistics: true, lines: true, notes: true, ccir: true, fires: true, labels: true, ...Object.fromEntries(TILE_OVERLAYS.map((n) => [n, false])) });
 
 export function initialState() {
   return {
@@ -61,6 +62,7 @@ export const DERIVED = [
   { key: 'draft', deps: ['drafts', 'activeChannel'], fn: (s) => getDraft(s.drafts, s.activeChannel) },
   { key: 'channelUnit', deps: ['channel'], fn: (s) => channelUnitId(s.channel) },
   { key: 'visibleMessages', deps: ['messages', 'archive', 'viewTurn'], fn: (s) => visibleMessages(s.messages, s) },
+  { key: 'overlays', deps: ['visibleMessages'], fn: (s) => overlaysOf(s.visibleMessages) }, // nakładki od przełożonego (T51)
   { key: 'unread', deps: ['channels', 'visibleMessages', 'read'], fn: (s) => unreadCounts(s.channels, s.visibleMessages, s.read) },
   { key: 'unreadUnits', deps: ['channels', 'unread'], fn: (s) => unreadByUnit(s.channels, s.unread) },
   { key: 'outboxCount', deps: ['messages', 'currentTurn'], fn: (s) => outboxCount(s.messages, s.currentTurn) },

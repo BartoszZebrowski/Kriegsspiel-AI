@@ -165,6 +165,14 @@ Co: …`), więc sędzia może czytać sam `text`. Wartość pola to tekst (≤ 
 
 Walidacja: struktura `checkFormShape` (`shared/form.js`), pola i wymagalność `checkFormContent` / `missingFields` (`domain/forms.js`). Serwer (`POST /api/outbox`, pole `form` w ciele) odrzuca błędny lub niekompletny formularz (400); walidator: błąd w `outbox`, w `inbox` braki wymaganych pól to uwaga.
 
+### Status zgłoszenia ognia `fire` w wiadomości inbox (T52)
+
+Odpowiedź sędziego na formularz `fire` (zgłoszenie = wiadomość outbox z `form.kind: "fire"`): wiadomość `player/inbox` z polem `fire: { "request_id", "status", "time", "rounds"?, "reason"? }`. `request_id` = `id` wiadomości ze zgłoszeniem (nieistniejące = uwaga walidatora), `status` = `accepted` (przyjęto), `refused` (odmowa; `reason` wymagany, ≤ 300 znaków) albo `done` (wykonano; `rounds` = liczba pocisków, liczba całkowita ≥ 0, tylko przy `done`), `time` = czas ISO ze strefą (np. godzina wykonania). Cykl: wysłane (brak odpowiedzi) → `accepted` / `refused` → `done`; `done` bez `accepted` dozwolone, po `refused` i `done` kolejne statusy są ignorowane. **Pole nie zawiera skutku ognia** (żadnych innych pól niż wymienione); skutek gracz poznaje z obserwacji i meldunków. `text` wiadomości to czytelna odpowiedź („Przyjęto.”, „Odmowa: brak amunicji.”, „Wykonano 08:20, 12 pocisków, skutek nieznany.”). `fire` w outbox = błąd. Walidacja: `checkMessageFire` (`shared/fire.js`), `tools/validate-fire.js`. Aplikacja pokazuje zgłoszenia na warstwie „Ogień” mapy.
+
+### Nakładka od przełożonego `overlay` w wiadomości inbox (T51)
+
+Wiadomość `player/inbox` (zwykle rozkaz przełożonego) może mieć `overlay: { "id", "name", "features": [ … ] }` — graficzną nakładkę (granice, rubieże, osie, rejony), którą gracz włącza w panelu Warstwy. `id` (1–30 znaków: litery, cyfry, `_`, `-`) wiąże kolejne wersje: nowsza nakładka o tym samym `id` (późniejszy `time` wiadomości) zastępuje starszą. `name` ≤ 60 znaków. `features` (1–60) to **szkice w formacie `player/notes`** (`id`, `kind`, `name`, `geometry`, `graphic`, `color`, `echelon`, `flip`, `sidc` dla `symbol`; id unikalne w nakładce) — te same znaki taktyczne co w szkicach. Walidacja: `checkOverlay` (`shared/overlay.js`) przez `checkNote`; nieznany znak (`graphic`) albo rodzaj to błąd. Pole jest zabronione w `player/outbox`. Gracz może skopiować nakładkę do własnych szkiców i dołączyć ją do rozkazu.
+
 ### Rozkaz graficzny w `attachments` (T44)
 
 Gracz zaznacza jednostki na mapie i wskazuje punkt, trasę, rubież albo rejon; wynik jest **załącznikiem do rozkazu**, nie jego wykonaniem (tarcie, czas i interpretacja podwładnego zostają po stronie sędziego). Sędzia czyta geometrię razem z treścią wiadomości; niejasność = interpretacja podwładnego. Walidacja: `checkOrderAttachment` z `shared/order.js` (serwer przy `POST /api/outbox` — pole `orders` w ciele żądania — i walidator scenariusza).

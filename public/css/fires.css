@@ -1,0 +1,4 @@
+/* T52: warstwa „Ogień” — znaczniki zgłoszeń ognia */
+.fire-mark{display:flex;align-items:center;gap:5px;white-space:nowrap;transform:translate(-6px,-6px)}
+.fire-mark__dot{width:12px;height:12px;border-radius:50%;background:var(--fc,#9ca3af);border:2px solid #10161d;box-shadow:0 0 0 1px var(--fc,#9ca3af)}
+.fire-mark__lbl{background:rgba(16,22,29,.85);border:1px solid var(--line-2);color:var(--t-1);font:700 11px var(--font-ui);padding:1px 4px}

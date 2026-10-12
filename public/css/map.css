@@ -175,3 +175,10 @@ body.l-collapsed .leader,body.r-collapsed .leader{}
 .rp-chip small{font-weight:400;color:var(--t-2)}
 .rp-chip.on{opacity:1}
 .rp-static{cursor:default}
+
+/* Nakładki od przełożonego (T51): wiersz w panelu warstw */
+.lp-ovl{height:auto;min-height:30px;padding:2px 0;flex-wrap:wrap}
+.lp-ovl .grow{min-width:0;display:flex;flex-direction:column}
+.lp-ovl__n{color:var(--t-1)}
+.lp-ovl small{color:var(--t-3);font-size:10px}
+.lp-ovl .btn{font-size:10px;padding:2px 6px}

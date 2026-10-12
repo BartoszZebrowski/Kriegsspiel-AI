@@ -745,8 +745,11 @@ try {
     await clickSel('#lp-base [data-base="Ciemna (Esri)"]');
     assert(await ev(`document.getElementById('map').classList.contains('is-dark-base')`), 'ciemna Esri włącza is-dark-base');
     // nakładka kafelkowa i warstwa sytuacji
+    // Panel renderuje się od nowa przy każdej zmianie store (m.in. nakładki od przełożonego, toasty): klik dopiero na ustabilizowanym układzie.
+    await waitFor(`!document.querySelector('#toasts .toast')`, 'toasty zniknęły (nie zasłaniają panelu)', 15000);
+    await sleep(300);
     await clickSel('#lp-over [data-ov="Koleje"]');
-    assert(await state(`s.layers['Koleje'] === true`), 'nakładka Koleje włączona');
+    await waitFor(`${store()}.layers['Koleje'] === true`, 'nakładka Koleje włączona');
     await clickSel('#lp-over [data-ov="Koleje"]');
     await clickSel('#lp-over [data-ov="contacts"]');
     await sleep(200);
@@ -1327,6 +1330,62 @@ try {
     await waitFor(`${store()}.messages.some((m) => m.id === 'in-smoke-form')`, 'form z inboxa po SSE');
     await waitFor(`!!document.querySelector('#thread .msg[data-id="in-smoke-form"] table.form-tbl')`, 'tabelka formularza od postaci');
     assert(await ev(`!document.querySelector('#thread .msg[data-id="in-smoke-form"] table i')`), 'treść z inboxa zescapowana');
+  });
+
+  await step('T52 ogień: zgłoszenie (outbox, form fire) → znacznik „wysłane”, odpowiedzi sędziego (fire w inbox) → przyjęte, wykonane; przełącznik warstwy', async () => {
+    const sent = await ev(`fetch('/api/outbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ channel: 'log', text: 'Zapotrzebowanie na ogień (smoke)', form: { kind: 'fire', fields: { target: { type: 'Point', coordinates: [22.35, 53.5] }, targetKind: 'czołgi <b>x</b>', effect: 'zniszczenie', time: 'natychmiast', priority: 'pilny' } } }) }).then((r) => r.json())`);
+    const reqId = sent.message?.id ?? sent.id;
+    assert(reqId, 'zgłoszenie ognia wysłane (id)');
+    await waitFor(`!!document.querySelector('.fire-mark__lbl')`, 'znacznik ognia na mapie');
+    assert(await ev(`document.querySelector('.fire-mark__lbl').textContent.includes('wysłane')`), 'status „wysłane” bez odpowiedzi');
+    const f = 'player/inbox/000.json';
+    const inbox = await readJson(f);
+    inbox.messages.push(
+      { id: 'in-smoke-fire1', channel: 'log', from: 'mjr Test, dca artylerii', time: '2026-05-14T06:20:00+02:00', type: 'meldunek', text: 'Przyjęto.', fire: { request_id: reqId, status: 'accepted', time: '2026-05-14T06:20:00+02:00' } },
+      { id: 'in-smoke-fire2', channel: 'log', from: 'mjr Test, dca artylerii', time: '2026-05-14T06:30:00+02:00', type: 'meldunek', text: 'Wykonano 06:30, 12 pocisków, skutek nieznany.', fire: { request_id: reqId, status: 'done', time: '2026-05-14T06:30:00+02:00', rounds: 12 } },
+    );
+    await writeJson(f, inbox);
+    await waitFor(`${store()}.messages.some((m) => m.id === 'in-smoke-fire2')`, 'odpowiedzi ogniowe po SSE');
+    await waitFor(`document.querySelector('.fire-mark__lbl')?.textContent.includes('wykonane')`, 'status „wykonane” na znaczniku');
+    assert(await ev(`!document.querySelector('.fire-mark b')`), 'treść zgłoszenia w znaczniku zescapowana');
+    await ev(`window.__ks.controller.setLayerVisible('fires', false)`);
+    await waitFor(`!document.querySelector('.fire-mark')`, 'warstwa „Ogień” wyłączona');
+    await ev(`window.__ks.controller.setLayerVisible('fires', true)`);
+    await waitFor(`!!document.querySelector('.fire-mark')`, 'warstwa „Ogień” włączona');
+  });
+
+  await step('T51 nakładki: overlay w inboxie → lista w Warstwach, nowsza o tym samym id zastępuje, włącz/wyłącz, kopia do szkiców i do rozkazu', async () => {
+    const [lon, lat] = await state('s.scenario.map.center');
+    const feats = (tag) => [
+      { id: 'f1', kind: 'line', name: 'Granica ' + tag, color: 'blue', graphic: 'boundary', echelon: 'F', geometry: { type: 'LineString', coordinates: [[lon, lat], [lon + 0.05, lat + 0.03]] } },
+      { id: 'f2', kind: 'area', name: 'Rejon ' + tag, color: 'blue', graphic: 'assembly', geometry: { type: 'Polygon', coordinates: [[[lon, lat], [lon + 0.02, lat], [lon + 0.02, lat + 0.02], [lon, lat]]] } },
+    ];
+    const f = 'player/inbox/000.json';
+    const inbox = await readJson(f);
+    inbox.messages.push(
+      { id: 'in-smoke-ov1', channel: 'log', from: 'płk Test, dca', time: '2026-05-14T06:40:00+02:00', type: 'rozkaz', text: 'Granice wg nakładki v1.', overlay: { id: 'ov-smoke', name: 'Granice v1', features: feats('v1') } },
+      { id: 'in-smoke-ov2', channel: 'log', from: 'płk Test, dca', time: '2026-05-14T06:50:00+02:00', type: 'rozkaz', text: 'Granice wg nakładki v2 (zmiana).', overlay: { id: 'ov-smoke', name: 'Granice v2', features: feats('v2') } },
+    );
+    await writeJson(f, inbox);
+    await waitFor(`${store()}.messages.some((m) => m.id === 'in-smoke-ov2')`, 'nakładki po SSE');
+    assert((await state(`s.overlays.filter((o) => o.id === 'ov-smoke').length`)) === 1, 'jedna nakładka o tym id');
+    assert((await state(`s.overlays.find((o) => o.id === 'ov-smoke').name`)) === 'Granice v2', 'nowsza zastępuje starszą');
+    await ev(`window.__ks.controller.setPopover('layers')`);
+    await waitFor(`document.getElementById('layers').classList.contains('open') && !!document.querySelector('#lp-over [data-ov="ov:ov-smoke"]')`, 'nakładka na liście warstw');
+    assert(await ev(`document.querySelector('#lp-over [data-ov="ov:ov-smoke"]').textContent.includes('Granice v2')`), 'nazwa nakładki w panelu');
+    const drawn = `[...document.querySelectorAll('#map .tac-label')].some((e) => e.textContent.includes('v2'))`;
+    assert(!(await ev(drawn)), 'nakładka domyślnie wyłączona');
+    await ev(`document.querySelector('#lp-over [data-ov="ov:ov-smoke"] .lp-ovl__n').click()`);
+    await waitFor(drawn, 'nakładka narysowana po włączeniu');
+    await ev(`document.querySelector('#lp-over [data-ov="ov:ov-smoke"] .lp-ovl__n').click()`);
+    await waitFor(`!(${drawn})`, 'nakładka znika po wyłączeniu');
+    const notes0 = await state('s.notes.length');
+    await ev(`document.querySelector('#lp-over [data-ov-copy="ov-smoke"]:not([data-attach])').click()`);
+    await waitFor(`${store()}.notes.length === ${notes0 + 2}`, 'kopia nakładki w szkicach');
+    await ev(`document.querySelector('#lp-over [data-ov-copy="ov-smoke"][data-attach]').click()`);
+    await waitFor(`${store()}.notes.length === ${notes0 + 4}`, 'druga kopia (do rozkazu)');
+    assert(await state(`s.draft.attachIds.length >= 2`), 'kopia dołączona do szkicu wiadomości w aktywnym kanale');
+    await key('Escape');
   });
 
   await step('brak błędów JS w konsoli', async () => {

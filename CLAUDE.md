@@ -123,6 +123,7 @@ Gracz może adresować wiadomość (`player/outbox`) do **każdej jednostki wła
 
 - `time` mieści się w rozstrzyganym okresie (między turą N a N+1). Postacie mogą pisać same z siebie.
 - **Styl:** krótko i wojskowo, jak prawdziwe meldunki. Format meldunku z rozpoznania: *„BSP-1, 07:22, kolumna ~10 pojazdów gąsienicowych, droga Żytkiejmy–Wiżajny, kierunek płd., pewność średnia”*.
+- Rozkazy przełożonego mogą mieć `overlay: {id, name, features:[…]}` (graficzna nakładka ze szkicami; nowsza o tym samym `id` zastępuje starszą; format: docs/SCHEMA.md).
 - Każdy adresat rozkazu potwierdza go albo melduje problem. Przełożony może odmówić lub wydać niewygodny rozkaz.
 - `priority: "urgent"` tylko dla spraw pilnych (kontakt, straty, utrata łączności, rozkaz przełożonego).
 - **Formularze (T50):** postacie mogą odpowiadać w tych samych formatach co gracz (SPOTREP, LOGSTAT, FRAGO, zapotrzebowanie na ogień): obok czytelnego `text` dodaj `form: {kind, fields}` (pola: docs/SCHEMA.md); komunikator pokaże tabelkę. Gracz wysyła je w `player/outbox` z tym samym `form`.
@@ -137,6 +138,14 @@ Przy rozstrzyganiu tury czytaj `player/ccir.json` (PIR o przeciwniku, FFIR o wł
 - **Postacie mogą się mylić:** fałszywy alarm (odwołanie do CCIR, choć nie było spełnienia), przeoczenie albo opóźnienie. CCIR nie gwarantuje, że wiadomość przyjdzie; tarcie zostaje.
 - **SITREP i LOGSTAT** (`type: "meldunek"`, `report: "sitrep"|"logstat"`) wysyłają podwładni w rytmie `reportCycle`, o stałej godzinie odniesienia. Szablon (pięć punktów, krótko): *1. położenie, 2. stan (ludzie, sprzęt, DOS), 3. działania (ostatnie i bieżące), 4. zamiar, 5. potrzeby.* LOGSTAT kładzie nacisk na punkty 2 i 5 (DOS paliwa, amunicji, ogólnego; naprawy; dowóz).
 - **Brak albo spóźnienie meldunku cyklicznego jest informacją** (łączność, walka, kłopoty podwładnego): nie dopisuj wtedy „zastępczego” meldunku, pozwól graczowi wyciągnąć wniosek.
+
+## Zgłoszenia ognia (T52)
+
+Gracz zgłasza ogień formularzem `fire` (outbox, kanał = środek wsparcia). Sędzia odpowiada wiadomością inbox z polem `fire: {request_id, status, time, rounds?, reason?}` (format: docs/SCHEMA.md) i krótkim `text`: „Przyjęto.” / „Odmowa (powód).” / „Wykonano HH:MM, X pocisków, skutek nieznany.”.
+
+- Wykonanie zależy od: dostępności środka (stan, zajęcie innym zadaniem), amunicji (DOS), doręczenia zgłoszenia (łączność), zasięgu z katalogu wyposażenia (T46/T47) i priorytetów przełożonego (może zająć środek własnym zadaniem lub odmówić). Opóźnienie = czas przyjęcia + przygotowania, nie natychmiast.
+- Zużycie amunicji zapisz w `umpire/` (DOS), `rounds` w polu `fire` to liczba pocisków.
+- Pole `fire` nigdy nie niesie skutku. Skutek gracz poznaje wyłącznie z obserwacji (BSP, patrole, meldunki podwładnych), z opóźnieniem i niepełnie; prawdziwe straty wroga tylko w `umpire/`.
 
 ## Gazeter miejsc (`gazetteer.json`)
 

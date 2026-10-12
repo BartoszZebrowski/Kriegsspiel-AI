@@ -23,6 +23,8 @@ import { createLogisticsLayer } from './logistics.js';
 import { createOrderMode } from './order.js';
 import { createOrderPreview } from './order-preview.js';
 import { createCcirLayer } from './ccir.js';
+import { createOverlaysLayer } from './overlays.js';
+import { createFiresLayer } from './fires.js';
 
 // Rozmiar symbolu zależy od szczebla: im mniejsza jednostka, tym mniejszy znak.
 function unitSize(u) {
@@ -109,7 +111,9 @@ export function createMapView({ store, controller, root = document }) {
   // Rozkaz graficzny (T44): tryb zaznaczania i wskazywania oraz podgląd niewysłanych rozkazów.
   const order = createOrderMode({ store, controller, map, markers, root });
   createOrderPreview({ store, map });
+  createOverlaysLayer({ store, map }); // T51: nakładki od przełożonego (włączane w panelu warstw)
   createCcirLayer({ store, controller, map }); // T48: nakładka CCIR i wskazywanie geometrii dla edytora
+  createFiresLayer({ store, map }); // T52: warstwa „Ogień” (zgłoszenia i ich status)
 
   const markerEl = (id) => markers.get(id)?.getElement();
 

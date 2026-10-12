@@ -15,6 +15,7 @@ import { createMessaging } from './messaging.js';
 import { createLayout } from './layout.js';
 import { createOrders } from './orders.js';
 import { createCcir } from './ccir.js';
+import { createOverlays } from './overlays.js';
 import { createForms } from './forms.js';
 
 const nullStorage = { load: (_key, fallback) => fallback, save() {} };
@@ -67,6 +68,9 @@ export function createController({ store, api, storage = nullStorage, env = {} }
 
   // Formularze meldunków i rozkazów (T50): szablon w szkicu kanału, pola wskazywane na mapie.
   const forms = createForms({ store, S, setDraft });
+
+  // Nakładki od przełożonego (T51): kopiowanie do szkiców i dołączanie do rozkazu.
+  const overlays = createOverlays({ store, S, notify, saveNotes: (items) => saveNotes(items), setDraft });
 
   // Podświetla na mapie jednostkę wybranego kanału (gdy nic nie jest zaznaczone albo przy zmianie kanału).
   const syncSelectionToChannel = () => setSelection(S().channelUnit);
@@ -380,6 +384,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     ...orders,
     ...ccir,
     ...forms,
+    ...overlays,
     setDock, toggleDock, setMobile, setNarrow, toggleLeader, setAnimations, setReducedMotion,
     openBriefing, closeBriefing,
   };
