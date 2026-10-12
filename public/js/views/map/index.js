@@ -126,6 +126,10 @@ export function createMapView({ store, controller, root = document }) {
       offset: [0, -12],
     });
     marker.on('click', () => controller.selectEntity(item.id, { pan: false }));
+    // Dwuklik na jednostce własnej otwiera jej kanał w komunikatorze.
+    marker.on('dblclick', () => {
+      if (S().turn?.units?.some((u) => u.id === item.id)) controller.openUnitChannel(item.id);
+    });
     marker.on('mouseover', () => controller.hoverUnit(item.id));
     marker.on('mouseout', () => controller.hoverUnit(null));
     group.addLayer(marker);

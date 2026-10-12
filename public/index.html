@@ -201,9 +201,8 @@
         <button class="ibtn on" data-tip="Linia łączności z jednostką na mapie" id="m-leader" aria-label="Linia łączności z jednostką"><svg class="i s"><use href="#i-line"/></svg></button>
         <button class="ibtn" data-tip="Szukaj (Ctrl K)" id="m-search" aria-label="Szukaj"><svg class="i s"><use href="#i-search"/></svg></button></div>
       <div class="m-chs">
-        <div class="m-chs-scroll" id="chtabs" role="tablist"></div>
-        <button class="m-more" id="m-more" data-tip="Wszystkie kanały" data-pos="l" aria-label="Wszystkie kanały"><svg class="i"><use href="#i-chevd"/></svg></button>
-        <div class="pop" id="chlist"></div>
+        <input class="m-chs-search" id="ch-search" type="search" placeholder="Szukaj kanału (np. kompania)…" autocomplete="off" aria-label="Szukaj kanału">
+        <div class="m-chs-list" id="chtabs" role="listbox" aria-label="Kanały"></div>
       </div>
       <div class="m-head" id="m-head"></div>
       <div id="thread"></div>
@@ -215,6 +214,7 @@
           <button type="button" class="sw" id="sw-urg" data-tip="Oznacz jako pilne" aria-pressed="false"><svg class="i s"><use href="#i-zap"/></svg>Pilne</button>
         </div>
         <div class="comp-box">
+          <div class="comp-warn" id="compose-warn" hidden></div>
           <textarea id="compose-text" maxlength="4000" placeholder="Treść rozkazu… użyj @ aby wskazać jednostkę, # aby wskazać miejsce"></textarea>
           <div class="pop" id="mention-pop" role="listbox"></div>
           <div class="comp-bar">

@@ -5,7 +5,8 @@
 import { escapeHtml as e } from '../domain/markdown.js';
 import { linkify } from '../domain/linkify.js';
 import { formatClock, formatDay, dayKey, formatDtgShort, formatGameTime, addMinutes } from '../domain/format.js';
-import { parseSender, messageTags, groupChannels, tabLabel } from '../domain/messages.js';
+import { parseSender, messageTags, tabLabel } from '../domain/messages.js';
+import { draftType, foreignUnitMentions, unknownPlaceNames, channelListModel } from '../domain/compose.js';
 import { channelUnitId } from '../domain/orbat.js';
 import { activeTrigger, mentionSuggestions, applySuggestion } from '../domain/mentions.js';
 import { symbolSvg } from '../lib/symbols.js';
@@ -35,8 +36,8 @@ export function createMessengerView({ store, controller, root = document }) {
   const $ = (id) => root.getElementById(id);
   const els = {
     tabs: $('chtabs'),
-    more: $('m-more'),
-    list: $('chlist'),
+    search: $('ch-search'),
+    warn: $('compose-warn'),
     head: $('m-head'),
     thread: $('thread'),
     form: $('compose'),
@@ -54,10 +55,14 @@ export function createMessengerView({ store, controller, root = document }) {
   };
   const S = () => store.get();
 
-  // Stan lokalny widoku (szkic wiadomości): rodzaj, „Pilne”, załączniki, menu.
-  let type = 'rozkaz';
-  let urgent = false;
-  let attachIds = [];
+  // Szkic wiadomości (tekst, rodzaj, „Pilne”, załączniki) żyje w store, osobno dla każdego kanału.
+  // Stan lokalny widoku: zapytanie na liście kanałów, oczekująca pinezka, podpowiedzi.
+  const draft = () => S().draft;
+  const type = () => draftType(S().draft, S().channel);
+  const patchDraft = (patch) => controller.setDraft(S().activeChannel, patch);
+  let channelQuery = '';
+  let pendingPin = null; // { channel } — pinezka rysowana na prośbę podpowiedzi; po zapisie trafia jako załącznik
+  let knownNoteIds = new Set();
   const attachmentsById = new Map();
   let shownChannel = null; // kanał, którego wątek jest teraz wyrenderowany (do decyzji o przewijaniu)
   let forceBottom = false;
@@ -75,44 +80,25 @@ export function createMessengerView({ store, controller, root = document }) {
     return roleIcon(c) || e(tabLabel(c).slice(0, 3));
   }
 
-  // ---------- pasek kanałów ----------
-  function tabText(c) {
-    return c.kind === 'superior' || c.kind === 'recon' || c.kind === 'logistics' || c.kind === 'other' ? c.short || c.name : c.name;
-  }
-
+  // ---------- lista kanałów (stale na wierzchu: przełożony, sztab, sąsiedzi, podwładni) ----------
   function renderTabs(s) {
-    const byId = new Map(s.channels.map((c) => [c.id, c]));
-    const ids = s.pinned.filter((id) => byId.has(id));
-    if (s.channel && !ids.includes(s.channel.id)) ids.push(s.channel.id);
-    els.tabs.innerHTML = ids
-      .map((id) => {
-        const c = byId.get(id);
-        const n = s.unread.byChannel[id] || 0;
-        const on = s.channel?.id === id;
-        return `<button type="button" class="chtab k-${c.kind}${on ? ' on' : ''}" role="tab" aria-selected="${on}"${on ? ' data-leader-anchor' : ''} data-ch="${e(id)}" title="${e(c.description || c.name)}"><span class="ch-ic">${channelGlyph(s, c, 14)}</span>${e(tabText(c))}${n ? `<span class="ubadge${c.kind === 'superior' ? ' urg' : ''}">${n}</span>` : ''}</button>`;
-      })
-      .join('');
-    els.tabs.querySelector('.on')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    const groups = channelListModel(s.channels, { query: channelQuery, activeId: s.channel?.id ?? null });
+    els.tabs.innerHTML = groups.length
+      ? groups
+          .map(
+            (g) =>
+              `<div class="cl-g cap">${g.title}</div>${g.channels
+                .map((c) => {
+                  const n = s.unread.byChannel[c.id] || 0;
+                  const on = s.channel?.id === c.id;
+                  return `<div class="cl-i k-${c.kind}${on ? ' on' : ''}" role="option" aria-selected="${on}" tabindex="0"${on ? ' data-leader-anchor' : ''} data-ch="${e(c.id)}" title="${e(c.description || c.name)}"><span class="ch-ic">${channelGlyph(s, c, 16)}</span><span>${e(c.name)}</span>${n ? `<span class="ubadge${c.kind === 'superior' ? ' urg' : ''}">${n}</span>` : ''}</div>`;
+                })
+                .join('')}`,
+          )
+          .join('')
+      : '<div class="attach__empty">Brak kanałów pasujących do wyszukiwania.</div>';
+    els.tabs.querySelector('.on')?.scrollIntoView({ block: 'nearest' });
   }
-
-  function renderList(s) {
-    els.list.innerHTML = groupChannels(s.channels)
-      .map(
-        (g) =>
-          `<div class="cl-g cap">${g.title}</div>${g.channels
-            .map((c) => {
-              const n = s.unread.byChannel[c.id] || 0;
-              return `<div class="cl-i${s.channel?.id === c.id ? ' on' : ''}" role="option" tabindex="0" data-ch="${e(c.id)}"><span class="ch-ic">${channelGlyph(s, c, 16)}</span><span>${e(c.name)}</span>${n ? `<span class="ubadge">${n}</span>` : ''}</div>`;
-            })
-            .join('')}`,
-      )
-      .join('');
-  }
-
-  const setList = (on) => {
-    els.list.classList.toggle('open', on);
-    els.more.classList.toggle('on', on);
-  };
 
   // ---------- nagłówek kanału ----------
   function renderHead(s) {
@@ -235,22 +221,52 @@ export function createMessengerView({ store, controller, root = document }) {
   }
 
   function setType(t, { fill = true } = {}) {
-    type = t;
-    for (const b of els.types.querySelectorAll('button')) b.classList.toggle('on', b.dataset.ty === t);
-    els.text.placeholder = PLACEHOLDERS[t];
-    if (fill && (!els.text.value.trim() || isTemplate(els.text.value))) els.text.value = TEMPLATES[t];
+    const patch = { type: t };
+    const text = draft().text;
+    if (fill && (!text.trim() || isTemplate(text))) patch.text = TEMPLATES[t];
+    patchDraft(patch);
   }
 
-  function setUrgent(on) {
-    urgent = on;
-    els.urgent.classList.toggle('on', on);
-    els.urgent.setAttribute('aria-pressed', String(on));
+  const setUrgent = (on) => patchDraft({ urgent: on });
+
+  // Przenosi szkic ze store do pól formularza (tylko gdy się różnią — bez skakania kursora).
+  function syncDraft(s) {
+    const d = s.draft;
+    const ty = draftType(d, s.channel);
+    if (els.text.value !== d.text) els.text.value = d.text;
+    for (const b of els.types.querySelectorAll('button')) b.classList.toggle('on', b.dataset.ty === ty);
+    els.text.placeholder = PLACEHOLDERS[ty];
+    els.urgent.classList.toggle('on', d.urgent);
+    els.urgent.setAttribute('aria-pressed', String(d.urgent));
+    renderChips();
+    renderWarn(s);
+  }
+
+  // Ostrzeżenia pod polem (nieblokujące): inna własna jednostka w treści rozkazu; nazwa spoza gazetera.
+  function renderWarn(s) {
+    const text = s.draft.text;
+    const units = s.turn?.units ?? [];
+    const parts = [];
+    if (s.channel?.kind === 'subordinate' && !s.archive) {
+      const others = foreignUnitMentions(text, s.channelUnit, units);
+      if (others.length) {
+        parts.push(`<div class="warn warn--unit">${ic('zap', 's')}<span>Treść wymienia ${others.map((u) => `„${e(u.name)}”`).join(', ')}, a adresatem jest ${e(s.channel.name)}. Czy to właściwy adresat?</span></div>`);
+      }
+    }
+    if (s.channel && !s.archive) {
+      const ctx = { places: s.places, units, contacts: s.turn?.contacts ?? [], assets: s.turn?.assets ?? [] };
+      for (const p of unknownPlaceNames(text, ctx)) {
+        parts.push(`<div class="warn warn--place">${ic('pin', 's')}<span>„${e(p.text)}” nie ma w gazeterze.</span><button type="button" class="sw" data-pin="${e(p.text)}">Wskaż na mapie</button></div>`);
+      }
+    }
+    els.warn.innerHTML = parts.join('');
+    els.warn.hidden = !parts.length;
   }
 
   function renderChips() {
     const { notes } = S();
-    attachIds = attachIds.filter((id) => notes.some((n) => n.id === id));
-    els.chips.innerHTML = attachIds
+    const ids = draft().attachIds.filter((id) => notes.some((n) => n.id === id));
+    els.chips.innerHTML = ids
       .map((id) => {
         const n = notes.find((x) => x.id === id);
         return `<span class="att att--sel">${ic('clip', 's')}${e(n.name)}<a role="button" tabindex="0" data-unattach="${e(id)}" aria-label="Usuń załącznik">${ic('x', 's')}</a></span>`;
@@ -264,7 +280,7 @@ export function createMessengerView({ store, controller, root = document }) {
       `<div class="cl-g cap">Dołącz szkic z mapy</div>` +
       (notes.length
         ? notes
-            .map((n) => `<label class="cl-i attach__item"><input type="checkbox" value="${e(n.id)}"${attachIds.includes(n.id) ? ' checked' : ''}> <span>${e(n.name)}</span></label>`)
+            .map((n) => `<label class="cl-i attach__item"><input type="checkbox" value="${e(n.id)}"${draft().attachIds.includes(n.id) ? ' checked' : ''}> <span>${e(n.name)}</span></label>`)
             .join('')
         : '<div class="attach__empty">Brak szkiców. Narysuj coś na mapie narzędziami po lewej.</div>');
   }
@@ -298,28 +314,33 @@ export function createMessengerView({ store, controller, root = document }) {
   });
   els.attachMenu.addEventListener('change', (ev) => {
     const id = ev.target.value;
-    attachIds = ev.target.checked ? [...new Set([...attachIds, id])] : attachIds.filter((x) => x !== id);
-    renderChips();
+    const cur = draft().attachIds;
+    patchDraft({ attachIds: ev.target.checked ? [...new Set([...cur, id])] : cur.filter((x) => x !== id) });
   });
   els.tplMenu.addEventListener('click', (ev) => {
     const item = ev.target.closest('[data-tpl]');
     if (!item) return;
-    setType(item.dataset.tpl, { fill: false });
-    els.text.value = TEMPLATES[item.dataset.tpl];
+    patchDraft({ type: item.dataset.tpl, text: TEMPLATES[item.dataset.tpl] });
     closeMenus();
     els.text.focus();
   });
   els.chips.addEventListener('click', (ev) => {
     const btn = ev.target.closest('[data-unattach]');
     if (!btn) return;
-    attachIds = attachIds.filter((x) => x !== btn.dataset.unattach);
-    renderChips();
+    patchDraft({ attachIds: draft().attachIds.filter((x) => x !== btn.dataset.unattach) });
   });
   els.types.addEventListener('click', (ev) => {
     const b = ev.target.closest('button[data-ty]');
     if (b) setType(b.dataset.ty);
   });
-  els.urgent.addEventListener('click', () => setUrgent(!urgent));
+  els.urgent.addEventListener('click', () => setUrgent(!draft().urgent));
+  els.warn.addEventListener('click', (ev) => {
+    const b = ev.target.closest('[data-pin]');
+    if (!b || !S().channel) return;
+    pendingPin = { channel: S().channel.id };
+    controller.notify(`Wskaż „${b.dataset.pin}” na mapie: postawiona pinezka trafi do wiadomości jako załącznik`);
+    controller.command('tool', 'point');
+  });
 
   // ---------- podpowiedzi @ i # ----------
   function closeMention() {
@@ -362,11 +383,13 @@ export function createMessengerView({ store, controller, root = document }) {
     const res = applySuggestion(els.text.value, trig, caret, sg);
     els.text.value = res.text;
     els.text.setSelectionRange(res.caret, res.caret);
+    patchDraft({ text: res.text });
     closeMention();
     els.text.focus();
   }
 
   els.text.addEventListener('input', () => {
+    patchDraft({ text: els.text.value });
     sugIndex = 0;
     updateMention();
   });
@@ -418,14 +441,9 @@ export function createMessengerView({ store, controller, root = document }) {
     }
     els.send.disabled = true;
     forceBottom = true;
-    const msg = await controller.sendMessage(text, attachIds, { type, priority: urgent ? 'urgent' : 'normal' });
-    if (msg) {
-      els.text.value = '';
-      attachIds = [];
-      setUrgent(false);
-      renderChips();
-      closeMention();
-    }
+    const d = draft();
+    const msg = await controller.sendMessage(text, d.attachIds, { type: type(), priority: d.urgent ? 'urgent' : 'normal' });
+    if (msg) closeMention(); // kontroler czyści szkic kanału, widok synchronizuje pola
     renderCompose(S());
   }
   els.form.addEventListener('submit', (ev) => {
@@ -435,32 +453,35 @@ export function createMessengerView({ store, controller, root = document }) {
 
   // ---------- zdarzenia użytkownika → intencje ----------
   els.tabs.addEventListener('click', (ev) => {
-    const tab = ev.target.closest('[data-ch]');
-    if (tab) controller.selectChannel(tab.dataset.ch);
-  });
-  els.tabs.addEventListener('auxclick', (ev) => {
-    const tab = ev.target.closest('[data-ch]');
-    if (tab && ev.button === 1) controller.unpinChannel(tab.dataset.ch);
-  });
-  els.more.addEventListener('click', (ev) => {
-    ev.stopPropagation();
-    setList(!els.list.classList.contains('open'));
-  });
-  els.list.addEventListener('click', (ev) => {
     const item = ev.target.closest('[data-ch]');
-    if (!item) return;
-    controller.selectChannel(item.dataset.ch);
-    setList(false);
+    if (item) controller.selectChannel(item.dataset.ch);
+  });
+  els.tabs.addEventListener('keydown', (ev) => {
+    const item = ev.target.closest('[data-ch]');
+    if (item && (ev.key === 'Enter' || ev.key === ' ')) {
+      ev.preventDefault();
+      controller.selectChannel(item.dataset.ch);
+    }
+  });
+  els.search.addEventListener('input', () => {
+    channelQuery = els.search.value;
+    renderTabs(S());
+  });
+  els.search.addEventListener('keydown', (ev) => {
+    if (ev.key === 'Enter') {
+      const first = els.tabs.querySelector('[data-ch]');
+      if (first) controller.selectChannel(first.dataset.ch);
+    } else if (ev.key === 'Escape' && els.search.value) {
+      ev.stopPropagation();
+      els.search.value = channelQuery = '';
+      renderTabs(S());
+    }
   });
   document.addEventListener('click', (ev) => {
-    if (!ev.target.closest('#chlist') && !ev.target.closest('#m-more')) setList(false);
     if (!ev.target.closest('.comp-bar')) closeMenus();
   });
   document.addEventListener('keydown', (ev) => {
-    if (ev.key === 'Escape') {
-      setList(false);
-      closeMenus();
-    }
+    if (ev.key === 'Escape') closeMenus();
   });
 
   els.head.addEventListener('click', () => controller.focusEntity(S().channelUnit));
@@ -483,16 +504,26 @@ export function createMessengerView({ store, controller, root = document }) {
   });
 
   // ---------- subskrypcje ----------
-  store.subscribe(['channels', 'channel', 'unread', 'pinned', 'turn'], (s) => {
+  store.subscribe(['channels', 'channel', 'unread', 'turn'], (s) => {
     renderTabs(s);
-    renderList(s);
     renderHead(s);
   }, { immediate: true });
   store.subscribe(['channel', 'visibleMessages', 'archive', 'currentTurn', 'scenario', 'turn', 'places', 'fresh'], (s) => {
     if (s.scenario) renderThread(s);
   }, { immediate: true });
   store.subscribe(['archive', 'channel', 'currentTurn'], renderCompose, { immediate: true });
-  store.subscribe('notes', () => {
+  store.subscribe(['draft', 'channel', 'turn', 'places', 'archive'], syncDraft, { immediate: true });
+  knownNoteIds = new Set(S().notes.map((n) => n.id));
+  store.subscribe('notes', ({ notes }) => {
+    // Pinezka narysowana na prośbę podpowiedzi „wskaż na mapie” → załącznik szkicu kanału, z którego wyszła.
+    const added = notes.filter((n) => !knownNoteIds.has(n.id));
+    knownNoteIds = new Set(notes.map((n) => n.id));
+    if (pendingPin && added.length) {
+      const target = pendingPin.channel;
+      pendingPin = null;
+      const cur = S().drafts[target]?.attachIds ?? [];
+      controller.setDraft(target, { attachIds: [...new Set([...cur, ...added.map((n) => n.id)])] });
+    }
     renderChips();
     if (els.attachMenu.classList.contains('open')) renderAttachMenu();
   });
@@ -502,5 +533,4 @@ export function createMessengerView({ store, controller, root = document }) {
     if (command.arg?.type) setType(command.arg.type);
     els.text.focus();
   });
-  setType('rozkaz', { fill: false });
 }

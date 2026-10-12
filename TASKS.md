@@ -477,7 +477,7 @@ Sąsiednie brygady (np. `zt-mamry`, `zt-biebrza`) mają własne pododdziały w p
 
 Źródło: [docs/WNIOSKI-PRZESMYK-1.md](docs/WNIOSKI-PRZESMYK-1.md) (18 tur, 2026-10-12).
 
-## T33 — Komunikator wygodniejszy ⬜
+## T33 — Komunikator wygodniejszy ✅
 **WA**
 1. Dwuklik na jednostkę (mapa, hierarchia, karta) otwiera jej kanał w komunikatorze.
 2. Szkic wiadomości jest osobny dla każdego kanału: po przełączeniu adresata niewysłany tekst zostaje przy poprzednim i wraca po powrocie.

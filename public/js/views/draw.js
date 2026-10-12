@@ -181,6 +181,28 @@ export function createDrawView({ store, controller, surface, root = document }) 
     barEl.title = readOnly ? 'Archiwum — szkice tylko do podglądu (miarka działa)' : '';
   }
 
+  // Grot strzałki widoczny już podczas rysowania: od ostatniego postawionego punktu do kursora.
+  let drawingLayer = null;
+  let drawHead = null;
+  const clearDrawHead = () => {
+    if (drawHead) map.removeLayer(drawHead);
+    drawHead = null;
+    drawingLayer = null;
+  };
+  map.on('pm:drawstart', (ev) => {
+    drawingLayer = ev.workingLayer || null;
+  });
+  map.on('mousemove', (ev) => {
+    if (tool !== 'arrow' || !drawingLayer) return;
+    const placed = [].concat(drawingLayer.getLatLngs?.() ?? []).flat();
+    const cursor = map.latLngToLayerPoint(ev.latlng);
+    const from = [...placed].reverse().find((ll) => map.latLngToLayerPoint(ll).distanceTo(cursor) > 4);
+    if (!from) return drawHead?.setLatLngs([]);
+    const head = headLatLngs([from, ev.latlng]);
+    if (drawHead) drawHead.setLatLngs(head);
+    else drawHead = L.polyline(head, { color: '#ffd54a', weight: 3, interactive: false }).addTo(map);
+  });
+
   function stopTool() {
     if (tool && tool !== 'measure') {
       map.pm?.disableDraw();
@@ -188,6 +210,7 @@ export function createDrawView({ store, controller, surface, root = document }) 
       setTimeout(() => map.doubleClickZoom.enable(), 0);
     }
     if (tool === 'measure') endMeasure();
+    clearDrawHead();
     tool = null;
     presetGraphic = null;
     updateToolbar();

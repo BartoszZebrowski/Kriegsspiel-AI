@@ -1,6 +1,6 @@
 /* Komunikator: pasek kanałów, nagłówek, karty wiadomości, wzmianki, komponowanie */
 /* ---- komunikator ---- */
-.m-chs{display:flex;align-items:stretch;gap:0;border-bottom:1px solid var(--line);background:var(--bg-1);flex:none;position:relative}
+.m-chs{display:flex;flex-direction:column;align-items:stretch;gap:0;border-bottom:1px solid var(--line);background:var(--bg-1);flex:none;position:relative}
 .m-chs-scroll{display:flex;gap:4px;overflow-x:auto;padding:8px 16px 8px 8px;flex:1;scrollbar-width:none;min-width:0;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
 .m-chs-scroll::-webkit-scrollbar{display:none}
 .chtab{display:flex;align-items:center;gap:6px;height:28px;padding:0 9px 0 6px;border-radius:var(--r-3);color:var(--t-2);white-space:nowrap;border:1px solid transparent;flex:none}
@@ -115,3 +115,17 @@
 .cl-i .ubadge{flex:none}
 .hint kbd+kbd{margin-left:2px}
 .hint .mono{margin-right:6px}
+
+/* Lista kanałów stale na wierzchu + wyszukiwanie */
+.m-chs-search{margin:6px 8px 0;height:26px;padding:0 8px;border-radius:var(--r-2);border:1px solid var(--line-2);background:var(--bg-0);color:var(--t-1);font-size:12px}
+.m-chs-search:focus{outline:0;border-color:var(--accent)}
+.m-chs-list{max-height:156px;overflow-y:auto;padding:2px 6px 6px}
+.m-chs-list .cl-g{padding:6px 8px 2px}
+.m-chs-list .cl-i{height:26px}
+.m-chs-list .cl-i.on{background:var(--bg-4);color:var(--t-1)}
+.m-chs-list .cl-i:focus-visible{outline:2px solid var(--focus)}
+/* Ostrzeżenia pod polem wiadomości (nieblokujące) */
+.comp-warn{display:flex;flex-direction:column;gap:2px;padding:4px 8px;border-bottom:1px solid var(--line);font-size:11px}
+.comp-warn[hidden]{display:none}
+.comp-warn .warn{display:flex;align-items:center;gap:6px;color:var(--warn,#e0b040)}
+.comp-warn .warn span{flex:1}

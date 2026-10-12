@@ -6,6 +6,7 @@
 // - Powiadomienia zagnieżdżone (set wywołany z subskrybenta) są kolejkowane i wykonywane po bieżącej turze.
 import { mergeChannels, channelUnitId, detailLevel, unreadByUnit } from '../domain/orbat.js';
 import { visibleMessages, unreadCounts, outboxCount } from '../domain/messages.js';
+import { getDraft } from '../domain/compose.js';
 
 // Warstwy mapy: sytuacja (jednostki, kontakty…), szkice, etykiety i nakładki kafelkowe (domyślnie wyłączone).
 export const DEFAULT_BASEMAP = 'Ciemna (Esri)';
@@ -32,6 +33,7 @@ export function initialState() {
     layers: defaultLayers(),
     basemap: DEFAULT_BASEMAP, // nazwa podkładu mapy
     activeChannel: null, // id wybranego kanału komunikatora
+    drafts: {}, // szkice wiadomości per kanał: { [channelId]: { text, type, urgent, attachIds } } (domain/compose.js)
     pinned: [], // id kanałów przypiętych na pasku komunikatora
     fresh: new Set(), // wiadomości nieprzeczytane w chwili otwarcia kanału (separator „NOWE”)
     read: new Set(), // id przeczytanych wiadomości
@@ -52,6 +54,7 @@ export const DERIVED = [
   { key: 'archive', deps: ['viewTurn', 'currentTurn'], fn: (s) => s.viewTurn !== s.currentTurn },
   { key: 'channels', deps: ['scenario', 'turn'], fn: (s) => mergeChannels(s.scenario?.channels, s.turn?.units || []) },
   { key: 'channel', deps: ['channels', 'activeChannel'], fn: (s) => s.channels.find((c) => c.id === s.activeChannel) ?? null },
+  { key: 'draft', deps: ['drafts', 'activeChannel'], fn: (s) => getDraft(s.drafts, s.activeChannel) },
   { key: 'channelUnit', deps: ['channel'], fn: (s) => channelUnitId(s.channel) },
   { key: 'visibleMessages', deps: ['messages', 'archive', 'viewTurn'], fn: (s) => visibleMessages(s.messages, s) },
   { key: 'unread', deps: ['channels', 'visibleMessages', 'read'], fn: (s) => unreadCounts(s.channels, s.visibleMessages, s.read) },

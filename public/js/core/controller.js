@@ -8,6 +8,7 @@
 import { findEntity } from '../domain/entities.js';
 import { indexById, isUnitVisible, minLevelFor, DETAIL_LEVELS, channelForUnit } from '../domain/orbat.js';
 import { unreadIds, newIncoming, defaultPinned, parseSender } from '../domain/messages.js';
+import { updateDraft, clearDraft } from '../domain/compose.js';
 import { buildPlan, planIsEmpty, isSequential, ANIMATION_MS } from '../domain/motion.js';
 import { DEFAULT_BASEMAP, TILE_OVERLAYS, defaultLayers } from './store.js';
 
@@ -401,6 +402,13 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     syncSelectionToChannel();
   }
 
+  // Szkic wiadomości kanału (tekst, rodzaj, pilne, załączniki) — osobny dla każdego kanału, tylko w pamięci.
+  function setDraft(channelId, patch) {
+    if (!channelId) return;
+    store.set({ drafts: updateDraft(S().drafts, channelId, patch) });
+  }
+  const clearChannelDraft = (channelId) => store.set({ drafts: clearDraft(S().drafts, channelId) });
+
   function unpinChannel(id) {
     const pinned = S().pinned.filter((x) => x !== id);
     storage.save(keyOf('pinned'), pinned);
@@ -438,7 +446,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     msgEpoch++;
     try {
       const msg = await api.send(s.channel.id, body, attachments, meta);
-      store.set({ messages: [...S().messages, { ...msg, direction: 'out' }] });
+      store.set({ messages: [...S().messages, { ...msg, direction: 'out' }], drafts: clearDraft(S().drafts, s.channel.id) });
       return msg;
     } catch (err) {
       notify(err.message, true);
@@ -539,7 +547,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     selectEntity, focusEntity, clearSelection, hoverUnit, mentionClick, showAttachment, flyToPlace,
     setDetail, mapZoomChanged, setLayerVisible, setBasemap,
     command, setPopover, togglePopover, openOmnibox, closeOmnibox, runCommand,
-    selectChannel, ensureActiveChannel, unpinChannel, openUnitChannel, openChannel, sendMessage, withdrawMessage,
+    selectChannel, setDraft, clearChannelDraft, ensureActiveChannel, unpinChannel, openUnitChannel, openChannel, sendMessage, withdrawMessage,
     saveNotes,
     setDock, toggleDock, setMobile, setNarrow, toggleLeader, setAnimations, setReducedMotion,
     openBriefing, closeBriefing,

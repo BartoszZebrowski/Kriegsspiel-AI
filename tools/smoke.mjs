@@ -75,6 +75,11 @@ for (const sub of ['player/turns', 'player/inbox', 'umpire/turns']) {
     if (/^\d{3}\.json$/.test(name) && name !== '000.json') await fs.rm(path.join(scenarioDir, sub, name), { force: true });
   }
 }
+// Trasa zakłada grę w toku (np. „Po bitwie” zablokowane), a kopia bywa scenariuszem zakończonym — ustawiamy status w kopii.
+const scnPath = path.join(scenarioDir, 'scenario.json');
+const scn = JSON.parse(await fs.readFile(scnPath, 'utf8'));
+scn.status = 'active';
+await fs.writeFile(scnPath, JSON.stringify(scn, null, 2));
 await fs.rm(path.join(scenarioDir, 'player', 'outbox'), { recursive: true, force: true });
 await fs.rm(path.join(scenarioDir, 'player', 'notes'), { recursive: true, force: true });
 await fs.mkdir(profileDir, { recursive: true });
@@ -389,7 +394,8 @@ try {
   });
 
   await step('komunikator: pasek kanałów, nieprzeczytane, wątek, linia do jednostki, popover wszystkich kanałów', async () => {
-    assert((await ev(`document.querySelectorAll('#chtabs .chtab').length`)) >= 4, 'pasek przypiętych kanałów');
+    assert((await ev(`document.querySelectorAll('#chtabs .cl-i').length`)) >= 4, 'lista kanałów (przełożony, sztab, podwładni)');
+    assert(await ev(`!!document.getElementById('ch-search')`), 'pole wyszukiwania kanałów');
     const total = await state('s.unread.total');
     assert(total > 0, 'są nieprzeczytane wiadomości w innych kanałach');
     assert((await ev(`document.getElementById('cnt-unread').textContent`)).startsWith(String(total)), 'licznik nowych w nagłówku panelu');
@@ -399,7 +405,7 @@ try {
     assert(await ev(`!!document.querySelector('#thread .msg.urgent .tag.urg')`), 'wiadomość pilna ma znacznik PILNE');
     assert(await ev(`/Nowicki/.test(document.querySelector('#thread .msg .mh b').textContent) && !!document.querySelector('#thread .msg .mh .role')`), 'nadawca i rola');
     assert(await ev(`/^\\d{6}[A-Z] · T\\d+$/.test(document.querySelector('#thread .msg .mh time').textContent)`), 'DTG i tura w nagłówku karty');
-    assert(await ev(`!!document.querySelector('#chtabs .chtab.on[data-leader-anchor]')`), 'kotwica linii na aktywnej karcie kanału');
+    assert(await ev(`!!document.querySelector('#chtabs .cl-i.on[data-leader-anchor]')`), 'kotwica linii na aktywnej karcie kanału');
     await clickSel('#m-head');
     assert((await state('s.focus && s.focus.kind')) === 'entity', 'klik w nagłówek centruje mapę na jednostce');
     await sleep(500);
@@ -409,14 +415,16 @@ try {
     await sleep(200);
     assert(await ev(`document.querySelector('.leader').style.display === 'none'`), 'linia ukryta przyciskiem');
     await clickSel('#m-leader');
-    // popover wszystkich kanałów
-    await clickSel('#m-more');
-    assert(await ev(`document.getElementById('chlist').classList.contains('open') && document.querySelectorAll('#chlist .cl-i').length > 8`), 'lista wszystkich kanałów');
-    assert(await ev(`[...document.querySelectorAll('#chlist .cl-g')].map((e) => e.textContent).includes('Sąsiedzi')`), 'grupa Sąsiedzi');
-    await clickSel('#chlist [data-ch="zt-mamry"]');
-    await waitFor(`${store()}.activeChannel === 'zt-mamry'`, 'wybór kanału z popovera');
-    assert(await ev(`!!document.querySelector('#chtabs [data-ch="zt-mamry"]')`), 'kanał z popovera przypięty na pasku');
-    assert(await ev(`!document.getElementById('chlist').classList.contains('open')`), 'popover zamknięty po wyborze');
+    // wyszukiwanie kanałów: automatyczne kanały (kompanie, plutony) tylko po wpisaniu frazy
+    assert(await state(`s.channels.some((c) => c.auto)`), 'scenariusz ma kanały automatyczne');
+    assert(await ev(`[...document.querySelectorAll('#chtabs .cl-g')].map((e) => e.textContent).includes('Sąsiedzi')`), 'grupa Sąsiedzi na liście');
+    const before = await ev(`document.querySelectorAll('#chtabs .cl-i').length`);
+    await ev(`(() => { const i = document.getElementById('ch-search'); i.value = 'kompania'; i.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    assert((await ev(`document.querySelectorAll('#chtabs .cl-i').length`)) !== before, 'wyszukiwanie zmienia listę kanałów');
+    await ev(`(() => { const i = document.getElementById('ch-search'); i.value = ''; i.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    assert((await ev(`document.querySelectorAll('#chtabs .cl-i').length`)) === before, 'wyczyszczenie przywraca listę');
+    await clickSel('#chtabs [data-ch="zt-mamry"]');
+    await waitFor(`${store()}.activeChannel === 'zt-mamry'`, 'wybór kanału sąsiada z listy');
   });
 
   await step('komunikator: wzmianki klikalne jako chipy (miejsce, jednostka)', async () => {

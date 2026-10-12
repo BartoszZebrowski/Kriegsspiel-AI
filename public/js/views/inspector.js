@@ -120,6 +120,12 @@ export function createInspectorView({ store, controller, root = document }) {
       }
     }
   });
+  // Dwuklik na nagłówku karty albo na chipie jednostki otwiera jej kanał w komunikatorze.
+  body.addEventListener('dblclick', (ev) => {
+    const chip = ev.target.closest('[data-unit]');
+    const id = chip ? chip.dataset.unit : ev.target.closest('.insp-top') ? S().selection?.id : null;
+    if (id && S().turn?.units?.some((u) => u.id === id)) controller.openUnitChannel(id);
+  });
   body.addEventListener('keydown', (ev) => {
     const chip = ev.target.closest?.('[data-unit]');
     if (chip && (ev.key === 'Enter' || ev.key === ' ')) {
