@@ -523,7 +523,7 @@ Sąsiednie brygady (np. `zt-mamry`, `zt-biebrza`) mają własne pododdziały w p
 - [A] Tura bez ruchu nie ma `track`; tura z ruchem ma `track` od starej do nowej pozycji; pola sędziego nie trafiają do gracza.
 - [A] `pick --check-water` przy niedostępnym Overpass kończy się w < 30 s z ostrzeżeniem.
 
-## T37 — Walidator: spójność i realizm ⬜
+## T37 — Walidator: spójność i realizm ✅
 **WA** (uwagi, nie błędy):
 1. Suma `personnel`/`equipment` plutonów różna od stanu kompanii.
 2. Jednostka w wodzie (z cache `terrain.mjs`, bez sieci).

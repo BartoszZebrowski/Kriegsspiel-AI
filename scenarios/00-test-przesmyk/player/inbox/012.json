@@ -51,20 +51,20 @@
       "text": "05:10 salwa BM-21 (ok. 12 wyrzutni) na skrzyżowanie, korekta z Orlana (widoczny od 04:50). 1 Leopard uszkodzony, 5 rannych w 1k. Kierunek ognia SE. Orlan nad nami — proszę o środki OPL."
     },
     {
-      "id": "in-012-07",
-      "channel": "s2",
-      "from": "kpt. Wrona, S2",
-      "time": "2026-05-15T05:32:00+02:00",
-      "type": "meldunek",
-      "text": "WR-40 w stanowisku w Suwałkach, gotowa od 05:30 — jedna salwa na wyrzutnię. Proponuję cel: park zaopatrzenia SE od Gib albo zgrupowanie w Gibach. Czekam na decyzję."
-    },
-    {
       "id": "in-012-08",
       "channel": "1bzmot",
       "from": "mjr Wrzos, dowódca 1 bzmot",
       "time": "2026-05-15T05:25:00+02:00",
       "type": "meldunek",
       "text": "05:20 patrol BGT (2 BTR) przy Szeszupie — 3k odparła ogniem. 05:30 pojedyncze strzały 2S19 na Jeleniewo, bez strat."
+    },
+    {
+      "id": "in-012-07",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T05:32:00+02:00",
+      "type": "meldunek",
+      "text": "WR-40 w stanowisku w Suwałkach, gotowa od 05:30 — jedna salwa na wyrzutnię. Proponuję cel: park zaopatrzenia SE od Gib albo zgrupowanie w Gibach. Czekam na decyzję."
     },
     {
       "id": "in-012-09",

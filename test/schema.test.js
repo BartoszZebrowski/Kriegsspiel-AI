@@ -73,7 +73,9 @@ describe('T12.5 — walidator: strażnik wycieku i szkice', () => {
   test('scenariusz wzorcowy jest poprawny i ma schemaVersion', async () => {
     const { errors, warnings } = await validateScenario(dir);
     assert.deepEqual(errors, []);
-    assert.deepEqual(warnings, []);
+    // T37: na scenariuszu wzorcowym zostają tylko uwagi spójności/realizmu (dane 2bzmot, nazwy wroga) — nic spoza nich
+    const t37 = /suma podwładnych|poza kolejnością|nazwa wroga zawiera|pozycja w wodzie|finished/;
+    assert.deepEqual(warnings.filter((w) => !t37.test(w)), []);
   });
 
   test('supply w jednostce gracza → błąd (bez wartości w komunikacie)', async () => {

@@ -110,6 +110,14 @@
       "text": "07:40 ogień z rezerwy obronnej na czołgi przy Berżnikach: ok. 2 T-90M uszkodzone. 3b ok. 0,55 DOS, 1b i 2b ok. 0,3. Bez dowozu do 08:30 nie mam czym strzelać dalej."
     },
     {
+      "id": "in-013-15",
+      "channel": "s2",
+      "from": "kpt. Wrona, S2",
+      "time": "2026-05-15T07:55:00+02:00",
+      "type": "meldunek",
+      "text": "BSP-1 i BSP-2 gotowe ok. 07:50. WR-40 po salwie — przeładowanie do ok. 09:30. Proszę o rozkaz lotu: północ czy wschód."
+    },
+    {
       "id": "in-013-14",
       "channel": "bcz",
       "from": "mjr Kowal, dowódca bcz",
@@ -117,14 +125,6 @@
       "type": "meldunek",
       "priority": "urgent",
       "text": "07:55 natarcie odparte: ok. 5 T-90M spalonych, reszta cofa się ku Suborowu. Straty: 2 Leopardy zniszczone (3k), 1 uszkodzony (2k), 12 poległych i rannych. Paliwo ok. 2,0 DOS, amunicja ok. 1,0. Na DK16 07:45 demonstracja BMP-3 odparta (1 spalony)."
-    },
-    {
-      "id": "in-013-15",
-      "channel": "s2",
-      "from": "kpt. Wrona, S2",
-      "time": "2026-05-15T07:55:00+02:00",
-      "type": "meldunek",
-      "text": "BSP-1 i BSP-2 gotowe ok. 07:50. WR-40 po salwie — przeładowanie do ok. 09:30. Proszę o rozkaz lotu: północ czy wschód."
     }
   ]
 }
