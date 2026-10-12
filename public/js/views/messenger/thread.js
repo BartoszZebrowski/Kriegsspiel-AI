@@ -8,6 +8,8 @@ import { symbolSvg } from '../../lib/symbols.js';
 import { ic } from '../../lib/icons.js';
 import { channelGlyph } from './glyphs.js';
 import { attachmentKindLabel } from './orders.js';
+import { formTableHtml } from './form.js';
+import { textBeyondForm } from '../../domain/forms.js';
 
 // `box` — element wątku; `ccirOnly()` — czy pokazywać tylko wiadomości z odwołaniem do CCIR (filtr komunikatora, T48). Zwraca render(s), stickToBottom() (następne renderowanie zjedzie na dół) i attachment(klucz).
 export function createThread({ box, ccirOnly = () => false }) {
@@ -62,7 +64,8 @@ export function createThread({ box, ccirOnly = () => false }) {
         foot = `<div class="mf"><span class="ok">✓✓ Doręczono ${e(formatClock(next, tz))}</span><span>tura ${m.turn} rozstrzygnięta</span></div>`;
       }
     }
-    const text = decorateMentions(linkify(m.text, ctx.link), s);
+    const body = m.form ? textBeyondForm(m) : m.text; // formularz (T50): tabelka + tylko dopiska poza tekstem formularza
+    const text = (m.form ? formTableHtml(m.form) : '') + (body ? decorateMentions(linkify(body, ctx.link), s) : '');
     return `<div class="msg${urgentMsg ? ' urgent' : ''}${out ? ' out' : ''}${m.ccir ? ' is-ccir' : ''}${m.report ? ` is-report rpt-${e(m.report)}` : ''}" data-id="${e(m.id)}"${ccirAttr}><div class="av">${av}</div><div class="mc">
       <div class="mh"><b>${e(sender.name || ch.name)}</b>${sender.role ? `<span class="role">${e(sender.role)}</span>` : ''}${tags}<time title="${e(formatGameTime(m.time, tz))}">${e(formatDtgShort(m.time, tz))} · T${m.turn}</time></div>
       <div class="mb">${text}</div>${attachmentsHtml(m)}${foot}</div></div>`;

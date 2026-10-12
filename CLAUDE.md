@@ -87,7 +87,8 @@ Pododdziały rozstawiaj ręcznie na zrzucie mapy terenu (`tools/umpire/terrain-v
 ## Widok gracza (`player/turns/NNN.json`)
 
 - `turn`, `time` (= start + N × turnMinutes, ISO ze strefą).
-- `units`: jednostki własne **na prawdziwych pozycjach** (z prawdy), z polami `id`, `name`, `sidc`, `pos`, `strength`, `status`, `task`. Do tego przełożony i sąsiedzi (położenie orientacyjne).
+- `units`: jednostki własne z polami `id`, `name`, `sidc`, `pos`, `pos_time`, `strength`, `status`, `task`. Do tego przełożony i sąsiedzi (położenie orientacyjne).
+  - **Pozycja BFT (Blue Force Tracking):** `pos` to ostatnia **zameldowana** pozycja, `pos_time` to czas raportu (nie późniejszy niż czas tury; brak = czas tury). Zwykle raport co kilka–kilkanaście minut, więc `pos` = prawda, `pos_time` = czas tury. W strefie zagłuszenia, przy ciszy radiowej albo utracie łączności pozycja **zamarza** (stare `pos` + stare `pos_time`) i „przeskakuje” po odzyskaniu łączności. Prawdziwa pozycja jest tylko w `umpire/turns/`. W `turn.mjs` podaj ją łatką `plan.player.units.<id> = {pos, pos_time}`; `track` kończy się na pozycji BFT. Mapa przygasza symbol, gdy pozycja jest starsza niż 30 min.
 - `contacts`: to, co gracz wie o wrogu. Każdy kontakt ma `id`, `sidc`, `pos`, `uncertainty_m`, `observed`, `source`, `confidence` (wysoka/średnia/niska) i `estimate`.
   - kontakt niepotwierdzony ma status `A` w SIDC (4. znak), co daje ramkę przerywaną,
   - przynależność `U` (nieznany) albo `S` (podejrzany), gdy nie wiadomo, czyj to obiekt,
@@ -124,6 +125,7 @@ Gracz może adresować wiadomość (`player/outbox`) do **każdej jednostki wła
 - **Styl:** krótko i wojskowo, jak prawdziwe meldunki. Format meldunku z rozpoznania: *„BSP-1, 07:22, kolumna ~10 pojazdów gąsienicowych, droga Żytkiejmy–Wiżajny, kierunek płd., pewność średnia”*.
 - Każdy adresat rozkazu potwierdza go albo melduje problem. Przełożony może odmówić lub wydać niewygodny rozkaz.
 - `priority: "urgent"` tylko dla spraw pilnych (kontakt, straty, utrata łączności, rozkaz przełożonego).
+- **Formularze (T50):** postacie mogą odpowiadać w tych samych formatach co gracz (SPOTREP, LOGSTAT, FRAGO, zapotrzebowanie na ogień): obok czytelnego `text` dodaj `form: {kind, fields}` (pola: docs/SCHEMA.md); komunikator pokaże tabelkę. Gracz wysyła je w `player/outbox` z tym samym `form`.
 - **`type`** ustawiaj zawsze, gdy da się go określić: `rozkaz` (rozkaz przełożonego), `zarzadzenie`, `meldunek` (meldunek podwładnych, S2, S4), `wiadomosc` (zwykła rozmowa). Aplikacja pokazuje go jako znacznik na karcie i w osi czasu.
 - **Rozkazy gracza:** w `player/outbox` pole `type` to kategoria wybrana przez gracza (`rozkaz` / `zarzadzenie` / `meldunek` / `wiadomosc`), a `priority: "urgent"` oznacza przełącznik „Pilne”. Traktuj `type` jako kategorię rozkazu (rozkaz bojowy ma wyższą wagę niż zwykła wiadomość), a „Pilne” jako prośbę o szybsze potraktowanie — nie jako automatyczne wykonanie.
 

@@ -63,7 +63,7 @@ Odprawa w Markdownie, wyświetlana w zakładce Odprawa. Brak pliku = uwaga walid
 
 ## `player/turns/NNN.json` — jawny (widok gracza)
 
-Stan świata **taki, jaki zna gracz**: własne siły na prawdziwych pozycjach, wróg tylko jako kontakty. Pola najwyższego poziomu (gracz): `turn`, `time`, `units`, `contacts`, `assets`, `lines`, `logistics`.
+Stan świata **taki, jaki zna gracz**: własne siły na ostatnich zameldowanych pozycjach (BFT, `pos_time`), wróg tylko jako kontakty. Pola najwyższego poziomu (gracz): `turn`, `time`, `units`, `contacts`, `assets`, `lines`, `logistics`.
 
 | Pole | Typ | Wym. | Znaczenie |
 |---|---|---|---|
@@ -84,7 +84,8 @@ Wszystkie elementy `units`/`contacts`/`assets` mają unikalne w pliku `id`.
 | `id` | tekst | tak | `1bzmot-1k`. Jest też dozwolonym kanałem wiadomości. |
 | `name` | tekst | zalec. | `1 kompania`. |
 | `sidc` | tekst(15) | tak | `SFGPUCIZ---F---`. |
-| `pos` | `[lon,lat]` | tak | Pozycja prawdziwa (własne siły). |
+| `pos` | `[lon,lat]` | tak | Ostatnia **zameldowana** pozycja (BFT, T49); zwykle równa prawdzie, w zagłuszeniu / ciszy radiowej / przy utracie łączności zamrożona. Prawda o pozycji tylko w `umpire/turns`. |
+| `pos_time` | czas ISO | nie | Czas raportu BFT dla `pos`. Późniejszy niż czas tury = błąd; wcześniejszy niż `time − turnMinutes` = uwaga (pozycja zamarznięta); brak = czas tury (zgodność wstecz). Mapa przygasza symbol, gdy pozycja jest starsza niż 30 min (`domain/bft.js`). |
 | `strength` | liczba 0–1 | nie | Siła bojowa. |
 | `status` | tekst | nie | `w marszu`, `SD rozwinięte`… |
 | `task` | tekst | nie | Bieżące zadanie. |
@@ -144,11 +145,25 @@ Obiekt z czterema opcjonalnymi listami. Ten sam kształt w `player/turns` (to, c
 
 `{ "messages": [ … ] }` — wiadomości do gracza z rozstrzyganego okresu (między turą N a N+1); plik NNN odpowiada turze, w której wiadomości się pojawiają. Zapisuje sędzia.
 
-Wiadomość: `id` (tekst, unikalny w całym scenariuszu, np. `in-000-01`, tak), `channel` (id kanału lub jednostki z tury, tak), `from` (tekst: „stopień nazwisko, funkcja”), `time` (ISO, tak), `type` (`rozkaz`, `zarzadzenie`, `meldunek`, `wiadomosc`; nie), `priority` (`normal`, `urgent`; nie), `text` (niepusty, ≤ 4000 znaków, tak). Opcjonalnie (T48): `ccir` (id pozycji z `player/ccir.json`, np. `PIR-2` — wiadomość spełnia tę potrzebę informacyjną; nieistniejąca pozycja = uwaga walidatora) i `report` (`sitrep` albo `logstat` — meldunek cykliczny; z `type: meldunek`). Aplikacja pokazuje `type` jako znacznik na karcie wiadomości, a `priority: "urgent"` jako „PILNE”.
+Wiadomość: `id` (tekst, unikalny w całym scenariuszu, np. `in-000-01`, tak), `channel` (id kanału lub jednostki z tury, tak), `from` (tekst: „stopień nazwisko, funkcja”), `time` (ISO, tak), `type` (`rozkaz`, `zarzadzenie`, `meldunek`, `wiadomosc`; nie), `priority` (`normal`, `urgent`; nie), `text` (niepusty, ≤ 4000 znaków, tak), `form` (T50, nie — patrz niżej). Opcjonalnie (T48): `ccir` (id pozycji z `player/ccir.json`, np. `PIR-2` — wiadomość spełnia tę potrzebę informacyjną; nieistniejąca pozycja = uwaga walidatora) i `report` (`sitrep` albo `logstat` — meldunek cykliczny; z `type: meldunek`). Aplikacja pokazuje `type` jako znacznik na karcie wiadomości, a `priority: "urgent"` jako „PILNE”.
 
 ## `player/outbox/NNN.json` — jawny, zapisuje aplikacja
 
 `{ "messages": [ … ] }` — rozkazy gracza z tury N. **Sędzia nie modyfikuje tego pliku** (tylko czyta). Wiadomość: `id` (`out-xxxxxxxx`), `channel`, `turn`, `time` (czas gry tury), `sent` (rzeczywisty czas wysłania, ISO UTC), `type` (kategoria rozkazu wybrana przez gracza: `rozkaz`, `zarzadzenie`, `meldunek`, `wiadomosc`; domyślnie `wiadomosc`), `priority` (`normal` albo `urgent` — przełącznik „Pilne”; domyślnie `normal`), `text`, opcjonalne `attachments` (kopie szkiców, jak w `notes`, oraz rozkazy graficzne `kind: "order"` — niżej). Zapis przez API jest serializowany (kolejka per scenariusz), a plik zapisywany atomowo przez unikalny plik tymczasowy.
+
+### Formularz `form` w wiadomości (T50)
+
+Opcjonalne pole `form: { "kind": "spotrep|logstat|frago|fire", "fields": { … } }` w wiadomości `player/outbox` (gracz wysyła formularz z komunikatora) i `player/inbox` (postać może odpowiedzieć w tym samym formacie; komunikator pokazuje tabelkę). `text` zostaje czytelnym tekstem (w outbox generowanym z pól: `SPOTREP
+Co: …`), więc sędzia może czytać sam `text`. Wartość pola to tekst (≤ 1000 znaków), liczba albo geometria GeoJSON (`Point`, `LineString`, `Polygon`, współrzędne `[długość, szerokość]`) dla pól wskazywanych na mapie. Pola szablonów (id, etykieta, wymagalność, opcje): `public/js/domain/forms.js`; w skrócie:
+
+| kind | pola (* wymagane) |
+|---|---|
+| `spotrep` | `what`* co, `count`* ile, `where`* gdzie (punkt/rejon), `when`* kiedy, `direction` (`stoi`, `N`…`NW`), `certainty`* (`niska`, `średnia`, `wysoka`), `notes` |
+| `logstat` | `fuel`*, `ammo`*, `personnel`*, `equipment`, `needs`* |
+| `frago` | `task`*, `area`* (rejon/punkt/linia), `time`*, `coordination` |
+| `fire` | `target`* (punkt/rejon), `targetKind`*, `effect`* (`obezwładnienie`, `zniszczenie`, `dymy`, `oświetlenie`), `time`*, `priority`* (`zwykły`, `pilny`, `natychmiastowy`), `support` |
+
+Walidacja: struktura `checkFormShape` (`shared/form.js`), pola i wymagalność `checkFormContent` / `missingFields` (`domain/forms.js`). Serwer (`POST /api/outbox`, pole `form` w ciele) odrzuca błędny lub niekompletny formularz (400); walidator: błąd w `outbox`, w `inbox` braki wymaganych pól to uwaga.
 
 ### Rozkaz graficzny w `attachments` (T44)
 

@@ -227,3 +227,29 @@ Gracz definiuje 3–7 krytycznych potrzeb informacyjnych (PIR o przeciwniku, FFI
 | Widoki | `views/ccir.js` (edytor, osobny widok), `views/map/ccir.js` (nakładka geometrii i wskazywanie punktu / linii / rejonu), `views/messenger/thread.js` + `messenger.js` (znaczniki i przycisk filtra), `views/timeline.js` (zgrupowane znaczniki meldunków) | Brak importów między widokami; edytor i mapa komunikują się przez `store.ccirEditor.pick`. |
 
 Geometria CCIR jest widoczna zawsze (zapisane pozycje) albo w edytorze (kopia robocza); osobnego przełącznika warstwy nie ma. Sędzia: reguły w [CLAUDE.md](../CLAUDE.md), format w [SCHEMA.md](SCHEMA.md).
+
+## Pozycje własnych sił z BFT (T49)
+
+Gracz widzi ostatnią zameldowaną pozycję jednostki (jak w Blue Force Tracking), nie prawdę; w zagłuszeniu, ciszy radiowej i przy utracie łączności pozycja zamarza.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/schema.js` | `pos_time` w `PLAYER_FIELDS.units`; `checkPosTime(posTime, turnTime, turnMinutes)` → `{error}` (późniejszy niż tura) / `{warn}` (starszy niż okres tury) / `{}`. Używa go `tools/validate-checks.js` i `turn.mjs`. Opis pola: [SCHEMA.md](SCHEMA.md). |
+| Logika | `domain/bft.js` (czysta) | `BFT_STALE_MIN` (30 min, jedno miejsce), `posAgeMin`, `isPosStale`, `posOpacity`, `bftStatus` → `{stale, ageMin, reportedAt, text}`; brak `pos_time` = czas tury. Bez nowych plastrów store. |
+| Widoki | `views/map/index.js` (krycie symbolu i podpowiedź), `domain/cards.js` (wiersz „Ostatni raport BFT” w karcie) | Wyłącznie odczyt `pos_time` z tury; `track` animacji kończy się na `pos` BFT (liczy `turn.mjs`), więc `views/map/motion.js` bez zmian. |
+| Sędzia | `tools/umpire/turn.mjs`, [CLAUDE.md](../CLAUDE.md) | Prawda pozycji tylko w `umpire/turns`. Widok gracza = prawda z `pos_time` = czas tury, chyba że `plan.player.units.<id>` podaje `{pos, pos_time}` (zamrożenie). `pos_time` nie jest dziedziczone z tury N. |
+
+## Formularze meldunków i rozkazów (T50)
+
+Szablony z polami (SPOTREP, LOGSTAT, FRAGO, zapotrzebowanie na ogień) obok wolnego tekstu. Wiadomość niesie czytelny `text` **oraz** strukturę `form: { kind, fields }` (w `player/outbox` od gracza, w `player/inbox` od postaci). Pola „gdzie”/„cel” wskazuje się na mapie istniejącym mechanizmem wskazywania geometrii z T48 (`ccirEditor.pick`), bez drugiej warstwy mapy.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/form.js` (czysty JS) | `FORM_KINDS` (id szablonów), limity, `checkFormShape(form)` → tekst błędu albo `null`: `kind` z listy, `fields` to obiekt, wartości to tekst / liczba / geometria (`checkCcirGeometry`). Osobny plik, bo `shared/schema.js` ma jednego właściciela naraz; w schemacie tylko `form` dopisane do `PLAYER_MESSAGE_FIELDS`. |
+| Logika | `domain/forms.js` (czysta, jedno miejsce definicji szablonów) | `FORMS` (pola: id, etykieta PL, typ `text` / `textarea` / `select` / `geo`, wymagalność, opcje, kształt geometrii), `emptyForm`, `setFormField`, `missingFields`, `checkFormContent` (nieznane pola, opcje spoza listy, brak wymaganych), `formText` (czytelny tekst), `formRows` (wiersze tabelki), `textBeyondForm`. Id rodzajów lustrzane do `shared/form.js` (komentarz zamiast importu: `domain/` nie importuje z `shared/`). Serwer i walidator importują `domain/forms.js` jak `domain/command.js`. |
+| Stan | szkic kanału w `store.drafts[kanał].form` | bez nowych plastrów store; wskazywanie to `ccirEditor.pick = { id, shape, target: "form", channel }`. |
+| Intencje | `core/forms.js` (podkontroler jak `orders.js`) | `formSelect`, `formSetField`, `formClear`, `formPickStart`, `formSetGeometry`; korzysta z `setDraft` komunikatora. |
+| Widoki | `views/messenger/form.js` (panel pól i tabelka `formTableHtml`, wszystko przez `escapeHtml`), `views/messenger.js` (menu „Szablon”, wysyłka), `views/messenger/thread.js` (tabelka w wątku), `views/map/ccir.js` (tylko rozgałęzienie: wynik wskazania z `target: "form"` idzie do `formSetGeometry`) | Brak importów między widokami; `thread.js` i panel dzielą tylko `views/messenger/form.js`. |
+| Serwer | `server/store.js` (`POST /api/outbox`) | pole `form`: `checkFormShape` + `checkFormContent` (400 przy błędzie), zapis w wiadomości. Walidator scenariusza sprawdza `form` w `outbox` (błąd) i `inbox` (braki wymaganych = uwaga). |
+
+Pola wartości: tekst lub liczba bez struktury albo geometria GeoJSON (`Point` / `LineString` / `Polygon`, `[długość, szerokość]`). Wysłany tekst = `formText` + opcjonalna dopiska gracza; wątek pokazuje tabelkę, a tekst tylko w części wykraczającej poza `formText`.

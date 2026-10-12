@@ -1287,6 +1287,48 @@ try {
     assert(await ev(`document.querySelectorAll('.tl-lane.msgs i.rep').length === 1 && document.querySelector('.tl-lane.msgs i.rep').dataset.tip === 'SITREP ×2'`), 'SITREP-y zgrupowane na osi czasu');
   });
 
+  await step('T50 formularze: SPOTREP z mapy (menu Szablon), blokada niekompletnego, wysyłka z form, tabelka w wątku, form z inboxa (escape)', async () => {
+    await ev(`window.__ks.controller.selectChannel('log')`);
+    await clickSel('#tpl-btn');
+    await waitFor(`!!document.querySelector('#tpl-menu [data-form="spotrep"]')`, 'formularze w menu szablonów');
+    await clickSel('#tpl-menu [data-form="spotrep"]');
+    await waitFor(`!document.getElementById('compose-form').hidden && !!document.querySelector('#compose-form [data-ff="what"]')`, 'panel formularza SPOTREP');
+    // niekompletny formularz nie wychodzi
+    const before = (await fetchJson('/api/messages')).messages.length;
+    await ev(`document.getElementById('compose').requestSubmit()`);
+    assert((await fetchJson('/api/messages')).messages.length === before, 'niekompletny formularz nie został wysłany');
+    const fill = (id, v) => ev(`(() => { const i = document.querySelector('#compose-form [data-ff="${id}"]'); i.value = ${JSON.stringify(v)}; i.dispatchEvent(new Event('input', { bubbles: true })); })()`);
+    await fill('what', 'kolumna <b>czołgów</b>');
+    await fill('count', '~10 pojazdów');
+    await fill('when', '07:22');
+    await fill('certainty', 'średnia');
+    // pole „gdzie” z mapy
+    await clickSel('#compose-form [data-ff-pick="where"][data-shape="point"]');
+    await waitFor(`${store()}.ccirEditor.pick?.target === 'form'`, 'tryb wskazywania pola formularza');
+    await ev(`(() => { const m = window.__ks.map; m.fire('click', { latlng: m.getCenter() }); })()`);
+    await waitFor(`${store()}.drafts['log']?.form?.fields?.where?.type === 'Point' && !${store()}.ccirEditor.pick`, 'punkt „gdzie” z mapy w formularzu');
+    assert(await ev(`document.querySelector('#compose-form [data-ff-geo="where"]').textContent.length > 4`), 'pozycja pokazana w panelu');
+    await ev(`document.getElementById('compose').requestSubmit()`);
+    await waitFor(`${store()}.messages.some((m) => m.form?.kind === 'spotrep')`, 'wiadomość z form w store');
+    const turnNo = String(await state('s.currentTurn')).padStart(3, '0');
+    const out = (await readJson(`player/outbox/${turnNo}.json`)).messages.find((m) => m.form?.kind === 'spotrep');
+    assert(out && out.type === 'meldunek' && out.form.fields.where.type === 'Point' && out.text.startsWith('SPOTREP') && out.text.includes('Gdzie:'), 'outbox: text + form {kind, fields} ');
+    await waitFor(`document.getElementById('compose-form').hidden`, 'panel zamknięty po wysłaniu');
+    await waitFor(`!!document.querySelector('#thread table.form-tbl')`, 'tabelka formularza w wątku');
+    assert(await ev(`!document.querySelector('#thread table.form-tbl td b') && document.querySelector('#thread table.form-tbl').textContent.includes('<b>czołgów</b>')`), 'wartości w tabelce są zescapowane');
+    // serwer odrzuca błędny form
+    const bad = await ev(`fetch('/api/outbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ channel: 'log', text: 'x', form: { kind: 'spotrep', fields: { what: 'x' } } }) }).then((r) => r.status)`);
+    assert(bad === 400, 'serwer odrzuca niekompletny formularz (400)');
+    // form od postaci (inbox)
+    const f = 'player/inbox/000.json';
+    const inbox = await readJson(f);
+    inbox.messages.push({ id: 'in-smoke-form', channel: 'log', from: 'por. Test, S2', time: '2026-05-14T06:58:00+02:00', type: 'meldunek', text: 'LOGSTAT\nPaliwo: 1 DOS', form: { kind: 'logstat', fields: { fuel: '1 DOS <i>x</i>', ammo: '2 DOS', personnel: '90%', needs: 'paliwo' } } });
+    await writeJson(f, inbox);
+    await waitFor(`${store()}.messages.some((m) => m.id === 'in-smoke-form')`, 'form z inboxa po SSE');
+    await waitFor(`!!document.querySelector('#thread .msg[data-id="in-smoke-form"] table.form-tbl')`, 'tabelka formularza od postaci');
+    assert(await ev(`!document.querySelector('#thread .msg[data-id="in-smoke-form"] table i')`), 'treść z inboxa zescapowana');
+  });
+
   await step('brak błędów JS w konsoli', async () => {
     assert(consoleErrors.length === 0, 'błędy konsoli:\n         ' + consoleErrors.join('\n         '));
   });

@@ -3,7 +3,7 @@
 import milsymbol from 'milsymbol';
 import { isDescribed } from '../public/js/sidc.js';
 import { distanceKm } from '../public/js/domain/geo.js';
-import { LINE_KINDS, PLACE_KINDS, PLAYER_TURN_FIELDS, PLAYER_FIELDS, checkTrack, checkDos, checkLogistics, isCoord as validPos, isValidTime as validTime, isCount, extraFields } from '../shared/schema.js';
+import { LINE_KINDS, PLACE_KINDS, PLAYER_TURN_FIELDS, PLAYER_FIELDS, checkTrack, checkPosTime, checkDos, checkLogistics, isCoord as validPos, isValidTime as validTime, isCount, extraFields } from '../shared/schema.js';
 import { checkEwZone, checkEmitterContact } from '../shared/ew.js';
 
 const ms = milsymbol.default ?? milsymbol;
@@ -127,6 +127,11 @@ export function checkSituation(label, data, n, scenario, report, strictLogistics
       if (key === 'units' && item.dos !== undefined) {
         const e = checkDos(item.dos);
         if (e) report.error(`${where}: ${e}`);
+      }
+      if (key === 'units' && item.pos_time !== undefined) {
+        const r = checkPosTime(item.pos_time, data.time, scenario.turnMinutes);
+        if (r.error) report.error(`${where}: ${r.error}`);
+        else if (r.warn) report.warn(`${where}: ${r.warn}`);
       }
       if (key === 'units' && item.track !== undefined) {
         const r = checkTrack(item.track, item.pos);

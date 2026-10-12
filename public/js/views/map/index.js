@@ -10,6 +10,7 @@ import { unitBrief, contactBrief } from '../../domain/strength.js';
 import { findEntity, entityPos } from '../../domain/entities.js';
 import { toLatLng } from '../../domain/geo.js';
 import { ageMinutes } from '../../domain/format.js';
+import { bftStatus, BFT_STALE_OPACITY } from '../../domain/bft.js';
 import { indexById, isUnitVisible, echelonRank, BATTALION_RANK, COMPANY_RANK, splitUnits, parentIdOf, isNeighbourUnit } from '../../domain/orbat.js';
 import { BASEMAPS, OVERLAYS, DARK_BASES } from './basemaps.js';
 import { renderLines } from './lines.js';
@@ -199,8 +200,9 @@ export function createMapView({ store, controller, root = document }) {
     unitList = turn.units || [];
     unitsById = indexById(unitList);
     for (const u of unitList) {
-      const brief = [unitBrief(u), isNeighbourUnit(u, unitsById) ? 'Sąsiad — brak dowodzenia' : ''].filter(Boolean).join(' · ');
-      addSymbol(situation.units, u, { size: unitSize(u), uniqueDesignation: u.name }, brief);
+      const bft = bftStatus(u, turn.time, scenario.timezone); // pozycja BFT starsza niż próg: symbol przygaszony (T49)
+      const brief = [unitBrief(u), isNeighbourUnit(u, unitsById) ? 'Sąsiad — brak dowodzenia' : '', bft.text].filter(Boolean).join(' · ');
+      addSymbol(situation.units, u, { size: unitSize(u), uniqueDesignation: u.name }, brief, bft.stale ? { opacity: BFT_STALE_OPACITY } : {});
     }
     applyLevel();
 

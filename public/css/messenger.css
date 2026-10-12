@@ -129,3 +129,23 @@
 .comp-warn[hidden]{display:none}
 .comp-warn .warn{display:flex;align-items:center;gap:6px;color:var(--warn,#e0b040)}
 .comp-warn .warn span{flex:1}
+
+/* Formularze meldunków i rozkazów (T50) */
+.comp-form{margin:0 0 6px;padding:8px;border:1px solid var(--line-2);border-radius:6px;background:var(--bg-2);max-height:240px;overflow:auto}
+.comp-form[hidden]{display:none}
+.ff-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ff-head b{flex:1;font-size:var(--fs-body)}
+.ff-head a{cursor:pointer}
+.ff-miss{font-size:11px;color:var(--warn)}.ff-miss.ok{color:var(--ok)}
+.ff-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px}
+.ff{display:flex;flex-direction:column;gap:2px;min-width:0}
+.ff--textarea,.ff--geo{grid-column:1/-1}
+.ff label{font-size:11px;color:var(--t-3)}
+.ff .req{color:var(--warn);font-style:normal;margin-left:2px}
+.ff input,.ff select,.ff textarea{width:100%;box-sizing:border-box;font:inherit;font-size:var(--fs-body)}
+.ff-geo{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ff-val{flex:1;min-width:0;font-family:var(--font-mono);font-size:11px;overflow-wrap:anywhere}.ff-val.empty{color:var(--t-3)}
+.form-tbl{margin:6px 0 2px;border-collapse:collapse;font-size:var(--fs-body);width:100%}
+.form-tbl caption{text-align:left;font-weight:600;font-size:11px;letter-spacing:.06em;color:var(--t-3);padding-bottom:2px}
+.form-tbl th,.form-tbl td{border-top:1px solid var(--line-2);padding:2px 6px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+.form-tbl th{font-weight:500;color:var(--t-3);width:30%}

@@ -39,7 +39,7 @@ export const api = {
     }
   },
   messages: async () => (await request('/api/messages')).json(),
-  // meta: { type, priority, orders } — rodzaj, przełącznik „Pilne” i rozkazy graficzne (T44) — pola opcjonalne.
+  // meta: { type, priority, orders, form } — rodzaj, przełącznik „Pilne”, rozkazy graficzne (T44) i formularz (T50) — pola opcjonalne.
   send: async (channel, text, attachments, meta = {}) =>
     (
       await request('/api/outbox', {
@@ -51,6 +51,7 @@ export const api = {
           ...(meta.type ? { type: meta.type } : {}),
           ...(meta.priority ? { priority: meta.priority } : {}),
           ...(meta.orders?.length ? { orders: meta.orders } : {}),
+          ...(meta.form ? { form: meta.form } : {}),
         }),
       })
     ).json(),

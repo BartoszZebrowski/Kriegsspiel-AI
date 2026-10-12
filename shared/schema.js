@@ -33,6 +33,21 @@ export function checkTrack(track, pos) {
   return {};
 }
 
+// --- Pozycja BFT (units[].pos_time, T49) ---
+
+// Czas raportu pozycji własnej jednostki: nie późniejszy niż czas tury (błąd); wcześniejszy niż początek okresu tury
+// (czas tury − turnMinutes) = uwaga (pozycja zamarznięta: zagłuszenie, cisza radiowa, utrata łączności).
+// Zwraca { error } | { warn } | {}.
+export function checkPosTime(posTime, turnTime, turnMinutes) {
+  if (!isValidTime(posTime)) return { error: 'pos_time musi być czasem ISO' };
+  if (!isValidTime(turnTime)) return {};
+  const t = Date.parse(posTime);
+  const now = Date.parse(turnTime);
+  if (t > now) return { error: 'pos_time późniejszy niż czas tury' };
+  if (turnMinutes > 0 && t < now - turnMinutes * 60000) return { warn: 'pos_time starszy niż okres tury (pozycja BFT zamarznięta?)' };
+  return {};
+}
+
 // --- Kanały, linie, miejsca ---
 
 export const CHANNEL_KINDS = ['superior', 'neighbor', 'subordinate', 'logistics', 'recon', 'other'];
@@ -71,12 +86,12 @@ export const NOTE_ECHELONS = ['D', 'E', 'F', 'G', 'H', 'I', 'J'];
 
 export const PLAYER_TURN_FIELDS = ['turn', 'time', 'units', 'contacts', 'assets', 'lines', 'logistics'];
 export const PLAYER_FIELDS = {
-  units: ['id', 'name', 'sidc', 'pos', 'strength', 'status', 'task', 'personnel', 'equipment', 'parent', 'formation', 'track', 'notes', 'dos'],
+  units: ['id', 'name', 'sidc', 'pos', 'strength', 'status', 'task', 'personnel', 'equipment', 'parent', 'formation', 'track', 'notes', 'dos', 'pos_time'],
   contacts: ['id', 'sidc', 'pos', 'uncertainty_m', 'observed', 'source', 'confidence', 'estimate', 'estimate_personnel', 'estimate_equipment'],
   assets: ['id', 'name', 'type', 'sidc', 'pos', 'status', 'task'],
   lines: ['id', 'kind', 'label', 'coords', 'formation', 'observed'],
 };
-export const PLAYER_MESSAGE_FIELDS = ['id', 'channel', 'from', 'turn', 'time', 'sent', 'type', 'priority', 'text', 'attachments', 'ccir', 'report'];
+export const PLAYER_MESSAGE_FIELDS = ['id', 'channel', 'from', 'turn', 'time', 'sent', 'type', 'priority', 'text', 'attachments', 'ccir', 'report', 'form'];
 
 // Rodzaj i priorytet wiadomości (gracza w outboxie; sędziego w inboxie). Oba pola opcjonalne.
 export const MESSAGE_TYPES = ['rozkaz', 'zarzadzenie', 'meldunek', 'wiadomosc'];

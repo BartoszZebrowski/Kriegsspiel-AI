@@ -168,6 +168,7 @@ Połączenia: jedno zapytanie na bbox, User-Agent z opisem, ponowna próba po 42
 
 - Format sekcji (`depots`, `routes`, `bridges`, `convoys`): `{ "patch": { id: łatka | null }, "add": [obiekty] }`. Łatka scala pola (`null` w polu usuwa pole), `null` zamiast łatki usuwa element. Brak planu = poprzedni stan.
 - **Track konwoju** liczony jak dla jednostek: od pozycji z tury N do nowego `pos`, z punktami pośrednimi z łatki (`route`) albo pełnym `track`; w widoku gracza, gdy łatka gracza nie ma `route`, użyta zostaje trasa z łatki sędziego (koniec zawsze w `pos` gracza).
+- **Pozycja BFT (T49):** domyślnie widok gracza = prawda, `pos_time` = czas tury (nie jest dziedziczone z poprzedniej tury). Zamrożoną pozycję (zagłuszenie, cisza radiowa) podaj łatką `plan.player.units.<id>: { "pos": [lon, lat], "pos_time": "…" }`; `track` kończy się na tej pozycji, a `pos` bez `pos_time` daje ostrzeżenie.
 - Widok gracza przechodzi przez białą listę `LOGISTICS_FIELDS`, więc pola sędziego z elementu nie wyciekną. `dos` jednostki **nie jest** kopiowany z prawdy: ustawiasz go wyłącznie łatką `plan.player.units.<id>.dos` (inaczej dziedziczony z tury N gracza).
 - Poprawność (statusy, id, współrzędne) turn.mjs zgłasza jako UWAGI (`sędzia logistics…` / `gracz logistics…`); twardy wynik daje `npm run validate`.
 

@@ -7,6 +7,7 @@ import { formatDms, mgrsOf } from './mgrs.js';
 import { dosIndicators, dosAgeMin, isDosStale, formatDosValue, dosBarPct } from './dos.js';
 import { echelonRank, PLATOON_RANK } from './orbat.js';
 import { groupEquipment, subordinateTotals, portableSummary, OTHER_CATEGORY } from './equipment.js';
+import { bftStatus } from './bft.js';
 import { formatStrength, readinessRatio, readinessLevel, formatEstimateEquipment, formatEstimatePersonnel } from './strength.js';
 
 const e = escapeHtml;
@@ -115,7 +116,8 @@ export function unitCard(u, byId = new Map(), kids = [], ctx = {}) {
   const symbolOf = ctx.symbolOf || noSymbol;
   const parent = u.parent || u.formation ? byId.get(u.parent ?? u.formation) : null;
   const header = ctx.header === false ? '' : `<h4>${e(u.name || u.id)}</h4><div class="card__type">${e(describeSidc(u.sidc))}</div>`;
-  const rows = row('Stan', u.status) + row('Zadanie', u.task);
+  const bft = bftStatus(u, ctx.turnTime, ctx.tz);
+  const rows = row('Stan', u.status) + row('Zadanie', u.task) + (bft.stale ? row('Ostatni raport BFT', bft.text.replace(/^pozycja z /, '')) : '');
   const sub = parent || kids.length
     ? `<div class="kv"><div class="cap">Podporządkowanie</div>
         ${parent ? `<div class="kvr"><span>Przełożony</span><span>${unitChip(parent, symbolOf)}</span></div>` : ''}

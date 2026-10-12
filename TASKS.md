@@ -722,7 +722,7 @@ Praca sztabu jak w realnym punkcie dowodzenia: gracz określa, o czym chce być 
 - [A] Domena: filtr „tylko CCIR”, grupowanie meldunków cyklicznych.
 - [M] Gracz ustawia PIR na kolumnę pancerną; w turze z takim kontaktem przychodzi pilny meldunek z odwołaniem do PIR; drobne kontakty trafiają do SITREP.
 
-## T49 — Pozycje własnych sił z BFT ⬜
+## T49 — Pozycje własnych sił z BFT ✅
 Jak w BMS: gracz widzi ostatnią pozycję z GPS (Blue Force Tracking), a nie prawdę. Wiąże się z T19 (utrata łączności) i T26 (REW).
 
 **WA**
@@ -736,7 +736,7 @@ Jak w BMS: gracz widzi ostatnią pozycję z GPS (Blue Force Tracking), a nie pra
 - [A] Domena: wiek pozycji i próg przygaszenia.
 - [M] Kompania w strefie zagłuszenia stoi na mapie w starej pozycji z czasem raportu; po wyjściu ze strefy „przeskakuje”.
 
-## T50 — Formularze meldunków i rozkazów ⬜
+## T50 — Formularze meldunków i rozkazów ✅
 Obok wolnego tekstu szablony z polami, jak w BMS (wiąże się z T44 — punkt i rubież z mapy).
 
 **WA**

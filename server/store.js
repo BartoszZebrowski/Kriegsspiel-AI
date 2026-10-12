@@ -7,6 +7,8 @@ import crypto from 'node:crypto';
 import { MAX_MESSAGE_LENGTH, MAX_NOTES, NOTE_KINDS, NOTE_COLORS, NOTE_GRAPHICS, NOTE_ECHELONS, checkNote, checkMessageText, checkMessageMeta } from '../shared/schema.js';
 import { checkOrderAttachment } from '../shared/order.js';
 import { checkCcir } from '../shared/ccir.js';
+import { checkFormShape } from '../shared/form.js';
+import { checkFormContent, missingFields } from '../public/js/domain/forms.js';
 import { assessSkip, skipMessage } from '../public/js/domain/command.js';
 
 // Stałe schematu żyją w shared/schema.js; tu tylko re-eksport dla zgodności wstecznej.
@@ -210,7 +212,7 @@ export function createStore(scenarioDir) {
     return locked(() => sendMessageUnlocked(body));
   }
 
-  async function sendMessageUnlocked({ channel, text, attachments, orders, type, priority }) {
+  async function sendMessageUnlocked({ channel, text, attachments, orders, type, priority, form }) {
     const scenario = await readScenario();
     const n = await currentTurn();
     const turn = await readTurn(n);
@@ -232,6 +234,13 @@ export function createStore(scenarioDir) {
     if (textError) throw new StoreError(400, textError);
     const metaError = checkMessageMeta({ type, priority });
     if (metaError) throw new StoreError(400, metaError);
+    // Formularz (T50): struktura, pola szablonu i wymagane pola; czytelny tekst jest w `text`.
+    if (form !== undefined) {
+      const formError = checkFormShape(form) ?? checkFormContent(form);
+      if (formError) throw new StoreError(400, formError);
+      const missing = missingFields(form);
+      if (missing.length) throw new StoreError(400, `Formularz ${form.kind}: brak wymaganych pól: ${missing.join(', ')}`);
+    }
     let attached;
     if (attachments !== undefined) {
       if (!Array.isArray(attachments) || attachments.length > 20) throw new StoreError(400, 'Nieprawidłowe załączniki');
@@ -266,6 +275,7 @@ export function createStore(scenarioDir) {
       priority: priority ?? 'normal',
       text: text.trim(),
     };
+    if (form !== undefined) message.form = form;
     if (attached?.length || orderAtts.length) message.attachments = [...(attached ?? []), ...orderAtts];
     data.messages = [...(data.messages || []), message];
     await writeJson(file, data);

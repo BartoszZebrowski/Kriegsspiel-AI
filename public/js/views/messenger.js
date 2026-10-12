@@ -3,9 +3,8 @@
 // oraz komponowanie (rodzaj, „Pilne”, szablony, szkice, podpowiedzi @ i #).
 // Renderuje ze store; wszystkie akcje zgłasza kontrolerowi.
 import { escapeHtml as e } from '../domain/markdown.js';
-import { draftType, foreignUnitMentions, unknownPlaceNames, channelListModel } from '../domain/compose.js';
+import { draftType, channelListModel } from '../domain/compose.js';
 import { draftOrders } from '../domain/order.js';
-import { assessSkip } from '../domain/command.js';
 import { countCcir } from '../domain/ccir.js';
 import { ic } from '../lib/icons.js';
 import { TEMPLATES, PLACEHOLDERS, TEMPLATE_MENU, isTemplate } from './messenger/templates.js';
@@ -13,6 +12,9 @@ import { channelGlyph } from './messenger/glyphs.js';
 import { createThread } from './messenger/thread.js';
 import { createMentionPopup } from './messenger/mentions.js';
 import { orderChipsHtml } from './messenger/orders.js';
+import { warnHtml } from './messenger/warn.js';
+import { createFormPanel } from './messenger/form.js';
+import { FORM_MENU, missingFields, composeFormMessage } from '../domain/forms.js';
 
 export { TEMPLATES };
 
@@ -37,6 +39,7 @@ export function createMessengerView({ store, controller, root = document }) {
     types: $('seg-type'),
     mention: $('mention-pop'),
     ccirBtn: $('m-ccir'),
+    formBox: $('compose-form'),
   };
   const S = () => store.get();
 
@@ -50,6 +53,7 @@ export function createMessengerView({ store, controller, root = document }) {
   let knownNoteIds = new Set();
   let ccirOnly = false; // filtr „tylko CCIR” (T48) — stan lokalny widoku
   const thread = createThread({ box: els.thread, ccirOnly: () => ccirOnly });
+  const formPanel = createFormPanel({ box: els.formBox, S, controller });
   const mentions = createMentionPopup({ text: els.text, pop: els.mention, S, patchDraft, onSend: () => send() });
 
   // ---------- lista kanałów (stale na wierzchu: przełożony, sztab, sąsiedzi, podwładni) ----------
@@ -103,7 +107,7 @@ export function createMessengerView({ store, controller, root = document }) {
   function setType(t, { fill = true } = {}) {
     const patch = { type: t };
     const text = draft().text;
-    if (fill && (!text.trim() || isTemplate(text))) patch.text = TEMPLATES[t];
+    if (fill && !draft().form && (!text.trim() || isTemplate(text))) patch.text = TEMPLATES[t];
     patchDraft(patch);
   }
 
@@ -115,38 +119,18 @@ export function createMessengerView({ store, controller, root = document }) {
     const ty = draftType(d, s.channel);
     if (els.text.value !== d.text) els.text.value = d.text;
     for (const b of els.types.querySelectorAll('button')) b.classList.toggle('on', b.dataset.ty === ty);
-    els.text.placeholder = PLACEHOLDERS[ty];
+    els.text.placeholder = d.form ? 'Dopisek do formularza (opcjonalnie)…' : PLACEHOLDERS[ty];
     els.urgent.classList.toggle('on', d.urgent);
     els.urgent.setAttribute('aria-pressed', String(d.urgent));
     renderChips();
+    formPanel.render(s);
     renderWarn(s);
   }
 
-  // Ostrzeżenia pod polem (nieblokujące): inna własna jednostka w treści rozkazu; nazwa spoza gazetera.
   function renderWarn(s) {
-    const text = s.draft.text;
-    const units = s.turn?.units ?? [];
-    const parts = [];
-    if (s.channel?.kind === 'subordinate' && !s.archive) {
-      const others = foreignUnitMentions(text, s.channelUnit, units);
-      if (others.length) {
-        parts.push(`<div class="warn warn--unit">${ic('zap', 's')}<span>Treść wymienia ${others.map((u) => `„${e(u.name)}”`).join(', ')}, a adresatem jest ${e(s.channel.name)}. Czy to właściwy adresat?</span></div>`);
-      }
-    }
-    if (s.channel && !s.archive) {
-      // T45: pominięcie szczebla dowodzenia (nieblokujące w „soft”; w „hard” wysyłka zablokowana poza pilnymi).
-      const skip = assessSkip({ scenario: s.scenario, units, channels: s.channels, channelId: s.channel.id, priority: s.draft.urgent ? 'urgent' : 'normal' });
-      if (skip.level !== 'none') {
-        const tail = skip.level === 'block' ? 'Wysyłka zablokowana — użyj kanału bezpośredniego podwładnego albo oznacz jako pilne.' : 'Pominięty dowódca dowie się z opóźnieniem, a plany mogą się rozjechać.';
-        parts.push(`<div class="warn warn--unit warn--skip">${ic('zap', 's')}<span>${e(skip.text.charAt(0).toUpperCase() + skip.text.slice(1))}. ${tail}</span></div>`);
-      }
-      const ctx = { places: s.places, units, contacts: s.turn?.contacts ?? [], assets: s.turn?.assets ?? [] };
-      for (const p of unknownPlaceNames(text, ctx)) {
-        parts.push(`<div class="warn warn--place">${ic('pin', 's')}<span>„${e(p.text)}” nie ma w gazeterze.</span><button type="button" class="sw" data-pin="${e(p.text)}">Wskaż na mapie</button></div>`);
-      }
-    }
-    els.warn.innerHTML = parts.join('');
-    els.warn.hidden = !parts.length;
+    const html = warnHtml(s);
+    els.warn.innerHTML = html;
+    els.warn.hidden = !html;
   }
 
   function renderChips() {
@@ -173,7 +157,10 @@ export function createMessengerView({ store, controller, root = document }) {
   }
 
   function renderTemplateMenu() {
-    els.tplMenu.innerHTML = `<div class="cl-g cap">Szablony</div>` + TEMPLATE_MENU.map(([id, name]) => `<div class="cl-i" role="menuitem" tabindex="0" data-tpl="${id}">${ic('tpl', 's')}<span>${name}</span></div>`).join('');
+    const item = (attr, id, name) => `<div class="cl-i" role="menuitem" tabindex="0" ${attr}="${id}">${ic('tpl', 's')}<span>${name}</span></div>`;
+    els.tplMenu.innerHTML =
+      `<div class="cl-g cap">Szablony</div>` + TEMPLATE_MENU.map(([id, name]) => item('data-tpl', id, name)).join('') +
+      `<div class="cl-g cap">Formularze</div>` + FORM_MENU.map(([id, name]) => item('data-form', id, e(name))).join('');
   }
 
   const closeMenus = () => {
@@ -205,8 +192,15 @@ export function createMessengerView({ store, controller, root = document }) {
     patchDraft({ attachIds: ev.target.checked ? [...new Set([...cur, id])] : cur.filter((x) => x !== id) });
   });
   els.tplMenu.addEventListener('click', (ev) => {
+    const form = ev.target.closest('[data-form]');
+    if (form) {
+      controller.formSelect(S().activeChannel, form.dataset.form);
+      closeMenus();
+      return;
+    }
     const item = ev.target.closest('[data-tpl]');
     if (!item) return;
+    controller.formClear(S().activeChannel);
     patchDraft({ type: item.dataset.tpl, text: TEMPLATES[item.dataset.tpl] });
     closeMenus();
     els.text.focus();
@@ -236,16 +230,21 @@ export function createMessengerView({ store, controller, root = document }) {
   // ---------- wysyłanie ----------
   async function send() {
     const s = S();
-    const text = els.text.value.trim();
+    const form = draft().form ?? null;
+    if (form) {
+      const missing = missingFields(form);
+      if (missing.length) return controller.notify(`Uzupełnij pola formularza: ${missing.join(', ')}`, true);
+    }
+    const text = form ? composeFormMessage(form, els.text.value) : els.text.value.trim();
     if (!text || !s.channel || s.archive) return;
-    if (isTemplate(els.text.value)) {
+    if (!form && isTemplate(els.text.value)) {
       els.text.focus(); // szablon bez uzupełnienia nie jest rozkazem
       return;
     }
     els.send.disabled = true;
     thread.stickToBottom();
     const d = draft();
-    const msg = await controller.sendMessage(text, d.attachIds, { type: type(), priority: d.urgent ? 'urgent' : 'normal', orders: draftOrders(d) });
+    const msg = await controller.sendMessage(text, d.attachIds, { type: type(), priority: d.urgent ? 'urgent' : 'normal', orders: draftOrders(d), ...(form ? { form } : {}) });
     if (msg) mentions.close(); // kontroler czyści szkic kanału, widok synchronizuje pola
     renderCompose(S());
   }
@@ -342,6 +341,7 @@ export function createMessengerView({ store, controller, root = document }) {
     renderChips();
     if (els.attachMenu.classList.contains('open')) renderAttachMenu();
   });
+  store.subscribe('ccirEditor', (s) => formPanel.render(s)); // przycisk wskazywania na mapie (tryb aktywny)
   store.subscribe('ui', ({ ui }) => $('m-leader').classList.toggle('on', ui.leader), { immediate: true });
   store.subscribe('command', ({ command }) => {
     if (command?.name !== 'compose') return;

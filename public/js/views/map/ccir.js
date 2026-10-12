@@ -1,7 +1,7 @@
 // Warstwa mapy CCIR (T48): nakładka z geometrią pozycji (PIR / FFIR) oraz wskazywanie geometrii dla edytora.
 // Rysuje zapisane pozycje (store.ccir), a przy otwartym edytorze jego kopię roboczą (store.ccirEditor.draft).
 // Wskazywanie: gdy store.ccirEditor.pick = { id, shape }, kliknięcia na mapie zbierają punkty; wynik trafia do
-// controller.ccirSetGeometry (punkt: jedno kliknięcie; linia i rejon: dwuklik lub Enter; Esc anuluje).
+// controller.ccirSetGeometry (albo formSetGeometry, gdy pick.target === 'form' — formularze T50; punkt: jedno kliknięcie; linia i rejon: dwuklik lub Enter; Esc anuluje).
 /* global L */
 import { toLatLng } from '../../domain/geo.js';
 import { ccirGeometry } from '../../domain/ccir.js';
@@ -66,7 +66,8 @@ export function createCcirLayer({ store, controller, map }) {
     const r = ccirGeometry(p.shape, points);
     if (r.error) return controller.notify(r.error, true);
     reset();
-    controller.ccirSetGeometry(p.id, r.geometry);
+    if (p.target === 'form') controller.formSetGeometry(p.id, r.geometry);
+    else controller.ccirSetGeometry(p.id, r.geometry);
   }
 
   map.on('click', (ev) => {

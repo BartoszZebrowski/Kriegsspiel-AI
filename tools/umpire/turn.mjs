@@ -10,7 +10,7 @@ import { readFile, writeFile, readdir, mkdir, rename, appendFile } from 'node:fs
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { PLAYER_FIELDS, PLAYER_TURN_FIELDS, LOGISTICS_FIELDS, extraFields, isCoord, isValidTime, checkTrack } from '../../shared/schema.js';
+import { PLAYER_FIELDS, PLAYER_TURN_FIELDS, LOGISTICS_FIELDS, extraFields, isCoord, isValidTime, checkTrack, checkPosTime } from '../../shared/schema.js';
 import { checkDeliveries, checkEw, checkEwZone } from '../../shared/ew.js';
 import { clone, pad3, pickFields, moved, computeTrack, nextTime, mergeById, checkIds, patchMissing, applyLogistics, buildInbox } from './turn-merge.mjs';
 
@@ -85,7 +85,9 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   for (const u of uUnits) {
     if (u.side !== playerSide) continue;
     // Pola widoku gracza, których sędzia nie prowadzi (np. notes), dziedziczymy z poprzedniej tury gracza.
-    base.push({ ...prevById.get(u.id), ...pickFields(u, PLAYER_FIELDS.units.filter((f) => f !== 'dos')) }); // dos to meldunek gracza: nie z prawdy
+    // pos_time (BFT, T49) nie jest dziedziczone: bez łatki widok gracza = prawda, z czasem raportu = czas tury.
+    const { pos_time: _bft, ...inherited } = prevById.get(u.id) || {};
+    base.push({ ...inherited, ...pickFields(u, PLAYER_FIELDS.units.filter((f) => f !== 'dos')) }); // dos to meldunek gracza: nie z prawdy
     seen.add(u.id);
   }
   for (const u of prevPlayer.units || []) if (!seen.has(u.id) && !umpireIds.has(u.id)) base.push(clone(u));
@@ -103,6 +105,16 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
     return out;
   });
   checkIds('jednostki gracza', pUnits, warnings);
+  // Pozycja BFT (T49): plan.player.units.<id> = { pos: <ostatnio zameldowana>, pos_time } zamiast prawdy (zagłuszenie, cisza radiowa, utrata łączności).
+  for (const u of pUnits) {
+    const patch = playerPatches[u.id];
+    if (patch?.pos !== undefined && patch.pos_time === undefined) warnings.push(`jednostka ${u.id}: pos BFT bez pos_time (przyjęto czas tury)`);
+    if (u.pos_time === undefined) continue;
+    const r = checkPosTime(u.pos_time, time, turnMinutes);
+    if (r.error) warnings.push(`jednostka ${u.id}: ${r.error}`);
+    else if (r.warn && !patch?.pos_time) warnings.push(`jednostka ${u.id}: ${r.warn}`);
+    else if (Date.parse(u.pos_time) === Date.parse(time)) delete u.pos_time; // równy czasowi tury = domyślny
+  }
   for (const u of pUnits) {
     if (!isCoord(u.pos)) warnings.push(`jednostka ${u.id}: brak poprawnego pos`);
     if (u.track) {

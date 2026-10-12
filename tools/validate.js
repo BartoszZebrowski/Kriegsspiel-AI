@@ -7,6 +7,8 @@ import { SCHEMA_VERSION, CHANNEL_KINDS, checkCommandRules, PLAYER_MESSAGE_FIELDS
 import { checkDeliveries, checkEw } from '../shared/ew.js';
 import { checkOrderAttachment } from '../shared/order.js';
 import { checkPlayerFields, checkSituation, checkTracksContinuity, checkGazetteer } from './validate-checks.js';
+import { checkFormShape } from '../shared/form.js';
+import { checkFormContent, missingFields } from '../public/js/domain/forms.js';
 import { checkCcirFile, checkReportCycleField, checkMessageCcirFields } from './validate-ccir.js';
 import { loadCatalogIndex, checkEquipmentRefs } from './validate-equipment.js';
 import { checkHierarchySums, unitsInWater, loadWaterPolygons, inboxOutOfOrder, enemyNameLeaks, checkFinishedAar } from './validate-realism.js';
@@ -134,6 +136,15 @@ export async function validateScenario(dir) {
         if (metaError) report.error(`${where}: ${metaError.toLowerCase()}`);
         if (kind === 'inbox') checkMessageCcirFields(where, m, ccirIds, report);
         else if (m.ccir !== undefined || m.report !== undefined) report.error(`${where}: pola ccir i report są tylko w wiadomościach sędziego (inbox)`);
+        if (m.form !== undefined) {
+          // Formularz (T50): struktura i pola szablonu zawsze; braki wymaganych: błąd w outbox, uwaga w inbox (sędzia pisze swobodniej).
+          const formError = checkFormShape(m.form) ?? checkFormContent(m.form);
+          if (formError) report.error(`${where}: ${formError}`);
+          else {
+            const missing = missingFields(m.form);
+            if (missing.length) report[kind === 'outbox' ? 'error' : 'warn'](`${where}: formularz ${m.form.kind} bez wymaganych pól: ${missing.join(', ')}`);
+          }
+        }
         for (const f of extraFields(m, PLAYER_MESSAGE_FIELDS)) report.error(`${where}: pole „${f}” spoza schematu gracza (pole sędziego?)`);
         // Rozkazy graficzne (T44) w załącznikach rozkazów gracza: struktura, geometria i jednostki z tury.
         if (kind === 'outbox') {
