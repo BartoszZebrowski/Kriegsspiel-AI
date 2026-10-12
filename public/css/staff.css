@@ -1,0 +1,22 @@
+/* Odprawa sztabu (T28.1): panel kart S2/S3/S4 i przełącznik widoków komórek sztabu */
+#staff-panel{left:12px;top:56px;width:380px;max-height:calc(100% - 120px);display:none;flex-direction:column;z-index:var(--z-map-ui)}
+#staff-panel.open{display:flex}
+#staff-panel .panel-h{border-radius:var(--r-4) var(--r-4) 0 0}
+#staff-body{overflow:auto;min-height:0;padding:6px;display:flex;flex-direction:column;gap:6px}
+.staff-card{border:1px solid var(--line-2);border-radius:var(--r-3);background:var(--bg-1);padding:7px 9px;cursor:pointer}
+.staff-card[data-linked="0"]{cursor:default}
+.staff-card:hover,.staff-card:focus-visible{background:var(--bg-3);border-color:var(--line-3);outline:none}
+.staff-card header{display:flex;align-items:center;gap:8px;margin-bottom:4px;min-width:0}
+.staff-card p{margin:0;font-size:var(--fs-body);line-height:1.4;color:var(--t-1)}
+.staff-badge{flex:none;font:700 11px var(--font-mono);letter-spacing:.06em;padding:1px 6px;border-radius:var(--r-1);color:#fff;background:var(--accent-2)}
+.staff-s3{background:#2f8f6b}.staff-s4{background:#a8741a}
+.staff-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t-2);font-size:var(--fs-ui)}
+.staff-dtg{flex:none;color:var(--t-3);font-size:11px}
+#tb-staff:disabled{opacity:.45}
+#staffview{left:56px;top:12px;display:flex;align-items:center;gap:8px;padding:3px 3px 3px 10px}
+#staffview .cap{color:var(--t-3)}
+@media (max-width:760px){
+  #staff-panel{left:8px;right:56px;width:auto;top:48px;max-height:calc(100% - 100px)}
+  #staffview{left:auto;right:8px;top:auto;bottom:44px;padding-left:6px}
+  #staffview .cap{display:none}
+}

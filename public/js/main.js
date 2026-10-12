@@ -11,6 +11,8 @@ import { createDocksView } from './views/docks.js';
 import { createHotkeysView } from './views/hotkeys.js';
 import { createBriefingView } from './views/briefing.js';
 import { createCcirView } from './views/ccir.js';
+import { createStaffView } from './views/staff.js';
+import { createStaffViewsView } from './views/staffviews.js';
 import { createStructureView } from './views/structure.js';
 import { createInspectorView } from './views/inspector.js';
 import { createLegendView } from './views/legend.js';
@@ -52,6 +54,8 @@ async function start() {
   createDocksView({ store, controller });
   createBriefingView({ store, controller });
   createCcirView({ store, controller });
+  createStaffView({ store, controller });
+  createStaffViewsView({ store, controller });
   createStructureView({ store, controller });
   createInspectorView({ store, controller });
   createLegendView({ store, controller });

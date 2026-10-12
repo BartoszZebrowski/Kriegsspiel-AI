@@ -8,11 +8,13 @@ import { mergeChannels, channelUnitId, detailLevel, unreadByUnit } from '../doma
 import { visibleMessages, unreadCounts, outboxCount } from '../domain/messages.js';
 import { getDraft } from '../domain/compose.js';
 import { overlaysOf } from '../domain/overlays.js';
+import { staffCards, isStaffOpen, emptyStaffUi } from '../domain/staff.js';
+import { emptyStaffView } from '../domain/staffviews.js';
 
 // Warstwy mapy: sytuacja (jednostki, kontakty…), szkice, etykiety i nakładki kafelkowe (domyślnie wyłączone).
 export const DEFAULT_BASEMAP = 'Ciemna (Esri)';
 export const TILE_OVERLAYS = ['Rzeźba terenu', 'Koleje', 'Nazwy i granice'];
-export const defaultLayers = () => ({ units: true, hierarchy: true, contacts: true, assets: true, logistics: true, lines: true, notes: true, ccir: true, fires: true, labels: true, ...Object.fromEntries(TILE_OVERLAYS.map((n) => [n, false])) });
+export const defaultLayers = () => ({ units: true, hierarchy: true, contacts: true, assets: true, logistics: true, lines: true, notes: true, ccir: true, fires: true, engineering: true, labels: true, ...Object.fromEntries(TILE_OVERLAYS.map((n) => [n, false])) });
 
 export function initialState() {
   return {
@@ -44,6 +46,8 @@ export function initialState() {
     animation: null, // jednorazowe zlecenie dla mapy: { nonce, from, to, plan, ms } — odtwórz przemieszczenia między turami (domain/motion.js)
     orderMode: null, // tryb rozkazu graficznego (T44): null | { selected: [id], task, kind, delivery } (domain/order.js)
     ccirEditor: { open: false, draft: [], pick: null }, // edytor CCIR (T48): edytowana kopia i wskazywanie geometrii na mapie { id, shape }
+    staffUi: emptyStaffUi(), // panel odprawy sztabu (T28.1): { closed: [tury zamknięte, zapamiętane], recalled: [tury przywołane w archiwum] }
+    staffView: emptyStaffView(), // widok komórki sztabu: { active, saved } — zapamiętane ustawienia gracza do przywrócenia
     popover: null, // otwarty popover mapy: 'legend' | 'layers' | 'dos' | 'bell' | null
     omnibox: { open: false },
     command: null, // jednorazowe polecenie dla widoku: { name, arg, nonce }
@@ -63,6 +67,8 @@ export const DERIVED = [
   { key: 'channelUnit', deps: ['channel'], fn: (s) => channelUnitId(s.channel) },
   { key: 'visibleMessages', deps: ['messages', 'archive', 'viewTurn'], fn: (s) => visibleMessages(s.messages, s) },
   { key: 'overlays', deps: ['visibleMessages'], fn: (s) => overlaysOf(s.visibleMessages) }, // nakładki od przełożonego (T51)
+  { key: 'staff', deps: ['turn', 'channels', 'scenario'], fn: (s) => staffCards(s.turn?.staff, s.channels, s.scenario?.timezone) }, // karty odprawy sztabu (T28.1)
+  { key: 'staffOpen', deps: ['staff', 'staffUi', 'viewTurn', 'archive'], fn: (s) => isStaffOpen({ cards: s.staff, staffUi: s.staffUi, viewTurn: s.viewTurn, archive: s.archive }) },
   { key: 'unread', deps: ['channels', 'visibleMessages', 'read'], fn: (s) => unreadCounts(s.channels, s.visibleMessages, s.read) },
   { key: 'unreadUnits', deps: ['channels', 'unread'], fn: (s) => unreadByUnit(s.channels, s.unread) },
   { key: 'outboxCount', deps: ['messages', 'currentTurn'], fn: (s) => outboxCount(s.messages, s.currentTurn) },

@@ -1,0 +1,10 @@
+/* Warstwa „Zapory i mosty” (T27): znaczniki mostów i przejść. Kolor obiektu w --ec, stan w klasie tonu. */
+.eng-icon{overflow:visible}
+.eng-mark{display:flex;align-items:center;gap:5px;white-space:nowrap;transform:translate(-9px,-9px)}
+.eng-mark__g{width:18px;height:18px;display:grid;place-items:center;background:#10161d;border:2px solid var(--ec,#2f7bff);color:var(--ec,#2f7bff);font:700 12px var(--font-ui);line-height:1}
+.eng-mark__lbl{background:rgba(16,22,29,.85);border:1px solid var(--line-2);color:var(--t-1);font:700 11px var(--font-ui);padding:1px 4px}
+.eng-mark--plan .eng-mark__g{border-style:dotted;opacity:.7}
+.eng-mark--warn .eng-mark__g{border-style:dashed}
+.eng-mark--bad .eng-mark__g{background:#3a1212;text-decoration:line-through}
+.eng-mark--bad .eng-mark__lbl{border-color:#ef4444}
+.eng-mark--enemy .eng-mark__lbl{border-style:dashed}

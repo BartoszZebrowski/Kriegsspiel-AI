@@ -23,6 +23,7 @@ const OVERLAY_ROWS = [
   ['Nazwy i granice', 'Nazwy i granice (Esri)'],
   ...RANGE_KINDS.map((k) => [allLayerKey(k.kind), 'Zasięg ' + k.short + ': wszystkie jednostki']),
   ['fires', 'Ogień: zgłoszenia i ich status'], // T52
+  ['engineering', 'Zapory i mosty (saperzy)'], // T27
 ];
 
 export function createMapControls({ store, controller, map, root = document }) {

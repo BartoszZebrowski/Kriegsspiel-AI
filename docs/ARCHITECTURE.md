@@ -279,3 +279,32 @@ Wiadomość sędziego (`inbox`) może nieść `overlay: { id, name, features: [s
 | Intencje | `core/overlays.js` (podkontroler jak `orders.js`) | `copyOverlayToNotes(id, { attach })`: kopie → `saveNotes`; z `attach` dodatkowo `attachIds` w szkicu aktywnego kanału (`setDraft`). Archiwum: odmowa. |
 | Widoki | `views/map/overlays.js` (nowy plik, osobna warstwa; czyta `overlays` i `layers`), `views/map/controls.js` (sekcja „Nakładki od przełożonego” w panelu warstw: nazwa, DTG, włącz/wyłącz, „Do szkiców”, „Do rozkazu”) | Warstwa rysuje przez `buildGraphic` + `builtLayers` (przeliczanie po zoomie); brak importów z innych widoków. |
 | Walidator | `tools/validate.js` | `overlay` w `inbox`: `checkOverlay` (błąd); w `outbox` pole jest błędem (tylko sędzia). |
+
+## Wojska inżynieryjne (T27)
+
+Zapory, przejścia i mosty jako obiekty ze stanem. Prawda (`umpire/turns`, pole `engineering`) ma pełny stan i pola sędziego; gracz dostaje w `player/turns` tylko listę z białej listy: własne obiekty z prawdy, zapory przeciwnika wyłącznie z rozpoznania.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/engineering.js` (osobny plik, bo `shared/schema.js` ma jednego właściciela naraz) | `ENGINEERING_KINDS` (`minefield`, `obstacle`, `lane`, `temp_bridge`, `bridge`) z geometrią każdego rodzaju, `WORK_STATES` (`planned` / `building` / `done`), `BRIDGE_STATES` (`intact` / `damaged` / `destroyed`), `checkEngineering(list, { player, turnTime })` → `{ errors, warnings }`. W `shared/schema.js` tylko `engineering` w `PLAYER_TURN_FIELDS` i lista pól w `PLAYER_FIELDS` (strażnik wycieku działa bez zmian w walidatorze). |
+| Logika klienta | `domain/engineering.js` (czysta; stałe lustrzane do `shared/`) | `engineeringItems(turn)`, `engineeringLabel` („ZAPORA-1: 60%”), `engineeringStateText`, `engineeringTone`, `engineeringTip`; nowe kody SIDC saperów w `domain/sidc.js`. Bez DOM. |
+| Stan | `core/store.js` | tylko flaga warstwy `layers.engineering`; obiekty to część `turn`, bez nowego plastra. |
+| Widoki | `views/map/engineering.js` (nowy plik, osobna warstwa), `views/map/controls.js` (wiersz „Zapory i mosty” na końcu panelu warstw), `public/css/engineering.css` | Zapory rysują znaki z `domain/tactical.js` (pole minowe, linia zapór) przez `buildGraphic` + `builtLayers`; mosty i przejścia to znaczniki z etykietą i stanem. Własne i wrogie (rozpoznane) różnią kolor i kreskowanie; tekst przez `escapeHtml`; subskrypcja `turn` + `layers`. Brak importów z innych widoków. |
+| Kalkulator | `tools/umpire/engineer.mjs` (czyste funkcje + CLI, deterministyczne) | czas pola minowego, przejścia, mostu składanego / pontonowego, zniszczenia mostu, postęp zadania. Nie zależy od klienta ani serwera. |
+| Sędzia | `tools/umpire/engineering-merge.mjs` (wołany z `turn.mjs`), [CLAUDE.md](../CLAUDE.md) | dziedziczenie listy z tury N i łatki planu (`set` / `remove`); widok gracza = obiekty strony gracza z prawdy + wrogie z `plan.player.engineering`; stan mostu synchronizowany z `logistics.bridges` (zmiana routingu T15 / T17). |
+| Walidator | `tools/validate.js` | `engineering` w `umpire/turns` (pełny stan, pola dodatkowe dozwolone) i w `player/turns` (biała lista, wrogie z `observed`). |
+
+## Strefa sztabu: odprawa S2/S3/S4 i widoki komórek (T28.1)
+
+Na starcie tury gracz dostaje krótką odprawę trzech stanowisk sztabu (`staff` w `player/turns`), a przełącznik „Sztab” na mapie daje gotowe zestawy warstw i paneli dla S2, S3, S4 i wsparcia ogniowego.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/staff.js` (osobny plik, bo `shared/schema.js` ma jednego właściciela naraz) | `STAFF_ROLES`, `STAFF_MAX_TEXT`, `checkStaff(staff, turnTime, turnMinutes)` → `{errors, warnings}`: ≤ 3 pozycje, role z listy i unikalne, `name`, `text` ≤ 300 znaków, `time` ISO (poza okresem tury = uwaga). W `shared/schema.js` tylko `staff` dopisane do `PLAYER_TURN_FIELDS`. Używają go `tools/validate.js` i `tools/umpire/turn.mjs` (`plan.player.staff`, nie dziedziczone). |
+| Logika | `domain/staff.js` (czysta) | `staffCards(staff, channels, tz)` → karty `{role, badge, title, name, text, dtg, channel}` w kolejności S2/S3/S4; `staffChannelId` (kanał o id = rola, rezerwa: S2 → rozpoznanie, S4 → logistyka, S3 → brak); stan panelu `isStaffOpen`, `closeStaff`, `openStaff` (zamknięte tury + przywołane w archiwum). |
+| Logika | `domain/staffviews.js` (czysta) | `STAFF_VIEWS` (S2, S3, S4, Ogień: warstwy i panel), `activateStaffView`, `restoreStaffView`, `toggleStaffView`: preset dotyka tylko wymienionych warstw, a przy pierwszym włączeniu zapamiętuje wartości gracza tych warstw i panelu (`staffView.saved`) do przywrócenia. |
+| Stan | `core/store.js` | plastry `staffUi` (`closed`, `recalled`) i `staffView` (`active`, `saved`); pochodne `staff` (karty z `turn.staff` i `channels`) oraz `staffOpen`. |
+| Intencje | `core/staff.js` (podkontroler jak `ccir.js`) | `closeStaffPanel`, `openStaffPanel`, `toggleStaffPanel`, `openStaffChannel(role)` (przez `openChannel`), `setStaffView(id\|null)` (jedno `set`). Zamknięte tury zapisuje przez `storage` pod kluczem `ks:<scenariusz>:staff-closed`. |
+| Widoki | `views/staff.js` (panel „Odprawa sztabu” + ikona przy zegarze), `views/staffviews.js` (przełącznik S2/S3/S4/Ogień/Moje), `views/hotkeys.js` (Shift + 1…4, Shift + 0), `public/css/staff.css` | Brak importów między widokami; tekst przez `escapeHtml`. Panel jest pływającym oknem mapy (na telefonie na szerokość zakładki „Mapa”), działa w archiwum (odprawa oglądanej tury). |
+
+Bieżąca tura otwiera panel sama, dopóki gracz jej nie zamknie; w archiwum panel pokazuje się tylko na żądanie. Presety nie zmieniają podkładów ani nakładek kafelkowych. Sędzia: procedura w [CLAUDE.md](../CLAUDE.md), format w [SCHEMA.md](SCHEMA.md).

@@ -848,7 +848,7 @@ Spektrum jako broń obu stron: zagłuszenie, namierzanie nadajników, wabiki.
 - [A] Kontakt-nadajnik ma status `A` i źródło z REW/DF.
 - [M] Zameldowana strefa zagłuszenia rysuje się na mapie z wiekiem informacji; rozkaz do jednostki w tej strefie idzie kurierem (opóźnienie widać w rozstrzygnięciu, nie w UI).
 
-## T27 — Wojska inżynieryjne ⬜
+## T27 — Wojska inżynieryjne ✅
 Saperzy jako jednostki z zadaniami; zapory i mosty jako rzeczywistość na mapie, nie tylko szkic.
 
 **WA**
@@ -882,7 +882,7 @@ Wytrzymałość jako zasób: rotacja i odpoczynek stają się decyzją.
 - [A] Inspektor pokazuje kategorię i kolor.
 - [M] Brygada po dobie ciągłej walki melduje „nie stać nas na natarcie" i realnie zwalnia; świeża rezerwa działa pełnym tempem.
 
-## T28.1 — Strefa sztabu (S2/S3/S4) ⬜
+## T28.1 — Strefa sztabu (S2/S3/S4) ✅
 Na starcie każdej tury gracz dostaje krótką odprawę sztabu: trzy stanowiska (S2 — wywiad, S3 — operacje, S4 — logistyka). Gracz siedzi w dowództwie, nie patrzy z góry.
 
 **WA**

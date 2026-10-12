@@ -1388,6 +1388,85 @@ try {
     await key('Escape');
   });
 
+  await step('T28.1 sztab: odprawa S2/S3/S4 (karty, klik → kanał, zamknięcie i przywołanie zapamiętane), widoki komórek zachowują ustawienia gracza', async () => {
+    const cur = await state('s.currentTurn');
+    const f = `player/turns/${String(cur).padStart(3, '0')}.json`;
+    const turn0 = await readJson(f);
+    const t = turn0.time;
+    turn0.staff = [
+      { role: 's2', name: 'mjr Test, szef S2', text: 'Wróg <i>przegrupowuje się</i> na zachód — pewność średnia.', time: t },
+      { role: 's3', name: 'ppłk Test, szef S3', text: 'Proponuję rotację 1k.', time: t },
+      { role: 's4', name: 'mjr Test, szef S4', text: 'Amunicja 0,4 doby, konwój 3 opóźniony.', time: t },
+    ];
+    await writeJson(f, turn0);
+    await waitFor(`${store()}.staff.length === 3`, 'odprawa sztabu po SSE');
+    await waitFor(`document.getElementById('staff-panel').classList.contains('open') && document.querySelectorAll('.staff-card').length === 3`, 'panel z trzema kartami');
+    assert(await ev(`[...document.querySelectorAll('.staff-badge')].map((e) => e.textContent).join() === 'S2,S3,S4'`), 'odznaki S2, S3, S4');
+    assert(await ev(`!document.querySelector('.staff-card p i')`), 'tekst karty zescapowany');
+    assert(await ev(`document.querySelector('.staff-dtg').textContent.length > 4`), 'DTG na karcie');
+    await clickSel('.staff-card[data-role="s2"]');
+    await waitFor(`${store()}.activeChannel === 's2'`, 'klik karty S2 otwiera kanał s2');
+    await clickSel('#staff-x');
+    await waitFor(`!document.getElementById('staff-panel').classList.contains('open')`, 'panel zamknięty');
+    const key0 = await state(`'ks:' + s.scenario.id + ':staff-closed'`);
+    assert(await ev(`JSON.parse(localStorage.getItem(${JSON.stringify(key0)})).includes(${cur})`), 'zamknięcie zapamiętane w localStorage');
+    await clickSel('#tb-staff');
+    await waitFor(`document.getElementById('staff-panel').classList.contains('open')`, 'panel przywołany ikoną przy zegarze');
+    // Skrót Shift+1 nie działa w polu tekstowym, a poza nim działa (i się cofa).
+    const shiftKey = (target) => ev(`(${target}).dispatchEvent(new KeyboardEvent('keydown', { code: 'Digit1', key: '!', shiftKey: true, bubbles: true, cancelable: true }))`);
+    await ev(`(() => { const t = document.createElement('textarea'); t.id = 'sv-probe'; document.body.appendChild(t); t.focus(); })()`);
+    await shiftKey(`document.getElementById('sv-probe')`);
+    assert(await state('s.staffView.active === null'), 'Shift+1 w polu tekstowym nie przełącza widoku');
+    await ev(`document.getElementById('sv-probe').remove()`);
+    await shiftKey('document.body');
+    await waitFor(`${store()}.staffView.active === 's2'`, 'Shift+1 włącza widok S2');
+    await shiftKey('document.body');
+    await waitFor(`${store()}.staffView.active === null`, 'ponowne Shift+1 cofa widok');
+    // Telefon: panel mieści się w ekranie, nie zasłania całej mapy i da się go zamknąć.
+    await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: false });
+    await sleep(500);
+    assert(await ev(`(() => { const r = document.getElementById('staff-panel').getBoundingClientRect(); return r.left >= 0 && r.right <= 390 - 40 && r.height < 844 * 0.6; })()`), 'panel odprawy mieści się na telefonie, nie zasłania przycisków mapy ani całej mapy');
+    assert(await ev(`(() => { const r = document.getElementById('staffview').getBoundingClientRect(); return r.left >= 0 && r.right <= 390 && r.bottom <= 844; })()`), 'przełącznik widoków w ekranie telefonu');
+    await clickSel('#staff-x');
+    await waitFor(`!document.getElementById('staff-panel').classList.contains('open')`, 'panel zamknięty na telefonie');
+    await clickSel('#tb-staff');
+    await waitFor(`document.getElementById('staff-panel').classList.contains('open')`, 'panel przywołany na telefonie');
+    await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+    await sleep(500);
+    // Widoki komórek: własne ustawienia gracza wracają po „Moje”.
+    await ev(`window.__ks.controller.setLayerVisible('contacts', false)`);
+    await clickSel('#seg-staff [data-sv="s4"]');
+    await waitFor(`${store()}.layers.logistics === true && ${store()}.popover === 'dos' && ${store()}.layers.contacts === false`, 'widok S4: logistyka i panel DOS');
+    await clickSel('#seg-staff [data-sv="s2"]');
+    await waitFor(`${store()}.layers.contacts === true && ${store()}.layers.logistics === false`, 'widok S2: kontakty');
+    await clickSel('#seg-staff [data-sv=""]');
+    await waitFor(`${store()}.layers.contacts === false && ${store()}.layers.logistics === true && ${store()}.popover === null && ${store()}.staffView.active === null`, 'przywrócone ustawienia gracza');
+    await ev(`window.__ks.controller.setLayerVisible('contacts', true)`);
+  });
+
+  await step('T27 saperzy: engineering w turze → pole minowe (wykonywane 60%), most pontonowy, wrogi most zburzony; escape; przełącznik warstwy', async () => {
+    const [lon, lat] = await state('s.scenario.map.center');
+    const cur = await state('s.currentTurn');
+    await waitFor(`${store()}.viewTurn === ${cur}`, 'oglądana jest bieżąca tura');
+    const f = `player/turns/${String(cur).padStart(3, '0')}.json`;
+    const turn0 = await readJson(f);
+    turn0.engineering = [
+      { id: 'zapora-1', kind: 'minefield', owner: 'own', state: 'building', progress: 60, label: 'ZAPORA-1', unit: '1bzmot', coords: [[lon, lat], [lon + 0.02, lat], [lon + 0.02, lat + 0.01], [lon, lat + 0.01], [lon, lat]] },
+      { id: 'most-1', kind: 'temp_bridge', owner: 'own', state: 'done', label: 'Most <i>pon.</i>', pos: [lon + 0.03, lat] },
+      { id: 'wrog-most', kind: 'bridge', owner: 'enemy', state: 'destroyed', label: 'Most wrogi', pos: [lon + 0.04, lat + 0.01], observed: turn0.time, source: 'BSP-1', confidence: 'średnia' },
+    ];
+    await writeJson(f, turn0);
+    await waitFor(`${store()}.turn.engineering?.length === 3`, 'obiekty inżynieryjne po SSE');
+    await waitFor(`document.querySelectorAll('.eng-mark').length === 2`, 'znaczniki mostów na mapie');
+    assert(await ev(`[...document.querySelectorAll('#map .tac-label')].some((e) => e.textContent.includes('ZAPORA-1: wykonywane 60%'))`), 'etykieta zapory ze stanem i postępem');
+    assert(await ev(`!document.querySelector('.eng-mark i') && [...document.querySelectorAll('.eng-mark__lbl')].some((e) => e.textContent.includes('<i>pon.</i>'))`), 'etykieta mostu zescapowana');
+    assert(await ev(`document.querySelector('.eng-mark--bad.eng-mark--enemy') !== null`), 'wrogi zburzony most oznaczony');
+    await ev(`window.__ks.controller.setLayerVisible('engineering', false)`);
+    await waitFor(`!document.querySelector('.eng-mark')`, 'warstwa „Zapory i mosty” wyłączona');
+    await ev(`window.__ks.controller.setLayerVisible('engineering', true)`);
+    await waitFor(`document.querySelectorAll('.eng-mark').length === 2`, 'warstwa „Zapory i mosty” włączona');
+  });
+
   await step('brak błędów JS w konsoli', async () => {
     assert(consoleErrors.length === 0, 'błędy konsoli:\n         ' + consoleErrors.join('\n         '));
   });

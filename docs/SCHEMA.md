@@ -63,7 +63,7 @@ Odprawa w Markdownie, wyświetlana w zakładce Odprawa. Brak pliku = uwaga walid
 
 ## `player/turns/NNN.json` — jawny (widok gracza)
 
-Stan świata **taki, jaki zna gracz**: własne siły na ostatnich zameldowanych pozycjach (BFT, `pos_time`), wróg tylko jako kontakty. Pola najwyższego poziomu (gracz): `turn`, `time`, `units`, `contacts`, `assets`, `lines`, `logistics`.
+Stan świata **taki, jaki zna gracz**: własne siły na ostatnich zameldowanych pozycjach (BFT, `pos_time`), wróg tylko jako kontakty. Pola najwyższego poziomu (gracz): `turn`, `time`, `units`, `contacts`, `assets`, `lines`, `logistics`, `staff`.
 
 | Pole | Typ | Wym. | Znaczenie |
 |---|---|---|---|
@@ -74,8 +74,14 @@ Stan świata **taki, jaki zna gracz**: własne siły na ostatnich zameldowanych 
 | `assets` | lista | nie | Środki rozpoznania gracza. |
 | `lines` | lista | nie | Linie operacyjne. |
 | `logistics` | obiekt | nie | Warstwa logistyczna znana graczowi (sekcja `logistics` niżej). |
+| `staff` | lista | nie | Odprawa sztabu na start tury (T28.1), niżej. Dotyczy tylko tej tury, nie jest dziedziczona. |
+| `engineering` | lista | nie | Obiekty inżynieryjne znane graczowi (T27): zapory, przejścia, mosty. Sekcja `engineering` niżej. |
 
 Wszystkie elementy `units`/`contacts`/`assets` mają unikalne w pliku `id`.
+
+### `staff` (gracz, T28.1)
+
+Do 3 pozycji `{ role, name, text, time }`: `role` ∈ `s2` / `s3` / `s4` (unikalna w turze), `name` (`stopień nazwisko, funkcja`), `text` (≤ 300 znaków), `time` (ISO, w okresie tury: od czasu tury − `turnMinutes` do czasu tury; poza nim uwaga). Treść zawiera tylko to, co wiedzą stanowiska sztabu, nigdy prawdę. Stałe i walidator: `shared/staff.js` (`checkStaff`); `staff` w `inbox`/`outbox` jest błędem (poza `PLAYER_MESSAGE_FIELDS`). Karta w aplikacji otwiera kanał postaci: `s2` → kanał `s2` (albo pierwszy kanał rodzaju `recon`), `s4` → kanał `s4` albo `logistics`, `s3` → kanał `s3`, a gdy go brak, karta jest tylko do czytania.
 
 ### `units[]` (gracz)
 
@@ -140,6 +146,27 @@ Obiekt z czterema opcjonalnymi listami. Ten sam kształt w `player/turns` (to, c
 ### `lines[]` (gracz)
 
 `id` (tekst), `kind` (`boundary`, `flot`, `enemy_flot`, `phase`, `axis`, `enemy_axis`, `ew_zone`; inny = uwaga), `label` (tekst), `coords` (`[[lon,lat], …]`, ≥ 2 punkty, tak), `observed` (czas ISO meldunku; wymagane dla `ew_zone`), `formation` (nie; id dowództwa sąsiada z tej samej tury — linia należy do sąsiada, np. jego FLOT; ta sama reguła celu co przy `units[].formation`).
+
+### `engineering` (gracz i sędzia, T27)
+
+Obiekty inżynieryjne: pola minowe, linie zapór, przejścia, mosty. Walidator: `checkEngineering` (`shared/engineering.js`). Rysunek na mapie: warstwa „Zapory i mosty”.
+
+| Pole | Typ | Wym. | Znaczenie |
+|---|---|---|---|
+| `id` | tekst | tak | Unikalne w liście. |
+| `kind` | tekst | tak | `minefield` (pole minowe), `obstacle` (linia zapór), `lane` (przejście w zaporze), `temp_bridge` (most składany / pontonowy), `bridge` (most stały). |
+| `owner` | tekst | tak | Gracz: `own` albo `enemy`. Prawda: strona (`PL`, `RU`…). |
+| `state` | tekst | tak | Zapory, przejścia, `temp_bridge`: `planned` / `building` / `done` (planowane / wykonywane / gotowe). `bridge`: `intact` / `damaged` / `destroyed` (cały / uszkodzony / zburzony). |
+| `coords` | lista | zależnie | `minefield`: zamknięty wielokąt (≥ 4 punkty, pierwszy == ostatni); `obstacle`, `lane`: łamana (≥ 2 punkty). `[lon, lat]`. |
+| `pos` | `[lon, lat]` | zależnie | `temp_bridge`, `bridge`. |
+| `label` | tekst | nie | Nazwa, np. „ZAPORA-1”. |
+| `progress` | liczba 0–100 | nie | Postęp w % (sens tylko przy `building`; brak przy `building` = uwaga). Meldunek: „ZAPORA-1: 60%”. |
+| `unit` | tekst | nie | Id jednostki saperskiej wykonującej zadanie. |
+| `observed`, `source`, `confidence` | czas ISO, tekst, `wysoka`/`średnia`/`niska` | `observed` tak dla `owner: enemy` | Wiedza z rozpoznania o obiekcie przeciwnika (jak kontakt: starzeje się). |
+
+- **Gracz** (`player/turns`): tylko pola z tabeli. Obiekty `own` pochodzą **z prawdy** (nie z notatek gracza); obiekty `enemy` tylko z rozpoznania (albo odkryte przy wejściu — wtedy sędzia dopisuje je z `observed` i `source`). Most stały, który jest już w `logistics.bridges`, nie powtarza się w `engineering`.
+- **Sędzia** (`umpire/turns`): pełna lista, w tym obiekty nieodkryte; pola dodatkowe dozwolone (`changed_at`, `changed_by` — kto i kiedy uszkodził / zburzył most, `started`, `until`, …). Stan mostu stałego jest synchronizowany do `logistics.bridges` (`status`), więc zburzony most zmienia routing (T15, T17).
+- Na mapie stan wyraża kreskowanie (planowane cienko kropkowane, wykonywane kreskowane, gotowe ciągłe); obiekty przeciwnika są czerwone.
 
 ## `player/inbox/NNN.json` — jawny
 

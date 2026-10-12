@@ -12,6 +12,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PLAYER_FIELDS, PLAYER_TURN_FIELDS, LOGISTICS_FIELDS, extraFields, isCoord, isValidTime, checkTrack, checkPosTime } from '../../shared/schema.js';
 import { checkDeliveries, checkEw, checkEwZone } from '../../shared/ew.js';
+import { checkStaff, STAFF_FIELDS } from '../../shared/staff.js';
+import { applyEngineering, syncBridgeStatus } from './engineering-merge.mjs';
 import { clone, pad3, pickFields, moved, computeTrack, nextTime, mergeById, checkIds, patchMissing, applyLogistics, buildInbox } from './turn-merge.mjs';
 
 // Publiczne API (kiedyś w tym pliku): pomocniki żyją w turn-merge.mjs.
@@ -147,11 +149,26 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   // Logistyka gracza: tylko z poprzedniej tury gracza + plan.player.logistics (nie z prawdy). Trasy konwojów z planu sędziego jako zapas.
   const pLog = applyLogistics(prevPlayer.logistics, pl.logistics, { fallbackRoutes: uLog.routes, fields: LOGISTICS_FIELDS });
   warnings.push(...pLog.warnings.map((w) => `gracz ${w}`));
+  // Wojska inżynieryjne (T27): prawda dziedziczona z tury N i zmieniana planem; widok gracza = własne obiekty z prawdy + rozpoznane wrogie.
+  // Stan mostu stałego z prawdy trafia do logistics.bridges (routing); u gracza tylko dla mostów jego strony.
+  delete umpire.engineering;
+  const eng = applyEngineering({ prevUmpire, prevPlayer, plan, playerSide, time, logisticsBridgeIds: new Set((pLog.logistics?.bridges || []).map((b) => b.id)) });
+  warnings.push(...eng.warnings);
+  if (eng.umpire) umpire.engineering = eng.umpire;
+  syncBridgeStatus(umpire.logistics, eng.bridgeStates, time);
+  syncBridgeStatus(pLog.logistics, eng.ownBridgeStates, time);
   const player = { turn, time, units: pUnits };
   if (pLog.logistics) player.logistics = pLog.logistics;
   if (contacts.length || prevPlayer.contacts) player.contacts = contacts;
   if (pAssets.length || prevPlayer.assets) player.assets = pAssets;
   if (lines.length || prevPlayer.lines) player.lines = lines;
+  if (eng.player && (eng.player.length || prevPlayer.engineering)) player.engineering = eng.player;
+  // Odprawa sztabu (T28.1): dotyczy jednej tury, nie jest dziedziczona. plan.player.staff = [{ role, name, text, time }] (bez prawdy!).
+  if (Array.isArray(pl.staff) && pl.staff.length) {
+    player.staff = pl.staff.map((s) => pickFields(s, STAFF_FIELDS));
+    const st = checkStaff(player.staff, time, turnMinutes);
+    warnings.push(...st.errors.map((e) => `plan ${e}`), ...st.warnings.map((w) => `plan ${w}`));
+  }
   const leaked = extraFields(player, PLAYER_TURN_FIELDS);
   if (leaked.length) throw new Error(`Wyciek pól do widoku gracza: ${leaked.join(', ')}`);
 

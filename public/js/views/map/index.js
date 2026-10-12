@@ -25,6 +25,7 @@ import { createOrderPreview } from './order-preview.js';
 import { createCcirLayer } from './ccir.js';
 import { createOverlaysLayer } from './overlays.js';
 import { createFiresLayer } from './fires.js';
+import { createEngineeringLayer } from './engineering.js';
 
 // Rozmiar symbolu zależy od szczebla: im mniejsza jednostka, tym mniejszy znak.
 function unitSize(u) {
@@ -114,6 +115,7 @@ export function createMapView({ store, controller, root = document }) {
   createOverlaysLayer({ store, map }); // T51: nakładki od przełożonego (włączane w panelu warstw)
   createCcirLayer({ store, controller, map }); // T48: nakładka CCIR i wskazywanie geometrii dla edytora
   createFiresLayer({ store, map }); // T52: warstwa „Ogień” (zgłoszenia i ich status)
+  createEngineeringLayer({ store, map }); // T27: zapory, przejścia i mosty
 
   const markerEl = (id) => markers.get(id)?.getElement();
 

@@ -5,9 +5,11 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { SCHEMA_VERSION, CHANNEL_KINDS, checkCommandRules, PLAYER_MESSAGE_FIELDS, MAX_NOTES, isValidTime, extraFields, checkNote, checkMessageText, checkMessageMeta } from '../shared/schema.js';
 import { checkDeliveries, checkEw } from '../shared/ew.js';
+import { checkEngineering } from '../shared/engineering.js';
 import { checkOrderAttachment } from '../shared/order.js';
 import { checkPlayerFields, checkSituation, checkTracksContinuity, checkGazetteer } from './validate-checks.js';
 import { checkFormShape } from '../shared/form.js';
+import { checkStaff } from '../shared/staff.js';
 import { checkOverlay } from '../shared/overlay.js';
 import { checkFormContent, missingFields } from '../public/js/domain/forms.js';
 import { createFireChecker } from './validate-fire.js';
@@ -103,7 +105,11 @@ export async function validateScenario(dir) {
     if (data) {
       checkSituation(`player/turns/${pad(n)}`, data, n, scenario, report, true);
       checkPlayerFields(`player/turns/${pad(n)}`, data, report);
+      const st = checkStaff(data.staff, data.time, scenario.turnMinutes);
+      for (const e of st.errors) report.error(`player/turns/${pad(n)}: ${e}`);
+      for (const w of st.warnings) report.warn(`player/turns/${pad(n)}: ${w}`);
       checkEquipmentRefs(`player/turns/${pad(n)}`, data, catalogIndex, report);
+      if (data.engineering !== undefined) reportEngineering(`player/turns/${pad(n)}`, data, true, report);
       checkTracksContinuity(`player/turns/${pad(n)}`, prevUnits, data.units, report);
       for (const w of checkHierarchySums(`player/turns/${pad(n)}`, data.units)) report.warn(w);
       playerTurnData.set(n, data);
@@ -207,6 +213,7 @@ export async function validateScenario(dir) {
       for (const w of r.warnings) report.warn(`${ulabel}: ${w}`);
     }
     if (data.ew !== undefined) for (const e of checkEw(data.ew)) report.error(`${ulabel}: ${e}`);
+    if (data.engineering !== undefined) reportEngineering(ulabel, data, false, report);
     for (const w of checkHierarchySums(ulabel, data.units)) report.warn(w);
     const water = await loadWaterPolygons((data.units || []).map((u) => u?.pos));
     for (const id of unitsInWater(data.units, water)) report.warn(`${ulabel} units[${id}]: pozycja w wodzie`);
@@ -221,6 +228,13 @@ export async function validateScenario(dir) {
   for (const w of checkFinishedAar(scenario, hasAar)) report.warn(w);
 
   return { errors, warnings };
+}
+
+// Obiekty inżynieryjne (T27): prawda (pola dodatkowe dozwolone) albo widok gracza (biała lista, wrogie z observed).
+function reportEngineering(label, data, player, report) {
+  const r = checkEngineering(data.engineering, { player, turnTime: data.time });
+  for (const e of r.errors) report.error(`${label}: ${e}`);
+  for (const w of r.warnings) report.warn(`${label}: ${w}`);
 }
 
 async function main() {

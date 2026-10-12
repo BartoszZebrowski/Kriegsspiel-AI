@@ -19,11 +19,14 @@
   <link rel="stylesheet" href="/css/overlays.css">
   <link rel="stylesheet" href="/css/ccir.css">
   <link rel="stylesheet" href="/css/fires.css">
+  <link rel="stylesheet" href="/css/engineering.css">
+  <link rel="stylesheet" href="/css/staff.css">
   <link rel="stylesheet" href="/css/responsive.css">
 </head>
 <body data-m="map">
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-staff" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.3"/><path d="M16 14.3c2.9.2 5 2.4 5 5.7"/></symbol>
 <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
 <symbol id="i-chev" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
 <symbol id="i-chevd" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
@@ -92,6 +95,7 @@
       <button id="t-next" data-tip="Następna tura" data-k="." aria-label="Następna tura"><svg class="i"><use href="#i-gt"/></svg></button>
     </div>
     <button class="btn sm" id="t-cur" hidden>Wróć do bieżącej</button>
+    <button class="tb-btn" id="tb-staff" data-tip="Odprawa sztabu S2/S3/S4 — pokaż lub ukryj" aria-label="Odprawa sztabu" aria-pressed="false" disabled><svg class="i"><use href="#i-staff"/></svg><span class="lbl">Sztab</span></button>
     <span class="pill hide-m" id="outbox-pill" data-tip="Rozkazy w skrzynce nadawczej — zostaną rozpatrzone po „koniec tury”">SKRZYNKA · 0</span>
     <span class="vsep"></span>
     <button class="tb-btn" id="tb-brief" data-tip="Odprawa" data-k="B"><svg class="i"><use href="#i-doc"/></svg><span class="lbl">Odprawa</span></button>
@@ -149,6 +153,16 @@
           <button data-detail="company" data-d="company" data-tip="Także kompanie" data-k="3">Kompania</button>
           <button data-detail="platoon" data-d="platoon" data-tip="Także plutony" data-k="4">Pluton</button>
         </div>
+      </div>
+
+      <div class="float" id="staffview"><span class="cap">Sztab</span>
+        <div class="seg sm" id="seg-staff" role="group" aria-label="Widok według komórki sztabu"></div>
+      </div>
+
+      <div class="float pop" id="staff-panel" role="dialog" aria-label="Odprawa sztabu">
+        <div class="panel-h"><span class="cap">Odprawa sztabu</span><span class="count mono" id="staff-turn"></span><span class="grow"></span>
+          <button class="ibtn" id="staff-x" data-tip="Zamknij odprawę (przywołasz ją ikoną przy zegarze)" aria-label="Zamknij odprawę sztabu"><svg class="i s"><use href="#i-x"/></svg></button></div>
+        <div id="staff-body"></div>
       </div>
 
       <div class="float" id="mapctl">

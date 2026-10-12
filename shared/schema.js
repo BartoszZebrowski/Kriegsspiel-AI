@@ -84,12 +84,13 @@ export const NOTE_ECHELONS = ['D', 'E', 'F', 'G', 'H', 'I', 'J'];
 // --- Biała lista pól plików gracza (player/turns/NNN.json) ---
 // Wszystko spoza listy jest polem sędziego (np. side, supply, events) i nie może trafić do pliku gracza.
 
-export const PLAYER_TURN_FIELDS = ['turn', 'time', 'units', 'contacts', 'assets', 'lines', 'logistics'];
+export const PLAYER_TURN_FIELDS = ['turn', 'time', 'units', 'contacts', 'assets', 'lines', 'logistics', 'staff', 'engineering'];
 export const PLAYER_FIELDS = {
   units: ['id', 'name', 'sidc', 'pos', 'strength', 'status', 'task', 'personnel', 'equipment', 'parent', 'formation', 'track', 'notes', 'dos', 'pos_time'],
   contacts: ['id', 'sidc', 'pos', 'uncertainty_m', 'observed', 'source', 'confidence', 'estimate', 'estimate_personnel', 'estimate_equipment'],
   assets: ['id', 'name', 'type', 'sidc', 'pos', 'status', 'task'],
   lines: ['id', 'kind', 'label', 'coords', 'formation', 'observed'],
+  engineering: ['id', 'kind', 'owner', 'state', 'label', 'coords', 'pos', 'progress', 'unit', 'observed', 'source', 'confidence'], // T27, walidacja: shared/engineering.js
 };
 export const PLAYER_MESSAGE_FIELDS = ['id', 'channel', 'from', 'turn', 'time', 'sent', 'type', 'priority', 'text', 'attachments', 'ccir', 'report', 'form', 'fire', 'overlay'];
 

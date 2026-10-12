@@ -84,6 +84,14 @@ Pododdziały rozstawiaj ręcznie na zrzucie mapy terenu (`tools/umpire/terrain-v
 - **Wykrywalność gracza:** intensywna łączność radiowa = namierzenie (ostrzał rejonu sztabu/SD po 1–2 turach); cisza radiowa i kurier zmniejszają ryzyko; wabiki gracza mogą ściągnąć ogień.
 - **Prawda** o strefach zagłuszenia i namierzaniu tylko w `umpire/turns` (`ew`) i `enemy-plan.md`. Gracz widzi **wyłącznie skutki**: opóźnione lub zgubione rozkazy, przerwane meldunki, BSP tracące łączność lub zestrzelone, ostrzał. Strefę zna dopiero z meldunku (`lines` `ew_zone` z `observed`), a nadajnik z własnego DF (kontakt `UUMSEI`, status `A`).
 
+## Wojska inżynieryjne (T27)
+
+- **Saperzy gracza:** jednostki `UCE*` (batalion saperów dywizji, plutony pionierów w batalionach) dowodzone tekstowo. Czas zadania liczy `tools/umpire/engineer.mjs` (docs/UMPIRE-TOOLS.md): pole minowe, przejście, most, zniszczenie. Zadanie ma `state` i `progress` w `umpire/turns` (`engineering`); meldunek saperów podaje postęp („ZAPORA-1: 60%”). Ogień, straty saperów albo rozkaz przerywa zadanie: zamroź `progress`, nie dopisuj z góry.
+- **Widok gracza:** własne obiekty (`owner: own`) idą z prawdy automatycznie (`turn.mjs`); zapory przeciwnika gracz zna tylko z rozpoznania (`plan.player.engineering`, `observed`, `source`) albo odkrywa przy wejściu (straty na minach, potem wpis `enemy`). Nie dopisuj mu nieodkrytych zapór.
+- **Mosty:** stan (cały / uszkodzony / zburzony) i „kto, kiedy” (`changed_by`, `changed_at`) w prawdzie; zburzenie zmienia trasy konwojów i marsz (T15, T17). Własne mosty gracz zna, wrogie z rozpoznania.
+- **Saperzy przeciwnika (SOP):** rozpoznanie inżynieryjne przed natarciem (kierunki, mosty, zapory), przejścia w zaporach wykonują pod osłoną ognia i dymów w 1–3 godziny (`laneTime`), a przy braku czasu wchodzą w pole minowe ze stratami. Ich zapory i zniszczone mosty trafiają do `engineering` (prawda) oraz `enemy-plan.md`.
+- **Zapora gracza** zatrzymuje albo rozbija natarcie przeciwnika w swoim rejonie tylko, gdy jest `done` (częściowa: proporcjonalnie do `progress`); bez obserwacji i ognia zapora to tylko opóźnienie, nie bariera.
+
 ## Widok gracza (`player/turns/NNN.json`)
 
 - `turn`, `time` (= start + N × turnMinutes, ISO ze strefą).
@@ -102,6 +110,11 @@ Pododdziały rozstawiaj ręcznie na zrzucie mapy terenu (`tools/umpire/terrain-v
 - **Straty:** przy rozstrzyganiu aktualizuj `personnel`, `equipment` i `strength` spójnie (strata kompanii zmniejsza też liczby w jej batalionie) i podawaj liczby w meldunkach, np. „utraciliśmy 3 KTO, 14 rannych”.
 - **`track` (animacja przemieszczeń):** dla każdej jednostki własnej (i jednostki sąsiada), która w danej turze zmieniła pozycję, zapisz w `player/turns/(N+1).json` pole `track: [[lon,lat], …]` = trasę przejechaną w tej turze, kończącą się dokładnie w `pos` i zaczynającą się w pozycji z tury N. Prowadź ją po drogach, gdzie to sensowne (marsz kolumny po MSR, nie przez jezioro i las), a w terenie po prostej lub kilku punktach; ≥ 2 punkty. Bez `track` jednostka w aplikacji jedzie po linii prostej. Nie dotyczy kontaktów wroga: aplikacja pokazuje tylko „ducha” starej zameldowanej pozycji, więc `track` w kontaktach jest niedozwolone. Walidator zgłasza uwagę, gdy początek lub koniec trasy nie zgadza się z pozycjami tur.
 - **Sąsiedzi i ich formacje (`formation`):** sąsiedzi (`zt-mamry`, `zt-biebrza`…) żyją własnym życiem — symuluj ich w każdej turze (ruch, walka, meldunki) i aktualizuj ich pozycje, a ich pododdziały zapisuj w `units` pliku gracza jako jednostki z `formation: "<id sąsiada>"` **zamiast** `parent` (np. `{ "id": "mamry-1bzmot", "name": "1 bzmot (ZT Mamry)", "sidc": "SFGPUCIZ---F---", "formation": "zt-mamry", … }`; podwładni takiej jednostki mogą używać `parent`). Gracz nimi nie dowodzi: nie mają kanałów i nie wolno mu ich wskazać jako adresata rozkazu. Pozycje to położenie orientacyjne (jak u sąsiada), `track` dla ruchu jak wyżej. FLOT sąsiada może być linią z `formation`. Pola sędziego (`side`, `supply`) nadal tylko w `umpire/turns/`.
+- `staff` (odprawa sztabu na start tury, T28.1): do 3 pozycji `{ role: "s2"|"s3"|"s4", name: "stopień nazwisko, funkcja", text: ≤ 300 znaków, time }` (`time` w okresie tury). Dla każdej rozstrzyganej tury, krótko i wojskowo, **bez prawdy** (sztab jej nie zna, może się mylić):
+  - S2: ocena wroga z pewnością, np. *„wróg przegrupowuje się na zachód — pewność średnia”*,
+  - S3: ocena własna i propozycja, np. *„1 bzmot wykrwawiony, proponuję rotację 1k”*,
+  - S4: stan logistyki i ryzyka, np. *„amunicja dart 0,4 doby, konwój 3 opóźniony”*.
+  - Zapisujesz w `plan.player.staff` (`tools/umpire/turn.mjs`) albo wprost w `player/turns/(N+1).json`; nie dziedziczy się z tury N.
 - `assets`: środki rozpoznania gracza (`pos` tylko, gdy w powietrzu lub rozwinięte).
 - `lines`: `boundary`, `flot`, `enemy_flot`, `phase`, `axis`, `enemy_axis`. Każda linia ma `coords` i `label`.
 - Współrzędne zawsze `[długość, szerokość]`.

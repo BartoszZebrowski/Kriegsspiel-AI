@@ -147,6 +147,44 @@ Połączenia: jedno zapytanie na bbox, User-Agent z opisem, ponowna próba po 42
 
 **Limit czasu.** Całe zapytanie (wszystkie serwery i ponowienia razem) ma twardy limit, domyślnie 20 s, dzielony po równo między serwery. Nadpisanie: opcja `{ timeoutMs }` w `findWater`/`findForest`/`nudgeOutOfWater`/`preferCover`, zmienna `OVERPASS_TIMEOUT_MS` albo `pick.mjs --overpass-timeout <sekundy>`. Lista serwerów: opcja `endpoints` albo `OVERPASS_ENDPOINTS` (adresy po przecinku). Po przekroczeniu limitu rzucany jest błąd z `code === 'OVERPASS_UNAVAILABLE'`; `pick --check-water` łapie go, wypisuje „UWAGA: tryb offline — nie sprawdzono wody” i kończy się kodem 0 (dane z cache działają dalej bez sieci). Zawieszenie niemożliwe nawet przy serwerze, który przyjmuje połączenie i milczy (test: wskaż `OVERPASS_ENDPOINTS` na lokalny gniazdowy serwer bez odpowiedzi i `OVERPASS_TIMEOUT_MS=1000`).
 
+## Zadania saperskie (`engineer.mjs`, T27)
+
+Kalkulator czasu zadań inżynieryjnych: czyste, deterministyczne funkcje (`minefieldTime`, `laneTime`, `bridgeTime`, `demolitionTime`, `progressPercent`) i CLI. Zwraca `minutes` i `hours`. Wartości to praktyka sędziowska (rząd wielkości), jedyne źródło: stałe na górze pliku.
+
+```
+node tools/umpire/engineer.mjs minefield --length 800 --personnel 100 --strength 0.6 [--rows 3] [--method manual|mechanical --vehicles N] [--terrain open|rough|forest|urban|frozen|marsh] [--night] [--fire]
+node tools/umpire/engineer.mjs lane --depth 150 --personnel 30 [--method manual|mechanical]
+node tools/umpire/engineer.mjs bridge --span 20 --personnel 12 [--type folding|pontoon] [--current calm|medium|strong]
+node tools/umpire/engineer.mjs demolition --span 25 --personnel 10 [--prepared] [--full]
+node tools/umpire/engineer.mjs progress --started <ISO> --now <ISO> --total <min> [--paused <min>]
+```
+
+| Zadanie | Model | Przykład |
+|---|---|---|
+| Pole minowe | 30 min przygotowania + (front × rzędy) / (6 m·rząd na sapera·h, ręcznie albo 1000 na minoukładacz·h) × teren | kompania (100 ludzi, siła 0,6), 800 m, 3 rzędy: ok. 7,2 h |
+| Przejście | 15 min + głębokość × 1,5 min / sekcje po 10 ludzi (ręcznie) albo 20 min + 0,1 min/m (trał, ładunek) | 150 m, 30 ludzi: ok. 1,3 h |
+| Most składany / pontonowy | składany: 15 min + 1,5 min/m (obsada 12); pontonowy: 30 min + 1,2 min/m (obsada 40, × prąd); obsada ×0,6–3 | most składany 20 m, 12 ludzi: 45 min |
+| Zniszczenie mostu | komory gotowe: 10 min; ładunki na miejscu: 20 min + 10 min / 10 m rozpiętości; całkowite × 1,5 | 25 m, 10 ludzi: 45 min |
+
+Mnożniki: noc × 1,25, pod ogniem × 2, teren (otwarty 1; las 1,4; błoto 1,8…). `progressPercent` daje postęp do meldunku „ZAPORA-1: 60%”; zadanie przerwane ogniem lub rozkazem zatrzymaj (zapisz `state` i `progress` bez zmian, ewentualnie `paused_min`).
+
+### Obiekty inżynieryjne w planie tury
+
+`plan.engineering` zmienia prawdę (`umpire/turns`, dziedziczoną z tury N), `plan.player.engineering` wiedzę gracza o obiektach **przeciwnika**; własne obiekty gracza biorą się z prawdy automatycznie.
+
+```json
+{
+  "engineering": {
+    "set": [ { "id": "zapora-1", "kind": "minefield", "owner": "PL", "state": "building", "progress": 20, "label": "ZAPORA-1", "unit": "1bzmot-sap", "coords": [[22.8,54.1],[22.82,54.1],[22.82,54.11],[22.8,54.11],[22.8,54.1]] } ],
+    "patch": { "zapora-1": { "progress": 60 }, "most-3": { "state": "destroyed", "changed_at": "2026-05-14T07:40:00+02:00", "changed_by": "saperzy RU" } },
+    "remove": [ "zapora-9" ]
+  },
+  "player": { "engineering": { "set": [ { "id": "wrog-zapora-1", "kind": "obstacle", "owner": "enemy", "state": "done", "coords": [[22.9,54.2],[22.95,54.2]], "observed": "2026-05-14T07:00:00+02:00", "source": "BSP-1", "confidence": "średnia" } ] } }
+}
+```
+
+Stan mostu stałego z prawdy trafia do `logistics.bridges` sędziego (`status`, `as_of`); w widoku gracza tylko dla mostów **jego strony** (resztę gracz poznaje z meldunków i rozpoznania: `plan.player.logistics`). Poprawność turn.mjs zgłasza jako UWAGI (`sędzia engineering…` / `gracz engineering…`).
+
 ## Logistyka i DOS w planie tury (`turn.mjs`, T17/T18)
 
 `plan.logistics` zmienia prawdę sędziego (`umpire/turns`), `plan.player.logistics` widok gracza (`player/turns`). Oba mają ten sam format, a każdy działa tylko na swojej poprzedniej turze: gracz **nie dostaje** niczego z logistyki sędziego (stan znany graczowi aktualizujesz jawnie, np. skład z opóźnionym `as_of`).

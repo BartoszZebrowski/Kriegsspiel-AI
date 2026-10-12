@@ -17,6 +17,7 @@ import { createOrders } from './orders.js';
 import { createCcir } from './ccir.js';
 import { createOverlays } from './overlays.js';
 import { createForms } from './forms.js';
+import { createStaff } from './staff.js';
 
 const nullStorage = { load: (_key, fallback) => fallback, save() {} };
 
@@ -72,6 +73,9 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   // Nakładki od przełożonego (T51): kopiowanie do szkiców i dołączanie do rozkazu.
   const overlays = createOverlays({ store, S, notify, saveNotes: (items) => saveNotes(items), setDraft });
 
+  // Odprawa sztabu i widoki komórek S2/S3/S4/ogień (T28.1).
+  const staff = createStaff({ store, storage, S, keyOf, notify, openChannel: (id) => openChannel(id) });
+
   // Podświetla na mapie jednostkę wybranego kanału (gdy nic nie jest zaznaczone albo przy zmianie kanału).
   const syncSelectionToChannel = () => setSelection(S().channelUnit);
 
@@ -126,6 +130,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
       places,
       equipment,
       detail,
+      staffUi: staff.loadStaffUi(id),
       layers,
       basemap: typeof mapPrefs.base === 'string' ? mapPrefs.base : DEFAULT_BASEMAP,
       read: new Set(storage.load(key('read'), [])),
@@ -385,6 +390,11 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     ...ccir,
     ...forms,
     ...overlays,
+    closeStaffPanel: staff.closeStaffPanel,
+    openStaffPanel: staff.openStaffPanel,
+    toggleStaffPanel: staff.toggleStaffPanel,
+    openStaffChannel: staff.openStaffChannel,
+    setStaffView: staff.setStaffView,
     setDock, toggleDock, setMobile, setNarrow, toggleLeader, setAnimations, setReducedMotion,
     openBriefing, closeBriefing,
   };
