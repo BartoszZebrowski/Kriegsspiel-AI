@@ -57,3 +57,5 @@ button.tl-node{padding:0;background:none;border:0}
 /* T48: meldunki cykliczne zgrupowane na osi (SITREP, LOGSTAT) */
 .tl-lane.msgs i.rep{width:6px;height:8px;transform:translateX(-3px);border-radius:1px;opacity:1;background:transparent;border:1.5px solid var(--accent)}
 .tl-lane.msgs i.rep-logstat{border-color:var(--warn)}
+.tl-node.night i{border-color:#7f95e8;background:#1d2440}
+.tl-node.night.cur i{background:#7f95e8}

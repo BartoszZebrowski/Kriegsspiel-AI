@@ -10,11 +10,12 @@ import { getDraft } from '../domain/compose.js';
 import { overlaysOf } from '../domain/overlays.js';
 import { staffCards, isStaffOpen, emptyStaffUi } from '../domain/staff.js';
 import { emptyStaffView } from '../domain/staffviews.js';
+import { isFinished } from '../domain/afterbattle.js';
 
 // Warstwy mapy: sytuacja (jednostki, kontakty…), szkice, etykiety i nakładki kafelkowe (domyślnie wyłączone).
 export const DEFAULT_BASEMAP = 'Ciemna (Esri)';
 export const TILE_OVERLAYS = ['Rzeźba terenu', 'Koleje', 'Nazwy i granice'];
-export const defaultLayers = () => ({ units: true, hierarchy: true, contacts: true, assets: true, logistics: true, lines: true, notes: true, ccir: true, fires: true, engineering: true, labels: true, ...Object.fromEntries(TILE_OVERLAYS.map((n) => [n, false])) });
+export const defaultLayers = () => ({ units: true, hierarchy: true, contacts: true, assets: true, logistics: true, lines: true, notes: true, ccir: true, fires: true, engineering: true, labels: true, truth: false, ...Object.fromEntries(TILE_OVERLAYS.map((n) => [n, false])) });
 
 export function initialState() {
   return {
@@ -52,6 +53,8 @@ export function initialState() {
     omnibox: { open: false },
     command: null, // jednorazowe polecenie dla widoku: { name, arg, nonce }
     briefing: { open: false, text: null, error: null },
+    aar: { open: false, text: null, error: null }, // omówienie ćwiczenia po bitwie (T29)
+    truth: { turn: null, data: null }, // prawda oglądanej tury z umpire/ (T29, tylko po status: finished)
     notice: null, // { id, text, error, title?, urgent?, channel? } — komunikat do wyświetlenia (toast)
     notices: [], // historia komunikatów (dzwonek)
     noticesSeen: 0, // ile z historii obejrzano
@@ -61,6 +64,7 @@ export function initialState() {
 // Wartości pochodne: kolejność ma znaczenie (późniejsze mogą zależeć od wcześniejszych).
 export const DERIVED = [
   { key: 'archive', deps: ['viewTurn', 'currentTurn'], fn: (s) => s.viewTurn !== s.currentTurn },
+  { key: 'finished', deps: ['scenario'], fn: (s) => isFinished(s.scenario) }, // tryb po bitwie (T29)
   { key: 'channels', deps: ['scenario', 'turn'], fn: (s) => mergeChannels(s.scenario?.channels, s.turn?.units || []) },
   { key: 'channel', deps: ['channels', 'activeChannel'], fn: (s) => s.channels.find((c) => c.id === s.activeChannel) ?? null },
   { key: 'draft', deps: ['drafts', 'activeChannel'], fn: (s) => getDraft(s.drafts, s.activeChannel) },

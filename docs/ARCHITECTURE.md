@@ -349,3 +349,33 @@ Stan łączności jednostki to wiedza sztabu: pole `comms: {status, last_contact
 | Widoki | `views/map/index.js` (znacznik przy symbolu i podpowiedź), `domain/cards.js` (wiersz „Łączność”), `views/messenger.js` + `views/messenger/warn.js` (znacznik kanału, ostrzeżenie), `public/css/*.css` | Wyłącznie odczyt `comms` z tury; BFT (`domain/bft.js`) pozostaje osobny. Wysyłka nie jest blokowana (decyzja T25: bez statusów doręczenia). |
 | Sędzia | `tools/umpire/turn.mjs`, [CLAUDE.md](../CLAUDE.md) | `comms` w widoku gracza z `comms_true` (`since` → `last_contact`) albo łatką `plan.player.units.<id>.comms`; nie dziedziczone z tury N. `comms_true` nie trafia do pliku gracza. Zasady utraty i odzyskania łączności: CLAUDE.md. |
 | Walidator | `tools/validate-checks.js` | `comms` w `player/turns` przez `checkComms`; `comms_true` w `umpire/turns` przez `checkUmpireComms`. |
+
+## Pogoda i cykl dobowy (T30)
+
+Pogoda jest jawna dla gracza (prognoza i obserwacje), więc `weather` jest w białej liście `player/turns`; sędzia zapisuje ten sam obiekt w `umpire/turns` (dziedziczony z tury N, zmieniany planem). Dzień i noc nie są polem pliku: liczy je klient z czasu tury i położenia scenariusza.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Schemat | `shared/weather.js` (osobny plik, jak `fatigue.js`) | Listy kategorii (`WEATHER_PRECIP`, `WEATHER_FOG`, `WEATHER_WIND`), `checkWeather(weather)` → tekst błędu lub null. W `shared/schema.js` tylko `weather` dopisane do `PLAYER_TURN_FIELDS`. |
+| Logika dnia i nocy | `domain/daylight.js` (nowy, czysty; algorytm NOAA, bez zależności) | `solarElevation(ms, lat, lon)`, `sunTimes(ms, lat, lon)` → `{sunrise, sunset}`, `dayPhase(iso, lat, lon)` → `day` / `twilight` / `night`, `isNightPhase`. Jedyne miejsce reguł zmierzchu (progi stopni). |
+| Logika pogody | `domain/weather.js` (nowy, czysty; listy kategorii lustrzane do `shared/`) | `weatherInfo(weather)` → ikona, etykieta, ton, opis; `droneFlightVerdict(weather)` (wiatr / opad / mgła → lot możliwy lub powód); `groundSpeedFactor(weather)` (rozmoknięty teren); `visibilityNote`. Bez DOM. |
+| Marsz | `domain/roadmarch.js` | `isNightAt(iso, tz, pos?)` – z położeniem liczy wg słońca (inaczej stare progi godzinowe); `marchMinutesFor(km, profile, night, weather?)` mnoży czas przez `groundSpeedFactor`. Zależność tylko `domain/` → `domain/`. |
+| Widok | `views/weather.js` (nowy), podpięty w `main.js`; `views/timeline.js` i `domain/timeline.js` (znacznik nocy na węzłach), `domain/cards.js` (karta środka rozpoznania: werdykt lotu) | Wskaźnik pogody i dnia/nocy w zegarze (`#clk-weather`), klasa `body.is-night` (przyciemnienie kafli mapy w CSS), podpowiedź z opisem. Dane tylko ze store (`turn.weather`, `scenario.map.center`, `scenario.timezone`); bez nowego stanu i bez importów innych widoków. |
+| Sędzia | `tools/umpire/turn.mjs`, [CLAUDE.md](../CLAUDE.md) | `plan.weather` (obiekt lub `null`), dziedziczenie z tury N, `checkWeather` jako ostrzeżenie. Skutki (drony, obserwacja, przejezdność, zima): CLAUDE.md. |
+| Walidator | `tools/validate-checks.js` | `weather` w obu rodzajach tur przez `checkWeather`; poza białą listą `weather` nie jest błędem pola. |
+
+## Tryb po bitwie (T29)
+
+Jedyny świadomy wyjątek od zasady „serwer nie czyta `umpire/`”: po `status: "finished"` w `scenario.json` serwer udostępnia prawdę (`umpire/turns/NNN.json`) i `umpire/aar.md`. Przy każdym innym statusie jest to technicznie niemożliwe.
+
+| Część | Miejsce | Odpowiedzialność |
+|---|---|---|
+| Serwer (strażnik) | `server/truth.js` (nowy) | Jedyny plik serwera, który zna ścieżkę `umpire/`. `createTruth(dir)` zwraca `readTruthTurn(n)` i `readAar()`; obie przechodzą przez prywatną `openUmpire()`, która za każdym razem (bez pamięci podręcznej) czyta `scenario.json` i przy `status !== "finished"` rzuca `StoreError(403)`. `store.js` nadal nie ma odczytu `umpire/`. Test pilnuje, że łańcuch `umpire` występuje w `server/` tylko w `truth.js`. |
+| API | `server/app.js` | `GET /api/truth/:n` (numer przez `parseTurnNumber`) i `GET /api/aar`; poza tym bez zmian (zakaz `..`, brak statycznego serwowania `umpire/`). |
+| Logika | `domain/afterbattle.js` (czysta) | `isFinished(scenario)`, `enemyTruth(truth, ownSide)` → jednostki strony przeciwnej z prawdy, `truthLabel(unit)`. Dokument AAR to `briefingDocument` (spis treści z `##`) — bez drugiego parsera. |
+| Stan | `core/store.js` | `truth: { turn, data }` (pobrana prawda oglądanej tury), `aar: { open, text, error }`, warstwa `layers.truth` (domyślnie wyłączona), pochodna `finished`. |
+| Intencje | `core/afterbattle.js` (podkontroler) + `core/api.js` (`truth`, `aar`) | `setTruthVisible(on)` (tylko gdy `finished`; pobiera prawdę oglądanej tury), `syncTruth()` (po zmianie tury, wołane z `applyView`), `openAar`, `closeAar`. Błąd 403/sieci → `notify`. |
+| Widoki | `views/map/truth.js` (nowa warstwa Leaflet: symbole przeciwnika na prawdziwych pozycjach, przerywany pierścień), `views/aar.js` (pełnoekranowy dokument jak odprawa, ten sam CSS `br-*`, osobny `#aar`), `views/map/controls.js` (wiersz „Prawda” w Warstwach, nieaktywny do końca bitwy), `views/timeline.js` (przycisk „Po bitwie” otwiera AAR), `views/messenger.js` (po bitwie komunikator tylko do podglądu) | Brak importów między widokami; tekst przez `escapeHtml`. |
+| Walidator | `tools/validate.js` | `status` z listy (`SCENARIO_STATUSES` w `shared/schema.js`), uwaga dla `finished` bez `aar.md` (już istnieje). |
+
+Strażnik jest sprawdzany także odwrotnie: `status: "active"` (lub brak pola) daje 403 dla `/api/truth/*` i `/api/aar`, a ścieżki z `..` nigdy nie dochodzą do dysku. Przypadek graniczny: sędzia zmienia status na `finished` dopiero po zapisaniu `aar.md` (CLAUDE.md).

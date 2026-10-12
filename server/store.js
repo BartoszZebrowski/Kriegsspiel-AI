@@ -1,5 +1,5 @@
 // Dostęp do plików scenariusza widocznych dla gracza.
-// Celowo nie ma tu żadnej funkcji czytającej katalog umpire/ — prawda nie wychodzi przez serwer.
+// Celowo nie ma tu żadnej funkcji czytającej katalog umpire/ — jedyny wyjątek (po status: finished) to server/truth.js.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';

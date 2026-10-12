@@ -43,7 +43,7 @@ export function createInspectorView({ store, controller, root = document }) {
     }
     const { item, kind } = entity;
     const tz = s.scenario?.timezone;
-    const ctx = { symbolOf, turnTime: s.turn.time, tz, header: false, catalog: s.equipment, units: s.turn.units };
+    const ctx = { symbolOf, turnTime: s.turn.time, tz, header: false, catalog: s.equipment, units: s.turn.units, weather: s.turn.weather };
     const units = s.turn.units || [];
     // Jednostka formacji sąsiada: tylko odczyt (bez wiadomości, rozkazów i dziennika rozmów).
     const neighbour = kind === 'unit' && isNeighbourUnit(item, indexById(units));

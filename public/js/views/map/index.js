@@ -28,6 +28,7 @@ import { createCcirLayer } from './ccir.js';
 import { createOverlaysLayer } from './overlays.js';
 import { createFiresLayer } from './fires.js';
 import { createEngineeringLayer } from './engineering.js';
+import { createTruthLayer } from './truth.js';
 
 // Rozmiar symbolu zależy od szczebla: im mniejsza jednostka, tym mniejszy znak.
 function unitSize(u) {
@@ -116,6 +117,7 @@ export function createMapView({ store, controller, root = document }) {
   createCcirLayer({ store, controller, map }); // T48: nakładka CCIR i wskazywanie geometrii dla edytora
   createFiresLayer({ store, map }); // T52: warstwa „Ogień” (zgłoszenia i ich status)
   createEngineeringLayer({ store, map }); // T27: zapory, przejścia i mosty
+  createTruthLayer({ store, map }); // T29: prawda o przeciwniku po bitwie
 
   const markerEl = (id) => markers.get(id)?.getElement();
 

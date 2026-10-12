@@ -92,3 +92,8 @@ body.dragging{user-select:none}body.dragging.dx{cursor:col-resize}body.dragging.
 /* podczas przeciągania mapa i ramki nie przechwytują wskaźnika */
 body.dragging #map,body.dragging iframe{pointer-events:none}
 .split.rel{position:relative;flex:none;margin:-3px 0;z-index:5}
+.clock-wx{display:flex;align-items:center;gap:4px;padding:0 8px;font:600 12px var(--font-mono);color:var(--t-2);border-right:1px solid var(--line-2)}
+.clock-wx[data-tone="warn"]{color:var(--warn)}
+.clock-wx[data-tone="bad"]{color:var(--bad, #e5534b)}
+.clock-wx[data-phase="night"]{color:#9db4ff}
+@media (max-width:720px){.clock-wx{padding:0 5px}}

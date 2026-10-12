@@ -2,6 +2,8 @@
 // Czysta logika bez DOM i sieci (testowana w Node). Sieć: server/route.js + core/api.js.
 import { distanceKm, pathLengthKm } from './geo.js';
 import { formatClock } from './format.js';
+import { dayPhase, isNightPhase } from './daylight.js';
+import { groundSpeedFactor } from './weather.js';
 
 // Prędkości marszowe po drodze (km/h) i masa typowego sprzętu (t). Masa: kołowa = Rosomak (~22–26 t), gąsienicowa = Leopard 2 (~60 t).
 export const MARCH_PROFILES = [
@@ -24,14 +26,17 @@ export function profileFromSidc(sidc) {
   return profileById('wheeled');
 }
 
-export function isNightAt(iso, timeZone) {
+// Z położeniem (pos = [lon, lat]) noc wynika ze słońca (T30), bez niego ze stałych godzin.
+export function isNightAt(iso, timeZone, pos) {
   if (!iso) return false;
+  if (Array.isArray(pos) && pos.length >= 2) return isNightPhase(dayPhase(iso, pos));
   const hour = Number(formatClock(iso, timeZone).slice(0, 2));
   return Number.isFinite(hour) && (hour >= NIGHT_FROM || hour < NIGHT_TO);
 }
 
 export const speedKmh = (profile, night) => (night ? profile.nightKmh : profile.dayKmh);
-export const marchMinutesFor = (km, profile, night) => (km / speedKmh(profile, night)) * 60;
+// weather (opcjonalnie): rozmokły teren po opadzie wydłuża marsz (groundSpeedFactor).
+export const marchMinutesFor = (km, profile, night, weather) => (km / (speedKmh(profile, night) * groundSpeedFactor(weather))) * 60;
 
 // Szacunek bez routera: prosta × współczynnik krętości. `estimate: true` wymusza oznaczenie w widoku.
 export function estimateRoute(points) {
@@ -80,14 +85,14 @@ export function bridgesOnRoute(path, bridges, massT, tolerance = BRIDGE_TOLERANC
 }
 
 // Wynik dla widoku: trasa + czas marszu + ostrzeżenia (mosty sprawdzane tylko przy trasie drogowej).
-export function routeSummary(route, profile, { night = false, bridges = [] } = {}) {
+export function routeSummary(route, profile, { night = false, bridges = [], weather } = {}) {
   const warnings = route.estimate ? [] : bridgesOnRoute(route.path, bridges, profile.massT);
   return {
     ...route,
     profile,
     night,
     speedKmh: speedKmh(profile, night),
-    minutes: marchMinutesFor(route.km, profile, night),
+    minutes: marchMinutesFor(route.km, profile, night, weather),
     warnings,
     bridgesChecked: !route.estimate,
   };

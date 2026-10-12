@@ -15,6 +15,7 @@ import { checkDeliveries, checkEw, checkEwZone } from '../../shared/ew.js';
 import { checkStaff, STAFF_FIELDS } from '../../shared/staff.js';
 import { fatigueLevel } from '../../shared/fatigue.js';
 import { checkComms, commsFromTruth } from '../../shared/comms.js';
+import { checkWeather } from '../../shared/weather.js';
 import { applyEngineering, syncBridgeStatus } from './engineering-merge.mjs';
 import { clone, pad3, pickFields, moved, computeTrack, nextTime, mergeById, checkIds, patchMissing, applyLogistics, buildInbox } from './turn-merge.mjs';
 
@@ -74,6 +75,16 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   if (zones.size || prevUmpire.ew) {
     umpire.ew = { zones: [...zones.values()] };
     warnings.push(...checkEw(umpire.ew).map((e) => `sędzia ${e}`));
+  }
+
+  // Pogoda (T30): jawna dla gracza; dziedziczona z tury N, plan.weather = obiekt (zmiana) albo null (usuń).
+  if (plan.weather !== undefined) {
+    if (plan.weather === null) delete umpire.weather;
+    else umpire.weather = clone(plan.weather);
+  }
+  if (umpire.weather) {
+    const we = checkWeather(umpire.weather);
+    if (we) warnings.push(`plan ${we}`);
   }
 
   // --- widok gracza ---
@@ -171,6 +182,7 @@ export function buildTurn({ prevUmpire, prevPlayer, plan = {}, turnMinutes, play
   syncBridgeStatus(umpire.logistics, eng.bridgeStates, time);
   syncBridgeStatus(pLog.logistics, eng.ownBridgeStates, time);
   const player = { turn, time, units: pUnits };
+  if (umpire.weather) player.weather = clone(umpire.weather);
   if (pLog.logistics) player.logistics = pLog.logistics;
   if (contacts.length || prevPlayer.contacts) player.contacts = contacts;
   if (pAssets.length || prevPlayer.assets) player.assets = pAssets;

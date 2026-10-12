@@ -30,7 +30,7 @@ Metadane i kanały komunikatora.
 | `schemaVersion` | liczba | zalecane | Wersja schematu, obecnie `1`. |
 | `id` | tekst | tak | Identyfikator = nazwa katalogu, np. `00-test-przesmyk`. |
 | `title` | tekst | tak | Tytuł wyświetlany w aplikacji. |
-| `status` | tekst | nie | `active` (domyślnie) albo `finished`. Dopiero `finished` zwalnia treści `umpire/` (CLAUDE.md, T20). |
+| `status` | tekst | nie | `active` (domyślnie) albo `finished`. Dopiero `finished` zwalnia treści `umpire/`: serwer (`server/truth.js`) wtedy, i tylko wtedy, serwuje `GET /api/truth/:n` i `GET /api/aar` (inaczej 403); aplikacja pokazuje warstwę „Prawda” i omówienie ćwiczenia (T29). Wartości spoza listy to błąd walidatora, `finished` bez `umpire/aar.md` to uwaga. |
 | `side` | tekst | nie | Strona gracza, np. `PL`. |
 | `scale` | tekst | nie | Skala dowodzenia, np. `brygada` (informacyjnie). |
 | `timezone` | tekst | tak | Strefa IANA, np. `Europe/Warsaw`. |
@@ -76,8 +76,25 @@ Stan świata **taki, jaki zna gracz**: własne siły na ostatnich zameldowanych 
 | `logistics` | obiekt | nie | Warstwa logistyczna znana graczowi (sekcja `logistics` niżej). |
 | `staff` | lista | nie | Odprawa sztabu na start tury (T28.1), niżej. Dotyczy tylko tej tury, nie jest dziedziczona. |
 | `engineering` | lista | nie | Obiekty inżynieryjne znane graczowi (T27): zapory, przejścia, mosty. Sekcja `engineering` niżej. |
+| `weather` | obiekt | nie | Pogoda (T30): prognoza i obserwacje, jawna dla gracza. Sekcja `weather` niżej. Dziedziczona z tury N przez `turn.mjs`. |
 
 Wszystkie elementy `units`/`contacts`/`assets` mają unikalne w pliku `id`.
+
+### `weather` (gracz i sędzia, T30)
+
+Pogoda jest jawna: ten sam obiekt w `player/turns` i `umpire/turns`. Dzień i noc to nie pole pliku: klient liczy je ze słońca (algorytm NOAA) z `start`/czasu tury i `map.center` scenariusza (wysokość słońca > −0,83° dzień, do −6° zmierzch, niżej noc).
+
+| Pole | Typ | Wym. | Znaczenie |
+|---|---|---|---|
+| `text` | tekst ≤ 400 | tak | Opis słowny, np. „Zachmurzenie duże, przelotny deszcz”. |
+| `precip` | `brak` / `mżawka` / `deszcz` / `ulewa` / `śnieg` | nie | Opad. |
+| `fog` | `brak` / `lekka` / `gęsta` | nie | Mgła. |
+| `wind` | `słaby` / `umiarkowany` / `silny` | nie | Wiatr (wpływ na BSP). |
+| `temp_c` | liczba −60…60 | nie | Temperatura, °C. |
+| `visibility_km` | liczba 0–50 | nie | Widzialność, km. |
+| `forecast` | tekst ≤ 400 | nie | Prognoza na kolejne godziny. |
+
+Pola spoza listy lub kategoria spoza listy to błąd. Walidator: `checkWeather` (`shared/weather.js`).
 
 ### `staff` (gracz, T28.1)
 

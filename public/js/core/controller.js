@@ -18,6 +18,7 @@ import { createCcir } from './ccir.js';
 import { createOverlays } from './overlays.js';
 import { createForms } from './forms.js';
 import { createStaff } from './staff.js';
+import { createAfterBattle } from './afterbattle.js';
 
 const nullStorage = { load: (_key, fallback) => fallback, save() {} };
 
@@ -76,6 +77,9 @@ export function createController({ store, api, storage = nullStorage, env = {} }
   // Odprawa sztabu i widoki komórek S2/S3/S4/ogień (T28.1).
   const staff = createStaff({ store, storage, S, keyOf, notify, openChannel: (id) => openChannel(id) });
 
+  // Tryb po bitwie (T29): warstwa „Prawda” i AAR (dostępne po status: finished).
+  const afterBattle = createAfterBattle({ store, api, S, notify });
+
   // Podświetla na mapie jednostkę wybranego kanału (gdy nic nie jest zaznaczone albo przy zmianie kanału).
   const syncSelectionToChannel = () => setSelection(S().channelUnit);
 
@@ -102,6 +106,7 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     store.set(patch);
     // Zaznaczenie (inspektor) zostaje przy zmianie tury; bez zaznaczenia podświetlamy jednostkę kanału.
     if (!S().selection) syncSelectionToChannel();
+    afterBattle.syncTruth();
     readIfVisible();
   }
 
@@ -253,11 +258,13 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     // Użytkownik przełączył turę w trakcie odświeżania: bierzemy tylko dane globalne.
     if (epoch !== navEpoch || s.viewTurn !== basis) {
       store.set(global);
+      afterBattle.revokeIfNotFinished();
       readIfVisible();
       announceIncoming(incoming);
       return;
     }
     applyView(target, view, global);
+    afterBattle.revokeIfNotFinished();
     if (advanced) notify(`Tura ${previous} rozstrzygnięta — teraz tura ${current}`);
     announceIncoming(incoming);
   }
@@ -398,5 +405,8 @@ export function createController({ store, api, storage = nullStorage, env = {} }
     setStaffView: staff.setStaffView,
     setDock, toggleDock, setMobile, setNarrow, toggleLeader, setAnimations, setReducedMotion,
     openBriefing, closeBriefing,
+    setTruthVisible: afterBattle.setTruthVisible,
+    openAar: afterBattle.openAar,
+    closeAar: afterBattle.closeAar,
   };
 }

@@ -4,7 +4,7 @@ Projekt: gra sztabowa w przeglądarce. Koncepcja w [DESIGN.md](DESIGN.md), zadan
 
 ## Kod
 
-- `server/`: serwer Node bez zależności (`app.js` HTTP i API, `store.js` pliki gracza, `watch.js` SSE). Serwer **nigdy** nie czyta `umpire/`.
+- `server/`: serwer Node bez zależności (`app.js` HTTP i API, `store.js` pliki gracza, `watch.js` SSE). Serwer **nie czyta** `umpire/`, z jednym wyjątkiem (T29): `server/truth.js` udostępnia `GET /api/truth/:n` i `GET /api/aar` wyłącznie przy `status: "finished"` w `scenario.json` (inaczej 403). Żaden inny plik serwera nie zna ścieżki `umpire/` (pilnuje tego test).
 - `public/`: aplikacja (ES modules, bez bundlera). Leaflet i milsymbol z `/vendor/`. Architektura klienta (jednokierunkowe MVC: `core/` store i kontroler, `views/`, `domain/`): [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 - `shared/schema.js`: stałe i walidatory wspólne (serwer, walidator, docelowo klient); serwowane pod `/shared/schema.js`.
 - `tools/validate.js`: walidator scenariusza.
@@ -64,6 +64,15 @@ Rozstawiając pododdziały po ruchu używaj `tools/umpire/deploy.mjs` (formacje 
 
 Pododdziały rozstawiaj ręcznie na zrzucie mapy terenu (`tools/umpire/terrain-view.mjs` + `pick.mjs`, docs/UMPIRE-TOOLS.md); kalkulator `deploy.mjs` tylko jako punkt wyjścia.
 
+## Zamknięcie bitwy (T29)
+
+Gdy spełniony jest warunek końca bitwy (z `umpire/enemy-plan.md` i scenariusza: utrzymanie rubieży do chwili X, przełamanie albo rozbicie zgrupowania):
+
+1. Rozstrzygnij ostatnią turę jak zwykle i zapisz ją (`umpire/`, `inbox`, `player/turns`).
+2. Napisz `umpire/aar.md` w stylu omówienia ćwiczenia: wynik, zamiary przeciwnika a rzeczywistość, decyzje kluczowe gracza, wnioski i uwagi sędziego; sekcje `##` tworzą spis treści w aplikacji.
+3. **Dopiero potem** ustaw `"status": "finished"` w `scenario.json` (od tej chwili serwer zwalnia prawdę i AAR, a w czacie wolno już omawiać `umpire/`).
+4. `npm run validate -- <nazwa>`: zły `status` jest błędem, `finished` bez `aar.md` uwagą. Odpowiedz graczowi jednym zdaniem.
+
 ## Zasady sędziego (wnioski z rozgrywki nr 1, docs/WNIOSKI-PRZESMYK-1.md)
 
 - **Realizm strat:** przy obronie przygotowanej stosunek strat ok. 2–3:1, nie 7:1. Atakujący, który wchodzi w ogień, też trafia: każde większe starcie kosztuje gracza sprzęt.
@@ -100,6 +109,15 @@ Pododdziały rozstawiaj ręcznie na zrzucie mapy terenu (`tools/umpire/terrain-v
 - **Skutki:** zmęczona: marsz ok. −15%, opóźnienia i dosłowne rozumienie rozkazów; wyczerpana: marsz ok. −35%, możliwe zaśnięcie na stanowiskach, odmowa natarcia.
 - **Próba morale** przy ciężkich stratach (> 30% w turze), okrążeniu albo utracie dowódcy: sędzia rozstrzyga swobodnie wg `morale` i zmęczenia, od zatrzymania przez samowolny odwrót po (skrajnie, słabe formacje) poddanie się; wynik i kolejne `morale` zapisz w `umpire/`.
 - **Meldunki** ludzkim głosem, bez liczb: „ludzi nie stać na kolejne natarcie”, „kompania zasnęła na stanowiskach”.
+
+## Pogoda i cykl dobowy (T30)
+
+- **`weather`** (docs/SCHEMA.md) jest jawna: prognoza i obserwacje, te same w obu plikach tury; `turn.mjs` dziedziczy ją z tury N (`plan.weather` zmienia, `null` usuwa). Zmianę zameldują ludzie (S2, rozpoznanie, przełożony), nie sam plik.
+- **Dzień/noc** liczy aplikacja ze słońca (Suwałki 14.05: ok. 04:30 / 20:20); nic nie wpisuj. Tura sięgająca zmierzchu lub nocy: rozstrzygaj noc.
+- **BSP:** silny wiatr, ulewa, śnieg, gęsta mgła (< 1 km) = lot odwołany, meldunek „lot odwołany — wiatr”; deszcz, mżawka, lekka mgła = krótszy lot i słabszy obraz (niższa pewność).
+- **Obserwacja:** zasięg = `visibility_km`; nocą widzi tylko to, co ma termowizję (kto ma, widzi; maskowanie cieplne i dym ją ograniczają). Natarcie nocne bez termowizji obserwator zauważa późno i niepewnie.
+- **Teren i marsz:** po deszczu lub w ulewie drogi gruntowe i teren −15…−30% prędkości (aplikacja liczy −15% / −30% w pomiarze po drogach); nocą marsz wolniejszy wg `MARCH_PROFILES`.
+- **Zima:** poniżej −5 °C rośnie zużycie wytrzymałości (ok. ×1,3), ostrzeżenia o odmrożeniach i rozruchu sprzętu.
 
 ## Widok gracza (`player/turns/NNN.json`)
 

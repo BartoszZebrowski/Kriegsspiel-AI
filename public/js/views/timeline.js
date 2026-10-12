@@ -1,6 +1,7 @@
 // Widok: oś czasu tur pod mapą — węzły tur (przeszłość, bieżąca, przyszłość, archiwum w kolorze bursztynu),
 // ścieżki zdarzeń (wiadomości, rozkazy, kontakty), znacznik oglądanej tury i zablokowany przełącznik „Po bitwie”.
 // Klik w przeszłą turę = podgląd archiwalny (controller.showTurn).
+import { dayPhase, isNightPhase } from '../domain/daylight.js';
 import { buildTimeline, hourStep, showTurnLabel, lanesVisible } from '../domain/timeline.js';
 import { addMinutes, formatClock } from '../domain/format.js';
 import { REPORT_LABELS } from '../domain/ccir.js';
@@ -27,6 +28,7 @@ export function createTimelineView({ store, controller, root = document }) {
       turnMinutes: scenario.turnMinutes,
       messages: s.messages,
       contacts: s.turn?.contacts || [],
+      nightAt: (min) => isNightPhase(dayPhase(addMinutes(scenario.start, min), scenario.map?.center)),
     });
     const step = hourStep(width);
     const clock = (i) => formatClock(addMinutes(scenario.start, i * scenario.turnMinutes), tz);
@@ -35,8 +37,8 @@ export function createTimelineView({ store, controller, root = document }) {
     h += '</div>';
     h += `<div class="tl-line"></div><div class="tl-fut" style="left:${tl.futurePct}%"></div><div class="tl-past" style="width:${tl.pastPct}%"></div>`;
     for (const t of tl.ticks) {
-      const cls = [t.state === 'fut' ? 'fut' : '', t.state === 'cur' ? 'cur' : '', t.view ? 'view' : ''].filter(Boolean).join(' ');
-      const tip = `Tura ${t.turn} · ${clock(t.turn)}${t.state === 'fut' ? ' (przyszła)' : t.state === 'cur' ? ' (bieżąca)' : ''}`;
+      const cls = [t.state === 'fut' ? 'fut' : '', t.state === 'cur' ? 'cur' : '', t.view ? 'view' : '', t.night ? 'night' : ''].filter(Boolean).join(' ');
+      const tip = `Tura ${t.turn} · ${clock(t.turn)}${t.state === 'fut' ? ' (przyszła)' : t.state === 'cur' ? ' (bieżąca)' : ''}${t.night ? ' · noc' : ''}`;
       h += `<button type="button" class="tl-node ${cls}" data-turn="${t.turn}" ${t.clickable ? '' : 'tabindex="-1" aria-disabled="true"'} style="left:${t.pct}%" data-tip="${e(tip)}" aria-label="${e(tip)}"><em${showTurnLabel(t.turn, width) ? '' : ' style="display:none"'}>T${t.turn}</em><i></i></button>`;
     }
     const repTip = (x) => (x.report ? ` data-tip="${REPORT_LABELS[x.report]}${x.count > 1 ? ` ×${x.count}` : ''}"` : '');
@@ -65,8 +67,8 @@ export function createTimelineView({ store, controller, root = document }) {
   $('tl-next').addEventListener('click', () => controller.nextTurn());
   $('tl-cur').addEventListener('click', () => controller.showCurrent());
   $('tl-replay').addEventListener('click', () => controller.replayTurn());
-  // Tryb „po bitwie” (suwak czasu, warstwy wiedza/prawda/notatki) powstanie w v0.3; po zakończeniu scenariusza przycisk jest już aktywny.
-  $('ab-btn').addEventListener('click', () => controller.notify('Tryb „po bitwie” (suwak czasu, prawda, notatki) pojawi się w wersji 0.3', false, { title: 'Po bitwie' }));
+  // Tryb „po bitwie” (T29): po zakończeniu scenariusza przycisk otwiera omówienie ćwiczenia (AAR); pełny suwak czasu i warstwy: T32.
+  $('ab-btn').addEventListener('click', () => controller.openAar());
 
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(() => render()).observe(section);
   store.subscribe(['scenario', 'turns', 'currentTurn', 'viewTurn', 'messages', 'turn', 'archive'], render, { immediate: true });

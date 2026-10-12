@@ -92,6 +92,7 @@
         <span class="clock-turn" id="clk-turn">TURA —</span>
         <span class="clock-time"><b id="clk-time">—</b><i id="clk-dtg"></i></span>
       </div>
+      <span class="clock-wx" id="clk-weather" hidden></span>
       <button id="t-next" data-tip="Następna tura" data-k="." aria-label="Następna tura"><svg class="i"><use href="#i-gt"/></svg></button>
     </div>
     <button class="btn sm" id="t-cur" hidden>Wróć do bieżącej</button>
@@ -287,6 +288,15 @@
     <nav class="br-toc" id="br-toc"></nav>
     <div class="br-doc" id="br-doc"><article class="markdown" id="briefing-body"></article></div>
     <aside class="br-side" id="br-side"></aside>
+  </div>
+</div>
+<!-- ======================= OMÓWIENIE ĆWICZENIA (AAR, po bitwie) ======================= -->
+<div id="aar" role="dialog" aria-label="Omówienie ćwiczenia" aria-modal="true">
+  <div class="br-top"><svg class="i"><use href="#i-doc"/></svg><h2 id="aar-title">Omówienie ćwiczenia</h2><span class="pill">PO BITWIE · TYLKO PODGLĄD</span><span class="grow"></span><button class="btn sm" id="aar-close">Zamknij <kbd>Esc</kbd></button></div>
+  <div class="br-main">
+    <nav class="br-toc" id="aar-toc"></nav>
+    <div class="br-doc" id="aar-doc"><article class="markdown" id="aar-body"></article></div>
+    <aside class="br-side" id="aar-side"></aside>
   </div>
 </div>
 <!-- ======================= EDYTOR CCIR ======================= -->

@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { createStore, parseTurnNumber, StoreError } from './store.js';
 import { createWatcher } from './watch.js';
 import { createRouter } from './route.js';
+import { createTruth } from './truth.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -92,7 +93,7 @@ function guardApi(req, port) {
   }
 }
 
-async function handleApi(req, res, store, watcher, router, parts) {
+async function handleApi(req, res, store, watcher, router, truth, parts) {
   const [resource, arg] = parts;
   const method = req.method;
 
@@ -138,6 +139,15 @@ async function handleApi(req, res, store, watcher, router, parts) {
   if (method === 'POST' && resource === 'route' && !arg) {
     return sendJson(res, 200, await router.route((await readBody(req)).coords));
   }
+  // Tryb po bitwie (T29): prawda i AAR tylko przy status: finished — pilnuje tego server/truth.js (403 w innym wypadku).
+  if (method === 'GET' && resource === 'truth' && arg !== undefined) {
+    return sendJson(res, 200, await truth.readTruthTurn(parseTurnNumber(arg)));
+  }
+  if (method === 'GET' && resource === 'aar' && !arg) {
+    const aar = await truth.readAar(); // najpierw strażnik (403), dopiero potem nagłówki 200
+    res.writeHead(200, { 'Content-Type': 'text/markdown; charset=utf-8', 'Cache-Control': 'no-store' });
+    return res.end(aar);
+  }
   if (method === 'GET' && resource === 'events' && !arg) {
     return watcher.subscribe(req, res);
   }
@@ -176,6 +186,7 @@ async function handleStatic(res, pathname) {
 export function createApp(scenarioDir, { router = createRouter({ disabled: process.env.KS_ROUTER === 'off' }) } = {}) {
   const store = createStore(scenarioDir);
   const watcher = createWatcher(scenarioDir);
+  const truth = createTruth(scenarioDir);
 
   const server = http.createServer(async (req, res) => {
     try {
@@ -192,7 +203,7 @@ export function createApp(scenarioDir, { router = createRouter({ disabled: proce
       if (pathname.startsWith('/api/')) {
         guardApi(req, server.address().port);
         const parts = pathname.slice(5).split('/').filter(Boolean);
-        return await handleApi(req, res, store, watcher, router, parts);
+        return await handleApi(req, res, store, watcher, router, truth, parts);
       }
       if (req.method !== 'GET' && req.method !== 'HEAD') throw new StoreError(405, 'Niedozwolona metoda');
       return await handleStatic(res, pathname);

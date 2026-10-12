@@ -84,7 +84,7 @@ export const NOTE_ECHELONS = ['D', 'E', 'F', 'G', 'H', 'I', 'J'];
 // --- Biała lista pól plików gracza (player/turns/NNN.json) ---
 // Wszystko spoza listy jest polem sędziego (np. side, supply, events) i nie może trafić do pliku gracza.
 
-export const PLAYER_TURN_FIELDS = ['turn', 'time', 'units', 'contacts', 'assets', 'lines', 'logistics', 'staff', 'engineering'];
+export const PLAYER_TURN_FIELDS = ['turn', 'time', 'units', 'contacts', 'assets', 'lines', 'logistics', 'staff', 'engineering', 'weather'];
 export const PLAYER_FIELDS = {
   units: ['id', 'name', 'sidc', 'pos', 'strength', 'status', 'task', 'personnel', 'equipment', 'parent', 'formation', 'track', 'notes', 'dos', 'pos_time', 'fatigue', 'comms'],
   contacts: ['id', 'sidc', 'pos', 'uncertainty_m', 'observed', 'source', 'confidence', 'estimate', 'estimate_personnel', 'estimate_equipment'],

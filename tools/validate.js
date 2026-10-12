@@ -10,6 +10,7 @@ import { checkOrderAttachment } from '../shared/order.js';
 import { checkPlayerFields, checkSituation, checkTracksContinuity, checkGazetteer } from './validate-checks.js';
 import { checkFormShape } from '../shared/form.js';
 import { checkStaff } from '../shared/staff.js';
+import { checkScenarioStatus } from '../shared/status.js';
 import { checkOverlay } from '../shared/overlay.js';
 import { checkFormContent, missingFields } from '../public/js/domain/forms.js';
 import { createFireChecker } from './validate-fire.js';
@@ -69,6 +70,8 @@ export async function validateScenario(dir) {
       report.error(`scenario.json: nieznana strefa czasowa ${scenario.timezone}`);
     }
   }
+  const statusError = checkScenarioStatus(scenario.status);
+  if (statusError) report.error('scenario.json: ' + statusError);
   for (const m of checkCommandRules(scenario.commandRules)) report.error('scenario.json: ' + m);
   checkReportCycleField(scenario, report);
   const ccirIds = checkCcirFile(await readJsonSafe(path.join(dir, 'player', 'ccir.json'), report), report);

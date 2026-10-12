@@ -977,7 +977,7 @@ Gracz: dowódca dywizji zmechanizowanej w obronie przesmyku. Jedna bitwa, 8–12
 - [A] Ciągłość numeracji tur, kanałów i czasu; schema v0.2 w praktyce.
 - [M] Pełna bitwa rozegrana do końca: rozkazy z tarciem, logistyka daje o sobie znać, AAR pokazany w aplikacji (T29).
 
-## T29 — Tryb po bitwie (minimalny) ⬜
+## T29 — Tryb po bitwie (minimalny) ✅
 Zapłata za grę: po `status: “finished”` aplikacja pokazuje prawdę i AAR.
 
 **WA**
@@ -1002,7 +1002,7 @@ Modele i doktryna potrzebne do prowadzenia T23: zużycie DOS (postój < obrona <
 
 Ten sam szczebel (dywizja), jedna wielodniowa bitwa w **czasie gry**: fazy D+0…D+3, noce jako osobny rytm, zegar logistyczny, rezerwy przyjeżdżające wg harmonogramu. Gracz gra sam; nic się nie resetuje między dniami. (Szerszy front — dowodzenie 2 dywizjami/korpusem — odłożony na później, po kampanii.)
 
-## T30 — Pogoda i cykl dobowy ⬜
+## T30 — Pogoda i cykl dobowy 🟨
 **WA**
 1. `weather` w turach (biała lista): tekst i kategorie (opad, mgła, wiatr, temperatura, widzialność). Pogoda jawna dla gracza (prognoza + obserwacje), zmiany meldunkami.
 2. Dzień/noc liczony z realnego czasu startu i szerokości geograficznej (wschód/zachód słońca); zegar i oś czasu oznaczają noce.

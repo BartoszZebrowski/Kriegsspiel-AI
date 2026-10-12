@@ -22,6 +22,9 @@ export const api = {
   scenario: async () => (await request('/api/scenario')).json(),
   turn: async (n) => (await request(`/api/turn/${n}`)).json(),
   briefing: async () => (await request('/api/briefing')).text(),
+  // Tryb po bitwie (T29): prawda tury i AAR; serwer odpowiada 403, dopóki scenariusz nie ma status: finished.
+  truth: async (n) => (await request(`/api/truth/${n}`)).json(),
+  aar: async () => (await request('/api/aar')).text(),
   // Brak gazetera (404) = brak linków do miejsc.
   gazetteer: async () => {
     try {

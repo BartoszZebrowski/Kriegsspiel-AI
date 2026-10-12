@@ -6,6 +6,7 @@ import { distanceKm } from '../public/js/domain/geo.js';
 import { LINE_KINDS, PLACE_KINDS, PLAYER_TURN_FIELDS, PLAYER_FIELDS, checkTrack, checkPosTime, checkDos, checkLogistics, isCoord as validPos, isValidTime as validTime, isCount, extraFields } from '../shared/schema.js';
 import { checkFatigue, checkUmpireFatigue } from '../shared/fatigue.js';
 import { checkComms, checkUmpireComms } from '../shared/comms.js';
+import { checkWeather } from '../shared/weather.js';
 import { checkEwZone, checkEmitterContact } from '../shared/ew.js';
 
 const ms = milsymbol.default ?? milsymbol;
@@ -159,6 +160,10 @@ export function checkSituation(label, data, n, scenario, report, strictLogistics
           report.error(`${where}: obserwacja późniejsza niż czas tury`);
       }
     }
+  }
+  if (data.weather !== undefined) {
+    const e = checkWeather(data.weather); // T30: jawna dla gracza, ta sama struktura w obu rodzajach tur
+    if (e) report.error(`${label}: ${e}`);
   }
   if (data.logistics !== undefined) {
     const r = checkLogistics(data.logistics, { strict: strictLogistics });

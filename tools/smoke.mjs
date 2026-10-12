@@ -1541,6 +1541,24 @@ try {
     await ev(`window.__ks.controller.clearSelection()`);
   });
 
+  await step('T30 pogoda i doba: weather w turze → wskaźnik w zegarze (ikona, podpowiedź), body.is-night zgodne ze słońcem; brak weather → wskaźnik znika', async () => {
+    const cur = await state('s.currentTurn');
+    await waitFor(`${store()}.viewTurn === ${cur}`, 'oglądana jest bieżąca tura');
+    const f = `player/turns/${String(cur).padStart(3, '0')}.json`;
+    const turn0 = await readJson(f);
+    turn0.weather = { text: 'Ulewa, silny wiatr z zachodu', precip: 'ulewa', wind: 'silny', temp_c: 11, visibility_km: 3 };
+    await writeJson(f, turn0);
+    await waitFor(`${store()}.turn.weather?.precip === 'ulewa'`, 'weather po SSE');
+    await waitFor(`document.querySelector('#clk-weather') && !document.querySelector('#clk-weather').hidden`, 'wskaźnik pogody w zegarze');
+    assert(await ev(`document.querySelector('#clk-weather').dataset.tip.includes('Ulewa') && document.querySelector('#clk-weather').dataset.tone === 'bad'`), 'podpowiedź z opisem i ton bad');
+    const night = await ev(`import('/js/domain/daylight.js').then((m) => { const s = ${store()}; return m.isNightPhase(m.dayPhase(s.turn.time, s.scenario.map.center)); })`);
+    assert((await ev(`document.body.classList.contains('is-night')`)) === night, 'klasa is-night zgodna ze słońcem: ' + night);
+    delete turn0.weather;
+    await writeJson(f, turn0);
+    await waitFor(`!${store()}.turn.weather`, 'weather usunięte po SSE');
+    await waitFor(`document.querySelector('#clk-weather').hidden || document.querySelector('#clk-weather').dataset.phase !== 'day'`, 'wskaźnik znika w dzień');
+  });
+
   await step('T19 łączność: comms lost → znacznik na mapie, wiersz w karcie, ostrzeżenie w komunikatorze; ok bez znaczników', async () => {
     const cur = await state('s.currentTurn');
     await waitFor(`${store()}.viewTurn === ${cur}`, 'oglądana jest bieżąca tura');
@@ -1562,6 +1580,36 @@ try {
     await writeJson(f, turn0);
     await waitFor(`!document.querySelector('#map .leaflet-marker-icon.nocomms') && !document.querySelector('#compose-warn [data-comms]')`, 'po przywróceniu łączności brak znaczników');
     await ev(`window.__ks.controller.clearSelection()`);
+  });
+
+  await step('T29 po bitwie: active → 403 i zablokowane; finished → API 200, przycisk AAR z spisem treści, warstwa Prawda pokazuje przeciwnika, komunikator tylko do podglądu', async () => {
+    const api = async (p) => (await fetch(`${base}${p}`)).status;
+    assert((await api('/api/truth/0')) === 403 && (await api('/api/aar')) === 403, 'prawda i AAR: 403 przy active');
+    const scn = await readJson('scenario.json');
+    await writeJson('scenario.json', { ...scn, status: 'finished' });
+    assert((await api('/api/truth/0')) === 200 && (await api('/api/aar')) === 200, 'prawda i AAR: 200 przy finished');
+    await send('Page.navigate', { url: `${base}/?debug` });
+    await waitFor(`window.__ks && ${store()}.turn && document.getElementById('ab-btn')`, 'przeładowanie strony');
+    await waitFor(`${store()}.finished === true && !document.getElementById('ab-btn').disabled`, 'przycisk „Po bitwie” odblokowany');
+    assert(await ev(`document.getElementById('compose-text').disabled`), 'komunikator tylko do podglądu po bitwie');
+    await clickSel('#ab-btn');
+    await waitFor(`document.getElementById('aar').classList.contains('open') && document.querySelectorAll('#aar-toc a[data-s]').length >= 2`, 'AAR ze spisem treści');
+    assert(await ev(`document.getElementById('aar-body').querySelector('h2') !== null`), 'AAR: nagłówki sekcji');
+    await key('Escape');
+    await waitFor(`!document.getElementById('aar').classList.contains('open')`, 'Esc zamyka AAR');
+    await ev(`window.__ks.controller.showTurn(0)`);
+    await waitFor(`${store()}.viewTurn === 0`, 'tura 0');
+    const icons = await ev(`document.querySelectorAll('#map .leaflet-marker-icon').length`);
+    await ev(`window.__ks.controller.setTruthVisible(true)`);
+    await waitFor(`${store()}.truth.turn === 0 && ${store()}.truth.data.units.length > 0`, 'prawda tury 0 pobrana');
+    await waitFor(`document.querySelectorAll('#map .leaflet-marker-icon').length > ${icons}`, 'przeciwnik na prawdziwych pozycjach na mapie');
+    await ev(`window.__ks.controller.setTruthVisible(false)`);
+    await waitFor(`document.querySelectorAll('#map .leaflet-marker-icon').length === ${icons}`, 'wyłączenie warstwy Prawda');
+    await writeJson('scenario.json', scn);
+    assert((await api('/api/truth/0')) === 403, 'powrót do active zamyka prawdę');
+    await send('Page.navigate', { url: `${base}/?debug` });
+    await waitFor(`window.__ks && ${store()}.turn && document.getElementById('ab-btn')`, 'przeładowanie strony');
+    assert(await ev(`document.getElementById('ab-btn').disabled`), '„Po bitwie” znów zablokowane');
   });
 
   await step('brak błędów JS w konsoli', async () => {

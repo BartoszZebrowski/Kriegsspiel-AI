@@ -30,7 +30,7 @@ export const lanesVisible = (height) => height >= 80;
 
 // Budowa osi. Wejście: { turns, currentTurn, viewTurn, start (ISO), turnMinutes, messages, contacts }.
 // Wynik: { ticks, lanes: { msgs, ords, cons }, playheadPct, pastPct, futurePct, archive }.
-export function buildTimeline({ turns = [], currentTurn = 0, viewTurn = 0, start, turnMinutes = 120, messages = [], contacts = [] }) {
+export function buildTimeline({ turns = [], currentTurn = 0, viewTurn = 0, start, turnMinutes = 120, messages = [], contacts = [], nightAt = null }) {
   const count = tickCount(currentTurn);
   const span = (count - 1) * turnMinutes || 1;
   const pct = (m) => Math.max(0, Math.min(100, (m / span) * 100));
@@ -42,7 +42,7 @@ export function buildTimeline({ turns = [], currentTurn = 0, viewTurn = 0, start
     else if (i < currentTurn) state = 'past';
     // Dostępna do obejrzenia = istnieje plik tury (klikalna).
     const clickable = turns.includes(i);
-    ticks.push({ turn: i, minutes: i * turnMinutes, pct: pct(i * turnMinutes), state, view: archive && i === viewTurn, clickable });
+    ticks.push({ turn: i, minutes: i * turnMinutes, pct: pct(i * turnMinutes), state, view: archive && i === viewTurn, clickable, night: nightAt ? Boolean(nightAt(i * turnMinutes)) : false });
   }
   const playheadMin = viewTurn * turnMinutes;
   const toMin = (iso) => (start && iso ? minutesBetween(start, iso) : null);

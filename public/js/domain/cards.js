@@ -10,6 +10,7 @@ import { groupEquipment, subordinateTotals, portableSummary, OTHER_CATEGORY } fr
 import { bftStatus } from './bft.js';
 import { commsInfo, commsCardText } from './comms.js';
 import { fatigueBlock } from './fatigue.js';
+import { droneFlightVerdict } from './weather.js';
 import { contactFreshness } from './contactage.js';
 import { formatStrength, readinessRatio, readinessLevel, formatEstimateEquipment, formatEstimatePersonnel } from './strength.js';
 
@@ -162,7 +163,15 @@ export function contactCard(c, turnTime, tz, ctx = {}) {
 
 export function assetCard(a, ctx = {}) {
   const header = ctx.header === false ? '' : `<h4>${e(a.name || a.id)}</h4><div class="card__type">${e(a.type || describeSidc(a.sidc))}</div>`;
-  return `<div class="card">${header}<div class="kv"><div class="cap">Zadanie</div>${row('Stan', a.status)}${row('Zadanie', a.task)}${positionBlock(a.pos, '')}${row('Uwagi', a.notes)}</div></div>`;
+  return `<div class="card">${header}<div class="kv"><div class="cap">Zadanie</div>${row('Stan', a.status)}${row('Zadanie', a.task)}${droneRow(a, ctx)}${positionBlock(a.pos, '')}${row('Uwagi', a.notes)}</div></div>`;
+}
+
+// Wiersz „Warunki lotu” dla drona (T30): werdykt z pogody tury; sędzia i tak potwierdza lot meldunkiem.
+function droneRow(a, ctx) {
+  if (!ctx.weather || !/dron/i.test(`${a.type || ''} ${a.name || ''}`)) return '';
+  const v = droneFlightVerdict(ctx.weather);
+  const text = v.ok ? (v.reason ? `lot możliwy, ${v.reason}` : 'lot możliwy') : `lot niewskazany: ${v.reason}`;
+  return `<div class="kvr" data-drone-flight="${v.ok ? 'ok' : 'no'}"><span>Warunki lotu</span><span class="${v.ok ? '' : 'warn'}">${e(text)}</span></div>`;
 }
 
 // Zakładka „Zaopatrzenie”: dane logistyczne należą do sędziego — gracz ich nie widzi (warstwa logistyczna v0.2).

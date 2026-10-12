@@ -41,7 +41,7 @@ export function createRoadMeasure({ map, store, controller }) {
   function isNight() {
     if (timeMode !== 'auto') return timeMode === 'night';
     const s = store.get();
-    return isNightAt(s.turn?.time, s.scenario?.timezone);
+    return isNightAt(s.turn?.time, s.scenario?.timezone, s.scenario?.map?.center);
   }
 
   function render() {
@@ -55,7 +55,7 @@ export function createRoadMeasure({ map, store, controller }) {
     let body = '';
     if (enabled && status && !route) body = `<div class="road-box__note">${e(status)}</div>`;
     else if (enabled && route) {
-      const sum = routeSummary(route, profile, { night, bridges: store.get().turn?.logistics?.bridges || [] });
+      const sum = routeSummary(route, profile, { night, bridges: store.get().turn?.logistics?.bridges || [], weather: store.get().turn?.weather });
       const warn = sum.warnings.map((w) => `<li class="road-box__lvl-${w.level}">${e(w.text)}</li>`).join('');
       body = `<div class="road-box__km" data-road-km>${e(formatKm(sum.km))}</div>
         <div class="road-box__note${sum.estimate ? ' road-box__est' : ''}">${e(sum.note)}${status ? ' — ' + e(status) : ''}</div>

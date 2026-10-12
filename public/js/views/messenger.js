@@ -92,8 +92,8 @@ export function createMessengerView({ store, controller, root = document }) {
   }
 
   // ---------- komponowanie ----------
-  function renderCompose({ archive, channel, currentTurn }) {
-    const disabled = archive || !channel;
+  function renderCompose({ archive, channel, currentTurn, finished }) {
+    const disabled = archive || finished || !channel;
     els.form.classList.toggle('is-disabled', disabled);
     els.text.disabled = disabled;
     els.send.disabled = disabled;
@@ -101,7 +101,9 @@ export function createMessengerView({ store, controller, root = document }) {
     els.tplBtn.disabled = disabled;
     els.urgent.disabled = disabled;
     for (const b of els.types.querySelectorAll('button')) b.disabled = disabled;
-    els.hint.innerHTML = archive
+    els.hint.innerHTML = finished
+      ? 'Bitwa zakończona — komunikator tylko do podglądu'
+      : archive
       ? 'Archiwum — wróć do bieżącej tury, aby wydawać rozkazy'
       : channel
         ? `<span class="mono">T${currentTurn}</span><kbd>Ctrl</kbd><kbd>↵</kbd>`
@@ -240,7 +242,7 @@ export function createMessengerView({ store, controller, root = document }) {
       if (missing.length) return controller.notify(`Uzupełnij pola formularza: ${missing.join(', ')}`, true);
     }
     const text = form ? composeFormMessage(form, els.text.value) : els.text.value.trim();
-    if (!text || !s.channel || s.archive) return;
+    if (!text || !s.channel || s.archive || s.finished) return;
     if (!form && isTemplate(els.text.value)) {
       els.text.focus(); // szablon bez uzupełnienia nie jest rozkazem
       return;
@@ -329,7 +331,7 @@ export function createMessengerView({ store, controller, root = document }) {
   store.subscribe(['channel', 'visibleMessages', 'archive', 'currentTurn', 'scenario', 'turn', 'places', 'fresh', 'ccir'], (s) => {
     if (s.scenario) thread.render(s);
   }, { immediate: true });
-  store.subscribe(['archive', 'channel', 'currentTurn'], renderCompose, { immediate: true });
+  store.subscribe(['archive', 'channel', 'currentTurn', 'finished'], renderCompose, { immediate: true });
   store.subscribe(['draft', 'channel', 'turn', 'places', 'archive'], syncDraft, { immediate: true });
   knownNoteIds = new Set(S().notes.map((n) => n.id));
   store.subscribe('notes', ({ notes }) => {

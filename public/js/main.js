@@ -7,9 +7,11 @@ import { load, save } from './lib/storage.js';
 import { createToastsView } from './views/toasts.js';
 import { createTooltipsView } from './views/tooltips.js';
 import { createTopbarView } from './views/topbar.js';
+import { createWeatherView } from './views/weather.js';
 import { createDocksView } from './views/docks.js';
 import { createHotkeysView } from './views/hotkeys.js';
 import { createBriefingView } from './views/briefing.js';
+import { createAarView } from './views/aar.js';
 import { createCcirView } from './views/ccir.js';
 import { createStaffView } from './views/staff.js';
 import { createStaffViewsView } from './views/staffviews.js';
@@ -51,8 +53,10 @@ async function start() {
   }
 
   createTopbarView({ store, controller });
+  createWeatherView({ store });
   createDocksView({ store, controller });
   createBriefingView({ store, controller });
+  createAarView({ store, controller });
   createCcirView({ store, controller });
   createStaffView({ store, controller });
   createStaffViewsView({ store, controller });

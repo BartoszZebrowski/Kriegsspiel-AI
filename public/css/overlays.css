@@ -22,8 +22,8 @@
 .o-none{padding:26px;text-align:center;color:var(--t-3)}
 
 /* ---- odprawa (widok dokumentu) ---- */
-#brief{position:fixed;inset:0;z-index:var(--z-modal);display:none;background:var(--bg-0);flex-direction:column}
-#brief.open{display:flex}
+#brief,#aar{position:fixed;inset:0;z-index:var(--z-modal);display:none;background:var(--bg-0);flex-direction:column}
+#brief.open,#aar.open{display:flex}
 .br-top{display:flex;align-items:center;gap:12px;height:var(--topbar-h);padding:0 12px;border-bottom:1px solid var(--line);background:var(--bg-1);flex:none}
 .br-top h2{margin:0;font-size:13px;font-weight:600}
 .br-main{flex:1;display:grid;grid-template-columns:240px minmax(0,1fr) 260px;min-height:0}

@@ -168,6 +168,10 @@ node tools/umpire/engineer.mjs progress --started <ISO> --now <ISO> --total <min
 
 Mnożniki: noc × 1,25, pod ogniem × 2, teren (otwarty 1; las 1,4; błoto 1,8…). `progressPercent` daje postęp do meldunku „ZAPORA-1: 60%”; zadanie przerwane ogniem lub rozkazem zatrzymaj (zapisz `state` i `progress` bez zmian, ewentualnie `paused_min`).
 
+### Pogoda w planie tury (T30)
+
+`plan.weather` = obiekt `weather` (docs/SCHEMA.md) zmienia pogodę tury; brak pola = dziedziczenie z tury N, `null` = usuń. Pogoda trafia do obu plików tury; błędna struktura to ostrzeżenie.
+
 ### Obiekty inżynieryjne w planie tury
 
 `plan.engineering` zmienia prawdę (`umpire/turns`, dziedziczoną z tury N), `plan.player.engineering` wiedzę gracza o obiektach **przeciwnika**; własne obiekty gracza biorą się z prawdy automatycznie.

@@ -64,7 +64,12 @@ export function createMapControls({ store, controller, map, root = document }) {
       .join('');
     return `<div class="lp-div"></div><span class="cap">Nakładki od przełożonego</span>${rows}`;
   }
-  function renderLayers({ basemap, layers, ui, overlays, scenario, archive }) {
+  // Prawda (T29): przełącznik aktywny dopiero po zakończeniu bitwy.
+  function truthRow(layers, finished) {
+    const tip = finished ? 'Przeciwnik na prawdziwych pozycjach (umpire/)' : 'Dostępne po zakończeniu bitwy';
+    return `<div class="lp-row${layers.truth ? ' on' : ''}${finished ? '' : ' is-disabled'}" role="checkbox" aria-checked="${Boolean(layers.truth)}" aria-disabled="${!finished}" tabindex="${finished ? 0 : -1}" data-truth title="${tip}"><span class="cb">${ic('check')}</span><span class="grow">Prawda (po bitwie)</span>${finished ? '' : `<span class="pill">${ic('lock')}</span>`}</div>`;
+  }
+  function renderLayers({ basemap, layers, ui, overlays, scenario, archive, finished }) {
     $('lp-base').innerHTML = BASEMAP_ORDER.map(
       (k) => `<div class="lp-row${basemap === k ? ' on' : ''}" role="radio" aria-checked="${basemap === k}" tabindex="0" data-base="${k}"><span class="rd"></span><span class="grow">${k}</span></div>`,
     ).join('');
@@ -74,6 +79,7 @@ export function createMapControls({ store, controller, map, root = document }) {
     $('lp-over').innerHTML =
       rows +
       overlayRows({ overlays, layers, scenario, archive }) +
+      truthRow(layers, finished) +
       `<div class="lp-div"></div>` +
       `<div class="lp-row${layers.labels ? ' on' : ''}" role="checkbox" aria-checked="${Boolean(layers.labels)}" tabindex="0" data-ov="labels"><span class="cb">${ic('check')}</span><span class="grow">Etykiety symboli</span></div>` +
       // Animacja przemieszczeń między turami: przełącznik zapamiętany; systemowe „ogranicz ruch” wyłącza ją zawsze.
@@ -82,6 +88,8 @@ export function createMapControls({ store, controller, map, root = document }) {
   $('layers').addEventListener('click', (ev) => {
     const base = ev.target.closest('[data-base]');
     if (base) return controller.setBasemap(base.dataset.base);
+    const tr = ev.target.closest('[data-truth]');
+    if (tr) return tr.getAttribute('aria-disabled') === 'true' ? controller.notify('Prawda będzie dostępna po zakończeniu bitwy', true) : controller.setTruthVisible(!S().layers.truth);
     if (ev.target.closest('[data-anim]')) return controller.setAnimations(!S().ui.animations);
     const copy = ev.target.closest('[data-ov-copy]');
     if (copy) return controller.copyOverlayToNotes(copy.dataset.ovCopy, { attach: copy.hasAttribute('data-attach') });
@@ -126,7 +134,7 @@ export function createMapControls({ store, controller, map, root = document }) {
   showZoom();
 
   store.subscribe(['detail', 'level'], renderDetail, { immediate: true });
-  store.subscribe(['basemap', 'layers', 'ui', 'overlays', 'scenario', 'archive'], renderLayers, { immediate: true });
+  store.subscribe(['basemap', 'layers', 'ui', 'overlays', 'scenario', 'archive', 'finished'], renderLayers, { immediate: true });
   store.subscribe('basemap', ({ basemap }) => ($('st-b').textContent = basemap), { immediate: true });
   store.subscribe('popover', renderPopover, { immediate: true });
 }
