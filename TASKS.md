@@ -633,6 +633,50 @@ Zadanie badawcze: wynik w `docs/STUDY-REALTIME.md`. Tury zostają (rozstrzyga je
 **Scenariusze testowe**
 - [M] Przegląd studium i prototypu z graczem; wybór wariantu.
 
+## T43 — Widok 3D terenu (hybryda) ⬜
+Mapa sztabowa zostaje w Leaflet 2D; dochodzi **widok 3D wybranego rejonu** (wariant D z rozmowy 2026-10-12) na MapLibre GL JS.
+
+**WA**
+1. Przycisk / polecenie „Widok 3D” otwiera rejon bieżącego widoku mapy w 3D: rzeźba terenu z darmowych danych wysokościowych (np. Terrarium), pochylanie i obrót, budynki z OSM (gdy dostępne).
+2. Na widoku 3D: jednostki własne i kontakty (milsymbol jako obrazki), linie (`flot`, `boundary`, `ew_zone`), warstwa logistyki — z tych samych danych tury, tylko do odczytu.
+3. Architektura: nowy widok (`views/map3d/`), biblioteka z `/vendor/`, bez importów z `views/map/`; wspólne przekształcenia danych w `domain/`. Wejście do 3D przez store/kontroler.
+4. Przed implementacją krótkie porównanie wariantów (MapLibre / Cesium / Google Photorealistic 3D Tiles — koszt, licencja, offline) w `docs/MAP3D.md`; wybór potwierdzony przez gracza.
+5. Działa bez klucza API i bez płatności.
+
+**Scenariusze testowe**
+- [M] Rejon przesmyku w 3D: widać wzgórza i doliny, jednostki stoją na terenie, obrót i pochylenie płynne.
+- [A] Domena: przekształcenie tury na obiekty widoku 3D (pozycje, symbole, linie).
+
+## T44 — Rozkaz graficzny na mapie (jak w RTS) ⬜
+Gracz zaznacza jednostkę (jedną lub kilka) i wskazuje na mapie cel ruchu albo rubież; to **załącznik do rozkazu**, nie natychmiastowe wykonanie — tarcie (T25) i interpretacja przez podwładnego zostają.
+
+**WA**
+1. Tryb „rozkaz graficzny”: zaznaczenie jednostki (klik / ramka / Shift+klik), potem wskazanie: punkt docelowy, trasa (kilka punktów), rubież (linia), rejon (wielokąt). Rodzaje zadań do wyboru: marsz do, zajmij rejon, broń rubieży, natarcie na, rozpoznanie.
+2. Wynik trafia do szkicu wiadomości w kanale tej jednostki (T33) jako załącznik strukturalny `{units:[id], task, geometry}` i jest widoczny na mapie jako znak taktyczny (strzałka, rubież) do czasu wysłania.
+3. Zaznaczenie jednostek różnych dowódców tworzy osobne szkice w ich kanałach (albo w kanale wspólnego przełożonego — do decyzji w planie).
+4. Schemat (`player/outbox`, SCHEMA.md, walidator) dla załącznika; sędzia czyta geometrię i treść razem — niejasność = interpretacja podwładnego.
+5. Etap planu architektonicznego: logika zaznaczenia i budowy załącznika w `domain/`, tryb mapy jako osobny plik w `views/map/`.
+
+**Scenariusze testowe**
+- [A] Domena: zaznaczenie + punkt/rubież → poprawny załącznik; walidator przyjmuje go w outbox.
+- [M] Zaznaczam 1 bzmot, wskazuję rubież, wysyłam rozkaz; w następnej turze batalion melduje zajęcie (lub problem).
+
+## T45 — Pomijanie szczebli dowodzenia: koszt ⬜
+Rozkaz do jednostki niżej niż bezpośredni podwładny (np. kompania z pominięciem batalionu) ma realistyczny koszt. Tryb ustawiany w scenariuszu: `commandRules.skipEchelon: "off" | "soft" | "hard"`.
+
+**WA**
+1. **soft (domyślny):** rozkaz przechodzi, ale:
+   - aplikacja pokazuje nieblokujące ostrzeżenie przy wyborze kanału („pomijasz dowódcę 1 bzmot”),
+   - sędzia stosuje skutki (zasady w CLAUDE.md): dowódca pominiętego szczebla dowiaduje się z opóźnieniem, jego plan może kolidować (sprzeczne rozkazy, zamieszanie, strata czasu), powtarzane pomijanie obniża inicjatywę podwładnych (czekają na rozkazy z góry) i zaufanie (związek z T28 morale), dowódca może zgłosić zastrzeżenia.
+2. **hard:** kanały poniżej bezpośrednich podwładnych są tylko do odczytu (meldunki), z wyjątkiem łączności alarmowej (`priority: urgent`) — ta ma koszt jak w soft.
+3. **off:** bez ograniczeń i skutków (tryb treningowy).
+4. Schemat: `commandRules` w `scenario.json` (SCHEMA.md, walidator). Logika „ile szczebli pominięto” jako czysta funkcja w `domain/` (z `parent`).
+5. Licznik pominięć widoczny dla sędziego w `umpire/` (np. w log.md), nie dla gracza.
+
+**Scenariusze testowe**
+- [A] Domena: kanał bezpośredniego podwładnego = 0 pominiętych szczebli, kompania pod batalionem = 1, pluton = 2; tryb hard blokuje wysyłkę poza urgent.
+- [M] W trybie soft rozkaz do kompanii działa, a batalion w następnej turze melduje zastrzeżenia lub kolizję planu.
+
 ---
 
 # Etap v0.2 — głębia: tarcie, logistyka, nowe wojska (krok 1)
