@@ -491,7 +491,7 @@ Sąsiednie brygady (np. `zt-mamry`, `zt-biebrza`) mają własne pododdziały w p
 - [M] Dwuklik na bcz otwiera kanał bcz; szkic wpisany do 1 bzmot nie przechodzi do 2 bzmot po przełączeniu.
 - [A] Stan szkiców per kanał w store (test domeny).
 
-## T34 — Linkowanie nazw bez kolizji ⬜
+## T34 — Linkowanie nazw bez kolizji ✅
 **WA**
 1. Dopasowanie nazw najdłuższe pierwsze.
 2. Fraza z dopiskiem „(RU)”/„(BY)” albo nazwa kontaktu nie linkuje do własnej jednostki.
